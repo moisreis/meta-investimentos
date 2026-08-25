@@ -44,6 +44,18 @@ export default defineConfig({
       },
 
       // --------------------------------------
+      // VALUE OBJECT TESTS
+      // --------------------------------------
+      {
+        extends: true,
+        test: {
+          name: "value-objects",
+          include: ["**/__unit__/value-objects/**/*.{test,spec}.{ts,tsx,js,jsx}"],
+          environment: "jsdom",
+        },
+      },
+
+      // --------------------------------------
       // INTEGRATION TESTS
       // --------------------------------------
       {
