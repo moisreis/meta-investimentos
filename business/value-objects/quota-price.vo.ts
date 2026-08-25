@@ -114,14 +114,14 @@ class QuotaPrice {
       throw new Error("`QuotaPrice` must be defined.");
     }
 
-    const decimalValue = new Decimal(value);
+    const DECIMAL_VALUE = new Decimal(value);
 
-    if (decimalValue.lessThan(0)) {
+    if (DECIMAL_VALUE.lessThan(0)) {
       throw new Error("`QuotaPrice` must be equal or greater than 0.");
     }
 
     return new QuotaPrice({
-      value: decimalValue.toDecimalPlaces(6),
+      value: DECIMAL_VALUE.toDecimalPlaces(6),
     });
   }
 
