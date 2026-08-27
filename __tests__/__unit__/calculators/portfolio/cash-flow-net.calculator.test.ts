@@ -1,11 +1,11 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { calculatePortfolioCashFlowNet } from "@/business/calculators/portfolio/cash-flow-net.calculator";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
 
 describe("calculatePortfolioCashFlowNet", () => {
-  it("returns the difference between applications and withdrawals", () => {
+  it("returns the difference between applications and withdrawals for `JACOPREV`", () => {
     const RESULT = calculatePortfolioCashFlowNet({
       applications: PositiveMoney.create("5140000"),
       withdrawals: PositiveMoney.create("4000000"),

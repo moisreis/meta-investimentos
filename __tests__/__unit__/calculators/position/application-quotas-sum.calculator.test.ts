@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { calculateApplicationQuotasSum } from "@/business/calculators/position/application-quotas-sum.calculator";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";

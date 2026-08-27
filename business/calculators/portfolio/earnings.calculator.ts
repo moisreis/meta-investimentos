@@ -11,7 +11,7 @@ import SignedMoney from "@/business/value-objects/signed-money.vo";
  */
 interface CalculatePortfolioEarningsProps {
   sumOfPositionCurrentBalances: SignedMoney;
-  sumOfPositioninitialBalance: SignedMoney;
+  sumOfPositionInitialBalance: SignedMoney;
   cashFlow: SignedMoney;
 }
 
@@ -28,7 +28,7 @@ interface CalculatePortfolioEarningsProps {
  *
  * @param sumOfPositionCurrentBalances - The sum of the current
  * balances of all positions in the portfolio.
- * @param sumOfPositioninitialBalance - The sum of the initial
+ * @param sumOfPositionInitialBalance - The sum of the initial
  * balances of all positions in the portfolio.
  * @param cashFlow - The net cash flow of the portfolio during
  * the period.
@@ -41,7 +41,7 @@ interface CalculatePortfolioEarningsProps {
  * ```ts
  * const RESULT = calculatePortfolioEarnings({
  *   sumOfPositionCurrentBalances: SignedMoney.create('7303437.91'),
- *   sumOfPositioninitialBalance: SignedMoney.create('6072272.64'),
+ *   sumOfPositionInitialBalance: SignedMoney.create('6072272.64'),
  *   cashFlow: SignedMoney.create('1140000.00'),
  * })
  *
@@ -51,12 +51,12 @@ interface CalculatePortfolioEarningsProps {
  */
 export function calculatePortfolioEarnings({
   sumOfPositionCurrentBalances,
-  sumOfPositioninitialBalance,
+  sumOfPositionInitialBalance,
   cashFlow,
 }: CalculatePortfolioEarningsProps): SignedMoney {
   return SignedMoney.create(
     sumOfPositionCurrentBalances.value
-      .minus(sumOfPositioninitialBalance.value)
+      .minus(sumOfPositionInitialBalance.value)
       .minus(cashFlow.value),
   );
 }

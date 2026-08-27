@@ -1,4 +1,4 @@
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
+import type PositiveMoney from "@/business/value-objects/positive-money.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
 
 /**

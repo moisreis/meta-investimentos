@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { calculateDailyFactor } from "@/business/calculators/position/daily-factor.calculator";
 import GrowthFactor from "@/business/value-objects/growth-factor.vo";
@@ -7,7 +7,7 @@ import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
 
 describe("calculateDailyFactor", () => {
-  it("returns the daily growth factor based on quota values and quantities", () => {
+  it("returns the daily growth factor based on quota values and quantities from `CAIXA BRASIL IRF-M 1 TÍTULOS PÚBLICOS FI RENDA FIXA`", () => {
     const RESULT = calculateDailyFactor({
       currentDayQuotaValue: QuotaPrice.create("4.424818"),
       currentDayQuotaQuantity: QuotaQuantity.create("342021.111191"),

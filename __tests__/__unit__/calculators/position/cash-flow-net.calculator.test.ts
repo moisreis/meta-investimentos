@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { calculateCashFlowNet } from "@/business/calculators/position/cash-flow-net.calculator";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";

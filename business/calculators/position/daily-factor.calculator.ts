@@ -1,7 +1,7 @@
 import GrowthFactor from "@/business/value-objects/growth-factor.vo";
-import QuotaPrice from "@/business/value-objects/quota-price.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+import type QuotaPrice from "@/business/value-objects/quota-price.vo";
+import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import type SignedMoney from "@/business/value-objects/signed-money.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -40,8 +40,7 @@ interface CalculateDailyFactorProps {
  *
  * @returns The calculated daily growth factor.
  *
- * @equation
- * (Vₖⁱ - Δₖⁱ) / Vₖ₋₁ⁱ
+ * @equation (Vₖᴾ - Δₖᴾ) / Vₖ₋₁ᴾ
  *
  * @example
  * ```ts

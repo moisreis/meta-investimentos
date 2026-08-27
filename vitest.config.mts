@@ -50,7 +50,9 @@ export default defineConfig({
         extends: true,
         test: {
           name: "value-objects",
-          include: ["**/__unit__/value-objects/**/*.{test,spec}.{ts,tsx,js,jsx}"],
+          include: [
+            "**/__unit__/value-objects/**/*.{test,spec}.{ts,tsx,js,jsx}",
+          ],
           environment: "jsdom",
         },
       },

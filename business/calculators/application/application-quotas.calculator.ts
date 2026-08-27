@@ -1,5 +1,5 @@
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaPrice from "@/business/value-objects/quota-price.vo";
+import type PositiveMoney from "@/business/value-objects/positive-money.vo";
+import type QuotaPrice from "@/business/value-objects/quota-price.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 
 /**

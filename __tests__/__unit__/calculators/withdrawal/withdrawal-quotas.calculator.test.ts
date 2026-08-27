@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { calculateWithdrawalQuotas } from "@/business/calculators/withdrawal/withdrawal-quotas.calculator";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";

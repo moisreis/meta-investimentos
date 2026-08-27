@@ -214,7 +214,98 @@ $$R^P_m = 1.04\%$$
 
 ---
 
+## Portfolios — Target, CumulativeTarget, Benchmarks, and Spreads
+
+The chapter defines **Target**, **CumulativeTarget**, **CumulativeBenchmark**,
+and the three spread metrics (**InflationSpread**, **RiskFreeSpread**,
+**MarketSpread**) without walking through numerical examples; the equations
+and worked verifications using the Jacoprev portfolio are provided here.
+
+### Target
+
+**Equation:**
+$$T_t = (1 + \pi_t) \cdot (1 + r^P_t) - 1$$
+
+where the portfolio's monthly interest rate is the annual rate defined for the
+Portfolio converted to a monthly base by compound interest:
+
+$$r^P_t = (1 + r^P_a)^{\frac{1}{12}} - 1$$
+
+**Inputs needed:** monthly inflation index (πₜ, IPCA); annual interest rate of
+the Portfolio (r^P_a)
+
+**Inputs used:**
+- r^P_a = 44.30% a.a. (Portfolio `annual_interest_rate` = 0.4430)
+- πₜ = 0.45% (monthly IPCA)
+
+**Result:**
+$$r^P_t = (1.4430)^{\frac{1}{12}} - 1 = 3.1032\%$$
+$$T_m = (1 + 0.0045) \cdot (1 + 0.031032) - 1 = 3.57\%$$
+
+### CumulativeTarget
+
+**Equation:**
+$$\bar{T}_t = \prod_{k=1}^{t} (1 + T_k) - 1$$
+
+**Inputs needed:** monthly Target factors (Tₖ) for every month in the period
+
+**Inputs used:** monthly targets of 3.57%, 2.91%, and 3.44%
+
+**Result:**
+$$\bar{T}_m = (1.0357) \cdot (1.0291) \cdot (1.0344) - 1 = 10.25\%$$
+
+### CumulativeBenchmark
+
+**Equation:**
+$$\bar{BR}_t = \prod_{k=1}^{t} (1 + BR_k) - 1$$
+
+BRₖ is the monthly value of the reference index, being πₖ (IPCA), fₖ (CDI),
+or mₖ (Ibovespa) depending on the index being evaluated.
+
+**Inputs used:** monthly IPCA values of 0.45%, 0.42%, and 0.51%
+
+**Result:**
+$$\bar{BR}_m = (1.0045) \cdot (1.0042) \cdot (1.0051) - 1 = 1.39\%$$
+
+### InflationSpread
+
+**Equation:**
+$$S^\pi_t = R^P_t - \pi_t$$
+
+**Inputs needed:** Portfolio Return; monthly inflation index (πₜ, IPCA)
+
+**Inputs used:** R^P_m = 1.04% (Portfolio Return, May 2026); π_m = 0.45%
+
+**Result:**
+$$S^\pi_m = 1.04\% - 0.45\% = 0.59\%$$
+
+### RiskFreeSpread
+
+**Equation:**
+$$S^f_t = R^P_t - f_t$$
+
+**Inputs needed:** Portfolio Return; monthly risk-free index (fₜ, CDI)
+
+**Inputs used:** R^P_m = 1.04% (Portfolio Return, May 2026); f_m = 0.95%
+
+**Result:**
+$$S^f_m = 1.04\% - 0.95\% = 0.09\%$$
+
+### MarketSpread
+
+**Equation:**
+$$S^m_t = R^P_t - m_t$$
+
+**Inputs needed:** Portfolio Return; monthly market index (mₜ, Ibovespa)
+
+**Inputs used:** R^P_m = 1.04% (Portfolio Return, May 2026); m_m = 1.20%
+
+**Result:**
+$$S^m_m = 1.04\% - 1.20\% = -0.16\%$$
+
+---
+
 ## Notes
 
-- The chapter does not walk through numerical examples for **Target**, **CumulativeTarget**, **CumulativeBenchmark**, or the three spread metrics (**InflationSpread**, **RiskFreeSpread**, **MarketSpread**) defined earlier in the document — the verification is limited to Return and Earnings, for both Positions and Portfolios.
+- The chapter does not walk through numerical examples for **Target**, **CumulativeTarget**, **CumulativeBenchmark**, or the three spread metrics (**InflationSpread**, **RiskFreeSpread**, **MarketSpread**); the equations were added to this summary alongside their implementations and worked verifications.
 - The Portfolio's ending market value, V^P_t = R$ 7,303,437.91, used in the Portfolio Earnings calculation, appears without an explicit derivation in the source text (unlike the Position-level V calculations, which show the Q × Q multiplication).
