@@ -30,8 +30,8 @@ export default defineConfig({
   // SCHEMA SOURCES
   // --------------------------------------
   schema: [
-    "./infrastructure/database/schemas/*.ts",
-    "./infrastructure/database/relations/*.ts",
+    "./infrastructure/database/schemas/index.ts",
+    "./infrastructure/database/relations/**/*.relations.ts",
   ],
 
   // --------------------------------------

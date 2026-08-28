@@ -1,4 +1,7 @@
 import { drizzle } from "drizzle-orm/neon-http";
+import { accountRelations } from "@/infrastructure/database/relations/user/account.relations";
+import { sessionRelations } from "@/infrastructure/database/relations/user/session.relations";
+import { userRelations } from "@/infrastructure/database/relations/user/user.relations";
 
 /**
  * Create and export the shared *Drizzle* database client.
@@ -20,4 +23,10 @@ if (!connectionString) {
   throw new Error("DATABASE_URL environment variable is not set");
 }
 
-export const db = drizzle(connectionString);
+export const db = drizzle(connectionString, {
+  relations: {
+    ...userRelations,
+    ...accountRelations,
+    ...sessionRelations,
+  },
+});
