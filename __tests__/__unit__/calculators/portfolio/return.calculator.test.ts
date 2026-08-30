@@ -4,7 +4,7 @@ import { BUSINESS_DAYS } from "@/__tests__/__datasets__/_business-days.dataset";
 import { CASH_FLOWS } from "@/__tests__/__datasets__/_cash-flows.dataset";
 import { QUOTA_BALANCES } from "@/__tests__/__datasets__/_quota-balances.dataset";
 import { QUOTA_VALUES } from "@/__tests__/__datasets__/_quota-values.dataset";
-import { buildPortfolioDailyGrowthFactors } from "@/__tests__/__helpers__/_portfolio.test.helper";
+import { buildPortfolioDailyGrowthFactors } from "@/__tests__/__helpers__/calculators/_portfolio.test.helper";
 import { calculatePortfolioReturn } from "@/business/calculators/portfolio/return.calculator";
 import GrowthFactor from "@/business/value-objects/growth-factor.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";

@@ -70,6 +70,18 @@ export default defineConfig({
       },
 
       // --------------------------------------
+      // REPOSITORY INTERFACE TESTS
+      // --------------------------------------
+      {
+        extends: true,
+        test: {
+          name: "interfaces",
+          include: ["**/__unit__/interfaces/**/*.{test,spec}.{ts,tsx,js,jsx}"],
+          environment: "jsdom",
+        },
+      },
+
+      // --------------------------------------
       // INTEGRATION TESTS
       // --------------------------------------
       {

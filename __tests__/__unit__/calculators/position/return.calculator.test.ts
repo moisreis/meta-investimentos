@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { INVESTMENT_FUND_IDS } from "@/__tests__/__datasets__/_investment-funds.dataset";
 import { QUOTA_VALUES } from "@/__tests__/__datasets__/_quota-values.dataset";
-import { buildPositionDailyGrowthFactors } from "@/__tests__/__helpers__/_position.test.helper";
+import { buildPositionDailyGrowthFactors } from "@/__tests__/__helpers__/calculators/_position.test.helper";
 import { calculateReturn } from "@/business/calculators/position/return.calculator";
 import GrowthFactor from "@/business/value-objects/growth-factor.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
