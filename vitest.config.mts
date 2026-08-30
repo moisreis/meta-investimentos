@@ -37,7 +37,7 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: "calculators",
+          name: { label: "CALCULATORS", color: "yellow" },
           include: ["**/__unit__/calculators/**/*.{test,spec}.{ts,tsx,js,jsx}"],
           environment: "jsdom",
         },
@@ -49,7 +49,7 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: "value-objects",
+          name: { label: "VALUE OBJECTS", color: "green" },
           include: [
             "**/__unit__/value-objects/**/*.{test,spec}.{ts,tsx,js,jsx}",
           ],
@@ -63,7 +63,7 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: "entities",
+          name: { label: "ENTITIES", color: "blue" },
           include: ["**/__unit__/entities/**/*.{test,spec}.{ts,tsx,js,jsx}"],
           environment: "jsdom",
         },
@@ -75,7 +75,7 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: "interfaces",
+          name: { label: "INTERFACES", color: "red" },
           include: ["**/__unit__/interfaces/**/*.{test,spec}.{ts,tsx,js,jsx}"],
           environment: "jsdom",
         },
@@ -87,7 +87,7 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: "integration",
+          name: { label: "INTEGRATION", color: "white" },
           include: ["**/__integration__/**/*.{test,spec}.{ts,tsx,js,jsx}"],
           environment: "jsdom",
         },
