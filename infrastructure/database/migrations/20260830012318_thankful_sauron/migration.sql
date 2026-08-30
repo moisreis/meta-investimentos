@@ -1,3 +1,11 @@
+CREATE SCHEMA IF NOT EXISTS "audit";--> statement-breakpoint
+CREATE SCHEMA IF NOT EXISTS "bank";--> statement-breakpoint
+CREATE SCHEMA IF NOT EXISTS "benchmark";--> statement-breakpoint
+CREATE SCHEMA IF NOT EXISTS "fund";--> statement-breakpoint
+CREATE SCHEMA IF NOT EXISTS "performance";--> statement-breakpoint
+CREATE SCHEMA IF NOT EXISTS "portfolio";--> statement-breakpoint
+CREATE SCHEMA IF NOT EXISTS "report";--> statement-breakpoint
+CREATE SCHEMA IF NOT EXISTS "user";--> statement-breakpoint
 CREATE TYPE "user"."user_role" AS ENUM('USER', 'MANAGER');--> statement-breakpoint
 CREATE TABLE "audit"."audit_log" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),

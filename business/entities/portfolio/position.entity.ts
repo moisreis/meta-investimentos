@@ -1,0 +1,178 @@
+import type PositiveMoney from "@/business/value-objects/positive-money.vo";
+
+/**
+ * Represents the properties required to create a {@link Position}.
+ *
+ * The `initialBalance` and `initialBalanceDate` fields default to `null`,
+ * and the timestamps default to the current time when not provided.
+ *
+ * Use {@link Position.create} to create a valid `Position` instance.
+ */
+interface PositionProps {
+  portfolioId: string;
+  fundId: string;
+  initialBalance?: PositiveMoney | null;
+  initialBalanceDate?: Date | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+/**
+ * Represents the holding of a fund within a portfolio.
+ *
+ * A `Position`:
+ * - must have a portfolio id.
+ * - must have a fund id.
+ *
+ * `Position` instances are immutable after creation.
+ *
+ * @example
+ * ```ts
+ * const POSITION = Position.create({
+ *   portfolioId: 'ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2',
+ *   fundId: 'f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d',
+ * })
+ *
+ * POSITION.portfolioId
+ * // 'ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2'
+ * ```
+ */
+export class Position {
+  private readonly _id?: string;
+  private readonly props: Required<PositionProps>;
+
+  // --------------------------------------
+  // GETTERS
+  // --------------------------------------
+
+  /**
+   * Returns the unique identifier of the position.
+   */
+  get id(): string | undefined {
+    return this._id;
+  }
+
+  /**
+   * Returns the id of the portfolio the position belongs to.
+   */
+  get portfolioId(): string {
+    return this.props.portfolioId;
+  }
+
+  /**
+   * Returns the id of the fund held by the position.
+   */
+  get fundId(): string {
+    return this.props.fundId;
+  }
+
+  /**
+   * Returns the initial balance of the position, if any.
+   */
+  get initialBalance(): PositiveMoney | null {
+    return this.props.initialBalance;
+  }
+
+  /**
+   * Returns the date of the initial balance, if any.
+   */
+  get initialBalanceDate(): Date | null {
+    return this.props.initialBalanceDate;
+  }
+
+  /**
+   * Returns the creation timestamp of the position.
+   */
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  /**
+   * Returns the last update timestamp of the position.
+   */
+  get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
+
+  // --------------------------------------
+  // CONSTRUCTOR
+  // --------------------------------------
+
+  /**
+   * Creates a `Position`.
+   *
+   * The constructor is private to ensure that all instances are
+   * created through {@link Position.create} and therefore satisfy the
+   * position's invariants.
+   */
+  private constructor(props: Required<PositionProps>, id?: string) {
+    this._id = id;
+    this.props = props;
+  }
+
+  // --------------------------------------
+  // FACTORY METHODS
+  // --------------------------------------
+
+  /**
+   * Creates a valid `Position` from the provided properties.
+   *
+   * The `initialBalance` and `initialBalanceDate` fields default to
+   * `null`, and the timestamps to the current time when those properties
+   * are not provided.
+   *
+   * @param props - The properties required to create the position.
+   * @param id - The unique identifier of the position.
+   *
+   * @returns A valid `Position` instance.
+   *
+   * @throws {Error} If `props.portfolioId` is blank.
+   * @throws {Error} If `props.fundId` is blank.
+   */
+  public static create(props: PositionProps, id?: string): Position {
+    if (!props.portfolioId || props.portfolioId.trim() === "") {
+      throw new Error("Position must have a portfolio id.");
+    }
+    if (!props.fundId || props.fundId.trim() === "") {
+      throw new Error("Position must have a fund id.");
+    }
+
+    const NOW = new Date();
+
+    const NORMALIZED_PROPS: Required<PositionProps> = {
+      ...props,
+      initialBalance: props.initialBalance ?? null,
+      initialBalanceDate: props.initialBalanceDate ?? null,
+      createdAt: props.createdAt ?? NOW,
+      updatedAt: props.updatedAt ?? NOW,
+    };
+
+    return new Position(NORMALIZED_PROPS, id);
+  }
+
+  // --------------------------------------
+  // COMPARISON METHODS
+  // --------------------------------------
+
+  /**
+   * Determines whether this `Position` represents the same position as
+   * the provided instance, based on referential equality and the unique id.
+   *
+   * @param object - The position to compare against.
+   * @returns `true` when both positions share the same id; otherwise,
+   * `false`.
+   */
+  public equals(object?: Position | null): boolean {
+    if (object == null || object === undefined) {
+      return false;
+    }
+    if (this === object) {
+      return true;
+    }
+    if (!this._id || !object._id) {
+      return false;
+    }
+
+    return this._id === object._id;
+  }
+}

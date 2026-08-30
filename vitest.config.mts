@@ -58,6 +58,18 @@ export default defineConfig({
       },
 
       // --------------------------------------
+      // ENTITY TESTS
+      // --------------------------------------
+      {
+        extends: true,
+        test: {
+          name: "entities",
+          include: ["**/__unit__/entities/**/*.{test,spec}.{ts,tsx,js,jsx}"],
+          environment: "jsdom",
+        },
+      },
+
+      // --------------------------------------
       // INTEGRATION TESTS
       // --------------------------------------
       {
