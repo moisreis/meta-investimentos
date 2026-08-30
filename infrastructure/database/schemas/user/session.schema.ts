@@ -1,6 +1,13 @@
 import { index, pgSchema, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { user } from "./user.schema";
 
+/**
+ * Defines the `session` table within the `user` database schema.
+ *
+ * The table stores the authentication sessions issued to users,
+ * including the opaque session token and the metadata of the request
+ * that created the session.
+ */
 export const session = pgSchema("user").table(
   "session",
   {
@@ -17,5 +24,10 @@ export const session = pgSchema("user").table(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
   },
-  (table) => [index("session_userId_idx").on(table.userId)],
+  (table) => [
+    /**
+     * Speeds up lookups of sessions by their owning user.
+     */
+    index("session_userId_idx").on(table.userId),
+  ],
 );

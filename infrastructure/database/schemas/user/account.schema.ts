@@ -8,6 +8,13 @@ import {
 } from "drizzle-orm/pg-core";
 import { user } from "./user.schema";
 
+/**
+ * Defines the `account` table within the `user` database schema.
+ *
+ * The table stores the authentication accounts linked to a user. Each
+ * row represents an identity provider authorization, including the
+ * email-and-password credential provider used by *Better Auth*.
+ */
 export const account = pgSchema("user").table(
   "account",
   {
@@ -31,10 +38,18 @@ export const account = pgSchema("user").table(
       .notNull(),
   },
   (table) => [
+    /**
+     * Enforces that each user may link a given provider account
+     * at most once.
+     */
     uniqueIndex("account_issuer_accountId_uidx").on(
       table.issuer,
       table.accountId,
     ),
+
+    /**
+     * Speeds up lookups of accounts by their owning user.
+     */
     index("account_userId_idx").on(table.userId),
   ],
 );

@@ -1,5 +1,11 @@
 import { index, pgSchema, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
+/**
+ * Defines the `verification` table within the `user` database schema.
+ *
+ * The table stores the verification requests issued to users, such as
+ * email address verification tokens or password reset requests.
+ */
 export const verification = pgSchema("user").table(
   "verification",
   {
@@ -13,5 +19,10 @@ export const verification = pgSchema("user").table(
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
-  (table) => [index("verification_identifier_idx").on(table.identifier)],
+  (table) => [
+    /**
+     * Speeds up lookups of verifications by their identifier.
+     */
+    index("verification_identifier_idx").on(table.identifier),
+  ],
 );

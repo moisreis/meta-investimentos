@@ -1,7 +1,28 @@
 import { drizzle } from "drizzle-orm/neon-http";
-import { accountRelations } from "@/infrastructure/database/relations/user/account.relations";
-import { sessionRelations } from "@/infrastructure/database/relations/user/session.relations";
-import { userRelations } from "@/infrastructure/database/relations/user/user.relations";
+import {
+  accountRelations,
+  applicationRelations,
+  auditLogRelations,
+  bankAccountRelations,
+  bankRelations,
+  benchmarkHistoryRelations,
+  benchmarkRelations,
+  categoryRelations,
+  checkingAccountRelations,
+  fundRelations,
+  normRelations,
+  normsPortfoliosRelations,
+  portfolioPerformanceRelations,
+  portfolioRelations,
+  positionPerformanceRelations,
+  positionRelations,
+  quotaRelations,
+  sessionRelations,
+  statementRelations,
+  transactionAllocationRelations,
+  userRelations,
+  withdrawalRelations,
+} from "@/infrastructure/database/relations";
 
 /**
  * Create and export the shared *Drizzle* database client.
@@ -28,5 +49,24 @@ export const db = drizzle(connectionString, {
     ...userRelations,
     ...accountRelations,
     ...sessionRelations,
+    ...bankRelations,
+    ...bankAccountRelations,
+    ...checkingAccountRelations,
+    ...fundRelations,
+    ...quotaRelations,
+    ...categoryRelations,
+    ...portfolioRelations,
+    ...positionRelations,
+    ...applicationRelations,
+    ...withdrawalRelations,
+    ...transactionAllocationRelations,
+    ...normRelations,
+    ...normsPortfoliosRelations,
+    ...benchmarkRelations,
+    ...benchmarkHistoryRelations,
+    ...auditLogRelations,
+    ...portfolioPerformanceRelations,
+    ...positionPerformanceRelations,
+    ...statementRelations,
   },
 });
