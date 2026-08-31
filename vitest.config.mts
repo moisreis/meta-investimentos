@@ -89,7 +89,18 @@ export default defineConfig({
         test: {
           name: { label: "INTEGRATION", color: "white" },
           include: ["**/__integration__/**/*.{test,spec}.{ts,tsx,js,jsx}"],
-          environment: "jsdom",
+          // Repository tests talk to a real Neon database through the
+          // serverless WebSocket driver, which clashes with the jsdom
+          // global `Event`. They are plain Node tests.
+          environment: "node",
+          // Tests hit a remote database; give hooks and tests enough
+          // head-room to tolerate latency without flaking.
+          testTimeout: 30_000,
+          hookTimeout: 30_000,
+          // Tests share a single PostgreSQL database and wipe it through
+          // `resetDatabase`; running files in parallel would make each
+          // file truncate the other's fixtures mid-suite.
+          fileParallelism: false,
         },
       },
     ],

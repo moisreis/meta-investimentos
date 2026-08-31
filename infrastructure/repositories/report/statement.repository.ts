@@ -1,0 +1,239 @@
+import { eq, inArray } from "drizzle-orm";
+
+import { Statement } from "@/business/entities/report/statement.entity";
+import type { IStatement } from "@/business/interfaces/report/statement.interface";
+import { statement } from "@/infrastructure/database/schemas";
+
+import type { DbClient } from "../types";
+
+/**
+ * PostgreSQL-backed implementation of the {@link IStatement} contract.
+ *
+ * Maps `statement` rows to `Statement` entities and back. Lookups rely
+ * on the primary key, the `(portfolio_id, period_start, period_end)`
+ * index and the generating user index.
+ *
+ * The `periodStart` and `periodEnd` columns are `date` typed, which
+ * postgres returns as strings; they are hydrated through `new Date`
+ * and persisted as the ISO representation of the entity dates.
+ *
+ * A save inserts a new row when the entity has no id and updates the
+ * existing row otherwise. The batch `findAllByPortfolioIds` lookup
+ * resolves statements of many portfolios in a single query.
+ */
+export class StatementRepository implements IStatement {
+  // --------------------------------------
+  // FIELDS
+  // --------------------------------------
+
+  private readonly db: DbClient;
+
+  // --------------------------------------
+  // CONSTRUCTOR
+  // --------------------------------------
+
+  /**
+   * Creates a `StatementRepository` bound to the provided database
+   * client.
+   *
+   * @param db - The database client to run queries against.
+   */
+  constructor(db: DbClient) {
+    this.db = db;
+  }
+
+  // --------------------------------------
+  // MAPPING METHODS
+  // --------------------------------------
+
+  /**
+   * Maps the provided `statement` row to a {@link Statement} entity.
+   *
+   * @param row - The database row.
+   * @returns The hydrated `Statement` entity.
+   */
+  private toEntity(row: typeof statement.$inferSelect): Statement {
+    return Statement.create(
+      {
+        portfolioId: row.portfolioId,
+        periodStart: new Date(row.periodStart),
+        periodEnd: new Date(row.periodEnd),
+        fileUrl: row.fileUrl,
+        generatedByUserId: row.generatedByUserId,
+        createdAt: row.createdAt,
+      },
+      row.id,
+    );
+  }
+
+  /**
+   * Maps the provided entity to the insert values of the `statement`
+   * table.
+   *
+   * @param entity - The statement to persist.
+   * @returns The insert values.
+   */
+  private toInsert(entity: Statement): typeof statement.$inferInsert {
+    return {
+      portfolioId: entity.portfolioId,
+      periodStart: entity.periodStart.toISOString(),
+      periodEnd: entity.periodEnd.toISOString(),
+      fileUrl: entity.fileUrl,
+      generatedByUserId: entity.generatedByUserId,
+      createdAt: entity.createdAt,
+    };
+  }
+
+  /**
+   * Maps the provided entity to the mutable update values of the
+   * `statement` table.
+   *
+   * `createdAt` never changes and is left out of the update.
+   *
+   * @param entity - The statement to persist.
+   * @returns The update values.
+   */
+  private toUpdate(entity: Statement): Partial<typeof statement.$inferInsert> {
+    return {
+      portfolioId: entity.portfolioId,
+      periodStart: entity.periodStart.toISOString(),
+      periodEnd: entity.periodEnd.toISOString(),
+      fileUrl: entity.fileUrl,
+      generatedByUserId: entity.generatedByUserId,
+    };
+  }
+
+  // --------------------------------------
+  // QUERY METHODS
+  // --------------------------------------
+
+  /**
+   * Retrieves the statement with the provided id.
+   *
+   * @see {@link IStatement.findById}
+   */
+  async findById(id: string): Promise<Statement | null> {
+    const [row] = await this.db
+      .select()
+      .from(statement)
+      .where(eq(statement.id, id))
+      .limit(1);
+
+    return row ? this.toEntity(row) : null;
+  }
+
+  /**
+   * Retrieves all statements belonging to the provided portfolio id.
+   *
+   * @see {@link IStatement.findAllByPortfolioId}
+   */
+  async findAllByPortfolioId(portfolioId: string): Promise<Statement[]> {
+    const rows = await this.db
+      .select()
+      .from(statement)
+      .where(eq(statement.portfolioId, portfolioId));
+
+    return rows.map((row) => this.toEntity(row));
+  }
+
+  /**
+   * Retrieves all statements belonging to any of the provided
+   * portfolio ids.
+   *
+   * Batched lookup for hydrating statements across many portfolios
+   * without falling into an N+1 query pattern.
+   *
+   * @param portfolioIds - The ids of the portfolios to retrieve
+   *   statements for.
+   * @returns A promise resolving to the matching `Statement` entities.
+   */
+  async findAllByPortfolioIds(portfolioIds: string[]): Promise<Statement[]> {
+    if (portfolioIds.length === 0) {
+      return [];
+    }
+
+    const rows = await this.db
+      .select()
+      .from(statement)
+      .where(inArray(statement.portfolioId, portfolioIds));
+
+    return rows.map((row) => this.toEntity(row));
+  }
+
+  /**
+   * Retrieves all statements generated by the provided user id.
+   *
+   * @see {@link IStatement.findAllByGeneratedByUserId}
+   */
+  async findAllByGeneratedByUserId(userId: string): Promise<Statement[]> {
+    const rows = await this.db
+      .select()
+      .from(statement)
+      .where(eq(statement.generatedByUserId, userId));
+
+    return rows.map((row) => this.toEntity(row));
+  }
+
+  /**
+   * Retrieves all statements generated by any of the provided user ids.
+   *
+   * Batched lookup for hydrating statements across many generating
+   * users without falling into an N+1 query pattern.
+   *
+   * @param userIds - The ids of the generating users.
+   * @returns A promise resolving to the matching `Statement` entities.
+   */
+  async findAllByGeneratedByUserIds(userIds: string[]): Promise<Statement[]> {
+    if (userIds.length === 0) {
+      return [];
+    }
+
+    const rows = await this.db
+      .select()
+      .from(statement)
+      .where(inArray(statement.generatedByUserId, userIds));
+
+    return rows.map((row) => this.toEntity(row));
+  }
+
+  // --------------------------------------
+  // COMMAND METHODS
+  // --------------------------------------
+
+  /**
+   * Persists the provided statement.
+   *
+   * @see {@link IStatement.save}
+   */
+  async save(persisted: Statement): Promise<Statement> {
+    if (persisted.id) {
+      const [row] = await this.db
+        .update(statement)
+        .set(this.toUpdate(persisted))
+        .where(eq(statement.id, persisted.id))
+        .returning();
+
+      if (!row) {
+        throw new Error(`Statement with id ${persisted.id} was not found.`);
+      }
+
+      return this.toEntity(row);
+    }
+
+    const [row] = await this.db
+      .insert(statement)
+      .values(this.toInsert(persisted))
+      .returning();
+
+    return this.toEntity(row);
+  }
+
+  /**
+   * Removes the statement with the provided id.
+   *
+   * @see {@link IStatement.delete}
+   */
+  async delete(id: string): Promise<void> {
+    await this.db.delete(statement).where(eq(statement.id, id));
+  }
+}
