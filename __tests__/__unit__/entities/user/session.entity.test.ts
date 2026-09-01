@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import { Session } from "@/business/entities/user/session.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("Session.create", () => {
   const VALID_PROPS = {
-    userId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     token: "session-token",
     expiresAt: new Date("2026-02-01T00:00:00.000Z"),
   };
@@ -49,9 +50,9 @@ describe("Session.create", () => {
   });
 
   it("throws when the user id is blank", () => {
-    expect(() => Session.create({ ...VALID_PROPS, userId: " " })).toThrow(
-      "Session must have a user id.",
-    );
+    expect(() =>
+      Session.create({ ...VALID_PROPS, userId: " " as unknown as EntityId }),
+    ).toThrow("Session must have a user id.");
   });
 
   it("throws when the token is blank", () => {
@@ -79,7 +80,7 @@ describe("Session.create", () => {
 
 describe("Session.equals", () => {
   const VALID_PROPS = {
-    userId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     token: "session-token",
     expiresAt: new Date("2026-02-01T00:00:00.000Z"),
   };

@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 
 import { Application } from "@/business/entities/portfolio/application.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 
 describe("Application.create", () => {
   const DATE = new Date("2026-01-01T00:00:00.000Z");
   const VALID_PROPS = {
-    positionId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    positionId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     date: DATE,
     amount: PositiveMoney.create("100.00"),
     quotas: QuotaQuantity.create("12.345"),
@@ -43,7 +44,7 @@ describe("Application.create", () => {
     const APPLICATION = Application.create({
       ...VALID_PROPS,
       reversedAt: REVERSED_AT,
-      reversedByUserId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+      reversedByUserId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
       createdAt: CREATED_AT,
       updatedAt: UPDATED_AT,
     });
@@ -58,7 +59,10 @@ describe("Application.create", () => {
 
   it("throws when the position id is blank", () => {
     expect(() =>
-      Application.create({ ...VALID_PROPS, positionId: " " }),
+      Application.create({
+        ...VALID_PROPS,
+        positionId: " " as unknown as EntityId,
+      }),
     ).toThrow("Application must have a position id.");
   });
 
@@ -97,7 +101,7 @@ describe("Application.create", () => {
 
 describe("Application.equals", () => {
   const VALID_PROPS = {
-    positionId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    positionId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     date: new Date("2026-01-01T00:00:00.000Z"),
     amount: PositiveMoney.create("100.00"),
     quotas: QuotaQuantity.create("12.345"),

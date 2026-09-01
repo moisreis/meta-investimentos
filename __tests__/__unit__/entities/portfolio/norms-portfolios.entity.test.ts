@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import { NormsPortfolios } from "@/business/entities/portfolio/norms-portfolios.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
 describe("NormsPortfolios.create", () => {
   const VALID_PROPS = {
-    normId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
-    portfolioId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+    normId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    portfolioId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),
     targetAllocation: SignedPercentage.create("12"),
@@ -45,13 +46,19 @@ describe("NormsPortfolios.create", () => {
 
   it("throws when the norm id is blank", () => {
     expect(() =>
-      NormsPortfolios.create({ ...VALID_PROPS, normId: " " }),
+      NormsPortfolios.create({
+        ...VALID_PROPS,
+        normId: " " as unknown as EntityId,
+      }),
     ).toThrow("NormsPortfolios must have a norm id.");
   });
 
   it("throws when the portfolio id is blank", () => {
     expect(() =>
-      NormsPortfolios.create({ ...VALID_PROPS, portfolioId: " " }),
+      NormsPortfolios.create({
+        ...VALID_PROPS,
+        portfolioId: " " as unknown as EntityId,
+      }),
     ).toThrow("NormsPortfolios must have a portfolio id.");
   });
 
@@ -96,8 +103,8 @@ describe("NormsPortfolios.create", () => {
 
 describe("NormsPortfolios.equals", () => {
   const VALID_PROPS = {
-    normId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
-    portfolioId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+    normId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    portfolioId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),
     targetAllocation: SignedPercentage.create("12"),

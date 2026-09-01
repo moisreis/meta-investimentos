@@ -75,7 +75,7 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: { label: "INTERFACES", color: "red" },
+          name: { label: "INTERFACES", color: "black" },
           include: ["**/__unit__/interfaces/**/*.{test,spec}.{ts,tsx,js,jsx}"],
           environment: "jsdom",
         },
@@ -87,8 +87,8 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: { label: "INTEGRATION", color: "white" },
-          include: ["**/__integration__/**/*.{test,spec}.{ts,tsx,js,jsx}"],
+          name: { label: "REPOSITORIES", color: "white" },
+          include: ["**/__integration__/repositories/**/*.{test,spec}.{ts,tsx,js,jsx}"],
           // Repository tests talk to a real Neon database through the
           // serverless WebSocket driver, which clashes with the jsdom
           // global `Event`. They are plain Node tests.

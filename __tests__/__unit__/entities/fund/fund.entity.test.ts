@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import { Fund } from "@/business/entities/fund/fund.entity";
+import CNPJ from "@/business/value-objects/cnpj.vo";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
 describe("Fund.create", () => {
@@ -8,13 +10,13 @@ describe("Fund.create", () => {
   const PERFORMANCE_FEE = SignedPercentage.create("20");
 
   const VALID_PROPS = {
-    cnpj: "12345678000195",
+    cnpj: CNPJ.create("12345678000195"),
     name: "Fundo de Investimento",
     administrationFee: ADMINISTRATION_FEE,
     performanceFee: PERFORMANCE_FEE,
-    bankId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
-    benchmarkId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
-    categoryId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+    bankId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    benchmarkId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
+    categoryId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
   };
 
   it("creates a valid fund with default values", () => {
@@ -27,7 +29,7 @@ describe("Fund.create", () => {
     });
 
     expect(FUND.id).toBeUndefined();
-    expect(FUND.cnpj).toBe("12345678000195");
+    expect(FUND.cnpj.value).toBe("12345678000195");
     expect(FUND.name).toBe("Fundo de Investimento");
     expect(FUND.administrationFee).toBeNull();
     expect(FUND.performanceFee).toBeNull();
@@ -66,12 +68,6 @@ describe("Fund.create", () => {
     expect(FUND.updatedAt).toBe(UPDATED_AT);
   });
 
-  it("throws when the cnpj is blank", () => {
-    expect(() => Fund.create({ ...VALID_PROPS, cnpj: "   " })).toThrow(
-      "Fund must have a cnpj.",
-    );
-  });
-
   it("throws when the name is blank", () => {
     expect(() => Fund.create({ ...VALID_PROPS, name: "   " })).toThrow(
       "Fund must have a name.",
@@ -79,9 +75,9 @@ describe("Fund.create", () => {
   });
 
   it("throws when the bank id is blank", () => {
-    expect(() => Fund.create({ ...VALID_PROPS, bankId: "   " })).toThrow(
-      "Fund must have a bank id.",
-    );
+    expect(() =>
+      Fund.create({ ...VALID_PROPS, bankId: " " as unknown as EntityId }),
+    ).toThrow("Fund must have a bank id.");
   });
 
   it("does not mutate its inputs", () => {
@@ -98,13 +94,13 @@ describe("Fund.equals", () => {
   const PERFORMANCE_FEE = SignedPercentage.create("20");
 
   const VALID_PROPS = {
-    cnpj: "12345678000195",
+    cnpj: CNPJ.create("12345678000195"),
     name: "Fundo de Investimento",
     administrationFee: ADMINISTRATION_FEE,
     performanceFee: PERFORMANCE_FEE,
-    bankId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
-    benchmarkId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
-    categoryId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+    bankId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    benchmarkId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
+    categoryId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
   };
   const ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
 

@@ -12,6 +12,7 @@ import {
 
 import { Session } from "@/business/entities/user/session.entity";
 import type { ISession } from "@/business/interfaces/user/session.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("ISession", () => {
   let REPOSITORY: ISession;
@@ -55,7 +56,7 @@ describe("ISession", () => {
 
       const FIRST = Session.create(
         {
-          userId: OTHER_USER_ID,
+          userId: EntityId.create(OTHER_USER_ID),
           token: "first-session-token",
           expiresAt: EXPIRES_AT,
         },

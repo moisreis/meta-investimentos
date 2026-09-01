@@ -1,4 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties required to create a {@link BenchmarkHistory}.
@@ -9,7 +11,7 @@ import type SignedPercentage from "@/business/value-objects/signed-percentage.vo
  * instance.
  */
 interface BenchmarkHistoryProps {
-  benchmarkId: string;
+  benchmarkId: EntityId;
   date: Date;
   rate: SignedPercentage;
   createdAt?: Date;
@@ -38,7 +40,7 @@ interface BenchmarkHistoryProps {
  * ```
  */
 export class BenchmarkHistory {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<BenchmarkHistoryProps>;
 
   // --------------------------------------
@@ -48,14 +50,14 @@ export class BenchmarkHistory {
   /**
    * Returns the unique identifier of the benchmark history.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
   /**
    * Returns the id of the benchmark the history belongs to.
    */
-  get benchmarkId(): string {
+  get benchmarkId(): EntityId {
     return this.props.benchmarkId;
   }
 
@@ -92,7 +94,7 @@ export class BenchmarkHistory {
    * satisfy the benchmark history's invariants.
    */
   private constructor(props: Required<BenchmarkHistoryProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -111,22 +113,22 @@ export class BenchmarkHistory {
    *
    * @returns A valid `BenchmarkHistory` instance.
    *
-   * @throws {Error} If `props.benchmarkId` is blank.
-   * @throws {Error} If `props.date` is missing.
-   * @throws {Error} If `props.rate` is missing.
+   * @throws {ValidationError} If `props.benchmarkId` is blank.
+   * @throws {ValidationError} If `props.date` is missing.
+   * @throws {ValidationError} If `props.rate` is missing.
    */
   public static create(
     props: BenchmarkHistoryProps,
     id?: string,
   ): BenchmarkHistory {
     if (!props.benchmarkId || props.benchmarkId.trim() === "") {
-      throw new Error("BenchmarkHistory must have a benchmark id.");
+      throw new ValidationError("BenchmarkHistory must have a benchmark id.");
     }
     if (!props.date) {
-      throw new Error("BenchmarkHistory must have a date.");
+      throw new ValidationError("BenchmarkHistory must have a date.");
     }
     if (!props.rate) {
-      throw new Error("BenchmarkHistory must have a rate.");
+      throw new ValidationError("BenchmarkHistory must have a rate.");
     }
 
     const NOW = new Date();

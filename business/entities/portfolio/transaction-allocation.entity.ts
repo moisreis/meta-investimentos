@@ -1,4 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties required to create a
@@ -10,8 +12,8 @@ import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
  * `TransactionAllocation` instance.
  */
 interface TransactionAllocationProps {
-  applicationId: string;
-  withdrawId: string;
+  applicationId: EntityId;
+  withdrawId: EntityId;
   quotasConsumed: QuotaQuantity;
   createdAt?: Date;
 }
@@ -40,7 +42,7 @@ interface TransactionAllocationProps {
  * ```
  */
 export class TransactionAllocation {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<TransactionAllocationProps>;
 
   // --------------------------------------
@@ -50,21 +52,21 @@ export class TransactionAllocation {
   /**
    * Returns the unique identifier of the transaction allocation.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
   /**
    * Returns the id of the application the allocation belongs to.
    */
-  get applicationId(): string {
+  get applicationId(): EntityId {
     return this.props.applicationId;
   }
 
   /**
    * Returns the id of the withdrawal the allocation belongs to.
    */
-  get withdrawId(): string {
+  get withdrawId(): EntityId {
     return this.props.withdrawId;
   }
 
@@ -97,7 +99,7 @@ export class TransactionAllocation {
     props: Required<TransactionAllocationProps>,
     id?: string,
   ) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -117,22 +119,28 @@ export class TransactionAllocation {
    *
    * @returns A valid `TransactionAllocation` instance.
    *
-   * @throws {Error} If `props.applicationId` is blank.
-   * @throws {Error} If `props.withdrawId` is blank.
-   * @throws {Error} If `props.quotasConsumed` is missing.
+   * @throws {ValidationError} If `props.applicationId` is blank.
+   * @throws {ValidationError} If `props.withdrawId` is blank.
+   * @throws {ValidationError} If `props.quotasConsumed` is missing.
    */
   public static create(
     props: TransactionAllocationProps,
     id?: string,
   ): TransactionAllocation {
     if (!props.applicationId || props.applicationId.trim() === "") {
-      throw new Error("TransactionAllocation must have an application id.");
+      throw new ValidationError(
+        "TransactionAllocation must have an application id.",
+      );
     }
     if (!props.withdrawId || props.withdrawId.trim() === "") {
-      throw new Error("TransactionAllocation must have a withdrawal id.");
+      throw new ValidationError(
+        "TransactionAllocation must have a withdrawal id.",
+      );
     }
     if (!props.quotasConsumed) {
-      throw new Error("TransactionAllocation must have consumed quotas.");
+      throw new ValidationError(
+        "TransactionAllocation must have consumed quotas.",
+      );
     }
 
     const NOW = new Date();

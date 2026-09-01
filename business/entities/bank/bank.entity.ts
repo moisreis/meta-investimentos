@@ -1,3 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { ValidationError } from "@/shared/errors";
+
 /**
  * Represents the properties required to create a {@link Bank}.
  *
@@ -33,7 +36,7 @@ interface BankProps {
  * ```
  */
 export class Bank {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<BankProps>;
 
   // --------------------------------------
@@ -43,7 +46,7 @@ export class Bank {
   /**
    * Returns the unique identifier of the bank.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
@@ -87,7 +90,7 @@ export class Bank {
    * bank's invariants.
    */
   private constructor(props: Required<BankProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -105,15 +108,15 @@ export class Bank {
    *
    * @returns A valid `Bank` instance.
    *
-   * @throws {Error} If `props.code` is blank.
-   * @throws {Error} If `props.name` is blank.
+   * @throws {ValidationError} If `props.code` is blank.
+   * @throws {ValidationError} If `props.name` is blank.
    */
   public static create(props: BankProps, id?: string): Bank {
     if (!props.code || props.code.trim() === "") {
-      throw new Error("Bank must have a code.");
+      throw new ValidationError("Bank must have a code.");
     }
     if (!props.name || props.name.trim() === "") {
-      throw new Error("Bank must have a name.");
+      throw new ValidationError("Bank must have a name.");
     }
 
     const NOW = new Date();

@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { Portfolio } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 import { portfolio } from "@/infrastructure/database/schemas";
 import { PortfolioRepository } from "@/infrastructure/repositories";
@@ -13,7 +14,7 @@ export const PORTFOLIO = Portfolio.create(
   {
     acronym: "FIA",
     name: "Fundo de Investimento em Ações",
-    userId: USER_ID,
+    userId: EntityId.create(USER_ID),
     annualInterestRate: SignedPercentage.create("10"),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),
@@ -26,7 +27,7 @@ export const OTHER_PORTFOLIO = Portfolio.create(
   {
     acronym: "RF",
     name: "Renda Fixa",
-    userId: OTHER_USER_ID,
+    userId: EntityId.create(OTHER_USER_ID),
     annualInterestRate: SignedPercentage.create("8"),
     minAllocation: SignedPercentage.create("10"),
     maxAllocation: SignedPercentage.create("30"),
@@ -39,7 +40,7 @@ export const THIRD_PORTFOLIO = Portfolio.create(
   {
     acronym: "CMB",
     name: "Carteira Multimercado",
-    userId: USER_ID,
+    userId: EntityId.create(USER_ID),
     annualInterestRate: SignedPercentage.create("12"),
     minAllocation: SignedPercentage.create("0"),
     maxAllocation: SignedPercentage.create("40"),
@@ -51,7 +52,7 @@ export const THIRD_PORTFOLIO = Portfolio.create(
 export const FRESH_PORTFOLIO = Portfolio.create({
   acronym: "MM",
   name: "Fundo Multimercado",
-  userId: USER_ID,
+  userId: EntityId.create(USER_ID),
   annualInterestRate: SignedPercentage.create("9"),
   minAllocation: SignedPercentage.create("0"),
   maxAllocation: SignedPercentage.create("30"),

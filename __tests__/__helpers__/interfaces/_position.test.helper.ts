@@ -1,5 +1,6 @@
 import { Position } from "@/business/entities/portfolio/position.entity";
 import type { IPosition } from "@/business/interfaces/portfolio/position.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 export const POSITION_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
 export const PORTFOLIO_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
@@ -9,8 +10,8 @@ export const OTHER_FUND_ID = "d5a3e7f1-6b90-4c12-8d47-2e8f0a1c3b64";
 
 export const POSITION = Position.create(
   {
-    portfolioId: PORTFOLIO_ID,
-    fundId: FUND_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
+    fundId: EntityId.create(FUND_ID),
   },
   POSITION_ID,
 );

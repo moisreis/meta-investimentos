@@ -12,6 +12,7 @@ import {
 
 import { TransactionAllocation } from "@/business/entities/portfolio/transaction-allocation.entity";
 import type { ITransactionAllocation } from "@/business/interfaces/portfolio/transaction-allocation.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 
 describe("ITransactionAllocation", () => {
@@ -39,16 +40,16 @@ describe("ITransactionAllocation", () => {
     it("returns all persisted allocations for the application", async () => {
       const SECOND_ALLOCATION = TransactionAllocation.create(
         {
-          applicationId: APPLICATION_ID,
-          withdrawId: OTHER_WITHDRAW_ID,
+          applicationId: EntityId.create(APPLICATION_ID),
+          withdrawId: EntityId.create(OTHER_WITHDRAW_ID),
           quotasConsumed: QuotaQuantity.create("2.5"),
         },
         "6a1f2c3d-9e8b-4a21-b3d7-1c7e9f0a4b52",
       );
       const OTHER_ALLOCATION = TransactionAllocation.create(
         {
-          applicationId: OTHER_APPLICATION_ID,
-          withdrawId: WITHDRAW_ID,
+          applicationId: EntityId.create(OTHER_APPLICATION_ID),
+          withdrawId: EntityId.create(WITHDRAW_ID),
           quotasConsumed: QuotaQuantity.create("3.75"),
         },
         "d5a3e7f1-6b90-4c12-8d47-2e8f0a1c3b64",
@@ -76,16 +77,16 @@ describe("ITransactionAllocation", () => {
     it("returns all persisted allocations for the withdrawal", async () => {
       const SECOND_ALLOCATION = TransactionAllocation.create(
         {
-          applicationId: OTHER_APPLICATION_ID,
-          withdrawId: WITHDRAW_ID,
+          applicationId: EntityId.create(OTHER_APPLICATION_ID),
+          withdrawId: EntityId.create(WITHDRAW_ID),
           quotasConsumed: QuotaQuantity.create("3.75"),
         },
         "6a1f2c3d-9e8b-4a21-b3d7-1c7e9f0a4b52",
       );
       const OTHER_ALLOCATION = TransactionAllocation.create(
         {
-          applicationId: APPLICATION_ID,
-          withdrawId: OTHER_WITHDRAW_ID,
+          applicationId: EntityId.create(APPLICATION_ID),
+          withdrawId: EntityId.create(OTHER_WITHDRAW_ID),
           quotasConsumed: QuotaQuantity.create("2.5"),
         },
         "d5a3e7f1-6b90-4c12-8d47-2e8f0a1c3b64",
@@ -121,8 +122,8 @@ describe("ITransactionAllocation", () => {
 
       const UPDATED = TransactionAllocation.create(
         {
-          applicationId: APPLICATION_ID,
-          withdrawId: OTHER_WITHDRAW_ID,
+          applicationId: EntityId.create(APPLICATION_ID),
+          withdrawId: EntityId.create(OTHER_WITHDRAW_ID),
           quotasConsumed: QuotaQuantity.create("1.25"),
         },
         ALLOCATION_ID,

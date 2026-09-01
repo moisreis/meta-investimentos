@@ -1,3 +1,7 @@
+import type CPF from "@/business/value-objects/cpf.vo";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { ValidationError } from "@/shared/errors";
+
 /**
  * Represents the role assigned to a {@link User}.
  */
@@ -17,7 +21,7 @@ interface UserProps {
   email: string;
   firstName: string;
   lastName: string;
-  cpf: string;
+  cpf: CPF;
   role?: UserRole;
   emailVerified?: boolean;
   image?: string | null;
@@ -62,7 +66,7 @@ interface UserProps {
  * ```
  */
 export class User {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<UserProps>;
 
   // --------------------------------------
@@ -72,7 +76,7 @@ export class User {
   /**
    * Returns the unique identifier of the user.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
@@ -107,7 +111,7 @@ export class User {
   /**
    * Returns the cpf of the user.
    */
-  get cpf(): string {
+  get cpf(): CPF {
     return this.props.cpf;
   }
 
@@ -158,7 +162,7 @@ export class User {
    * user's invariants.
    */
   private constructor(props: Required<UserProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -178,35 +182,35 @@ export class User {
    *
    * @returns A valid `User` instance.
    *
-   * @throws {Error} If `props.name` is blank.
-   * @throws {Error} If `props.email` does not contain an `@`.
-   * @throws {Error} If `props.firstName` is blank.
-   * @throws {Error} If `props.lastName` is blank.
-   * @throws {Error} If `props.cpf` is blank.
-   * @throws {Error} If `props.role` is not a valid {@link UserRole}.
+   * @throws {ValidationError} If `props.name` is blank.
+   * @throws {ValidationError} If `props.email` does not contain an `@`.
+   * @throws {ValidationError} If `props.firstName` is blank.
+   * @throws {ValidationError} If `props.lastName` is blank.
+   * @throws {ValidationError} If `props.cpf` is blank.
+   * @throws {ValidationError} If `props.role` is not a valid {@link UserRole}.
    */
   public static create(props: UserProps, id?: string): User {
     if (!props.name || props.name.trim() === "") {
-      throw new Error("User must have a name.");
+      throw new ValidationError("User must have a name.");
     }
     if (!props.email || !props.email.includes("@")) {
-      throw new Error("User must have a valid email.");
+      throw new ValidationError("User must have a valid email.");
     }
     if (!props.firstName || props.firstName.trim() === "") {
-      throw new Error("User must have a first name.");
+      throw new ValidationError("User must have a first name.");
     }
     if (!props.lastName || props.lastName.trim() === "") {
-      throw new Error("User must have a last name.");
+      throw new ValidationError("User must have a last name.");
     }
-    if (!props.cpf || props.cpf.trim() === "") {
-      throw new Error("User must have a valid cpf.");
+    if (!props.cpf) {
+      throw new ValidationError("User must have a valid cpf.");
     }
     if (
       props.role !== undefined &&
       props.role !== "USER" &&
       props.role !== "MANAGER"
     ) {
-      throw new Error("User must have a valid role.");
+      throw new ValidationError("User must have a valid role.");
     }
 
     const NOW = new Date();

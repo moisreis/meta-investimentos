@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { User, type UserRole } from "@/business/entities/user/user.entity";
+import CPF from "@/business/value-objects/cpf.vo";
 
 describe("User.create", () => {
   const VALID_PROPS = {
@@ -8,7 +9,7 @@ describe("User.create", () => {
     email: "jose@example.com",
     firstName: "José",
     lastName: "da Silva",
-    cpf: "24301457030",
+    cpf: CPF.create("52998224725"),
   };
 
   it("creates a valid user with default values", () => {
@@ -19,7 +20,7 @@ describe("User.create", () => {
     expect(USER.email).toBe("jose@example.com");
     expect(USER.firstName).toBe("José");
     expect(USER.lastName).toBe("da Silva");
-    expect(USER.cpf).toBe("24301457030");
+    expect(USER.cpf.value).toBe("52998224725");
     expect(USER.role).toBe("USER");
     expect(USER.emailVerified).toBe(false);
     expect(USER.image).toBeNull();
@@ -84,12 +85,6 @@ describe("User.create", () => {
     );
   });
 
-  it("throws when the cpf is blank", () => {
-    expect(() => User.create({ ...VALID_PROPS, cpf: "   " })).toThrow(
-      "User must have a valid cpf.",
-    );
-  });
-
   it("throws when the role is not a valid user role", () => {
     expect(() =>
       User.create({ ...VALID_PROPS, role: "ADMIN" as UserRole }),
@@ -111,7 +106,7 @@ describe("User.equals", () => {
     email: "jose@example.com",
     firstName: "José",
     lastName: "da Silva",
-    cpf: "24301457030",
+    cpf: CPF.create("52998224725"),
   };
   const ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
 

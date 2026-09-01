@@ -2,6 +2,7 @@ import { and, eq, inArray } from "drizzle-orm";
 
 import { Position } from "@/business/entities/portfolio/position.entity";
 import type { IPosition } from "@/business/interfaces/portfolio/position.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import { position } from "@/infrastructure/database/schemas";
 
@@ -56,8 +57,8 @@ export class PositionRepository implements IPosition {
   private toEntity(row: typeof position.$inferSelect): Position {
     return Position.create(
       {
-        portfolioId: row.portfolioId,
-        fundId: row.fundId,
+        portfolioId: EntityId.create(row.portfolioId),
+        fundId: EntityId.create(row.fundId),
         initialBalance: row.initialBalance
           ? PositiveMoney.create(row.initialBalance)
           : null,

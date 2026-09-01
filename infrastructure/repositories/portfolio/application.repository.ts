@@ -2,6 +2,7 @@ import { and, eq, gte, inArray, lte, sql } from "drizzle-orm";
 
 import { Application } from "@/business/entities/portfolio/application.entity";
 import type { IApplication } from "@/business/interfaces/portfolio/application.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import { application } from "@/infrastructure/database/schemas";
@@ -79,12 +80,14 @@ export class ApplicationRepository implements IApplication {
   private toEntity(row: typeof application.$inferSelect): Application {
     return Application.create(
       {
-        positionId: row.positionId,
+        positionId: EntityId.create(row.positionId),
         date: row.date,
         amount: PositiveMoney.create(row.amount),
         quotas: QuotaQuantity.create(row.quotas),
         reversedAt: row.reversedAt,
-        reversedByUserId: row.reversedByUserId,
+        reversedByUserId: row.reversedByUserId
+          ? EntityId.create(row.reversedByUserId)
+          : null,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
       },

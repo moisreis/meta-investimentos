@@ -1,11 +1,12 @@
 import { CheckingAccount } from "@/business/entities/bank/checking-account.entity";
 import type { ICheckingAccount } from "@/business/interfaces/bank/checking-account.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
 
 export const CHECKING_ACCOUNT_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
 
 export const PROPS = {
-  bankAccountId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+  bankAccountId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
   date: new Date("2026-01-01T00:00:00.000Z"),
   value: SignedMoney.create("-123.45"),
 };

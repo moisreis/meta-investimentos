@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { PortfolioPerformance } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
@@ -25,7 +26,7 @@ export const FEBRUARY_PERFORMANCE_DATE = new Date("2026-02-05T00:00:00.000Z");
 
 export const PORTFOLIO_PERFORMANCE = PortfolioPerformance.create(
   {
-    portfolioId: PORTFOLIO_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
     date: PERFORMANCE_DATE,
     quotasHeld: QuotaQuantity.create("1000"),
     patrimony: PositiveMoney.create("100000.00"),
@@ -48,7 +49,7 @@ export const PORTFOLIO_PERFORMANCE = PortfolioPerformance.create(
 
 export const OTHER_PORTFOLIO_PERFORMANCE = PortfolioPerformance.create(
   {
-    portfolioId: OTHER_PORTFOLIO_ID,
+    portfolioId: EntityId.create(OTHER_PORTFOLIO_ID),
     date: FEBRUARY_PERFORMANCE_DATE,
     quotasHeld: QuotaQuantity.create("500"),
     patrimony: PositiveMoney.create("50000.00"),
@@ -71,7 +72,7 @@ export const OTHER_PORTFOLIO_PERFORMANCE = PortfolioPerformance.create(
 
 export const EXTERNAL_PORTFOLIO_PERFORMANCE = PortfolioPerformance.create(
   {
-    portfolioId: PORTFOLIO_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
     date: PERFORMANCE_DUPLICATE_DATE,
     quotasHeld: QuotaQuantity.create("1100"),
     patrimony: PositiveMoney.create("110000.00"),
@@ -94,7 +95,7 @@ export const EXTERNAL_PORTFOLIO_PERFORMANCE = PortfolioPerformance.create(
 
 export const PERIOD_OUTSIDE_PORTFOLIO_PERFORMANCE = PortfolioPerformance.create(
   {
-    portfolioId: PORTFOLIO_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
     date: new Date("2026-03-01T00:00:00.000Z"),
     quotasHeld: QuotaQuantity.create("1200"),
     patrimony: PositiveMoney.create("120000.00"),
@@ -117,7 +118,7 @@ export const PERIOD_OUTSIDE_PORTFOLIO_PERFORMANCE = PortfolioPerformance.create(
 
 export const UPDATED_PORTFOLIO_PERFORMANCE = PortfolioPerformance.create(
   {
-    portfolioId: PORTFOLIO_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
     date: PERFORMANCE_DATE,
     quotasHeld: QuotaQuantity.create("1000"),
     patrimony: PositiveMoney.create("120000.00"),
@@ -139,7 +140,7 @@ export const UPDATED_PORTFOLIO_PERFORMANCE = PortfolioPerformance.create(
 );
 
 export const FRESH_PORTFOLIO_PERFORMANCE = PortfolioPerformance.create({
-  portfolioId: PORTFOLIO_ID,
+  portfolioId: EntityId.create(PORTFOLIO_ID),
   date: new Date("2026-04-05T00:00:00.000Z"),
   quotasHeld: QuotaQuantity.create("1300"),
   patrimony: PositiveMoney.create("130000.00"),

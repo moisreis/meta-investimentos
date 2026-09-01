@@ -1,5 +1,6 @@
 import { TransactionAllocation } from "@/business/entities/portfolio/transaction-allocation.entity";
 import type { ITransactionAllocation } from "@/business/interfaces/portfolio/transaction-allocation.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 
 export const ALLOCATION_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
@@ -10,8 +11,8 @@ export const OTHER_WITHDRAW_ID = "d5a3e7f1-6b90-4c12-8d47-2e8f0a1c3b64";
 
 export const ALLOCATION = TransactionAllocation.create(
   {
-    applicationId: APPLICATION_ID,
-    withdrawId: WITHDRAW_ID,
+    applicationId: EntityId.create(APPLICATION_ID),
+    withdrawId: EntityId.create(WITHDRAW_ID),
     quotasConsumed: QuotaQuantity.create("6.123"),
   },
   ALLOCATION_ID,

@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 
 import { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
 describe("Portfolio.create", () => {
   const VALID_PROPS = {
     acronym: "FIA",
     name: "Fundo de Investimento em Ações",
-    userId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     annualInterestRate: SignedPercentage.create("10.5"),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),
@@ -64,9 +65,9 @@ describe("Portfolio.create", () => {
   });
 
   it("throws when the user id is blank", () => {
-    expect(() => Portfolio.create({ ...VALID_PROPS, userId: " " })).toThrow(
-      "Portfolio must have a user id.",
-    );
+    expect(() =>
+      Portfolio.create({ ...VALID_PROPS, userId: " " as unknown as EntityId }),
+    ).toThrow("Portfolio must have a user id.");
   });
 
   it("throws when the annual interest rate is missing", () => {
@@ -114,7 +115,7 @@ describe("Portfolio.equals", () => {
   const VALID_PROPS = {
     acronym: "FIA",
     name: "Fundo de Investimento em Ações",
-    userId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     annualInterestRate: SignedPercentage.create("10.5"),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),

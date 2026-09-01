@@ -1,5 +1,6 @@
 import { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
 import type { IPortfolio } from "@/business/interfaces/portfolio/portfolio.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
 export const PORTFOLIO_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
@@ -10,7 +11,7 @@ export const PORTFOLIO = Portfolio.create(
   {
     acronym: "FIA",
     name: "Fundo de Investimento em Ações",
-    userId: USER_ID,
+    userId: EntityId.create(USER_ID),
     annualInterestRate: SignedPercentage.create("10"),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),

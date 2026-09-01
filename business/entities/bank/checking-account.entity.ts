@@ -1,4 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type SignedMoney from "@/business/value-objects/signed-money.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties required to create a {@link CheckingAccount}.
@@ -7,7 +9,7 @@ import type SignedMoney from "@/business/value-objects/signed-money.vo";
  * `CheckingAccount` instance.
  */
 interface CheckingAccountProps {
-  bankAccountId: string;
+  bankAccountId: EntityId;
   date: Date;
   value: SignedMoney;
 }
@@ -35,7 +37,7 @@ interface CheckingAccountProps {
  * ```
  */
 export class CheckingAccount {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<CheckingAccountProps>;
 
   // --------------------------------------
@@ -45,7 +47,7 @@ export class CheckingAccount {
   /**
    * Returns the unique identifier of the checking account.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
@@ -53,7 +55,7 @@ export class CheckingAccount {
    * Returns the id of the bank account the checking account
    * transaction belongs to.
    */
-  get bankAccountId(): string {
+  get bankAccountId(): EntityId {
     return this.props.bankAccountId;
   }
 
@@ -83,7 +85,7 @@ export class CheckingAccount {
    * satisfy the checking account's invariants.
    */
   private constructor(props: Required<CheckingAccountProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -100,22 +102,22 @@ export class CheckingAccount {
    *
    * @returns A valid `CheckingAccount` instance.
    *
-   * @throws {Error} If `props.bankAccountId` is blank.
-   * @throws {Error} If `props.date` is missing.
-   * @throws {Error} If `props.value` is missing.
+   * @throws {ValidationError} If `props.bankAccountId` is blank.
+   * @throws {ValidationError} If `props.date` is missing.
+   * @throws {ValidationError} If `props.value` is missing.
    */
   public static create(
     props: CheckingAccountProps,
     id?: string,
   ): CheckingAccount {
     if (!props.bankAccountId || props.bankAccountId.trim() === "") {
-      throw new Error("CheckingAccount must have a bank account id.");
+      throw new ValidationError("CheckingAccount must have a bank account id.");
     }
     if (!props.date) {
-      throw new Error("CheckingAccount must have a date.");
+      throw new ValidationError("CheckingAccount must have a date.");
     }
     if (!props.value) {
-      throw new Error("CheckingAccount must have a value.");
+      throw new ValidationError("CheckingAccount must have a value.");
     }
 
     const NORMALIZED_PROPS: Required<CheckingAccountProps> = {

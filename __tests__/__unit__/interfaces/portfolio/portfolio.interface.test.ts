@@ -10,6 +10,7 @@ import {
 
 import { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
 import type { IPortfolio } from "@/business/interfaces/portfolio/portfolio.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
 describe("IPortfolio", () => {
@@ -39,7 +40,7 @@ describe("IPortfolio", () => {
         {
           acronym: "FIM",
           name: "Fundo Multimercado",
-          userId: USER_ID,
+          userId: EntityId.create(USER_ID),
           annualInterestRate: SignedPercentage.create("12"),
           minAllocation: SignedPercentage.create("10"),
           maxAllocation: SignedPercentage.create("40"),
@@ -51,7 +52,7 @@ describe("IPortfolio", () => {
         {
           acronym: "FIC",
           name: "Fundo de Crédito",
-          userId: OTHER_USER_ID,
+          userId: EntityId.create(OTHER_USER_ID),
           annualInterestRate: SignedPercentage.create("9"),
           minAllocation: SignedPercentage.create("5"),
           maxAllocation: SignedPercentage.create("30"),
@@ -92,7 +93,7 @@ describe("IPortfolio", () => {
         {
           acronym: "FIA",
           name: "Fundo de Investimento em Ações Revisado",
-          userId: USER_ID,
+          userId: EntityId.create(USER_ID),
           annualInterestRate: SignedPercentage.create("11"),
           minAllocation: SignedPercentage.create("5"),
           maxAllocation: SignedPercentage.create("20"),

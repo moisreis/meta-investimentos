@@ -1,3 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { ValidationError } from "@/shared/errors";
+
 /**
  * Represents the properties required to create an {@link Account}.
  *
@@ -11,7 +14,7 @@ interface AccountProps {
   issuer: string;
   providerId: string;
   accountId: string;
-  userId: string;
+  userId: EntityId;
   accessToken?: string | null;
   refreshToken?: string | null;
   idToken?: string | null;
@@ -48,7 +51,7 @@ interface AccountProps {
  * ```
  */
 export class Account {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<AccountProps>;
 
   // --------------------------------------
@@ -58,7 +61,7 @@ export class Account {
   /**
    * Returns the unique identifier of the account.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
@@ -86,7 +89,7 @@ export class Account {
   /**
    * Returns the id of the user the account belongs to.
    */
-  get userId(): string {
+  get userId(): EntityId {
     return this.props.userId;
   }
 
@@ -165,7 +168,7 @@ export class Account {
    * account's invariants.
    */
   private constructor(props: Required<AccountProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -185,23 +188,23 @@ export class Account {
    *
    * @returns A valid `Account` instance.
    *
-   * @throws {Error} If `props.issuer` is blank.
-   * @throws {Error} If `props.providerId` is blank.
-   * @throws {Error} If `props.accountId` is blank.
-   * @throws {Error} If `props.userId` is blank.
+   * @throws {ValidationError} If `props.issuer` is blank.
+   * @throws {ValidationError} If `props.providerId` is blank.
+   * @throws {ValidationError} If `props.accountId` is blank.
+   * @throws {ValidationError} If `props.userId` is blank.
    */
   public static create(props: AccountProps, id?: string): Account {
     if (!props.issuer || props.issuer.trim() === "") {
-      throw new Error("Account must have an issuer.");
+      throw new ValidationError("Account must have an issuer.");
     }
     if (!props.providerId || props.providerId.trim() === "") {
-      throw new Error("Account must have a provider id.");
+      throw new ValidationError("Account must have a provider id.");
     }
     if (!props.accountId || props.accountId.trim() === "") {
-      throw new Error("Account must have an account id.");
+      throw new ValidationError("Account must have an account id.");
     }
     if (!props.userId || props.userId.trim() === "") {
-      throw new Error("Account must have a user id.");
+      throw new ValidationError("Account must have a user id.");
     }
 
     const NOW = new Date();

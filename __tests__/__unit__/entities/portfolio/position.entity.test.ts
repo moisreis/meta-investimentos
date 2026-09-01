@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import { Position } from "@/business/entities/portfolio/position.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 
 describe("Position.create", () => {
   const VALID_PROPS = {
-    portfolioId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
-    fundId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+    portfolioId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    fundId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
   };
 
   it("creates a valid position with default values", () => {
@@ -50,15 +51,18 @@ describe("Position.create", () => {
   });
 
   it("throws when the portfolio id is blank", () => {
-    expect(() => Position.create({ ...VALID_PROPS, portfolioId: " " })).toThrow(
-      "Position must have a portfolio id.",
-    );
+    expect(() =>
+      Position.create({
+        ...VALID_PROPS,
+        portfolioId: " " as unknown as EntityId,
+      }),
+    ).toThrow("Position must have a portfolio id.");
   });
 
   it("throws when the fund id is blank", () => {
-    expect(() => Position.create({ ...VALID_PROPS, fundId: " " })).toThrow(
-      "Position must have a fund id.",
-    );
+    expect(() =>
+      Position.create({ ...VALID_PROPS, fundId: " " as unknown as EntityId }),
+    ).toThrow("Position must have a fund id.");
   });
 
   it("does not mutate its inputs", () => {
@@ -72,8 +76,8 @@ describe("Position.create", () => {
 
 describe("Position.equals", () => {
   const VALID_PROPS = {
-    portfolioId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
-    fundId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+    portfolioId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    fundId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
   };
   const ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
 

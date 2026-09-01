@@ -11,6 +11,7 @@ import {
 
 import { AuditLog } from "@/business/entities/audit/audit-log.entity";
 import type { IAuditLog } from "@/business/interfaces/audit/audit-log.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("IAuditLog", () => {
   let REPOSITORY: IAuditLog;
@@ -38,9 +39,9 @@ describe("IAuditLog", () => {
       const SECOND_LOG = AuditLog.create(
         {
           entity: ENTITY,
-          entityId: "9e8b4a21-b3d7-1c7e-9f0a-1c7e9f0a4b52",
+          entityId: EntityId.create("9e8b4a21-b3d7-1c7e-9f0a-1c7e9f0a4b52"),
           action: "CREATED",
-          userId: USER_ID,
+          userId: EntityId.create(USER_ID),
         },
         "6a1f2c3d-9e8b-4a21-b3d7-1c7e9f0a4b52",
       );
@@ -65,9 +66,9 @@ describe("IAuditLog", () => {
       const SECOND_LOG = AuditLog.create(
         {
           entity: ENTITY,
-          entityId: ENTITY_ID,
+          entityId: EntityId.create(ENTITY_ID),
           action: "CREATED",
-          userId: USER_ID,
+          userId: EntityId.create(USER_ID),
         },
         "6a1f2c3d-9e8b-4a21-b3d7-1c7e9f0a4b52",
       );
@@ -97,9 +98,9 @@ describe("IAuditLog", () => {
       const SECOND_LOG = AuditLog.create(
         {
           entity: "Position",
-          entityId: "9e8b4a21-b3d7-1c7e-9f0a-1c7e9f0a4b52",
+          entityId: EntityId.create("9e8b4a21-b3d7-1c7e-9f0a-1c7e9f0a4b52"),
           action: "DELETED",
-          userId: USER_ID,
+          userId: EntityId.create(USER_ID),
         },
         "6a1f2c3d-9e8b-4a21-b3d7-1c7e9f0a4b52",
       );
@@ -134,9 +135,9 @@ describe("IAuditLog", () => {
       const UPDATED = AuditLog.create(
         {
           entity: ENTITY,
-          entityId: ENTITY_ID,
+          entityId: EntityId.create(ENTITY_ID),
           action: "DELETED",
-          userId: USER_ID,
+          userId: EntityId.create(USER_ID),
         },
         LOG_ID,
       );

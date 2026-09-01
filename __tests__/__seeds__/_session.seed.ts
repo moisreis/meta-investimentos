@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { Session } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { session } from "@/infrastructure/database/schemas";
 import { EXPIRES_AT, OTHER_USER_ID, seedUserById, USER_ID } from "./_user.seed";
 
@@ -9,7 +10,7 @@ export const THIRD_SESSION_ID = "e5f6a7b8-9c0d-4e1f-8a2b-3c4d5e6f7a8b";
 
 export const SESSION = Session.create(
   {
-    userId: USER_ID,
+    userId: EntityId.create(USER_ID),
     token: "session-token",
     expiresAt: EXPIRES_AT,
   },
@@ -18,7 +19,7 @@ export const SESSION = Session.create(
 
 export const OTHER_SESSION = Session.create(
   {
-    userId: OTHER_USER_ID,
+    userId: EntityId.create(OTHER_USER_ID),
     token: "other-session-token",
     expiresAt: EXPIRES_AT,
   },
@@ -27,7 +28,7 @@ export const OTHER_SESSION = Session.create(
 
 export const THIRD_SESSION = Session.create(
   {
-    userId: USER_ID,
+    userId: EntityId.create(USER_ID),
     token: "third-session-token",
     expiresAt: EXPIRES_AT,
   },
@@ -38,7 +39,7 @@ export const SESSIONS = [SESSION, OTHER_SESSION];
 
 export const UPDATED_SESSION = Session.create(
   {
-    userId: USER_ID,
+    userId: EntityId.create(USER_ID),
     token: "updated-session-token",
     expiresAt: EXPIRES_AT,
   },
@@ -46,7 +47,7 @@ export const UPDATED_SESSION = Session.create(
 );
 
 export const FRESH_SESSION = Session.create({
-  userId: USER_ID,
+  userId: EntityId.create(USER_ID),
   token: "fresh-session-token",
   expiresAt: EXPIRES_AT,
 });

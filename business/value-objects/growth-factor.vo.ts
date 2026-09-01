@@ -1,4 +1,5 @@
 import Decimal from "decimal.js";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties of a growth factor.
@@ -165,8 +166,8 @@ class GrowthFactor {
    * @param value - The decimal-compatible growth factor to create.
    * @returns A valid `GrowthFactor` instance.
    *
-   * @throws {Error} If `value` is `undefined` or `null`.
-   * @throws {Error} If `value` is less than `0`.
+   * @throws {ValidationError} If `value` is `undefined` or `null`.
+   * @throws {ValidationError} If `value` is less than `0`.
    *
    * @example
    * ```ts
@@ -186,13 +187,15 @@ class GrowthFactor {
    */
   public static create(value: Decimal.Value): GrowthFactor {
     if (value === undefined || value === null) {
-      throw new Error("`GrowthFactor` must be defined.");
+      throw new ValidationError("`GrowthFactor` must be defined.");
     }
 
     const DECIMAL_VALUE = new Decimal(value);
 
     if (DECIMAL_VALUE.lessThan(0)) {
-      throw new Error("`GrowthFactor` must be equal or greater than 0.");
+      throw new ValidationError(
+        "`GrowthFactor` must be equal or greater than 0.",
+      );
     }
 
     return new GrowthFactor({

@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import { CheckingAccount } from "@/business/entities/bank/checking-account.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
 
 describe("CheckingAccount.create", () => {
   const VALID_PROPS = {
-    bankAccountId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    bankAccountId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     date: new Date("2026-01-01T00:00:00.000Z"),
     value: SignedMoney.create("-123.45"),
   };
@@ -31,7 +32,10 @@ describe("CheckingAccount.create", () => {
 
   it("throws when the bank account id is blank", () => {
     expect(() =>
-      CheckingAccount.create({ ...VALID_PROPS, bankAccountId: " " }),
+      CheckingAccount.create({
+        ...VALID_PROPS,
+        bankAccountId: " " as unknown as EntityId,
+      }),
     ).toThrow("CheckingAccount must have a bank account id.");
   });
 
@@ -62,7 +66,7 @@ describe("CheckingAccount.create", () => {
 
 describe("CheckingAccount.equals", () => {
   const VALID_PROPS = {
-    bankAccountId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    bankAccountId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     date: new Date("2026-01-01T00:00:00.000Z"),
     value: SignedMoney.create("-123.45"),
   };

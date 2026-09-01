@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import { BankAccount } from "@/business/entities/bank/bank-account.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("BankAccount.create", () => {
   const VALID_PROPS = {
-    portfolioId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
-    bankId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+    portfolioId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    bankId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
     agency: "1234",
     accountNumber: "56789-0",
   };
@@ -48,14 +49,17 @@ describe("BankAccount.create", () => {
 
   it("throws when the portfolio id is blank", () => {
     expect(() =>
-      BankAccount.create({ ...VALID_PROPS, portfolioId: " " }),
+      BankAccount.create({
+        ...VALID_PROPS,
+        portfolioId: " " as unknown as EntityId,
+      }),
     ).toThrow("BankAccount must have a portfolio id.");
   });
 
   it("throws when the bank id is blank", () => {
-    expect(() => BankAccount.create({ ...VALID_PROPS, bankId: "" })).toThrow(
-      "BankAccount must have a bank id.",
-    );
+    expect(() =>
+      BankAccount.create({ ...VALID_PROPS, bankId: "" as unknown as EntityId }),
+    ).toThrow("BankAccount must have a bank id.");
   });
 
   it("throws when the agency is blank", () => {
@@ -81,8 +85,8 @@ describe("BankAccount.create", () => {
 
 describe("BankAccount.equals", () => {
   const VALID_PROPS = {
-    portfolioId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
-    bankId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+    portfolioId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    bankId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
     agency: "1234",
     accountNumber: "56789-0",
   };

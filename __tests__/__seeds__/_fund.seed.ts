@@ -1,5 +1,7 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { Fund } from "@/business/entities";
+import CNPJ from "@/business/value-objects/cnpj.vo";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 import { fund } from "@/infrastructure/database/schemas";
 import { FundRepository } from "@/infrastructure/repositories";
@@ -12,11 +14,11 @@ export const OTHER_FUND_ID = "9d0e1f2a-3b4c-4d5e-8f6a-7b8c9d0e1f2a";
 
 export const FUND = Fund.create(
   {
-    cnpj: "41142260000189",
+    cnpj: CNPJ.create("12345678000195"),
     name: "Fundo Ações",
-    bankId: BANK_ID,
-    benchmarkId: BENCHMARK_ID,
-    categoryId: CATEGORY_ID,
+    bankId: EntityId.create(BANK_ID),
+    benchmarkId: EntityId.create(BENCHMARK_ID),
+    categoryId: EntityId.create(CATEGORY_ID),
     administrationFee: SignedPercentage.create("1.5"),
     performanceFee: SignedPercentage.create("20"),
   },
@@ -25,19 +27,19 @@ export const FUND = Fund.create(
 
 export const OTHER_FUND = Fund.create(
   {
-    cnpj: "21654321000112",
+    cnpj: CNPJ.create("11222333000181"),
     name: "Fundo Renda Fixa",
-    bankId: OTHER_BANK_ID,
+    bankId: EntityId.create(OTHER_BANK_ID),
   },
   OTHER_FUND_ID,
 );
 
 export const FRESH_FUND = Fund.create({
-  cnpj: "33616089000123",
+  cnpj: CNPJ.create("41142260000189"),
   name: "Fundo Multimercado",
-  bankId: BANK_ID,
-  benchmarkId: BENCHMARK_ID,
-  categoryId: CATEGORY_ID,
+  bankId: EntityId.create(BANK_ID),
+  benchmarkId: EntityId.create(BENCHMARK_ID),
+  categoryId: EntityId.create(CATEGORY_ID),
   administrationFee: SignedPercentage.create("1.2"),
   performanceFee: SignedPercentage.create("15"),
 });
@@ -68,7 +70,7 @@ export async function seedFundById(id: string): Promise<Fund> {
 
   await db.insert(fund).values({
     id: FIXTURE.id,
-    cnpj: FIXTURE.cnpj,
+    cnpj: FIXTURE.cnpj.value,
     name: FIXTURE.name,
     administrationFee: FIXTURE.administrationFee?.value.toString() ?? null,
     performanceFee: FIXTURE.performanceFee?.value.toString() ?? null,

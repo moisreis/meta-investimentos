@@ -12,6 +12,7 @@ import {
 
 import { Position } from "@/business/entities/portfolio/position.entity";
 import type { IPosition } from "@/business/interfaces/portfolio/position.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("IPosition", () => {
   let REPOSITORY: IPosition;
@@ -38,15 +39,15 @@ describe("IPosition", () => {
     it("returns all persisted positions for the portfolio", async () => {
       const SECOND_POSITION = Position.create(
         {
-          portfolioId: PORTFOLIO_ID,
-          fundId: OTHER_FUND_ID,
+          portfolioId: EntityId.create(PORTFOLIO_ID),
+          fundId: EntityId.create(OTHER_FUND_ID),
         },
         "6a1f2c3d-9e8b-4a21-b3d7-1c7e9f0a4b52",
       );
       const OTHER_POSITION = Position.create(
         {
-          portfolioId: OTHER_PORTFOLIO_ID,
-          fundId: FUND_ID,
+          portfolioId: EntityId.create(OTHER_PORTFOLIO_ID),
+          fundId: EntityId.create(FUND_ID),
         },
         "d5a3e7f1-6b90-4c12-8d47-2e8f0a1c3b64",
       );
@@ -100,8 +101,8 @@ describe("IPosition", () => {
 
       const UPDATED = Position.create(
         {
-          portfolioId: PORTFOLIO_ID,
-          fundId: OTHER_FUND_ID,
+          portfolioId: EntityId.create(PORTFOLIO_ID),
+          fundId: EntityId.create(OTHER_FUND_ID),
         },
         POSITION_ID,
       );

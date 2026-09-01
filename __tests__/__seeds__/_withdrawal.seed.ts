@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { Withdrawal } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import { withdrawal } from "@/infrastructure/database/schemas";
@@ -19,7 +20,7 @@ export const OTHER_WITHDRAWAL_DATE = new Date("2026-02-20T00:00:00.000Z");
 
 export const WITHDRAWAL = Withdrawal.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: WITHDRAWAL_DATE,
     amount: PositiveMoney.create("500.00"),
     quotas: QuotaQuantity.create("6.123"),
@@ -29,7 +30,7 @@ export const WITHDRAWAL = Withdrawal.create(
 
 export const OTHER_WITHDRAWAL = Withdrawal.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: OTHER_WITHDRAWAL_DATE,
     amount: PositiveMoney.create("250.00"),
     quotas: QuotaQuantity.create("3.0615"),
@@ -39,7 +40,7 @@ export const OTHER_WITHDRAWAL = Withdrawal.create(
 
 export const EXTERNAL_WITHDRAWAL = Withdrawal.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: new Date("2026-01-22T00:00:00.000Z"),
     amount: PositiveMoney.create("100.00"),
     quotas: QuotaQuantity.create("1.2"),
@@ -49,7 +50,7 @@ export const EXTERNAL_WITHDRAWAL = Withdrawal.create(
 
 export const PERIOD_OUTSIDE_WITHDRAWAL = Withdrawal.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: new Date("2026-03-10T00:00:00.000Z"),
     amount: PositiveMoney.create("150.00"),
     quotas: QuotaQuantity.create("1.8"),
@@ -66,18 +67,18 @@ export const WITHDRAWALS = [
 
 export const UPDATED_WITHDRAWAL = Withdrawal.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: WITHDRAWAL_DATE,
     amount: PositiveMoney.create("500.00"),
     quotas: QuotaQuantity.create("6.123"),
     reversedAt: new Date("2026-02-01T00:00:00.000Z"),
-    reversedByUserId: USER_ID,
+    reversedByUserId: EntityId.create(USER_ID),
   },
   WITHDRAWAL_ID,
 );
 
 export const FRESH_WITHDRAWAL = Withdrawal.create({
-  positionId: POSITION_ID,
+  positionId: EntityId.create(POSITION_ID),
   date: new Date("2026-04-20T00:00:00.000Z"),
   amount: PositiveMoney.create("300.00"),
   quotas: QuotaQuantity.create("3.4"),

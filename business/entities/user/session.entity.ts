@@ -1,3 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { ValidationError } from "@/shared/errors";
+
 /**
  * Represents the properties required to create a {@link Session}.
  *
@@ -7,7 +10,7 @@
  * Use {@link Session.create} to create a valid `Session` instance.
  */
 interface SessionProps {
-  userId: string;
+  userId: EntityId;
   token: string;
   expiresAt: Date;
   ipAddress?: string | null;
@@ -39,7 +42,7 @@ interface SessionProps {
  * ```
  */
 export class Session {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<SessionProps>;
 
   // --------------------------------------
@@ -49,14 +52,14 @@ export class Session {
   /**
    * Returns the unique identifier of the session.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
   /**
    * Returns the id of the user the session belongs to.
    */
-  get userId(): string {
+  get userId(): EntityId {
     return this.props.userId;
   }
 
@@ -114,7 +117,7 @@ export class Session {
    * session's invariants.
    */
   private constructor(props: Required<SessionProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -134,19 +137,19 @@ export class Session {
    *
    * @returns A valid `Session` instance.
    *
-   * @throws {Error} If `props.userId` is blank.
-   * @throws {Error} If `props.token` is blank.
-   * @throws {Error} If `props.expiresAt` is missing.
+   * @throws {ValidationError} If `props.userId` is blank.
+   * @throws {ValidationError} If `props.token` is blank.
+   * @throws {ValidationError} If `props.expiresAt` is missing.
    */
   public static create(props: SessionProps, id?: string): Session {
     if (!props.userId || props.userId.trim() === "") {
-      throw new Error("Session must have a user id.");
+      throw new ValidationError("Session must have a user id.");
     }
     if (!props.token || props.token.trim() === "") {
-      throw new Error("Session must have a token.");
+      throw new ValidationError("Session must have a token.");
     }
     if (!props.expiresAt) {
-      throw new Error("Session must have an expiration date.");
+      throw new ValidationError("Session must have an expiration date.");
     }
 
     const NOW = new Date();

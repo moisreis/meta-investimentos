@@ -1,4 +1,5 @@
 import Decimal from "decimal.js";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties of a signed percentage.
@@ -120,7 +121,7 @@ class SignedPercentage {
    * @param value - The decimal-compatible percentage value to create.
    * @returns A valid `SignedPercentage` instance.
    *
-   * @throws {Error} If `value` is `undefined` or `null`.
+   * @throws {ValidationError} If `value` is `undefined` or `null`.
    *
    * @example
    * ```ts
@@ -140,7 +141,7 @@ class SignedPercentage {
    */
   public static create(value: Decimal.Value): SignedPercentage {
     if (value === undefined || value === null) {
-      throw new Error("`SignedPercentage` must be defined.");
+      throw new ValidationError("`SignedPercentage` must be defined.");
     }
 
     const DECIMAL_VALUE = new Decimal(value);

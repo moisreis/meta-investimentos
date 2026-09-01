@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { CheckingAccount } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
 import { checkingAccount } from "@/infrastructure/database/schemas";
 import {
@@ -20,7 +21,7 @@ export const FEBRUARY_DATE = new Date("2026-02-10T00:00:00.000Z");
 
 export const CHECKING_ACCOUNT = CheckingAccount.create(
   {
-    bankAccountId: BANK_ACCOUNT_ID,
+    bankAccountId: EntityId.create(BANK_ACCOUNT_ID),
     date: JANUARY_DATE,
     value: SignedMoney.create("1234.56"),
   },
@@ -29,7 +30,7 @@ export const CHECKING_ACCOUNT = CheckingAccount.create(
 
 export const OTHER_CHECKING_ACCOUNT = CheckingAccount.create(
   {
-    bankAccountId: OTHER_BANK_ACCOUNT_ID,
+    bankAccountId: EntityId.create(OTHER_BANK_ACCOUNT_ID),
     date: FEBRUARY_DATE,
     value: SignedMoney.create("-50.00"),
   },
@@ -38,7 +39,7 @@ export const OTHER_CHECKING_ACCOUNT = CheckingAccount.create(
 
 export const EXTERNAL_CHECKING_ACCOUNT = CheckingAccount.create(
   {
-    bankAccountId: BANK_ACCOUNT_ID,
+    bankAccountId: EntityId.create(BANK_ACCOUNT_ID),
     date: JANUARY_DUPLICATE_DATE,
     value: SignedMoney.create("2000.00"),
   },
@@ -47,7 +48,7 @@ export const EXTERNAL_CHECKING_ACCOUNT = CheckingAccount.create(
 
 export const PERIOD_OUTSIDE_ACCOUNT = CheckingAccount.create(
   {
-    bankAccountId: BANK_ACCOUNT_ID,
+    bankAccountId: EntityId.create(BANK_ACCOUNT_ID),
     date: new Date("2026-03-01T00:00:00.000Z"),
     value: SignedMoney.create("500.00"),
   },
@@ -56,7 +57,7 @@ export const PERIOD_OUTSIDE_ACCOUNT = CheckingAccount.create(
 
 export const UPDATED_CHECKING_ACCOUNT = CheckingAccount.create(
   {
-    bankAccountId: BANK_ACCOUNT_ID,
+    bankAccountId: EntityId.create(BANK_ACCOUNT_ID),
     date: JANUARY_DATE,
     value: SignedMoney.create("4321.10"),
   },
@@ -64,7 +65,7 @@ export const UPDATED_CHECKING_ACCOUNT = CheckingAccount.create(
 );
 
 export const FRESH_CHECKING_ACCOUNT = CheckingAccount.create({
-  bankAccountId: BANK_ACCOUNT_ID,
+  bankAccountId: EntityId.create(BANK_ACCOUNT_ID),
   date: new Date("2026-04-05T00:00:00.000Z"),
   value: SignedMoney.create("3000.00"),
 });

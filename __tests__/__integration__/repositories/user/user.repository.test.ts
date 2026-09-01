@@ -56,13 +56,13 @@ describe("UserRepository", () => {
     it("returns the persisted user", async () => {
       await seedUsers();
 
-      const FOUND = await newUserRepository().findByCpf(USER.cpf);
+      const FOUND = await newUserRepository().findByCpf(USER.cpf.value);
 
       expect(FOUND?.equals(USER)).toBe(true);
     });
 
     it("returns null when no user has the cpf", async () => {
-      expect(await newUserRepository().findByCpf(USER.cpf)).toBeNull();
+      expect(await newUserRepository().findByCpf(USER.cpf.value)).toBeNull();
     });
   });
 

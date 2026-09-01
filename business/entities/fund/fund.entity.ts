@@ -1,4 +1,7 @@
+import type CNPJ from "@/business/value-objects/cnpj.vo";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties required to create a {@link Fund}.
@@ -10,13 +13,13 @@ import type SignedPercentage from "@/business/value-objects/signed-percentage.vo
  * Use {@link Fund.create} to create a valid `Fund` instance.
  */
 interface FundProps {
-  cnpj: string;
+  cnpj: CNPJ;
   name: string;
   administrationFee?: SignedPercentage | null;
   performanceFee?: SignedPercentage | null;
-  bankId: string;
-  benchmarkId?: string | null;
-  categoryId?: string | null;
+  bankId: EntityId;
+  benchmarkId?: EntityId | null;
+  categoryId?: EntityId | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -32,7 +35,7 @@ interface FundProps {
  * `Fund` instances are immutable after creation.
  */
 export class Fund {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<FundProps>;
 
   // --------------------------------------
@@ -42,14 +45,14 @@ export class Fund {
   /**
    * Returns the unique identifier of the fund.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
   /**
    * Returns the cnpj of the fund.
    */
-  get cnpj(): string {
+  get cnpj(): CNPJ {
     return this.props.cnpj;
   }
 
@@ -77,21 +80,21 @@ export class Fund {
   /**
    * Returns the id of the bank the fund belongs to.
    */
-  get bankId(): string {
+  get bankId(): EntityId {
     return this.props.bankId;
   }
 
   /**
    * Returns the id of the benchmark the fund is compared against.
    */
-  get benchmarkId(): string | null {
+  get benchmarkId(): EntityId | null {
     return this.props.benchmarkId;
   }
 
   /**
    * Returns the id of the category the fund belongs to.
    */
-  get categoryId(): string | null {
+  get categoryId(): EntityId | null {
     return this.props.categoryId;
   }
 
@@ -121,7 +124,7 @@ export class Fund {
    * fund's invariants.
    */
   private constructor(props: Required<FundProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -141,19 +144,19 @@ export class Fund {
    *
    * @returns A valid `Fund` instance.
    *
-   * @throws {Error} If `props.cnpj` is blank.
-   * @throws {Error} If `props.name` is blank.
-   * @throws {Error} If `props.bankId` is blank.
+   * @throws {ValidationError} If `props.cnpj` is blank.
+   * @throws {ValidationError} If `props.name` is blank.
+   * @throws {ValidationError} If `props.bankId` is blank.
    */
   public static create(props: FundProps, id?: string): Fund {
-    if (!props.cnpj || props.cnpj.trim() === "") {
-      throw new Error("Fund must have a cnpj.");
+    if (!props.cnpj) {
+      throw new ValidationError("Fund must have a cnpj.");
     }
     if (!props.name || props.name.trim() === "") {
-      throw new Error("Fund must have a name.");
+      throw new ValidationError("Fund must have a name.");
     }
     if (!props.bankId || props.bankId.trim() === "") {
-      throw new Error("Fund must have a bank id.");
+      throw new ValidationError("Fund must have a bank id.");
     }
 
     const NOW = new Date();

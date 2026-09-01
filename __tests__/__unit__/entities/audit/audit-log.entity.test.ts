@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import { AuditLog } from "@/business/entities/audit/audit-log.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("AuditLog.create", () => {
   const VALID_PROPS = {
     entity: "User",
-    entityId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    entityId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     action: "CREATED",
   };
 
@@ -35,7 +36,7 @@ describe("AuditLog.create", () => {
     const AUDIT_LOG = AuditLog.create({
       ...VALID_PROPS,
       changes: { field: "old" },
-      userId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+      userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
       createdAt: CREATED_AT,
     });
 
@@ -80,7 +81,7 @@ describe("AuditLog.create", () => {
 describe("AuditLog.equals", () => {
   const VALID_PROPS = {
     entity: "User",
-    entityId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    entityId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     action: "CREATED",
   };
   const ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";

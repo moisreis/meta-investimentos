@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 
 import { Account } from "@/business/entities/user/account.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("Account.create", () => {
   const VALID_PROPS = {
     issuer: "github",
     providerId: "github",
     accountId: "octocat",
-    userId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
   };
 
   it("creates a valid account with default values", () => {
@@ -85,9 +86,9 @@ describe("Account.create", () => {
   });
 
   it("throws when the user id is blank", () => {
-    expect(() => Account.create({ ...VALID_PROPS, userId: " " })).toThrow(
-      "Account must have a user id.",
-    );
+    expect(() =>
+      Account.create({ ...VALID_PROPS, userId: " " as unknown as EntityId }),
+    ).toThrow("Account must have a user id.");
   });
 
   it("does not mutate its inputs", () => {
@@ -104,7 +105,7 @@ describe("Account.equals", () => {
     issuer: "github",
     providerId: "github",
     accountId: "octocat",
-    userId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
   };
   const ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
 

@@ -1,4 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties required to create a {@link Portfolio}.
@@ -10,7 +12,7 @@ import type SignedPercentage from "@/business/value-objects/signed-percentage.vo
 interface PortfolioProps {
   acronym: string;
   name: string;
-  userId: string;
+  userId: EntityId;
   annualInterestRate: SignedPercentage;
   minAllocation: SignedPercentage;
   maxAllocation: SignedPercentage;
@@ -50,7 +52,7 @@ interface PortfolioProps {
  * ```
  */
 export class Portfolio {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<PortfolioProps>;
 
   // --------------------------------------
@@ -60,7 +62,7 @@ export class Portfolio {
   /**
    * Returns the unique identifier of the portfolio.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
@@ -81,7 +83,7 @@ export class Portfolio {
   /**
    * Returns the id of the user the portfolio belongs to.
    */
-  get userId(): string {
+  get userId(): EntityId {
     return this.props.userId;
   }
 
@@ -139,7 +141,7 @@ export class Portfolio {
    * portfolio's invariants.
    */
   private constructor(props: Required<PortfolioProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -157,35 +159,35 @@ export class Portfolio {
    *
    * @returns A valid `Portfolio` instance.
    *
-   * @throws {Error} If `props.acronym` is blank.
-   * @throws {Error} If `props.name` is blank.
-   * @throws {Error} If `props.userId` is blank.
-   * @throws {Error} If `props.annualInterestRate` is missing.
-   * @throws {Error} If `props.minAllocation` is missing.
-   * @throws {Error} If `props.maxAllocation` is missing.
-   * @throws {Error} If `props.targetAllocation` is missing.
+   * @throws {ValidationError} If `props.acronym` is blank.
+   * @throws {ValidationError} If `props.name` is blank.
+   * @throws {ValidationError} If `props.userId` is blank.
+   * @throws {ValidationError} If `props.annualInterestRate` is missing.
+   * @throws {ValidationError} If `props.minAllocation` is missing.
+   * @throws {ValidationError} If `props.maxAllocation` is missing.
+   * @throws {ValidationError} If `props.targetAllocation` is missing.
    */
   public static create(props: PortfolioProps, id?: string): Portfolio {
     if (!props.acronym || props.acronym.trim() === "") {
-      throw new Error("Portfolio must have an acronym.");
+      throw new ValidationError("Portfolio must have an acronym.");
     }
     if (!props.name || props.name.trim() === "") {
-      throw new Error("Portfolio must have a name.");
+      throw new ValidationError("Portfolio must have a name.");
     }
     if (!props.userId || props.userId.trim() === "") {
-      throw new Error("Portfolio must have a user id.");
+      throw new ValidationError("Portfolio must have a user id.");
     }
     if (!props.annualInterestRate) {
-      throw new Error("Portfolio must have an annual interest rate.");
+      throw new ValidationError("Portfolio must have an annual interest rate.");
     }
     if (!props.minAllocation) {
-      throw new Error("Portfolio must have a minimum allocation.");
+      throw new ValidationError("Portfolio must have a minimum allocation.");
     }
     if (!props.maxAllocation) {
-      throw new Error("Portfolio must have a maximum allocation.");
+      throw new ValidationError("Portfolio must have a maximum allocation.");
     }
     if (!props.targetAllocation) {
-      throw new Error("Portfolio must have a target allocation.");
+      throw new ValidationError("Portfolio must have a target allocation.");
     }
 
     const NOW = new Date();

@@ -1,5 +1,6 @@
 import { PortfolioPerformance } from "@/business/entities/performance/portfolio-performance.entity";
 import type { IPortfolioPerformance } from "@/business/interfaces/performance/portfolio-performance.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
@@ -11,7 +12,7 @@ export const PERFORMANCE_DATE = new Date("2026-08-01T00:00:00.000Z");
 
 export const PERFORMANCE = PortfolioPerformance.create(
   {
-    portfolioId: PORTFOLIO_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
     date: PERFORMANCE_DATE,
     quotasHeld: QuotaQuantity.create("100"),
     patrimony: PositiveMoney.create("1000000"),

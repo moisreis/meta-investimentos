@@ -1,4 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type QuotaPrice from "@/business/value-objects/quota-price.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties required to create a {@link Quota}.
@@ -9,7 +11,7 @@ import type QuotaPrice from "@/business/value-objects/quota-price.vo";
  * Use {@link Quota.create} to create a valid `Quota` instance.
  */
 interface QuotaProps {
-  fundId: string;
+  fundId: EntityId;
   date: Date;
   price: QuotaPrice;
   createdAt?: Date;
@@ -26,7 +28,7 @@ interface QuotaProps {
  * `Quota` instances are immutable after creation.
  */
 export class Quota {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<QuotaProps>;
 
   // --------------------------------------
@@ -36,14 +38,14 @@ export class Quota {
   /**
    * Returns the unique identifier of the quota.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
   /**
    * Returns the id of the fund the quota belongs to.
    */
-  get fundId(): string {
+  get fundId(): EntityId {
     return this.props.fundId;
   }
 
@@ -80,7 +82,7 @@ export class Quota {
    * quota's invariants.
    */
   private constructor(props: Required<QuotaProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -99,19 +101,19 @@ export class Quota {
    *
    * @returns A valid `Quota` instance.
    *
-   * @throws {Error} If `props.fundId` is blank.
-   * @throws {Error} If `props.date` is not provided.
-   * @throws {Error} If `props.price` is not provided.
+   * @throws {ValidationError} If `props.fundId` is blank.
+   * @throws {ValidationError} If `props.date` is not provided.
+   * @throws {ValidationError} If `props.price` is not provided.
    */
   public static create(props: QuotaProps, id?: string): Quota {
     if (!props.fundId || props.fundId.trim() === "") {
-      throw new Error("Quota must have a fund id.");
+      throw new ValidationError("Quota must have a fund id.");
     }
     if (!props.date) {
-      throw new Error("Quota must have a date.");
+      throw new ValidationError("Quota must have a date.");
     }
     if (!props.price) {
-      throw new Error("Quota must have a price.");
+      throw new ValidationError("Quota must have a price.");
     }
 
     const NOW = new Date();

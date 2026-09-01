@@ -1,3 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { ValidationError } from "@/shared/errors";
+
 /**
  * Represents the properties required to create a {@link Category}.
  *
@@ -20,7 +23,7 @@ interface CategoryProps {
  * `Category` instances are immutable after creation.
  */
 export class Category {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<CategoryProps>;
 
   // --------------------------------------
@@ -30,7 +33,7 @@ export class Category {
   /**
    * Returns the unique identifier of the category.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
@@ -67,7 +70,7 @@ export class Category {
    * the category's invariants.
    */
   private constructor(props: Required<CategoryProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -86,11 +89,11 @@ export class Category {
    *
    * @returns A valid `Category` instance.
    *
-   * @throws {Error} If `props.name` is blank.
+   * @throws {ValidationError} If `props.name` is blank.
    */
   public static create(props: CategoryProps, id?: string): Category {
     if (!props.name || props.name.trim() === "") {
-      throw new Error("Category must have a name.");
+      throw new ValidationError("Category must have a name.");
     }
 
     const NOW = new Date();

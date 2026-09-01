@@ -2,6 +2,7 @@ import { and, desc, eq, inArray } from "drizzle-orm";
 
 import { PositionPerformance } from "@/business/entities/performance/position-performance.entity";
 import type { IPositionPerformance } from "@/business/interfaces/performance/position-performance.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
@@ -63,7 +64,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
   ): PositionPerformance {
     return PositionPerformance.create(
       {
-        positionId: row.positionId,
+        positionId: EntityId.create(row.positionId),
         date: row.date,
         quotasHeld: QuotaQuantity.create(row.quotasHeld),
         patrimony: PositiveMoney.create(row.patrimony),

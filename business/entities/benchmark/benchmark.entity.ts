@@ -1,3 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { ValidationError } from "@/shared/errors";
+
 /**
  * Represents the properties required to create a {@link Benchmark}.
  *
@@ -30,7 +33,7 @@ interface BenchmarkProps {
  * ```
  */
 export class Benchmark {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<BenchmarkProps>;
 
   // --------------------------------------
@@ -40,7 +43,7 @@ export class Benchmark {
   /**
    * Returns the unique identifier of the benchmark.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
@@ -77,7 +80,7 @@ export class Benchmark {
    * the benchmark's invariants.
    */
   private constructor(props: Required<BenchmarkProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -96,15 +99,15 @@ export class Benchmark {
    *
    * @returns A valid `Benchmark` instance.
    *
-   * @throws {Error} If `props.acronym` is blank.
-   * @throws {Error} If `props.name` is blank.
+   * @throws {ValidationError} If `props.acronym` is blank.
+   * @throws {ValidationError} If `props.name` is blank.
    */
   public static create(props: BenchmarkProps, id?: string): Benchmark {
     if (!props.acronym || props.acronym.trim() === "") {
-      throw new Error("Benchmark must have an acronym.");
+      throw new ValidationError("Benchmark must have an acronym.");
     }
     if (!props.name || props.name.trim() === "") {
-      throw new Error("Benchmark must have a name.");
+      throw new ValidationError("Benchmark must have a name.");
     }
 
     const NOW = new Date();

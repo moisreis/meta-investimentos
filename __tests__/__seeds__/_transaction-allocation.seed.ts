@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { TransactionAllocation } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import { transactionAllocation } from "@/infrastructure/database/schemas";
 import { APPLICATION_ID, OTHER_APPLICATION_ID } from "./_application.seed";
@@ -13,8 +14,8 @@ export const SECOND_ALLOCATION_ID = "14c5d6e7-f0ab-4c3d-9e4f-708192a3b4c5";
 
 export const TRANSACTION_ALLOCATION = TransactionAllocation.create(
   {
-    applicationId: APPLICATION_ID,
-    withdrawId: WITHDRAWAL_ID,
+    applicationId: EntityId.create(APPLICATION_ID),
+    withdrawId: EntityId.create(WITHDRAWAL_ID),
     quotasConsumed: QuotaQuantity.create("3.0"),
   },
   TRANSACTION_ALLOCATION_ID,
@@ -22,8 +23,8 @@ export const TRANSACTION_ALLOCATION = TransactionAllocation.create(
 
 export const OTHER_TRANSACTION_ALLOCATION = TransactionAllocation.create(
   {
-    applicationId: OTHER_APPLICATION_ID,
-    withdrawId: OTHER_WITHDRAWAL_ID,
+    applicationId: EntityId.create(OTHER_APPLICATION_ID),
+    withdrawId: EntityId.create(OTHER_WITHDRAWAL_ID),
     quotasConsumed: QuotaQuantity.create("2.0"),
   },
   OTHER_TRANSACTION_ALLOCATION_ID,
@@ -31,23 +32,23 @@ export const OTHER_TRANSACTION_ALLOCATION = TransactionAllocation.create(
 
 export const SECOND_ALLOCATION = TransactionAllocation.create(
   {
-    applicationId: APPLICATION_ID,
-    withdrawId: OTHER_WITHDRAWAL_ID,
+    applicationId: EntityId.create(APPLICATION_ID),
+    withdrawId: EntityId.create(OTHER_WITHDRAWAL_ID),
     quotasConsumed: QuotaQuantity.create("1.5"),
   },
   SECOND_ALLOCATION_ID,
 );
 
 export const FRESH_ALLOCATION = TransactionAllocation.create({
-  applicationId: OTHER_APPLICATION_ID,
-  withdrawId: WITHDRAWAL_ID,
+  applicationId: EntityId.create(OTHER_APPLICATION_ID),
+  withdrawId: EntityId.create(WITHDRAWAL_ID),
   quotasConsumed: QuotaQuantity.create("2.5"),
 });
 
 export const UPDATED_TRANSACTION_ALLOCATION = TransactionAllocation.create(
   {
-    applicationId: APPLICATION_ID,
-    withdrawId: WITHDRAWAL_ID,
+    applicationId: EntityId.create(APPLICATION_ID),
+    withdrawId: EntityId.create(WITHDRAWAL_ID),
     quotasConsumed: QuotaQuantity.create("3.5"),
   },
   TRANSACTION_ALLOCATION_ID,

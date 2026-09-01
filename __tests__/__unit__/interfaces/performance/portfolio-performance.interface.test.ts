@@ -10,6 +10,7 @@ import {
 
 import { PortfolioPerformance } from "@/business/entities/performance/portfolio-performance.entity";
 import type { IPortfolioPerformance } from "@/business/interfaces/performance/portfolio-performance.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
@@ -40,7 +41,7 @@ describe("IPortfolioPerformance", () => {
     it("returns all persisted performances for the portfolio", async () => {
       const SECOND_PERFORMANCE = PortfolioPerformance.create(
         {
-          portfolioId: PORTFOLIO_ID,
+          portfolioId: EntityId.create(PORTFOLIO_ID),
           date: new Date("2026-08-02T00:00:00.000Z"),
           quotasHeld: QuotaQuantity.create("150"),
           patrimony: PositiveMoney.create("1500000"),
@@ -94,7 +95,7 @@ describe("IPortfolioPerformance", () => {
     it("returns the performance with the latest date", async () => {
       const EARLIER = PortfolioPerformance.create(
         {
-          portfolioId: PORTFOLIO_ID,
+          portfolioId: EntityId.create(PORTFOLIO_ID),
           date: new Date("2026-07-01T00:00:00.000Z"),
           quotasHeld: QuotaQuantity.create("80"),
           patrimony: PositiveMoney.create("800000"),
@@ -108,7 +109,7 @@ describe("IPortfolioPerformance", () => {
       );
       const LATER = PortfolioPerformance.create(
         {
-          portfolioId: PORTFOLIO_ID,
+          portfolioId: EntityId.create(PORTFOLIO_ID),
           date: new Date("2026-08-01T00:00:00.000Z"),
           quotasHeld: QuotaQuantity.create("100"),
           patrimony: PositiveMoney.create("1000000"),
@@ -148,7 +149,7 @@ describe("IPortfolioPerformance", () => {
 
       const UPDATED = PortfolioPerformance.create(
         {
-          portfolioId: PORTFOLIO_ID,
+          portfolioId: EntityId.create(PORTFOLIO_ID),
           date: PERFORMANCE_DATE,
           quotasHeld: QuotaQuantity.create("100"),
           patrimony: PositiveMoney.create("1200000"),

@@ -1,11 +1,14 @@
 import { BankAccount } from "@/business/entities/bank/bank-account.entity";
 import type { IBankAccount } from "@/business/interfaces/bank/bank-account.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 export const BANK_ACCOUNT_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
+export const PORTFOLIO_ID = "a1a2a3a4-a5a6-4a7a-8a9a-0a1a2a3a4a5a";
+export const BANK_ID = "b1b2b3b4-b5b6-4b7b-8b9b-0b1b2b3b4b5b";
 
 export const PROPS = {
-  portfolioId: "p1",
-  bankId: "b1",
+  portfolioId: EntityId.create(PORTFOLIO_ID),
+  bankId: EntityId.create(BANK_ID),
   agency: "1234",
   accountNumber: "56789-0",
 };

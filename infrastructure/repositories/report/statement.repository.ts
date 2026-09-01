@@ -2,6 +2,7 @@ import { eq, inArray } from "drizzle-orm";
 
 import { Statement } from "@/business/entities/report/statement.entity";
 import type { IStatement } from "@/business/interfaces/report/statement.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { statement } from "@/infrastructure/database/schemas";
 
 import type { DbClient } from "../types";
@@ -55,11 +56,13 @@ export class StatementRepository implements IStatement {
   private toEntity(row: typeof statement.$inferSelect): Statement {
     return Statement.create(
       {
-        portfolioId: row.portfolioId,
+        portfolioId: row.portfolioId ? EntityId.create(row.portfolioId) : null,
         periodStart: new Date(row.periodStart),
         periodEnd: new Date(row.periodEnd),
         fileUrl: row.fileUrl,
-        generatedByUserId: row.generatedByUserId,
+        generatedByUserId: row.generatedByUserId
+          ? EntityId.create(row.generatedByUserId)
+          : null,
         createdAt: row.createdAt,
       },
       row.id,

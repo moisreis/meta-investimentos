@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Quota } from "@/business/entities/fund/quota.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import QuotaPrice from "@/business/value-objects/quota-price.vo";
 
 describe("Quota.create", () => {
@@ -8,7 +9,7 @@ describe("Quota.create", () => {
   const DATE = new Date("2026-01-01T00:00:00.000Z");
 
   const VALID_PROPS = {
-    fundId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    fundId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     date: DATE,
     price: PRICE,
   };
@@ -43,9 +44,9 @@ describe("Quota.create", () => {
   });
 
   it("throws when the fund id is blank", () => {
-    expect(() => Quota.create({ ...VALID_PROPS, fundId: "   " })).toThrow(
-      "Quota must have a fund id.",
-    );
+    expect(() =>
+      Quota.create({ ...VALID_PROPS, fundId: "   " as unknown as EntityId }),
+    ).toThrow("Quota must have a fund id.");
   });
 
   it("throws when the date is not provided", () => {
@@ -78,7 +79,7 @@ describe("Quota.equals", () => {
   const DATE = new Date("2026-01-01T00:00:00.000Z");
 
   const VALID_PROPS = {
-    fundId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    fundId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     date: DATE,
     price: PRICE,
   };

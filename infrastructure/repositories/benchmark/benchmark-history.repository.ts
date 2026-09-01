@@ -2,6 +2,7 @@ import { and, eq, gte, inArray, lte } from "drizzle-orm";
 
 import { BenchmarkHistory } from "@/business/entities/benchmark/benchmark-history.entity";
 import type { IBenchmarkHistory } from "@/business/interfaces/benchmark/benchmark-history.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 import { benchmarkHistory } from "@/infrastructure/database/schemas";
 
@@ -61,7 +62,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
   ): BenchmarkHistory {
     return BenchmarkHistory.create(
       {
-        benchmarkId: row.benchmarkId,
+        benchmarkId: EntityId.create(row.benchmarkId),
         date: row.date,
         rate: SignedPercentage.create(row.rate),
         createdAt: row.createdAt,

@@ -2,6 +2,7 @@ import { eq, inArray } from "drizzle-orm";
 
 import { Session } from "@/business/entities/user/session.entity";
 import type { ISession } from "@/business/interfaces/user/session.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { session } from "@/infrastructure/database/schemas";
 
 import type { DbClient } from "../types";
@@ -50,7 +51,7 @@ export class SessionRepository implements ISession {
   private toEntity(row: typeof session.$inferSelect): Session {
     return Session.create(
       {
-        userId: row.userId,
+        userId: EntityId.create(row.userId),
         token: row.token,
         expiresAt: row.expiresAt,
         ipAddress: row.ipAddress,

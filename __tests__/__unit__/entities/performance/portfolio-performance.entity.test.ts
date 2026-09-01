@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { PortfolioPerformance } from "@/business/entities/performance/portfolio-performance.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
@@ -8,7 +9,7 @@ import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
 describe("PortfolioPerformance.create", () => {
   const VALID_PROPS = {
-    portfolioId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+    portfolioId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
     date: new Date("2026-01-01T00:00:00.000Z"),
     quotasHeld: QuotaQuantity.create("100"),
     patrimony: PositiveMoney.create("10000"),
@@ -94,7 +95,10 @@ describe("PortfolioPerformance.create", () => {
 
   it("throws when the portfolio id is blank", () => {
     expect(() =>
-      PortfolioPerformance.create({ ...VALID_PROPS, portfolioId: " " }),
+      PortfolioPerformance.create({
+        ...VALID_PROPS,
+        portfolioId: " " as unknown as EntityId,
+      }),
     ).toThrow("PortfolioPerformance must have a portfolio id.");
   });
 
@@ -189,7 +193,7 @@ describe("PortfolioPerformance.create", () => {
 
 describe("PortfolioPerformance.equals", () => {
   const VALID_PROPS = {
-    portfolioId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+    portfolioId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
     date: new Date("2026-01-01T00:00:00.000Z"),
     quotasHeld: QuotaQuantity.create("100"),
     patrimony: PositiveMoney.create("10000"),

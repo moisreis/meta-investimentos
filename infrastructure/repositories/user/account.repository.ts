@@ -2,6 +2,7 @@ import { and, eq, inArray } from "drizzle-orm";
 
 import { Account } from "@/business/entities/user/account.entity";
 import type { IAccount } from "@/business/interfaces/user/account.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { account } from "@/infrastructure/database/schemas";
 
 import type { DbClient } from "../types";
@@ -54,7 +55,7 @@ export class AccountRepository implements IAccount {
         issuer: row.issuer,
         providerId: row.providerId,
         accountId: row.accountId,
-        userId: row.userId,
+        userId: EntityId.create(row.userId),
         accessToken: row.accessToken,
         refreshToken: row.refreshToken,
         idToken: row.idToken,

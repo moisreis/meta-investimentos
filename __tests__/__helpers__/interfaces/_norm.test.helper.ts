@@ -1,5 +1,6 @@
 import { Norm } from "@/business/entities/portfolio/norm.entity";
 import type { INorm } from "@/business/interfaces/portfolio/norm.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
 export const NORM_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
@@ -10,7 +11,7 @@ export const NORM = Norm.create(
   {
     articleNumber: "Art. 12",
     name: "Limite de Concentração",
-    categoryId: CATEGORY_ID,
+    categoryId: EntityId.create(CATEGORY_ID),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),
     targetAllocation: SignedPercentage.create("12"),

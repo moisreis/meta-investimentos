@@ -7,12 +7,15 @@
  *
  * Use {@link Statement.create} to create a valid `Statement` instance.
  */
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { ValidationError } from "@/shared/errors";
+
 interface StatementProps {
-  portfolioId?: string | null;
+  portfolioId?: EntityId | null;
   periodStart: Date;
   periodEnd: Date;
   fileUrl: string;
-  generatedByUserId?: string | null;
+  generatedByUserId?: EntityId | null;
   createdAt?: Date;
 }
 
@@ -39,7 +42,7 @@ interface StatementProps {
  * ```
  */
 export class Statement {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<StatementProps>;
 
   // --------------------------------------
@@ -49,14 +52,14 @@ export class Statement {
   /**
    * Returns the unique identifier of the statement.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
   /**
    * Returns the id of the portfolio the statement belongs to.
    */
-  get portfolioId(): string | null {
+  get portfolioId(): EntityId | null {
     return this.props.portfolioId;
   }
 
@@ -84,7 +87,7 @@ export class Statement {
   /**
    * Returns the id of the user who generated the statement.
    */
-  get generatedByUserId(): string | null {
+  get generatedByUserId(): EntityId | null {
     return this.props.generatedByUserId;
   }
 
@@ -107,7 +110,7 @@ export class Statement {
    * the statement's invariants.
    */
   private constructor(props: Required<StatementProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -127,19 +130,19 @@ export class Statement {
    *
    * @returns A valid `Statement` instance.
    *
-   * @throws {Error} If `props.periodStart` is missing.
-   * @throws {Error} If `props.periodEnd` is missing.
-   * @throws {Error} If `props.fileUrl` is blank.
+   * @throws {ValidationError} If `props.periodStart` is missing.
+   * @throws {ValidationError} If `props.periodEnd` is missing.
+   * @throws {ValidationError} If `props.fileUrl` is blank.
    */
   public static create(props: StatementProps, id?: string): Statement {
     if (!props.periodStart) {
-      throw new Error("Statement must have a period start.");
+      throw new ValidationError("Statement must have a period start.");
     }
     if (!props.periodEnd) {
-      throw new Error("Statement must have a period end.");
+      throw new ValidationError("Statement must have a period end.");
     }
     if (!props.fileUrl || props.fileUrl.trim() === "") {
-      throw new Error("Statement must have a file url.");
+      throw new ValidationError("Statement must have a file url.");
     }
 
     const NOW = new Date();

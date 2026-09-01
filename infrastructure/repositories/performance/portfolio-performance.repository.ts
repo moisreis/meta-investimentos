@@ -2,6 +2,7 @@ import { and, desc, eq, inArray } from "drizzle-orm";
 
 import { PortfolioPerformance } from "@/business/entities/performance/portfolio-performance.entity";
 import type { IPortfolioPerformance } from "@/business/interfaces/performance/portfolio-performance.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
@@ -63,7 +64,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
   ): PortfolioPerformance {
     return PortfolioPerformance.create(
       {
-        portfolioId: row.portfolioId,
+        portfolioId: EntityId.create(row.portfolioId),
         date: row.date,
         quotasHeld: QuotaQuantity.create(row.quotasHeld),
         patrimony: PositiveMoney.create(row.patrimony),

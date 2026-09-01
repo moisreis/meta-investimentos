@@ -2,6 +2,8 @@ import { eq, inArray } from "drizzle-orm";
 
 import { Fund } from "@/business/entities/fund/fund.entity";
 import type { IFund } from "@/business/interfaces/fund/fund.interface";
+import CNPJ from "@/business/value-objects/cnpj.vo";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 import { fund } from "@/infrastructure/database/schemas";
 
@@ -55,7 +57,7 @@ export class FundRepository implements IFund {
   private toEntity(row: typeof fund.$inferSelect): Fund {
     return Fund.create(
       {
-        cnpj: row.cnpj,
+        cnpj: CNPJ.create(row.cnpj),
         name: row.name,
         administrationFee: row.administrationFee
           ? SignedPercentage.create(row.administrationFee)
@@ -63,9 +65,9 @@ export class FundRepository implements IFund {
         performanceFee: row.performanceFee
           ? SignedPercentage.create(row.performanceFee)
           : null,
-        bankId: row.bankId,
-        benchmarkId: row.benchmarkId,
-        categoryId: row.categoryId,
+        bankId: EntityId.create(row.bankId),
+        benchmarkId: row.benchmarkId ? EntityId.create(row.benchmarkId) : null,
+        categoryId: row.categoryId ? EntityId.create(row.categoryId) : null,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
       },
@@ -81,7 +83,7 @@ export class FundRepository implements IFund {
    */
   private toInsert(entity: Fund): typeof fund.$inferInsert {
     return {
-      cnpj: entity.cnpj,
+      cnpj: entity.cnpj.value,
       name: entity.name,
       administrationFee: entity.administrationFee?.value.toString() ?? null,
       performanceFee: entity.performanceFee?.value.toString() ?? null,
@@ -105,7 +107,7 @@ export class FundRepository implements IFund {
    */
   private toUpdate(entity: Fund): Partial<typeof fund.$inferInsert> {
     return {
-      cnpj: entity.cnpj,
+      cnpj: entity.cnpj.value,
       name: entity.name,
       administrationFee: entity.administrationFee?.value.toString() ?? null,
       performanceFee: entity.performanceFee?.value.toString() ?? null,

@@ -48,13 +48,13 @@ describe("IUser", () => {
     it("returns the persisted user", async () => {
       await REPOSITORY.save(USER);
 
-      const FOUND = await REPOSITORY.findByCpf(USER.cpf);
+      const FOUND = await REPOSITORY.findByCpf(USER.cpf.value);
 
       expect(FOUND?.equals(USER)).toBe(true);
     });
 
     it("returns null when no user has the cpf", async () => {
-      expect(await REPOSITORY.findByCpf(USER.cpf)).toBeNull();
+      expect(await REPOSITORY.findByCpf(USER.cpf.value)).toBeNull();
     });
   });
 

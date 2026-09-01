@@ -11,6 +11,7 @@ import {
 
 import { Application } from "@/business/entities/portfolio/application.entity";
 import type { IApplication } from "@/business/interfaces/portfolio/application.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 
@@ -39,7 +40,7 @@ describe("IApplication", () => {
     it("returns all persisted applications for the position", async () => {
       const SECOND_APPLICATION = Application.create(
         {
-          positionId: POSITION_ID,
+          positionId: EntityId.create(POSITION_ID),
           date: new Date("2026-01-20T00:00:00.000Z"),
           amount: PositiveMoney.create("2000.00"),
           quotas: QuotaQuantity.create("24.5"),
@@ -48,7 +49,7 @@ describe("IApplication", () => {
       );
       const OTHER_APPLICATION = Application.create(
         {
-          positionId: OTHER_POSITION_ID,
+          positionId: EntityId.create(OTHER_POSITION_ID),
           date: new Date("2026-01-25T00:00:00.000Z"),
           amount: PositiveMoney.create("500.00"),
           quotas: QuotaQuantity.create("6.123"),
@@ -76,7 +77,7 @@ describe("IApplication", () => {
     it("returns only the applications within the period", async () => {
       const BEFORE = Application.create(
         {
-          positionId: POSITION_ID,
+          positionId: EntityId.create(POSITION_ID),
           date: new Date("2026-01-05T00:00:00.000Z"),
           amount: PositiveMoney.create("100.00"),
           quotas: QuotaQuantity.create("1.2"),
@@ -85,7 +86,7 @@ describe("IApplication", () => {
       );
       const INSIDE = Application.create(
         {
-          positionId: POSITION_ID,
+          positionId: EntityId.create(POSITION_ID),
           date: new Date("2026-01-15T00:00:00.000Z"),
           amount: PositiveMoney.create("300.00"),
           quotas: QuotaQuantity.create("3.5"),
@@ -94,7 +95,7 @@ describe("IApplication", () => {
       );
       const AFTER = Application.create(
         {
-          positionId: POSITION_ID,
+          positionId: EntityId.create(POSITION_ID),
           date: new Date("2026-02-25T00:00:00.000Z"),
           amount: PositiveMoney.create("200.00"),
           quotas: QuotaQuantity.create("2.4"),
@@ -147,7 +148,7 @@ describe("IApplication", () => {
 
       const UPDATED = Application.create(
         {
-          positionId: POSITION_ID,
+          positionId: EntityId.create(POSITION_ID),
           date: APPLICATION_DATE,
           amount: PositiveMoney.create("1500.00"),
           quotas: QuotaQuantity.create("18.75"),

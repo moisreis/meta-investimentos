@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { Position } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import { position } from "@/infrastructure/database/schemas";
 import { PositionRepository } from "@/infrastructure/repositories";
@@ -15,23 +16,32 @@ export const OTHER_POSITION_ID = "3b4c5d6e-7f8a-4b9c-8d0e-1f2a3b4c5d6e";
 export const THIRD_POSITION_ID = "10a1b2c3-4d5e-4f6a-8b7c-9d0e1f2a3b4c";
 
 export const POSITION = Position.create(
-  { portfolioId: PORTFOLIO_ID, fundId: FUND_ID },
+  {
+    portfolioId: EntityId.create(PORTFOLIO_ID),
+    fundId: EntityId.create(FUND_ID),
+  },
   POSITION_ID,
 );
 
 export const OTHER_POSITION = Position.create(
-  { portfolioId: OTHER_PORTFOLIO_ID, fundId: OTHER_FUND_ID },
+  {
+    portfolioId: EntityId.create(OTHER_PORTFOLIO_ID),
+    fundId: EntityId.create(OTHER_FUND_ID),
+  },
   OTHER_POSITION_ID,
 );
 
 export const THIRD_POSITION = Position.create(
-  { portfolioId: PORTFOLIO_ID, fundId: OTHER_FUND_ID },
+  {
+    portfolioId: EntityId.create(PORTFOLIO_ID),
+    fundId: EntityId.create(OTHER_FUND_ID),
+  },
   THIRD_POSITION_ID,
 );
 
 export const FRESH_POSITION = Position.create({
-  portfolioId: PORTFOLIO_ID,
-  fundId: FUND_ID,
+  portfolioId: EntityId.create(PORTFOLIO_ID),
+  fundId: EntityId.create(FUND_ID),
 });
 
 export const UPDATED_POSITION = Position.create(

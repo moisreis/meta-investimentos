@@ -1,7 +1,9 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type PositiveMoney from "@/business/value-objects/positive-money.vo";
 import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import type SignedMoney from "@/business/value-objects/signed-money.vo";
 import type SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties required to create a
@@ -14,7 +16,7 @@ import type SignedPercentage from "@/business/value-objects/signed-percentage.vo
  * `PositionPerformance` instance.
  */
 interface PositionPerformanceProps {
-  positionId: string;
+  positionId: EntityId;
   date: Date;
   quotasHeld: QuotaQuantity;
   patrimony: PositiveMoney;
@@ -48,7 +50,7 @@ interface PositionPerformanceProps {
  * `PositionPerformance` instances are immutable after creation.
  */
 export class PositionPerformance {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<PositionPerformanceProps>;
 
   // --------------------------------------
@@ -58,14 +60,14 @@ export class PositionPerformance {
   /**
    * Returns the unique identifier of the position performance.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
   /**
    * Returns the id of the position the performance belongs to.
    */
-  get positionId(): string {
+  get positionId(): EntityId {
     return this.props.positionId;
   }
 
@@ -172,7 +174,7 @@ export class PositionPerformance {
    * satisfy the position performance's invariants.
    */
   private constructor(props: Required<PositionPerformanceProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -191,50 +193,56 @@ export class PositionPerformance {
    *
    * @returns A valid `PositionPerformance` instance.
    *
-   * @throws {Error} If `props.positionId` is blank.
-   * @throws {Error} If `props.date` is not provided.
-   * @throws {Error} If `props.quotasHeld` is not provided.
-   * @throws {Error} If `props.patrimony` is not provided.
-   * @throws {Error} If `props.applicationTotal` is not provided.
-   * @throws {Error} If `props.redemptionTotal` is not provided.
-   * @throws {Error} If `props.cashFlowNet` is not provided.
-   * @throws {Error} If `props.earnings` is not provided.
-   * @throws {Error} If `props.returnDaily` is not provided.
-   * @throws {Error} If `props.allocation` is not provided.
+   * @throws {ValidationError} If `props.positionId` is blank.
+   * @throws {ValidationError} If `props.date` is not provided.
+   * @throws {ValidationError} If `props.quotasHeld` is not provided.
+   * @throws {ValidationError} If `props.patrimony` is not provided.
+   * @throws {ValidationError} If `props.applicationTotal` is not provided.
+   * @throws {ValidationError} If `props.redemptionTotal` is not provided.
+   * @throws {ValidationError} If `props.cashFlowNet` is not provided.
+   * @throws {ValidationError} If `props.earnings` is not provided.
+   * @throws {ValidationError} If `props.returnDaily` is not provided.
+   * @throws {ValidationError} If `props.allocation` is not provided.
    */
   public static create(
     props: PositionPerformanceProps,
     id?: string,
   ): PositionPerformance {
     if (!props.positionId || props.positionId.trim() === "") {
-      throw new Error("PositionPerformance must have a position id.");
+      throw new ValidationError("PositionPerformance must have a position id.");
     }
     if (!props.date) {
-      throw new Error("PositionPerformance must have a date.");
+      throw new ValidationError("PositionPerformance must have a date.");
     }
     if (!props.quotasHeld) {
-      throw new Error("PositionPerformance must have quotas held.");
+      throw new ValidationError("PositionPerformance must have quotas held.");
     }
     if (!props.patrimony) {
-      throw new Error("PositionPerformance must have patrimony.");
+      throw new ValidationError("PositionPerformance must have patrimony.");
     }
     if (!props.applicationTotal) {
-      throw new Error("PositionPerformance must have an application total.");
+      throw new ValidationError(
+        "PositionPerformance must have an application total.",
+      );
     }
     if (!props.redemptionTotal) {
-      throw new Error("PositionPerformance must have a redemption total.");
+      throw new ValidationError(
+        "PositionPerformance must have a redemption total.",
+      );
     }
     if (!props.cashFlowNet) {
-      throw new Error("PositionPerformance must have cash flow net.");
+      throw new ValidationError("PositionPerformance must have cash flow net.");
     }
     if (!props.earnings) {
-      throw new Error("PositionPerformance must have earnings.");
+      throw new ValidationError("PositionPerformance must have earnings.");
     }
     if (!props.returnDaily) {
-      throw new Error("PositionPerformance must have a daily return.");
+      throw new ValidationError(
+        "PositionPerformance must have a daily return.",
+      );
     }
     if (!props.allocation) {
-      throw new Error("PositionPerformance must have an allocation.");
+      throw new ValidationError("PositionPerformance must have an allocation.");
     }
 
     const NOW = new Date();

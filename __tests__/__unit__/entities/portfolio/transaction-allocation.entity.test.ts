@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import { TransactionAllocation } from "@/business/entities/portfolio/transaction-allocation.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 
 describe("TransactionAllocation.create", () => {
   const VALID_PROPS = {
-    applicationId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
-    withdrawId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+    applicationId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    withdrawId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
     quotasConsumed: QuotaQuantity.create("12.345"),
   };
 
@@ -43,13 +44,19 @@ describe("TransactionAllocation.create", () => {
 
   it("throws when the application id is blank", () => {
     expect(() =>
-      TransactionAllocation.create({ ...VALID_PROPS, applicationId: " " }),
+      TransactionAllocation.create({
+        ...VALID_PROPS,
+        applicationId: " " as unknown as EntityId,
+      }),
     ).toThrow("TransactionAllocation must have an application id.");
   });
 
   it("throws when the withdraw id is blank", () => {
     expect(() =>
-      TransactionAllocation.create({ ...VALID_PROPS, withdrawId: " " }),
+      TransactionAllocation.create({
+        ...VALID_PROPS,
+        withdrawId: " " as unknown as EntityId,
+      }),
     ).toThrow("TransactionAllocation must have a withdrawal id.");
   });
 
@@ -74,8 +81,8 @@ describe("TransactionAllocation.create", () => {
 
 describe("TransactionAllocation.equals", () => {
   const VALID_PROPS = {
-    applicationId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
-    withdrawId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+    applicationId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    withdrawId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
     quotasConsumed: QuotaQuantity.create("12.345"),
   };
   const ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";

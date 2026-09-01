@@ -2,6 +2,7 @@ import { eq, inArray, sql } from "drizzle-orm";
 
 import { TransactionAllocation } from "@/business/entities/portfolio/transaction-allocation.entity";
 import type { ITransactionAllocation } from "@/business/interfaces/portfolio/transaction-allocation.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import { transactionAllocation } from "@/infrastructure/database/schemas";
 
@@ -59,8 +60,8 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
   ): TransactionAllocation {
     return TransactionAllocation.create(
       {
-        applicationId: row.applicationId,
-        withdrawId: row.withdrawId,
+        applicationId: EntityId.create(row.applicationId),
+        withdrawId: EntityId.create(row.withdrawId),
         quotasConsumed: QuotaQuantity.create(row.quotasConsumed),
         createdAt: row.createdAt,
       },

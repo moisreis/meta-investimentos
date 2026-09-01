@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { BenchmarkHistory } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 import { benchmarkHistory } from "@/infrastructure/database/schemas";
 import {
@@ -21,7 +22,7 @@ export const FEBRUARY_HISTORY_DATE = new Date("2026-02-05T00:00:00.000Z");
 
 export const BENCHMARK_HISTORY = BenchmarkHistory.create(
   {
-    benchmarkId: BENCHMARK_ID,
+    benchmarkId: EntityId.create(BENCHMARK_ID),
     date: HISTORY_DATE,
     rate: SignedPercentage.create("1.25"),
   },
@@ -30,7 +31,7 @@ export const BENCHMARK_HISTORY = BenchmarkHistory.create(
 
 export const OTHER_BENCHMARK_HISTORY = BenchmarkHistory.create(
   {
-    benchmarkId: OTHER_BENCHMARK_ID,
+    benchmarkId: EntityId.create(OTHER_BENCHMARK_ID),
     date: FEBRUARY_HISTORY_DATE,
     rate: SignedPercentage.create("-0.5"),
   },
@@ -39,7 +40,7 @@ export const OTHER_BENCHMARK_HISTORY = BenchmarkHistory.create(
 
 export const EXTERNAL_BENCHMARK_HISTORY = BenchmarkHistory.create(
   {
-    benchmarkId: BENCHMARK_ID,
+    benchmarkId: EntityId.create(BENCHMARK_ID),
     date: HISTORY_DUPLICATE_DATE,
     rate: SignedPercentage.create("0.75"),
   },
@@ -48,7 +49,7 @@ export const EXTERNAL_BENCHMARK_HISTORY = BenchmarkHistory.create(
 
 export const PERIOD_OUTSIDE_HISTORY = BenchmarkHistory.create(
   {
-    benchmarkId: BENCHMARK_ID,
+    benchmarkId: EntityId.create(BENCHMARK_ID),
     date: new Date("2026-03-01T00:00:00.000Z"),
     rate: SignedPercentage.create("2.0"),
   },
@@ -57,7 +58,7 @@ export const PERIOD_OUTSIDE_HISTORY = BenchmarkHistory.create(
 
 export const UPDATED_BENCHMARK_HISTORY = BenchmarkHistory.create(
   {
-    benchmarkId: BENCHMARK_ID,
+    benchmarkId: EntityId.create(BENCHMARK_ID),
     date: HISTORY_DATE,
     rate: SignedPercentage.create("1.5"),
   },
@@ -65,7 +66,7 @@ export const UPDATED_BENCHMARK_HISTORY = BenchmarkHistory.create(
 );
 
 export const FRESH_BENCHMARK_HISTORY = BenchmarkHistory.create({
-  benchmarkId: BENCHMARK_ID,
+  benchmarkId: EntityId.create(BENCHMARK_ID),
   date: new Date("2026-04-05T00:00:00.000Z"),
   rate: SignedPercentage.create("1.1"),
 });

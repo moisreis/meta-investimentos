@@ -1,3 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { ValidationError } from "@/shared/errors";
+
 /**
  * Represents the properties required to create a {@link BankAccount}.
  *
@@ -7,8 +10,8 @@
  * instance.
  */
 interface BankAccountProps {
-  portfolioId: string;
-  bankId: string;
+  portfolioId: EntityId;
+  bankId: EntityId;
   agency: string;
   accountNumber: string;
   createdAt?: Date;
@@ -40,7 +43,7 @@ interface BankAccountProps {
  * ```
  */
 export class BankAccount {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<BankAccountProps>;
 
   // --------------------------------------
@@ -50,21 +53,21 @@ export class BankAccount {
   /**
    * Returns the unique identifier of the bank account.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
   /**
    * Returns the id of the portfolio the bank account belongs to.
    */
-  get portfolioId(): string {
+  get portfolioId(): EntityId {
     return this.props.portfolioId;
   }
 
   /**
    * Returns the id of the bank the account belongs to.
    */
-  get bankId(): string {
+  get bankId(): EntityId {
     return this.props.bankId;
   }
 
@@ -108,7 +111,7 @@ export class BankAccount {
    * the bank account's invariants.
    */
   private constructor(props: Required<BankAccountProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -126,23 +129,23 @@ export class BankAccount {
    *
    * @returns A valid `BankAccount` instance.
    *
-   * @throws {Error} If `props.portfolioId` is blank.
-   * @throws {Error} If `props.bankId` is blank.
-   * @throws {Error} If `props.agency` is blank.
-   * @throws {Error} If `props.accountNumber` is blank.
+   * @throws {ValidationError} If `props.portfolioId` is blank.
+   * @throws {ValidationError} If `props.bankId` is blank.
+   * @throws {ValidationError} If `props.agency` is blank.
+   * @throws {ValidationError} If `props.accountNumber` is blank.
    */
   public static create(props: BankAccountProps, id?: string): BankAccount {
     if (!props.portfolioId || props.portfolioId.trim() === "") {
-      throw new Error("BankAccount must have a portfolio id.");
+      throw new ValidationError("BankAccount must have a portfolio id.");
     }
     if (!props.bankId || props.bankId.trim() === "") {
-      throw new Error("BankAccount must have a bank id.");
+      throw new ValidationError("BankAccount must have a bank id.");
     }
     if (!props.agency || props.agency.trim() === "") {
-      throw new Error("BankAccount must have an agency.");
+      throw new ValidationError("BankAccount must have an agency.");
     }
     if (!props.accountNumber || props.accountNumber.trim() === "") {
-      throw new Error("BankAccount must have an account number.");
+      throw new ValidationError("BankAccount must have an account number.");
     }
 
     const NOW = new Date();

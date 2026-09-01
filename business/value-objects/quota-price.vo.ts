@@ -1,4 +1,5 @@
 import Decimal from "decimal.js";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents a non-negative quota price.
@@ -90,8 +91,8 @@ class QuotaPrice {
    * @param value - The decimal-compatible quota price to create.
    * @returns A valid `QuotaPrice` instance.
    *
-   * @throws {Error} If `value` is `undefined` or `null`.
-   * @throws {Error} If `value` is less than `0`.
+   * @throws {ValidationError} If `value` is `undefined` or `null`.
+   * @throws {ValidationError} If `value` is less than `0`.
    *
    * @example
    * ```ts
@@ -111,13 +112,15 @@ class QuotaPrice {
    */
   public static create(value: Decimal.Value): QuotaPrice {
     if (value === undefined || value === null) {
-      throw new Error("`QuotaPrice` must be defined.");
+      throw new ValidationError("`QuotaPrice` must be defined.");
     }
 
     const DECIMAL_VALUE = new Decimal(value);
 
     if (DECIMAL_VALUE.lessThan(0)) {
-      throw new Error("`QuotaPrice` must be equal or greater than 0.");
+      throw new ValidationError(
+        "`QuotaPrice` must be equal or greater than 0.",
+      );
     }
 
     return new QuotaPrice({

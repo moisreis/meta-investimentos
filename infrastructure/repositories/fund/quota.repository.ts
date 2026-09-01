@@ -2,6 +2,7 @@ import { and, desc, eq, gte, inArray, lte } from "drizzle-orm";
 
 import { Quota } from "@/business/entities/fund/quota.entity";
 import type { IQuota } from "@/business/interfaces/fund/quota.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import QuotaPrice from "@/business/value-objects/quota-price.vo";
 import { quota } from "@/infrastructure/database/schemas";
 
@@ -56,7 +57,7 @@ export class QuotaRepository implements IQuota {
   private toEntity(row: typeof quota.$inferSelect): Quota {
     return Quota.create(
       {
-        fundId: row.fundId,
+        fundId: EntityId.create(row.fundId),
         date: row.date,
         price: QuotaPrice.create(row.price),
         createdAt: row.createdAt,

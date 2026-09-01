@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import { BenchmarkHistory } from "@/business/entities/benchmark/benchmark-history.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
 describe("BenchmarkHistory.create", () => {
   const DATE = new Date("2026-01-01T00:00:00.000Z");
   const VALID_PROPS = {
-    benchmarkId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    benchmarkId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     date: DATE,
     rate: SignedPercentage.create("12.345"),
   };
@@ -42,7 +43,10 @@ describe("BenchmarkHistory.create", () => {
 
   it("throws when the benchmark id is blank", () => {
     expect(() =>
-      BenchmarkHistory.create({ ...VALID_PROPS, benchmarkId: " " }),
+      BenchmarkHistory.create({
+        ...VALID_PROPS,
+        benchmarkId: " " as unknown as EntityId,
+      }),
     ).toThrow("BenchmarkHistory must have a benchmark id.");
   });
 
@@ -77,7 +81,7 @@ describe("BenchmarkHistory.create", () => {
 
 describe("BenchmarkHistory.equals", () => {
   const VALID_PROPS = {
-    benchmarkId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    benchmarkId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     date: new Date("2026-01-01T00:00:00.000Z"),
     rate: SignedPercentage.create("12.345"),
   };

@@ -66,13 +66,13 @@ describe("FundRepository", () => {
     it("returns the fund with the cnpj", async () => {
       await seedFunds();
 
-      const FOUND = await newFundRepository().findByCnpj(FUND.cnpj);
+      const FOUND = await newFundRepository().findByCnpj(FUND.cnpj.value);
 
       expect(FOUND?.equals(FUND)).toBe(true);
     });
 
     it("returns null when no fund has the cnpj", async () => {
-      expect(await newFundRepository().findByCnpj(FUND.cnpj)).toBeNull();
+      expect(await newFundRepository().findByCnpj(FUND.cnpj.value)).toBeNull();
     });
   });
 

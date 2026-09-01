@@ -1,5 +1,7 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type PositiveMoney from "@/business/value-objects/positive-money.vo";
 import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties required to create an {@link Application}.
@@ -10,12 +12,12 @@ import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
  * Use {@link Application.create} to create a valid `Application` instance.
  */
 interface ApplicationProps {
-  positionId: string;
+  positionId: EntityId;
   date: Date;
   amount: PositiveMoney;
   quotas: QuotaQuantity;
   reversedAt?: Date | null;
-  reversedByUserId?: string | null;
+  reversedByUserId?: EntityId | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -45,7 +47,7 @@ interface ApplicationProps {
  * ```
  */
 export class Application {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<ApplicationProps>;
 
   // --------------------------------------
@@ -55,14 +57,14 @@ export class Application {
   /**
    * Returns the unique identifier of the application.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
   /**
    * Returns the id of the position the application belongs to.
    */
-  get positionId(): string {
+  get positionId(): EntityId {
     return this.props.positionId;
   }
 
@@ -97,7 +99,7 @@ export class Application {
   /**
    * Returns the id of the user who reversed the application, if any.
    */
-  get reversedByUserId(): string | null {
+  get reversedByUserId(): EntityId | null {
     return this.props.reversedByUserId;
   }
 
@@ -127,7 +129,7 @@ export class Application {
    * the application's invariants.
    */
   private constructor(props: Required<ApplicationProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -147,23 +149,23 @@ export class Application {
    *
    * @returns A valid `Application` instance.
    *
-   * @throws {Error} If `props.positionId` is blank.
-   * @throws {Error} If `props.date` is missing.
-   * @throws {Error} If `props.amount` is missing.
-   * @throws {Error} If `props.quotas` is missing.
+   * @throws {ValidationError} If `props.positionId` is blank.
+   * @throws {ValidationError} If `props.date` is missing.
+   * @throws {ValidationError} If `props.amount` is missing.
+   * @throws {ValidationError} If `props.quotas` is missing.
    */
   public static create(props: ApplicationProps, id?: string): Application {
     if (!props.positionId || props.positionId.trim() === "") {
-      throw new Error("Application must have a position id.");
+      throw new ValidationError("Application must have a position id.");
     }
     if (!props.date) {
-      throw new Error("Application must have a date.");
+      throw new ValidationError("Application must have a date.");
     }
     if (!props.amount) {
-      throw new Error("Application must have an amount.");
+      throw new ValidationError("Application must have an amount.");
     }
     if (!props.quotas) {
-      throw new Error("Application must have quotas.");
+      throw new ValidationError("Application must have quotas.");
     }
 
     const NOW = new Date();

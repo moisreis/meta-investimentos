@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { Norm } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 import { norm } from "@/infrastructure/database/schemas";
 import {
@@ -15,7 +16,7 @@ export const NORM = Norm.create(
   {
     articleNumber: "Art. 1",
     name: "Política de Investimento",
-    categoryId: CATEGORY_ID,
+    categoryId: EntityId.create(CATEGORY_ID),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),
     targetAllocation: SignedPercentage.create("12"),
@@ -27,7 +28,7 @@ export const OTHER_NORM = Norm.create(
   {
     articleNumber: "Art. 2",
     name: "Norma Renda Fixa",
-    categoryId: OTHER_CATEGORY_ID,
+    categoryId: EntityId.create(OTHER_CATEGORY_ID),
     minAllocation: SignedPercentage.create("10"),
     maxAllocation: SignedPercentage.create("30"),
     targetAllocation: SignedPercentage.create("18"),
@@ -50,7 +51,7 @@ export const UPDATED_NORM = Norm.create(
 export const FRESH_NORM = Norm.create({
   articleNumber: "Art. 3",
   name: "Norma Multimercado",
-  categoryId: CATEGORY_ID,
+  categoryId: EntityId.create(CATEGORY_ID),
   minAllocation: SignedPercentage.create("0"),
   maxAllocation: SignedPercentage.create("25"),
   targetAllocation: SignedPercentage.create("12"),

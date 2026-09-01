@@ -8,6 +8,8 @@ import {
 
 import { Fund } from "@/business/entities/fund/fund.entity";
 import type { IFund } from "@/business/interfaces/fund/fund.interface";
+import CNPJ from "@/business/value-objects/cnpj.vo";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("IFund", () => {
   let REPOSITORY: IFund;
@@ -34,13 +36,13 @@ describe("IFund", () => {
     it("returns the persisted fund matching the cnpj", async () => {
       await REPOSITORY.save(FUND);
 
-      const FOUND = await REPOSITORY.findByCnpj(FUND.cnpj);
+      const FOUND = await REPOSITORY.findByCnpj(FUND.cnpj.value);
 
       expect(FOUND?.equals(FUND)).toBe(true);
     });
 
     it("returns null when the fund does not exist", async () => {
-      expect(await REPOSITORY.findByCnpj(FUND.cnpj)).toBeNull();
+      expect(await REPOSITORY.findByCnpj(FUND.cnpj.value)).toBeNull();
     });
   });
 
@@ -58,9 +60,9 @@ describe("IFund", () => {
 
       const UPDATED_FUND = Fund.create(
         {
-          cnpj: "41142260000189",
+          cnpj: CNPJ.create("41142260000189"),
           name: "Fundo Teste Atualizado",
-          bankId: "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d",
+          bankId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
         },
         FUND_ID,
       );

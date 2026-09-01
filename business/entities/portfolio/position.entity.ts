@@ -1,4 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type PositiveMoney from "@/business/value-objects/positive-money.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties required to create a {@link Position}.
@@ -9,8 +11,8 @@ import type PositiveMoney from "@/business/value-objects/positive-money.vo";
  * Use {@link Position.create} to create a valid `Position` instance.
  */
 interface PositionProps {
-  portfolioId: string;
-  fundId: string;
+  portfolioId: EntityId;
+  fundId: EntityId;
   initialBalance?: PositiveMoney | null;
   initialBalanceDate?: Date | null;
   createdAt?: Date;
@@ -38,7 +40,7 @@ interface PositionProps {
  * ```
  */
 export class Position {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<PositionProps>;
 
   // --------------------------------------
@@ -48,21 +50,21 @@ export class Position {
   /**
    * Returns the unique identifier of the position.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
   /**
    * Returns the id of the portfolio the position belongs to.
    */
-  get portfolioId(): string {
+  get portfolioId(): EntityId {
     return this.props.portfolioId;
   }
 
   /**
    * Returns the id of the fund held by the position.
    */
-  get fundId(): string {
+  get fundId(): EntityId {
     return this.props.fundId;
   }
 
@@ -106,7 +108,7 @@ export class Position {
    * position's invariants.
    */
   private constructor(props: Required<PositionProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -126,15 +128,15 @@ export class Position {
    *
    * @returns A valid `Position` instance.
    *
-   * @throws {Error} If `props.portfolioId` is blank.
-   * @throws {Error} If `props.fundId` is blank.
+   * @throws {ValidationError} If `props.portfolioId` is blank.
+   * @throws {ValidationError} If `props.fundId` is blank.
    */
   public static create(props: PositionProps, id?: string): Position {
     if (!props.portfolioId || props.portfolioId.trim() === "") {
-      throw new Error("Position must have a portfolio id.");
+      throw new ValidationError("Position must have a portfolio id.");
     }
     if (!props.fundId || props.fundId.trim() === "") {
-      throw new Error("Position must have a fund id.");
+      throw new ValidationError("Position must have a fund id.");
     }
 
     const NOW = new Date();

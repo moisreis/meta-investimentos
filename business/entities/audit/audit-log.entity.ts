@@ -6,12 +6,15 @@
  *
  * Use {@link AuditLog.create} to create a valid `AuditLog` instance.
  */
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { ValidationError } from "@/shared/errors";
+
 interface AuditLogProps {
   entity: string;
-  entityId: string;
+  entityId: EntityId;
   action: string;
   changes?: Record<string, unknown> | null;
-  userId?: string | null;
+  userId?: EntityId | null;
   createdAt?: Date;
 }
 
@@ -38,7 +41,7 @@ interface AuditLogProps {
  * ```
  */
 export class AuditLog {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<AuditLogProps>;
 
   // --------------------------------------
@@ -48,7 +51,7 @@ export class AuditLog {
   /**
    * Returns the unique identifier of the audit log.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
@@ -62,7 +65,7 @@ export class AuditLog {
   /**
    * Returns the id of the entity the audit log refers to.
    */
-  get entityId(): string {
+  get entityId(): EntityId {
     return this.props.entityId;
   }
 
@@ -83,7 +86,7 @@ export class AuditLog {
   /**
    * Returns the id of the user who performed the action.
    */
-  get userId(): string | null {
+  get userId(): EntityId | null {
     return this.props.userId;
   }
 
@@ -106,7 +109,7 @@ export class AuditLog {
    * audit log's invariants.
    */
   private constructor(props: Required<AuditLogProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -125,19 +128,19 @@ export class AuditLog {
    *
    * @returns A valid `AuditLog` instance.
    *
-   * @throws {Error} If `props.entity` is blank.
-   * @throws {Error} If `props.entityId` is blank.
-   * @throws {Error} If `props.action` is blank.
+   * @throws {ValidationError} If `props.entity` is blank.
+   * @throws {ValidationError} If `props.entityId` is blank.
+   * @throws {ValidationError} If `props.action` is blank.
    */
   public static create(props: AuditLogProps, id?: string): AuditLog {
     if (!props.entity || props.entity.trim() === "") {
-      throw new Error("AuditLog must have an entity.");
+      throw new ValidationError("AuditLog must have an entity.");
     }
     if (!props.entityId || props.entityId.trim() === "") {
-      throw new Error("AuditLog must have an entity id.");
+      throw new ValidationError("AuditLog must have an entity id.");
     }
     if (!props.action || props.action.trim() === "") {
-      throw new Error("AuditLog must have an action.");
+      throw new ValidationError("AuditLog must have an action.");
     }
 
     const NOW = new Date();

@@ -1,5 +1,6 @@
 import { User } from "@/business/entities/user/user.entity";
 import type { IUser } from "@/business/interfaces/user/user.interface";
+import CPF from "@/business/value-objects/cpf.vo";
 
 export const USER_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
 
@@ -9,7 +10,7 @@ export const USER = User.create(
     email: "jose@example.com",
     firstName: "José",
     lastName: "da Silva",
-    cpf: "24301457030",
+    cpf: CPF.create("52998224725"),
   },
   USER_ID,
 );
@@ -30,7 +31,7 @@ export function createInMemoryUserRepository(): IUser {
     },
     async findByCpf(cpf: string): Promise<User | null> {
       for (const ROW of ROWS.values()) {
-        if (ROW.cpf === cpf) return ROW;
+        if (ROW.cpf.value === cpf) return ROW;
       }
 
       return null;

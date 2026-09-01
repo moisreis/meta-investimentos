@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { Quota } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import QuotaPrice from "@/business/value-objects/quota-price.vo";
 import { quota } from "@/infrastructure/database/schemas";
 import { FUND_ID, OTHER_FUND_ID, seedFundById } from "./_fund.seed";
@@ -15,7 +16,7 @@ export const FEBRUARY_QUOTA_DATE = new Date("2026-02-05T00:00:00.000Z");
 
 export const QUOTA = Quota.create(
   {
-    fundId: FUND_ID,
+    fundId: EntityId.create(FUND_ID),
     date: QUOTA_DATE,
     price: QuotaPrice.create("1000.00"),
   },
@@ -24,7 +25,7 @@ export const QUOTA = Quota.create(
 
 export const OTHER_QUOTA = Quota.create(
   {
-    fundId: OTHER_FUND_ID,
+    fundId: EntityId.create(OTHER_FUND_ID),
     date: FEBRUARY_QUOTA_DATE,
     price: QuotaPrice.create("500.00"),
   },
@@ -33,7 +34,7 @@ export const OTHER_QUOTA = Quota.create(
 
 export const EXTERNAL_QUOTA = Quota.create(
   {
-    fundId: FUND_ID,
+    fundId: EntityId.create(FUND_ID),
     date: QUOTA_DUPLICATE_DATE,
     price: QuotaPrice.create("1010.50"),
   },
@@ -42,7 +43,7 @@ export const EXTERNAL_QUOTA = Quota.create(
 
 export const PERIOD_OUTSIDE_QUOTA = Quota.create(
   {
-    fundId: FUND_ID,
+    fundId: EntityId.create(FUND_ID),
     date: new Date("2026-03-01T00:00:00.000Z"),
     price: QuotaPrice.create("1020.00"),
   },
@@ -51,7 +52,7 @@ export const PERIOD_OUTSIDE_QUOTA = Quota.create(
 
 export const UPDATED_QUOTA = Quota.create(
   {
-    fundId: FUND_ID,
+    fundId: EntityId.create(FUND_ID),
     date: QUOTA_DATE,
     price: QuotaPrice.create("1050.00"),
   },
@@ -59,7 +60,7 @@ export const UPDATED_QUOTA = Quota.create(
 );
 
 export const FRESH_QUOTA = Quota.create({
-  fundId: FUND_ID,
+  fundId: EntityId.create(FUND_ID),
   date: new Date("2026-04-05T00:00:00.000Z"),
   price: QuotaPrice.create("1030.00"),
 });

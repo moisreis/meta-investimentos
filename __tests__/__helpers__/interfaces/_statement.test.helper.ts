@@ -1,5 +1,6 @@
 import { Statement } from "@/business/entities/report/statement.entity";
 import type { IStatement } from "@/business/interfaces/report/statement.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 export const STATEMENT_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
 export const PORTFOLIO_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
@@ -9,11 +10,11 @@ export const PERIOD_END = new Date("2026-07-31T00:00:00.000Z");
 
 export const STATEMENT = Statement.create(
   {
-    portfolioId: PORTFOLIO_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
     periodStart: PERIOD_START,
     periodEnd: PERIOD_END,
     fileUrl: "https://example.com/statements/july.pdf",
-    generatedByUserId: USER_ID,
+    generatedByUserId: EntityId.create(USER_ID),
   },
   STATEMENT_ID,
 );

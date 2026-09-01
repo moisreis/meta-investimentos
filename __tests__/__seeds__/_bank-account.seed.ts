@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { BankAccount } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { bankAccount } from "@/infrastructure/database/schemas";
 import { BANK_ID, OTHER_BANK_ID, seedBankById } from "./_bank.seed";
 import {
@@ -14,8 +15,8 @@ export const THIRD_BANK_ACCOUNT_ID = "3456789a-bc0d-4efa-b234-56789abcde0f";
 
 export const BANK_ACCOUNT = BankAccount.create(
   {
-    portfolioId: PORTFOLIO_ID,
-    bankId: BANK_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
+    bankId: EntityId.create(BANK_ID),
     agency: "0001",
     accountNumber: "12345-6",
   },
@@ -24,8 +25,8 @@ export const BANK_ACCOUNT = BankAccount.create(
 
 export const OTHER_BANK_ACCOUNT = BankAccount.create(
   {
-    portfolioId: OTHER_PORTFOLIO_ID,
-    bankId: OTHER_BANK_ID,
+    portfolioId: EntityId.create(OTHER_PORTFOLIO_ID),
+    bankId: EntityId.create(OTHER_BANK_ID),
     agency: "0002",
     accountNumber: "67890-1",
   },
@@ -34,8 +35,8 @@ export const OTHER_BANK_ACCOUNT = BankAccount.create(
 
 export const THIRD_BANK_ACCOUNT = BankAccount.create(
   {
-    portfolioId: PORTFOLIO_ID,
-    bankId: OTHER_BANK_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
+    bankId: EntityId.create(OTHER_BANK_ID),
     agency: "0003",
     accountNumber: "11111-2",
   },
@@ -44,8 +45,8 @@ export const THIRD_BANK_ACCOUNT = BankAccount.create(
 
 export const UPDATED_BANK_ACCOUNT = BankAccount.create(
   {
-    portfolioId: PORTFOLIO_ID,
-    bankId: BANK_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
+    bankId: EntityId.create(BANK_ID),
     agency: "0001",
     accountNumber: "54321-0",
   },
@@ -53,8 +54,8 @@ export const UPDATED_BANK_ACCOUNT = BankAccount.create(
 );
 
 export const FRESH_BANK_ACCOUNT = BankAccount.create({
-  portfolioId: PORTFOLIO_ID,
-  bankId: BANK_ID,
+  portfolioId: EntityId.create(PORTFOLIO_ID),
+  bankId: EntityId.create(BANK_ID),
   agency: "0004",
   accountNumber: "99999-9",
 });

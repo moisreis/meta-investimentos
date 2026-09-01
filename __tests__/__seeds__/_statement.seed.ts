@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { Statement } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { statement } from "@/infrastructure/database/schemas";
 import {
   OTHER_PORTFOLIO_ID,
@@ -14,54 +15,54 @@ export const THIRD_STATEMENT_ID = "4708192a-3c4d-4e2f-9a3b-4c5d6e7f8091";
 
 export const STATEMENT = Statement.create(
   {
-    portfolioId: PORTFOLIO_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
     periodStart: new Date("2026-01-01T00:00:00.000Z"),
     periodEnd: new Date("2026-01-31T00:00:00.000Z"),
     fileUrl: "https://example.com/statements/fia-january.pdf",
-    generatedByUserId: USER_ID,
+    generatedByUserId: EntityId.create(USER_ID),
   },
   STATEMENT_ID,
 );
 
 export const OTHER_STATEMENT = Statement.create(
   {
-    portfolioId: OTHER_PORTFOLIO_ID,
+    portfolioId: EntityId.create(OTHER_PORTFOLIO_ID),
     periodStart: new Date("2026-02-01T00:00:00.000Z"),
     periodEnd: new Date("2026-02-28T00:00:00.000Z"),
     fileUrl: "https://example.com/statements/rf-february.pdf",
-    generatedByUserId: USER_ID,
+    generatedByUserId: EntityId.create(USER_ID),
   },
   OTHER_STATEMENT_ID,
 );
 
 export const THIRD_STATEMENT = Statement.create(
   {
-    portfolioId: PORTFOLIO_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
     periodStart: new Date("2026-03-01T00:00:00.000Z"),
     periodEnd: new Date("2026-03-31T00:00:00.000Z"),
     fileUrl: "https://example.com/statements/fia-march.pdf",
-    generatedByUserId: OTHER_USER_ID,
+    generatedByUserId: EntityId.create(OTHER_USER_ID),
   },
   THIRD_STATEMENT_ID,
 );
 
 export const UPDATED_STATEMENT = Statement.create(
   {
-    portfolioId: PORTFOLIO_ID,
+    portfolioId: EntityId.create(PORTFOLIO_ID),
     periodStart: STATEMENT.periodStart,
     periodEnd: STATEMENT.periodEnd,
     fileUrl: "https://example.com/statements/fia-january-v2.pdf",
-    generatedByUserId: USER_ID,
+    generatedByUserId: EntityId.create(USER_ID),
   },
   STATEMENT_ID,
 );
 
 export const FRESH_STATEMENT = Statement.create({
-  portfolioId: PORTFOLIO_ID,
+  portfolioId: EntityId.create(PORTFOLIO_ID),
   periodStart: new Date("2026-04-01T00:00:00.000Z"),
   periodEnd: new Date("2026-04-30T00:00:00.000Z"),
   fileUrl: "https://example.com/statements/fia-april.pdf",
-  generatedByUserId: USER_ID,
+  generatedByUserId: EntityId.create(USER_ID),
 });
 
 export async function seedStatements(): Promise<Statement[]> {

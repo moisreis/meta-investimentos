@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 
 import { Norm } from "@/business/entities/portfolio/norm.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
 describe("Norm.create", () => {
   const VALID_PROPS = {
     articleNumber: "Art. 12",
     name: "Limite de Concentração",
-    categoryId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    categoryId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),
     targetAllocation: SignedPercentage.create("12"),
@@ -62,9 +63,9 @@ describe("Norm.create", () => {
   });
 
   it("throws when the category id is blank", () => {
-    expect(() => Norm.create({ ...VALID_PROPS, categoryId: " " })).toThrow(
-      "Norm must have a category id.",
-    );
+    expect(() =>
+      Norm.create({ ...VALID_PROPS, categoryId: " " as unknown as EntityId }),
+    ).toThrow("Norm must have a category id.");
   });
 
   it("throws when the minimum allocation is missing", () => {
@@ -104,7 +105,7 @@ describe("Norm.equals", () => {
   const VALID_PROPS = {
     articleNumber: "Art. 12",
     name: "Limite de Concentração",
-    categoryId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+    categoryId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),
     targetAllocation: SignedPercentage.create("12"),

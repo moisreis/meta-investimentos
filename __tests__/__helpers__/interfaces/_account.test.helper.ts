@@ -1,5 +1,6 @@
 import { Account } from "@/business/entities/user/account.entity";
 import type { IAccount } from "@/business/interfaces/user/account.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 export const ACCOUNT_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
 export const OTHER_ACCOUNT_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
@@ -11,7 +12,7 @@ export const ACCOUNT = Account.create(
     issuer: "github",
     providerId: "github",
     accountId: "octocat",
-    userId: USER_ID,
+    userId: EntityId.create(USER_ID),
   },
   ACCOUNT_ID,
 );
@@ -21,7 +22,7 @@ export const OTHER_ACCOUNT = Account.create(
     issuer: "github",
     providerId: "github",
     accountId: "octodog",
-    userId: OTHER_USER_ID,
+    userId: EntityId.create(OTHER_USER_ID),
   },
   OTHER_ACCOUNT_ID,
 );

@@ -10,6 +10,7 @@ import {
 
 import { Norm } from "@/business/entities/portfolio/norm.entity";
 import type { INorm } from "@/business/interfaces/portfolio/norm.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
 describe("INorm", () => {
@@ -39,7 +40,7 @@ describe("INorm", () => {
         {
           articleNumber: "Art. 15",
           name: "Limite de Exposição",
-          categoryId: CATEGORY_ID,
+          categoryId: EntityId.create(CATEGORY_ID),
           minAllocation: SignedPercentage.create("3"),
           maxAllocation: SignedPercentage.create("30"),
           targetAllocation: SignedPercentage.create("15"),
@@ -50,7 +51,7 @@ describe("INorm", () => {
         {
           articleNumber: "Art. 20",
           name: "Limite de Derivativos",
-          categoryId: OTHER_CATEGORY_ID,
+          categoryId: EntityId.create(OTHER_CATEGORY_ID),
           minAllocation: SignedPercentage.create("0"),
           maxAllocation: SignedPercentage.create("15"),
           targetAllocation: SignedPercentage.create("8"),
@@ -90,7 +91,7 @@ describe("INorm", () => {
         {
           articleNumber: "Art. 12",
           name: "Limite de Concentração Revisado",
-          categoryId: CATEGORY_ID,
+          categoryId: EntityId.create(CATEGORY_ID),
           minAllocation: SignedPercentage.create("5"),
           maxAllocation: SignedPercentage.create("25"),
           targetAllocation: SignedPercentage.create("15"),

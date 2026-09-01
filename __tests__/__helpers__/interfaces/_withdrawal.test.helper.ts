@@ -1,5 +1,6 @@
 import { Withdrawal } from "@/business/entities/portfolio/withdrawal.entity";
 import type { IWithdrawal } from "@/business/interfaces/portfolio/withdrawal.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 
@@ -10,7 +11,7 @@ export const WITHDRAWAL_DATE = new Date("2026-01-15T00:00:00.000Z");
 
 export const WITHDRAWAL = Withdrawal.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: WITHDRAWAL_DATE,
     amount: PositiveMoney.create("500.00"),
     quotas: QuotaQuantity.create("6.123"),

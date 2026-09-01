@@ -2,6 +2,7 @@ import { eq, inArray } from "drizzle-orm";
 
 import { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
 import type { IPortfolio } from "@/business/interfaces/portfolio/portfolio.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 import { portfolio } from "@/infrastructure/database/schemas";
 
@@ -57,7 +58,7 @@ export class PortfolioRepository implements IPortfolio {
       {
         acronym: row.acronym,
         name: row.name,
-        userId: row.userId,
+        userId: EntityId.create(row.userId),
         annualInterestRate: SignedPercentage.create(row.annualInterestRate),
         minAllocation: SignedPercentage.create(row.minAllocation),
         maxAllocation: SignedPercentage.create(row.maxAllocation),

@@ -1,5 +1,6 @@
 import { Session } from "@/business/entities/user/session.entity";
 import type { ISession } from "@/business/interfaces/user/session.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 export const SESSION_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
 export const OTHER_SESSION_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
@@ -9,7 +10,7 @@ export const EXPIRES_AT = new Date("2026-02-01T00:00:00.000Z");
 
 export const SESSION = Session.create(
   {
-    userId: USER_ID,
+    userId: EntityId.create(USER_ID),
     token: "session-token",
     expiresAt: EXPIRES_AT,
   },
@@ -18,7 +19,7 @@ export const SESSION = Session.create(
 
 export const OTHER_SESSION = Session.create(
   {
-    userId: OTHER_USER_ID,
+    userId: EntityId.create(OTHER_USER_ID),
     token: "other-session-token",
     expiresAt: EXPIRES_AT,
   },

@@ -1,4 +1,5 @@
 import Decimal from "decimal.js";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents a non-negative quota quantity.
@@ -90,8 +91,8 @@ class QuotaQuantity {
    * @param value - The decimal-compatible quota quantity to create.
    * @returns A valid `QuotaQuantity` instance.
    *
-   * @throws {Error} If `value` is `undefined` or `null`.
-   * @throws {Error} If `value` is less than `0`.
+   * @throws {ValidationError} If `value` is `undefined` or `null`.
+   * @throws {ValidationError} If `value` is less than `0`.
    *
    * @example
    * ```ts
@@ -111,13 +112,15 @@ class QuotaQuantity {
    */
   public static create(value: Decimal.Value): QuotaQuantity {
     if (value === undefined || value === null) {
-      throw new Error("`QuotaQuantity` must be defined.");
+      throw new ValidationError("`QuotaQuantity` must be defined.");
     }
 
     const decimalValue = new Decimal(value);
 
     if (decimalValue.lessThan(0)) {
-      throw new Error("`QuotaQuantity` must be equal or greater than 0.");
+      throw new ValidationError(
+        "`QuotaQuantity` must be equal or greater than 0.",
+      );
     }
 
     return new QuotaQuantity({ value: decimalValue.toDecimalPlaces(6) });

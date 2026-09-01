@@ -1,6 +1,7 @@
 import { and, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { Withdrawal } from "@/business/entities/portfolio/withdrawal.entity";
 import type { IWithdrawal } from "@/business/interfaces/portfolio/withdrawal.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import { withdrawal } from "@/infrastructure/database/schemas";
@@ -77,12 +78,14 @@ export class WithdrawalRepository implements IWithdrawal {
   private toEntity(row: typeof withdrawal.$inferSelect): Withdrawal {
     return Withdrawal.create(
       {
-        positionId: row.positionId,
+        positionId: EntityId.create(row.positionId),
         date: row.date,
         amount: PositiveMoney.create(row.amount),
         quotas: QuotaQuantity.create(row.quotas),
         reversedAt: row.reversedAt,
-        reversedByUserId: row.reversedByUserId,
+        reversedByUserId: row.reversedByUserId
+          ? EntityId.create(row.reversedByUserId)
+          : null,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
       },

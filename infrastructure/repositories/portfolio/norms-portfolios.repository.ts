@@ -2,6 +2,7 @@ import { and, eq, inArray } from "drizzle-orm";
 
 import { NormsPortfolios } from "@/business/entities/portfolio/norms-portfolios.entity";
 import type { INormsPortfolios } from "@/business/interfaces/portfolio/norms-portfolios.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 import { normsPortfolios } from "@/infrastructure/database/schemas";
 
@@ -58,8 +59,8 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    */
   private toEntity(row: typeof normsPortfolios.$inferSelect): NormsPortfolios {
     return NormsPortfolios.create({
-      normId: row.normId,
-      portfolioId: row.portfolioId,
+      normId: EntityId.create(row.normId),
+      portfolioId: EntityId.create(row.portfolioId),
       minAllocation: SignedPercentage.create(row.minAllocation),
       maxAllocation: SignedPercentage.create(row.maxAllocation),
       targetAllocation: SignedPercentage.create(row.targetAllocation),

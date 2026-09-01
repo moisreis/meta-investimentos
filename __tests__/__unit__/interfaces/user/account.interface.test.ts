@@ -11,6 +11,7 @@ import {
 
 import { Account } from "@/business/entities/user/account.entity";
 import type { IAccount } from "@/business/interfaces/user/account.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("IAccount", () => {
   let REPOSITORY: IAccount;
@@ -65,7 +66,7 @@ describe("IAccount", () => {
           issuer: "google",
           providerId: "google",
           accountId: "jose",
-          userId: OTHER_USER_ID,
+          userId: EntityId.create(OTHER_USER_ID),
         },
         "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f",
       );

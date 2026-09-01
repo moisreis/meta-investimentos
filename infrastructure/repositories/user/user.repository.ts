@@ -2,6 +2,7 @@ import { eq, inArray } from "drizzle-orm";
 
 import { User } from "@/business/entities/user/user.entity";
 import type { IUser } from "@/business/interfaces/user/user.interface";
+import CPF from "@/business/value-objects/cpf.vo";
 import { user } from "@/infrastructure/database/schemas";
 
 import type { DbClient } from "../types";
@@ -60,7 +61,7 @@ export class UserRepository implements IUser {
         email: row.email,
         firstName: row.firstName,
         lastName: row.lastName,
-        cpf: row.cpf,
+        cpf: CPF.create(row.cpf),
         role: row.role,
         emailVerified: row.emailVerified,
         image: row.image,
@@ -83,7 +84,7 @@ export class UserRepository implements IUser {
       email: entity.email,
       firstName: entity.firstName,
       lastName: entity.lastName,
-      cpf: entity.cpf,
+      cpf: entity.cpf.value,
       role: entity.role,
       emailVerified: entity.emailVerified,
       image: entity.image,
@@ -108,7 +109,7 @@ export class UserRepository implements IUser {
       email: entity.email,
       firstName: entity.firstName,
       lastName: entity.lastName,
-      cpf: entity.cpf,
+      cpf: entity.cpf.value,
       role: entity.role,
       emailVerified: entity.emailVerified,
       image: entity.image,

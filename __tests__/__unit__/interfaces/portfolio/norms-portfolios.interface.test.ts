@@ -11,6 +11,7 @@ import {
 
 import { NormsPortfolios } from "@/business/entities/portfolio/norms-portfolios.entity";
 import type { INormsPortfolios } from "@/business/interfaces/portfolio/norms-portfolios.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
 describe("INormsPortfolios", () => {
@@ -43,15 +44,15 @@ describe("INormsPortfolios", () => {
   describe("findAllByPortfolioId", () => {
     it("returns all persisted relations for the portfolio", async () => {
       const SECOND_RELATION = NormsPortfolios.create({
-        normId: OTHER_NORM_ID,
-        portfolioId: PORTFOLIO_ID,
+        normId: EntityId.create(OTHER_NORM_ID),
+        portfolioId: EntityId.create(PORTFOLIO_ID),
         minAllocation: SignedPercentage.create("3"),
         maxAllocation: SignedPercentage.create("30"),
         targetAllocation: SignedPercentage.create("15"),
       });
       const OTHER_RELATION = NormsPortfolios.create({
-        normId: NORM_ID,
-        portfolioId: OTHER_PORTFOLIO_ID,
+        normId: EntityId.create(NORM_ID),
+        portfolioId: EntityId.create(OTHER_PORTFOLIO_ID),
         minAllocation: SignedPercentage.create("8"),
         maxAllocation: SignedPercentage.create("25"),
         targetAllocation: SignedPercentage.create("18"),
@@ -76,15 +77,15 @@ describe("INormsPortfolios", () => {
   describe("findAllByNormId", () => {
     it("returns all persisted relations for the norm", async () => {
       const SECOND_RELATION = NormsPortfolios.create({
-        normId: NORM_ID,
-        portfolioId: OTHER_PORTFOLIO_ID,
+        normId: EntityId.create(NORM_ID),
+        portfolioId: EntityId.create(OTHER_PORTFOLIO_ID),
         minAllocation: SignedPercentage.create("8"),
         maxAllocation: SignedPercentage.create("25"),
         targetAllocation: SignedPercentage.create("18"),
       });
       const OTHER_RELATION = NormsPortfolios.create({
-        normId: OTHER_NORM_ID,
-        portfolioId: PORTFOLIO_ID,
+        normId: EntityId.create(OTHER_NORM_ID),
+        portfolioId: EntityId.create(PORTFOLIO_ID),
         minAllocation: SignedPercentage.create("3"),
         maxAllocation: SignedPercentage.create("30"),
         targetAllocation: SignedPercentage.create("15"),
@@ -122,8 +123,8 @@ describe("INormsPortfolios", () => {
       await REPOSITORY.save(RELATION);
 
       const UPDATED = NormsPortfolios.create({
-        normId: NORM_ID,
-        portfolioId: PORTFOLIO_ID,
+        normId: EntityId.create(NORM_ID),
+        portfolioId: EntityId.create(PORTFOLIO_ID),
         minAllocation: SignedPercentage.create("5"),
         maxAllocation: SignedPercentage.create("25"),
         targetAllocation: SignedPercentage.create("16"),

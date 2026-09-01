@@ -2,6 +2,7 @@ import { eq, inArray } from "drizzle-orm";
 
 import { BankAccount } from "@/business/entities/bank/bank-account.entity";
 import type { IBankAccount } from "@/business/interfaces/bank/bank-account.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { bankAccount } from "@/infrastructure/database/schemas";
 
 import type { DbClient } from "../types";
@@ -52,8 +53,8 @@ export class BankAccountRepository implements IBankAccount {
   private toEntity(row: typeof bankAccount.$inferSelect): BankAccount {
     return BankAccount.create(
       {
-        portfolioId: row.portfolioId,
-        bankId: row.bankId,
+        portfolioId: EntityId.create(row.portfolioId),
+        bankId: EntityId.create(row.bankId),
         agency: row.agency,
         accountNumber: row.accountNumber,
         createdAt: row.createdAt,

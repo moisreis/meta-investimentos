@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { User } from "@/business/entities";
+import CPF from "@/business/value-objects/cpf.vo";
 import { user } from "@/infrastructure/database/schemas";
 import { UserRepository } from "@/infrastructure/repositories";
 
@@ -12,7 +13,7 @@ export const USER = User.create(
     email: "jose@example.com",
     firstName: "José",
     lastName: "da Silva",
-    cpf: "24301457030",
+    cpf: CPF.create("52998224725"),
   },
   USER_ID,
 );
@@ -23,7 +24,7 @@ export const OTHER_USER = User.create(
     email: "maria@example.com",
     firstName: "Maria",
     lastName: "Souza",
-    cpf: "52998224725",
+    cpf: CPF.create("12345678909"),
   },
   OTHER_USER_ID,
 );
@@ -33,7 +34,7 @@ export const FRESH_USER = User.create({
   email: "felipe@example.com",
   firstName: "Felipe",
   lastName: "Rocha",
-  cpf: "11144477735",
+  cpf: CPF.create("11144477735"),
 });
 
 export const USERS = [USER, OTHER_USER];
@@ -65,7 +66,7 @@ export async function seedUserById(id: string): Promise<User> {
     email: FIXTURE.email,
     firstName: FIXTURE.firstName,
     lastName: FIXTURE.lastName,
-    cpf: FIXTURE.cpf,
+    cpf: FIXTURE.cpf.value,
     role: FIXTURE.role,
     emailVerified: FIXTURE.emailVerified,
     image: FIXTURE.image,

@@ -1,7 +1,9 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type PositiveMoney from "@/business/value-objects/positive-money.vo";
 import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import type SignedMoney from "@/business/value-objects/signed-money.vo";
 import type SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties required to create a
@@ -14,7 +16,7 @@ import type SignedPercentage from "@/business/value-objects/signed-percentage.vo
  * `PortfolioPerformance` instance.
  */
 interface PortfolioPerformanceProps {
-  portfolioId: string;
+  portfolioId: EntityId;
   date: Date;
   quotasHeld: QuotaQuantity;
   patrimony: PositiveMoney;
@@ -51,7 +53,7 @@ interface PortfolioPerformanceProps {
  * `PortfolioPerformance` instances are immutable after creation.
  */
 export class PortfolioPerformance {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<PortfolioPerformanceProps>;
 
   // --------------------------------------
@@ -61,14 +63,14 @@ export class PortfolioPerformance {
   /**
    * Returns the unique identifier of the portfolio performance.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
   /**
    * Returns the id of the portfolio the performance belongs to.
    */
-  get portfolioId(): string {
+  get portfolioId(): EntityId {
     return this.props.portfolioId;
   }
 
@@ -203,7 +205,7 @@ export class PortfolioPerformance {
    * satisfy the portfolio performance's invariants.
    */
   private constructor(props: Required<PortfolioPerformanceProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -223,46 +225,56 @@ export class PortfolioPerformance {
    *
    * @returns A valid `PortfolioPerformance` instance.
    *
-   * @throws {Error} If `props.portfolioId` is blank.
-   * @throws {Error} If `props.date` is not provided.
-   * @throws {Error} If `props.quotasHeld` is not provided.
-   * @throws {Error} If `props.patrimony` is not provided.
-   * @throws {Error} If `props.applicationTotal` is not provided.
-   * @throws {Error} If `props.redemptionTotal` is not provided.
-   * @throws {Error} If `props.cashFlowNet` is not provided.
-   * @throws {Error} If `props.earnings` is not provided.
-   * @throws {Error} If `props.returnDaily` is not provided.
+   * @throws {ValidationError} If `props.portfolioId` is blank.
+   * @throws {ValidationError} If `props.date` is not provided.
+   * @throws {ValidationError} If `props.quotasHeld` is not provided.
+   * @throws {ValidationError} If `props.patrimony` is not provided.
+   * @throws {ValidationError} If `props.applicationTotal` is not provided.
+   * @throws {ValidationError} If `props.redemptionTotal` is not provided.
+   * @throws {ValidationError} If `props.cashFlowNet` is not provided.
+   * @throws {ValidationError} If `props.earnings` is not provided.
+   * @throws {ValidationError} If `props.returnDaily` is not provided.
    */
   public static create(
     props: PortfolioPerformanceProps,
     id?: string,
   ): PortfolioPerformance {
     if (!props.portfolioId || props.portfolioId.trim() === "") {
-      throw new Error("PortfolioPerformance must have a portfolio id.");
+      throw new ValidationError(
+        "PortfolioPerformance must have a portfolio id.",
+      );
     }
     if (!props.date) {
-      throw new Error("PortfolioPerformance must have a date.");
+      throw new ValidationError("PortfolioPerformance must have a date.");
     }
     if (!props.quotasHeld) {
-      throw new Error("PortfolioPerformance must have quotas held.");
+      throw new ValidationError("PortfolioPerformance must have quotas held.");
     }
     if (!props.patrimony) {
-      throw new Error("PortfolioPerformance must have patrimony.");
+      throw new ValidationError("PortfolioPerformance must have patrimony.");
     }
     if (!props.applicationTotal) {
-      throw new Error("PortfolioPerformance must have an application total.");
+      throw new ValidationError(
+        "PortfolioPerformance must have an application total.",
+      );
     }
     if (!props.redemptionTotal) {
-      throw new Error("PortfolioPerformance must have a redemption total.");
+      throw new ValidationError(
+        "PortfolioPerformance must have a redemption total.",
+      );
     }
     if (!props.cashFlowNet) {
-      throw new Error("PortfolioPerformance must have cash flow net.");
+      throw new ValidationError(
+        "PortfolioPerformance must have cash flow net.",
+      );
     }
     if (!props.earnings) {
-      throw new Error("PortfolioPerformance must have earnings.");
+      throw new ValidationError("PortfolioPerformance must have earnings.");
     }
     if (!props.returnDaily) {
-      throw new Error("PortfolioPerformance must have a daily return.");
+      throw new ValidationError(
+        "PortfolioPerformance must have a daily return.",
+      );
     }
 
     const NOW = new Date();

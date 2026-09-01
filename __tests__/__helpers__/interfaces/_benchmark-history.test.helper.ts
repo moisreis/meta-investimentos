@@ -1,5 +1,6 @@
 import { BenchmarkHistory } from "@/business/entities/benchmark/benchmark-history.entity";
 import type { IBenchmarkHistory } from "@/business/interfaces/benchmark/benchmark-history.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
 export const HISTORY_ID = "f8c1b1a7-3f92-4c58-b6e1-2b47c1b21d78";
@@ -9,7 +10,7 @@ export const HISTORY_DATE = new Date("2026-01-01T00:00:00.000Z");
 
 export const HISTORY = BenchmarkHistory.create(
   {
-    benchmarkId: BENCHMARK_ID,
+    benchmarkId: EntityId.create(BENCHMARK_ID),
     date: HISTORY_DATE,
     rate: SignedPercentage.create("12.345"),
   },

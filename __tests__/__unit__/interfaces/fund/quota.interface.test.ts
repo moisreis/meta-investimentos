@@ -11,6 +11,7 @@ import {
 
 import { Quota } from "@/business/entities/fund/quota.entity";
 import type { IQuota } from "@/business/interfaces/fund/quota.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import QuotaPrice from "@/business/value-objects/quota-price.vo";
 
 describe("IQuota", () => {
@@ -109,7 +110,7 @@ describe("IQuota", () => {
 
       const UPDATED_QUOTA = Quota.create(
         {
-          fundId: FUND_ID,
+          fundId: EntityId.create(FUND_ID),
           date: new Date("2024-01-15T12:00:00.000Z"),
           price: QuotaPrice.create("12.75"),
         },

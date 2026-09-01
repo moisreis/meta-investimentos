@@ -2,6 +2,7 @@ import { eq, inArray } from "drizzle-orm";
 
 import { Norm } from "@/business/entities/portfolio/norm.entity";
 import type { INorm } from "@/business/interfaces/portfolio/norm.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 import { norm } from "@/infrastructure/database/schemas";
 
@@ -56,7 +57,7 @@ export class NormRepository implements INorm {
       {
         articleNumber: row.articleNumber,
         name: row.name,
-        categoryId: row.categoryId,
+        categoryId: EntityId.create(row.categoryId),
         minAllocation: SignedPercentage.create(row.minAllocation),
         maxAllocation: SignedPercentage.create(row.maxAllocation),
         targetAllocation: SignedPercentage.create(row.targetAllocation),

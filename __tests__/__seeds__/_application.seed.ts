@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { Application } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import { application } from "@/infrastructure/database/schemas";
@@ -19,7 +20,7 @@ export const OTHER_APPLICATION_DATE = new Date("2026-02-15T00:00:00.000Z");
 
 export const APPLICATION = Application.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: APPLICATION_DATE,
     amount: PositiveMoney.create("1000.00"),
     quotas: QuotaQuantity.create("12.345"),
@@ -29,7 +30,7 @@ export const APPLICATION = Application.create(
 
 export const OTHER_APPLICATION = Application.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: OTHER_APPLICATION_DATE,
     amount: PositiveMoney.create("500.00"),
     quotas: QuotaQuantity.create("6.123"),
@@ -39,7 +40,7 @@ export const OTHER_APPLICATION = Application.create(
 
 export const EXTERNAL_APPLICATION = Application.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: new Date("2026-01-18T00:00:00.000Z"),
     amount: PositiveMoney.create("200.00"),
     quotas: QuotaQuantity.create("2.4"),
@@ -49,7 +50,7 @@ export const EXTERNAL_APPLICATION = Application.create(
 
 export const PERIOD_OUTSIDE_APPLICATION = Application.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: new Date("2026-03-05T00:00:00.000Z"),
     amount: PositiveMoney.create("400.00"),
     quotas: QuotaQuantity.create("4.8"),
@@ -66,18 +67,18 @@ export const APPLICATIONS = [
 
 export const UPDATED_APPLICATION = Application.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: APPLICATION_DATE,
     amount: PositiveMoney.create("1000.00"),
     quotas: QuotaQuantity.create("12.345"),
     reversedAt: new Date("2026-01-30T00:00:00.000Z"),
-    reversedByUserId: USER_ID,
+    reversedByUserId: EntityId.create(USER_ID),
   },
   APPLICATION_ID,
 );
 
 export const FRESH_APPLICATION = Application.create({
-  positionId: POSITION_ID,
+  positionId: EntityId.create(POSITION_ID),
   date: new Date("2026-04-15T00:00:00.000Z"),
   amount: PositiveMoney.create("750.00"),
   quotas: QuotaQuantity.create("8.5"),

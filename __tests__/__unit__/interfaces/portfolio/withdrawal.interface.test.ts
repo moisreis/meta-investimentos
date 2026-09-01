@@ -11,6 +11,7 @@ import {
 
 import { Withdrawal } from "@/business/entities/portfolio/withdrawal.entity";
 import type { IWithdrawal } from "@/business/interfaces/portfolio/withdrawal.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 
@@ -39,7 +40,7 @@ describe("IWithdrawal", () => {
     it("returns all persisted withdrawals for the position", async () => {
       const SECOND_WITHDRAWAL = Withdrawal.create(
         {
-          positionId: POSITION_ID,
+          positionId: EntityId.create(POSITION_ID),
           date: new Date("2026-01-20T00:00:00.000Z"),
           amount: PositiveMoney.create("200.00"),
           quotas: QuotaQuantity.create("2.4"),
@@ -48,7 +49,7 @@ describe("IWithdrawal", () => {
       );
       const OTHER_WITHDRAWAL = Withdrawal.create(
         {
-          positionId: OTHER_POSITION_ID,
+          positionId: EntityId.create(OTHER_POSITION_ID),
           date: new Date("2026-01-25T00:00:00.000Z"),
           amount: PositiveMoney.create("300.00"),
           quotas: QuotaQuantity.create("3.6"),
@@ -76,7 +77,7 @@ describe("IWithdrawal", () => {
     it("returns only the withdrawals within the period", async () => {
       const BEFORE = Withdrawal.create(
         {
-          positionId: POSITION_ID,
+          positionId: EntityId.create(POSITION_ID),
           date: new Date("2026-01-05T00:00:00.000Z"),
           amount: PositiveMoney.create("50.00"),
           quotas: QuotaQuantity.create("0.6"),
@@ -85,7 +86,7 @@ describe("IWithdrawal", () => {
       );
       const INSIDE = Withdrawal.create(
         {
-          positionId: POSITION_ID,
+          positionId: EntityId.create(POSITION_ID),
           date: new Date("2026-01-15T00:00:00.000Z"),
           amount: PositiveMoney.create("150.00"),
           quotas: QuotaQuantity.create("1.8"),
@@ -94,7 +95,7 @@ describe("IWithdrawal", () => {
       );
       const AFTER = Withdrawal.create(
         {
-          positionId: POSITION_ID,
+          positionId: EntityId.create(POSITION_ID),
           date: new Date("2026-02-25T00:00:00.000Z"),
           amount: PositiveMoney.create("100.00"),
           quotas: QuotaQuantity.create("1.2"),
@@ -147,7 +148,7 @@ describe("IWithdrawal", () => {
 
       const UPDATED = Withdrawal.create(
         {
-          positionId: POSITION_ID,
+          positionId: EntityId.create(POSITION_ID),
           date: WITHDRAWAL_DATE,
           amount: PositiveMoney.create("750.00"),
           quotas: QuotaQuantity.create("9.25"),

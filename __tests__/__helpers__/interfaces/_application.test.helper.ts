@@ -1,5 +1,6 @@
 import { Application } from "@/business/entities/portfolio/application.entity";
 import type { IApplication } from "@/business/interfaces/portfolio/application.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 
@@ -10,7 +11,7 @@ export const APPLICATION_DATE = new Date("2026-01-15T00:00:00.000Z");
 
 export const APPLICATION = Application.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: APPLICATION_DATE,
     amount: PositiveMoney.create("1000.00"),
     quotas: QuotaQuantity.create("12.345"),

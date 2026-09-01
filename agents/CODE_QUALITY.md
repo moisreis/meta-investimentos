@@ -1,14 +1,14 @@
 # Code Quality Standards
 
-Guide for writing consistent, high-quality code in this repository.
-Applies to every `.ts` / `.tsx` / `.mts` file, including tests and configs.
+This document tells you how to write consistent, high-quality code in
+this repository. This standard applies to every `.ts`, `.tsx`, and
+`.mts` file, including tests and configuration files.
 
 Companion documents:
 
 - Documentation: `agents/DOCUMENTATION_STANDARDS.md`
-- Equations reference: `agents/TRD.md`
 
-Reference implementations:
+Reference files:
 
 - Value object: `business/value-objects/quota-price.vo.ts`
 - Calculator: `business/calculators/application/application-quotas.calculator.ts`
@@ -16,150 +16,172 @@ Reference implementations:
 
 ---
 
-## 1. Tooling and Verification
+## Tooling and verification
 
-Biome is the single source of truth for formatting and linting.
-Never hand-format code and never fight the formatter.
+Biome is the single source of truth for formatting and linting. Do not
+hand-format code. Do not fight the formatter.
 
-| Command             | Purpose                          |
-| ------------------- | -------------------------------- |
-| `npm run lint`      | Lint + format check (`biome check`) |
-| `npm run format`    | Auto-format                      |
-| `npm run test`      | Run Vitest                       |
-| `npx tsc --noEmit`  | Type-check                       |
+| Command             | Purpose                             |
+| -------------------- | ------------------------------------ |
+| `npm run lint`      | Lint check and format check (`biome check`) |
+| `npm run format`    | Auto-format the code                |
+| `npm run test`      | Run the Vitest test suite           |
+| `npx tsc --noEmit`  | Check types without emitting output |
 
-Formatter settings already fixed by `biome.json`: 2-space indent,
-80-character lines, LF endings, double quotes, semicolons always,
-trailing commas everywhere, parentheses around arrow parameters.
+`biome.json` fixes these formatter settings: 2-space indent, 80-character
+lines, LF line endings, double quotes, semicolons on every statement,
+trailing commas everywhere, and parentheses around arrow function
+parameters.
 
-Before considering any task done:
+Run these three checks before you mark any task as done.
 
-1. `npm run lint` passes.
-2. `npx tsc --noEmit` passes.
-3. `npm run test` passes.
+1. Run `npm run lint`. Confirm it passes.
+2. Run `npx tsc --noEmit`. Confirm it passes.
+3. Run `npm run test`. Confirm it passes.
+
+Do not merge a change when any of these three checks fail.
 
 ---
 
-## 2. Naming Conventions
+## Naming conventions
 
-| Element                     | Convention            | Example                        |
-| --------------------------- | --------------------- | ------------------------------ |
-| `const` (all declarations)  | SCREAMING_UPPERCASE   | `TOTAL_APPLICATIONS`           |
-| Functions                   | camelCase             | `calculateWithdrawalSum`       |
-| Classes / value objects     | PascalCase            | `PositiveMoney`                |
-| Interfaces / type aliases   | PascalCase            | `QuotaPriceProps`              |
-| Files                       | kebab-case + suffix   | `quota-price.vo.ts`            |
-| Folders (domains)           | kebab-case            | `value-objects`, `position`    |
+| Element                    | Convention           | Example                  |
+| --------------------------- | --------------------- | ------------------------- |
+| `const` (all declarations) | SCREAMING_UPPERCASE  | `TOTAL_APPLICATIONS`     |
+| Functions                  | camelCase            | `calculateWithdrawalSum` |
+| Classes and value objects  | PascalCase           | `PositiveMoney`          |
+| Interfaces and type aliases| PascalCase           | `QuotaPriceProps`        |
+| Files                      | kebab-case with suffix | `quota-price.vo.ts`    |
+| Folders (domains)          | kebab-case           | `value-objects`, `position` |
 
-### 2.1 The `const` Rule (mandatory)
+### The `const` rule
 
-Every `const` declaration is written in SCREAMING_UPPERCASE
-(UPPER_SNAKE_CASE), without exception of scope or context:
+Write every `const` declaration in SCREAMING_UPPERCASE (UPPER_SNAKE_CASE).
+Apply this rule in every scope and every context, with no exceptions
+based on scope.
+
+Apply this rule in:
 
 - Module-level, function-level, and block-level scopes.
-- Business logic, tests, React components, configs, scripts.
+- Business logic, tests, React components, configuration files, and
+  scripts.
 - Destructured declarations that introduce a new binding.
 
 ```ts
-// GOOD
+// Correct
 const RESULT = calculateApplicationQuotas({ application, quota });
 const TOTAL_MONEY = applications.reduce((sum, item) => sum.plus(item), ZERO);
 const IS_NEGATIVE = amount.lessThan(0);
 
-// BAD
+// Incorrect
 const result = calculateApplicationQuotas({ application, quota });
 const totalMoney = ...
 const TotalMoney = ...
 ```
 
-Rules:
+Follow these four rules.
 
-1. Separate words with underscores: `INITIAL_POSITION`, not `InitialPosition`.
-2. Single words are fine as-is: `RESULT`, `SUM`, `QUOTA`.
-3. Boolean consts read naturally with an auxiliary verb prefix:
-   `IS_VALID`, `HAS_EARNINGS`, `CAN_WITHDRAW`.
-4. Loop accumulators and temporary values are still consts and still
-   uppercase: `SUM`, `ACCUMULATOR`.
+1. Separate words with underscores. Write `INITIAL_POSITION`. Do not
+   write `InitialPosition`.
+2. Write single-word names as-is: `RESULT`, `SUM`, `QUOTA`.
+3. Prefix boolean consts with an auxiliary verb, so the name reads as a
+   statement: `IS_VALID`, `HAS_EARNINGS`, `CAN_WITHDRAW`.
+4. Write loop accumulators and temporary values in uppercase too, the
+   same as any other const: `SUM`, `ACCUMULATOR`.
 
-Exceptions (the only allowed lowercase consts):
+Two exceptions allow a lowercase const name.
 
-- Bindings mandated verbatim by a framework. Example: Next.js requires
-  `export const metadata` in layouts/pages; renaming it silently breaks
-  the framework. Keep framework-required names exactly as documented.
-- Imported bindings (`import Decimal from "decimal.js"`). They are not
-  `const` declarations; never rename them to fit this rule.
+- A binding that a framework requires verbatim. Example: Next.js
+  requires `export const metadata` in layouts and pages. Renaming this
+  binding silently breaks the framework. Keep each framework-required
+  name exactly as the framework documents it.
+- An imported binding, such as `import Decimal from "decimal.js"`. An
+  import is not a `const` declaration. Never rename an import to fit
+  this rule.
 
-Everything else: if it is declared with `const`, its name is
-SCREAMING_UPPERCASE.
+Apply the SCREAMING_UPPERCASE rule to every other `const` declaration in
+the codebase.
 
-### 2.2 Identifiers
+### Identifiers
 
-- Calculator functions start with `calculate` followed by the operation:
-  `calculateApplicationQuotas`.
-- Props interfaces end in `Props` and are not exported:
-  `PositiveMoneyProps`, `CalculateWithdrawalSumProps`.
-- Boolean-returning methods start with a verb (`equals`, `isValid`).
+- Start each calculator function name with `calculate`, followed by the
+  operation name: `calculateApplicationQuotas`.
+- End each props interface name with `Props`. Do not export a props
+  interface: `PositiveMoneyProps`, `CalculateWithdrawalSumProps`.
+- Start each boolean-returning method name with a verb: `equals`,
+  `isValid`.
 
 ---
 
-## 3. Project Structure
+## Project structure
 
 ```
 business/
-  value-objects/          # <concept>.vo.ts        (default export)
-  calculators/<domain>/   # <operation>.calculator.ts (named export)
-app/                      # Next.js routing and UI shell only
-__tests__/__unit__/       # Mirrors business/ paths exactly
-agents/                   # Guides: this file, DOCUMENTATION_STANDARDS, TRD
+  value-objects/          <concept>.vo.ts        (default export)
+  calculators/<domain>/   <operation>.calculator.ts (named export)
+app/                      Next.js routing and UI shell only
+__tests__/__unit__/       Mirrors business/ paths exactly
+agents/                   Guides: this file, DOCUMENTATION_STANDARDS, TRD
 ```
 
-Rules:
+Follow these five rules.
 
-1. Business logic lives only in `business/`. The `app/` folder contains
-   routing, layout, and presentation - never calculations or invariants.
-2. File suffix encodes the role: `.vo.ts` for value objects,
-   `.calculator.ts` for calculators.
-3. A test file mirrors its source path:
-   `business/calculators/application/application-quotas.calculator.ts` ->
+1. Place business logic only in `business/`. Use the `app/` folder only
+   for routing, layout, and presentation. Do not place calculations or
+   invariants in `app/`.
+2. Encode each file's role in its suffix. Use `.vo.ts` for value
+   objects. Use `.calculator.ts` for calculators.
+3. Mirror each source file's path in its test file. For example,
+   `business/calculators/application/application-quotas.calculator.ts`
+   maps to
    `__tests__/__unit__/calculators/application/application-quotas.calculator.test.ts`.
-4. Cross-folder imports always use the `@/*` alias:
-   `import QuotaPrice from "@/business/value-objects/quota-price.vo";`
-5. Group domain concepts into subfolders when they grow
-   (`calculators/position`, `calculators/application`).
+4. Use the `@/*` alias for every cross-folder import:
+   `import QuotaPrice from "@/business/value-objects/quota-price.vo";`.
+5. Group related domain concepts into subfolders as they grow, such as
+   `calculators/position` and `calculators/application`.
 
 ---
 
-## 4. Domain Modeling Rules
+## Domain modeling rules
 
-### 4.1 Monetary and quota math
+### Monetary and quota math
 
 - Never perform arithmetic on monetary or quota amounts with native
-  numbers/operators (`+`, `-`, `*`, `/`). Floating point loses precision.
-- All arithmetic goes through `decimal.js`, hidden behind value objects
-  and calculators.
-- Precision is normalized at creation time inside the value object
-  (money: 2 decimal places; prices and quantities: 6 decimal places).
-- When constructing decimals from literals in tests/examples, prefer
-  strings (`'225825.442804'`) over floats to avoid precision drift.
+  operators (`+`, `-`, `*`, `/`). Floating-point arithmetic loses
+  precision.
+- Route all arithmetic through `decimal.js`, hidden behind value
+  objects and calculators.
+- Normalize precision at creation time, inside the value object. Store
+  money with 2 decimal places. Store prices and quantities with 6
+  decimal places.
+- Construct decimals from string literals in tests and examples, such
+  as `'225825.442804'`. Do not construct decimals from float literals.
+  A float literal can introduce precision drift.
 
-### 4.2 Value objects
+### Value objects
 
-- Private constructor; the only entry point is the static factory
-  `create()`, which validates every invariant and normalizes precision.
-- Immutable after creation; expose values through getters only.
-- Provide an `equals()` that compares values, never references.
-- Thrown errors mirror the documented invariants and name the class in
-  backticks: `` "`QuotaPrice` must be equal or greater than 0." ``
+- Give each value object a private constructor. Make the static factory
+  method `create()` the only entry point. Validate every invariant and
+  normalize precision inside `create()`.
+- Make each value object immutable after creation. Expose its values
+  through getters only.
+- Give each value object an `equals()` method that compares values, not
+  references.
+- Write each thrown error message to match its documented invariant.
+  Name the class in backticks inside the message: `` "`QuotaPrice`
+  must be equal or greater than 0." ``
 
-### 4.3 Calculators
+### Calculators
 
-- Pure, named-export functions: same inputs -> same output, no side
-  effects, no I/O, no mutation of inputs.
-- Take value objects in, return a value object out.
-- Accept a single destructured props object parameter.
-- Declare an explicit return type.
-- Each calculator documents its formula with `@equation`, matching
-  `agents/TRD.md` (see DOCUMENTATION_STANDARDS.md).
+- Write each calculator as a pure, named-export function. The same
+  inputs must always produce the same output. A calculator must have no
+  side effects, no I/O, and must not mutate its inputs.
+- Pass value objects into each calculator. Return a value object out.
+- Accept a single destructured props object as the parameter.
+- Declare an explicit return type on every calculator.
+- Document each calculator's formula with an `@equation` tag that
+  matches `agents/TRD.md`. See `agents/DOCUMENTATION_STANDARDS.md` for
+  the full documentation rule.
 
 ```ts
 export function calculateWithdrawalQuotas({
@@ -174,70 +196,136 @@ export function calculateWithdrawalQuotas({
 
 ---
 
-## 5. General Good Practices
+## Error handling
 
-1. Strict TypeScript. Do not use `any`; reach for `unknown` plus
-   narrowing instead. Do not disable lint/type rules inline without a
-   justification comment.
-2. Prefer immutability: `readonly` properties, `private readonly` fields,
-   no public mutable state.
-3. Small, single-purpose functions. If a function needs more than three
-   primitive parameters, introduce a props interface.
-4. No dead weight: no commented-out code, no `console.log`/`debugger`,
-   no unused exports or imports. Biome's organize-imports keeps import
-   order; let it.
-5. Errors are thrown with `Error` and messages that state the violated
-   invariant in backticks, matching the `@throws` documentation.
-6. Comments explain why, never what. JSDoc follows
-   `agents/DOCUMENTATION_STANDARDS.md`. Long classes and configs use
-   section dividers:
-
-   ```ts
-   // --------------------------------------
-   // SECTION NAME
-   // --------------------------------------
-   ```
-
-7. Do not commit secrets, keys, or environment-specific configuration.
+- Throw an `Error` for every invariant violation. Do not return `null`,
+  `undefined`, or a magic value to signal a validation failure.
+- Write each error message to name the violated invariant and the class
+  in backticks, matching the corresponding `@throws` documentation
+  entry.
+- Do not catch an error only to log it and continue silently. Handle
+  the error, or let it propagate to a layer that can handle it.
+- Do not throw a generic error message such as `"Invalid input"`. State
+  which value failed and why.
+- Distinguish a domain error, such as an invalid `Money` value, from an
+  infrastructure error, such as a failed database call. Do not let an
+  infrastructure error leak into domain code as an unhandled exception
+  type.
 
 ---
 
-## 6. Testing Standards
+## Security and secrets
 
-- Framework: Vitest. Unit tests live under `__tests__/__unit__/`,
-  integration tests under `__tests__/__integration__/`.
-- Structure: one `describe()` per function, named after it;
-  each `it()` is a behavior sentence describing an outcome, e.g.
-  `"rounds the result to 6 decimal places"`, `"returns zero when the
-  withdrawal list is empty"`.
-- One behavior per test; arrange-act-assert with blank lines between
-  phases.
-- Local test constants follow the `const` rule: `RESULT`, `APPLICATION`,
-  `WITHDRAWAL`, `QUOTA`.
-- Expected values compare value objects built through factories
-  (`toEqual(QuotaQuantity.create("25"))`), not raw numbers or snapshots.
-- Every calculator test suite includes:
-  1. The proven worked example from `agents/TRD.md` (Carteira LP A
-     values such as `'1000000'` / `'4.428199'` -> `'225825.442804'`).
-  2. Rounding and precision edge cases (exact quotient, tiny quotient).
-  3. Collection boundaries for aggregations (empty, single element).
-  4. An imutabilidade test: `"does not mutate its inputs"`.
+- Do not commit a secret, an API key, or an environment-specific
+  configuration value to the repository. Store each secret in an
+  environment variable or in the platform's secret manager.
+- Do not print a monetary value, an account identifier, or another
+  piece of sensitive data to the console or to a log at a level above
+  what the audit policy allows.
+- Validate and sanitize every input at a system boundary, such as an
+  API route or a form handler. Do not trust a value from outside the
+  codebase without validation.
+- Do not use `eval`, `Function` constructors, or another form of
+  dynamic code execution on data that comes from outside the codebase.
+- Pin each third-party dependency to an exact version. Review a
+  dependency's changelog before you upgrade it in a file that handles
+  monetary calculations.
 
 ---
 
-## 7. Review Checklist
+## General good practices
+
+1. Write strict TypeScript. Do not use `any`. Use `unknown` together
+   with type narrowing instead. Do not disable a lint rule or a type
+   rule inline without a comment that states the reason.
+2. Prefer immutability. Use `readonly` properties and `private
+   readonly` fields. Do not expose mutable public state.
+3. Write small, single-purpose functions. When a function needs more
+   than three primitive parameters, introduce a props interface
+   instead.
+4. Remove dead weight. Do not commit commented-out code, a
+   `console.log` call, or a `debugger` statement. Do not leave an
+   unused export or an unused import in the codebase. Let Biome's
+   import-organizing feature keep import order correct.
+5. Write each comment to explain why the code does something, not what
+   the code does. Follow `agents/DOCUMENTATION_STANDARDS.md` for every
+   JSDoc block.
+6. Do not commit a secret, a key, or an environment-specific
+   configuration value.
+
+---
+
+## Testing standards
+
+- Use Vitest as the test framework. Place unit tests under
+  `__tests__/__unit__/`. Place integration tests under
+  `__tests__/__integration__/`.
+- Write one `describe()` block for each function. Name each block after
+  the function it tests.
+- Write each `it()` block as one sentence that states a behavior and its
+  outcome, such as `"rounds the result to 6 decimal places"` or
+  `"returns zero when the withdrawal list is empty"`.
+- Test one behavior in each test case. Structure each test case in
+  three phases: arrange, act, and assert. Separate the phases with a
+  blank line.
+- Name local test constants according to the `const` rule: `RESULT`,
+  `APPLICATION`, `WITHDRAWAL`, `QUOTA`.
+- Compare expected values as value objects built through factories,
+  such as `toEqual(QuotaQuantity.create("25"))`. Do not compare against
+  a raw number or a snapshot.
+- Include these four cases in every calculator test suite.
+  1. The proven worked example from `agents/TRD.md`. For example, the
+     Carteira LP A values `'1000000'` and `'4.428199'` produce
+     `'225825.442804'`.
+  2. A rounding and precision edge case, such as an exact quotient and
+     a tiny quotient.
+  3. A collection boundary case for an aggregation, such as an empty
+     collection and a single-element collection.
+  4. An immutability test named `"does not mutate its inputs"`.
+- Write a regression test for every defect fix. Name the test after the
+  defect it prevents from recurring.
+
+---
+
+## Traceability and change control
+
+A financial institution reviewer checks each change for a source, an
+owner, and a history. Meet these requirements for every change to
+`business/`.
+
+- Link each calculator to its source requirement in `agents/TRD.md`
+  through the `@equation` tag, as `agents/DOCUMENTATION_STANDARDS.md`
+  requires.
+- Write a pull request description that states the business reason for
+  the change, not only the technical change.
+- Require a second reviewer to approve every change to a value object
+  or a calculator before merge. The second reviewer confirms that the
+  tests, the documentation, and the code agree with each other.
+- Do not change a documented invariant or a formula without a matching
+  change to `agents/TRD.md` and sign-off from the domain owner.
+- Keep a changelog entry for every change that affects a monetary
+  calculation, a rounding rule, or a validation rule.
+
+---
+
+## Review checklist
 
 - [ ] `npm run lint`, `npx tsc --noEmit`, and `npm run test` all pass.
-- [ ] Every `const` is SCREAMING_UPPERCASE (only framework-mandated
-      exports excepted).
-- [ ] No native arithmetic on money/quota values; everything flows
-      through value objects and calculators.
-- [ ] Calculators remain pure; inputs are never mutated.
-- [ ] New invariants are validated in `create()`, thrown with
-      backticked-class error messages, and documented per
+- [ ] Every `const` is SCREAMING_UPPERCASE, except the two allowed
+      exceptions.
+- [ ] No native arithmetic operates on a money or quota value. All such
+      arithmetic flows through value objects and calculators.
+- [ ] Every calculator stays pure. No calculator mutates its inputs.
+- [ ] Every new invariant is validated in `create()`, thrown with a
+      backticked class name in its error message, and documented per
       `DOCUMENTATION_STANDARDS.md`.
-- [ ] New formulas exist in `agents/TRD.md` and are referenced via
-      `@equation`.
-- [ ] Tests cover the TRD worked example, precision edges, collection
-      boundaries, and input immutability.
-- [ ] No debug leftovers, dead code, or unused imports.
+- [ ] Every new formula exists in `agents/TRD.md` and is referenced
+      through `@equation`.
+- [ ] Tests cover the TRD worked example, the precision edge cases, the
+      collection boundaries, and input immutability.
+- [ ] No debug leftovers, dead code, or unused imports remain.
+- [ ] No secret, key, or environment-specific value appears in the
+      diff.
+- [ ] Every input from outside the codebase is validated at the
+      boundary.
+- [ ] A second reviewer has approved the change.

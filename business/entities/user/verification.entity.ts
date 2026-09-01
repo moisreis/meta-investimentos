@@ -1,3 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { ValidationError } from "@/shared/errors";
+
 /**
  * Represents the properties required to create a {@link Verification}.
  *
@@ -37,7 +40,7 @@ interface VerificationProps {
  * ```
  */
 export class Verification {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<VerificationProps>;
 
   // --------------------------------------
@@ -47,7 +50,7 @@ export class Verification {
   /**
    * Returns the unique identifier of the verification.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
@@ -98,7 +101,7 @@ export class Verification {
    * the verification's invariants.
    */
   private constructor(props: Required<VerificationProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -116,19 +119,19 @@ export class Verification {
    *
    * @returns A valid `Verification` instance.
    *
-   * @throws {Error} If `props.identifier` is blank.
-   * @throws {Error} If `props.value` is blank.
-   * @throws {Error} If `props.expiresAt` is missing.
+   * @throws {ValidationError} If `props.identifier` is blank.
+   * @throws {ValidationError} If `props.value` is blank.
+   * @throws {ValidationError} If `props.expiresAt` is missing.
    */
   public static create(props: VerificationProps, id?: string): Verification {
     if (!props.identifier || props.identifier.trim() === "") {
-      throw new Error("Verification must have an identifier.");
+      throw new ValidationError("Verification must have an identifier.");
     }
     if (!props.value || props.value.trim() === "") {
-      throw new Error("Verification must have a value.");
+      throw new ValidationError("Verification must have a value.");
     }
     if (!props.expiresAt) {
-      throw new Error("Verification must have an expiration date.");
+      throw new ValidationError("Verification must have an expiration date.");
     }
 
     const NOW = new Date();

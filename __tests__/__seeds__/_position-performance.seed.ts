@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { PositionPerformance } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
@@ -26,7 +27,7 @@ export const PERIOD_OUTSIDE_POSITION_PERFORMANCE_ID =
 
 export const POSITION_PERFORMANCE = PositionPerformance.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: PERFORMANCE_DATE,
     quotasHeld: QuotaQuantity.create("1000"),
     patrimony: PositiveMoney.create("100000.00"),
@@ -45,7 +46,7 @@ export const POSITION_PERFORMANCE = PositionPerformance.create(
 
 export const OTHER_POSITION_PERFORMANCE = PositionPerformance.create(
   {
-    positionId: OTHER_POSITION_ID,
+    positionId: EntityId.create(OTHER_POSITION_ID),
     date: FEBRUARY_PERFORMANCE_DATE,
     quotasHeld: QuotaQuantity.create("500"),
     patrimony: PositiveMoney.create("50000.00"),
@@ -64,7 +65,7 @@ export const OTHER_POSITION_PERFORMANCE = PositionPerformance.create(
 
 export const EXTERNAL_POSITION_PERFORMANCE = PositionPerformance.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: PERFORMANCE_DUPLICATE_DATE,
     quotasHeld: QuotaQuantity.create("1100"),
     patrimony: PositiveMoney.create("110000.00"),
@@ -83,7 +84,7 @@ export const EXTERNAL_POSITION_PERFORMANCE = PositionPerformance.create(
 
 export const PERIOD_OUTSIDE_POSITION_PERFORMANCE = PositionPerformance.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: new Date("2026-03-01T00:00:00.000Z"),
     quotasHeld: QuotaQuantity.create("1200"),
     patrimony: PositiveMoney.create("120000.00"),
@@ -102,7 +103,7 @@ export const PERIOD_OUTSIDE_POSITION_PERFORMANCE = PositionPerformance.create(
 
 export const UPDATED_POSITION_PERFORMANCE = PositionPerformance.create(
   {
-    positionId: POSITION_ID,
+    positionId: EntityId.create(POSITION_ID),
     date: PERFORMANCE_DATE,
     quotasHeld: QuotaQuantity.create("1000"),
     patrimony: PositiveMoney.create("125000.00"),
@@ -120,7 +121,7 @@ export const UPDATED_POSITION_PERFORMANCE = PositionPerformance.create(
 );
 
 export const FRESH_POSITION_PERFORMANCE = PositionPerformance.create({
-  positionId: POSITION_ID,
+  positionId: EntityId.create(POSITION_ID),
   date: new Date("2026-04-05T00:00:00.000Z"),
   quotasHeld: QuotaQuantity.create("1300"),
   patrimony: PositiveMoney.create("130000.00"),

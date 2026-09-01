@@ -3,7 +3,9 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   BANK_ACCOUNT,
   BANK_ACCOUNT_ID,
+  BANK_ID,
   createInMemoryBankAccountRepository,
+  PORTFOLIO_ID,
   PROPS,
   UPDATED_BANK_ACCOUNT,
 } from "@/__tests__/__helpers__/interfaces/_bank-account.test.helper";
@@ -42,7 +44,7 @@ describe("IBankAccount", () => {
       await REPOSITORY.save(BANK_ACCOUNT);
       await REPOSITORY.save(OTHER);
 
-      const FOUND = await REPOSITORY.findAllByPortfolioId("p1");
+      const FOUND = await REPOSITORY.findAllByPortfolioId(PORTFOLIO_ID);
 
       expect(FOUND).toHaveLength(2);
       expect(FOUND[0]?.equals(BANK_ACCOUNT)).toBe(true);
@@ -50,7 +52,7 @@ describe("IBankAccount", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByPortfolioId("p1")).toEqual([]);
+      expect(await REPOSITORY.findAllByPortfolioId(PORTFOLIO_ID)).toEqual([]);
     });
   });
 
@@ -64,7 +66,7 @@ describe("IBankAccount", () => {
       await REPOSITORY.save(BANK_ACCOUNT);
       await REPOSITORY.save(OTHER);
 
-      const FOUND = await REPOSITORY.findAllByBankId("b1");
+      const FOUND = await REPOSITORY.findAllByBankId(BANK_ID);
 
       expect(FOUND).toHaveLength(2);
       expect(FOUND[0]?.equals(BANK_ACCOUNT)).toBe(true);
@@ -72,7 +74,7 @@ describe("IBankAccount", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByBankId("b1")).toEqual([]);
+      expect(await REPOSITORY.findAllByBankId(BANK_ID)).toEqual([]);
     });
   });
 

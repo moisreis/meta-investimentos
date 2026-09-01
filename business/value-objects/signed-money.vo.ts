@@ -1,4 +1,5 @@
 import Decimal from "decimal.js";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents a monetary amount that can be positive, negative, or zero.
@@ -114,7 +115,7 @@ class SignedMoney {
    * @param value - The decimal-compatible monetary amount to create.
    * @returns A valid `SignedMoney` instance.
    *
-   * @throws {Error} If `value` is `undefined` or `null`.
+   * @throws {ValidationError} If `value` is `undefined` or `null`.
    *
    * @example
    * ```ts
@@ -134,7 +135,7 @@ class SignedMoney {
    */
   public static create(value: Decimal.Value): SignedMoney {
     if (value === undefined || value === null) {
-      throw new Error("`SignedMoney` must be defined.");
+      throw new ValidationError("`SignedMoney` must be defined.");
     }
 
     const DECIMAL_VALUE = new Decimal(value);

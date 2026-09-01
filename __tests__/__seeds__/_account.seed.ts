@@ -1,5 +1,6 @@
 import { db } from "@/__tests__/__setup__/_database.setup";
 import { Account } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { account } from "@/infrastructure/database/schemas";
 import { OTHER_USER_ID, seedUserById, USER_ID } from "./_user.seed";
 
@@ -12,7 +13,7 @@ export const ACCOUNT = Account.create(
     issuer: "github",
     providerId: "github",
     accountId: "octocat",
-    userId: USER_ID,
+    userId: EntityId.create(USER_ID),
   },
   ACCOUNT_ID,
 );
@@ -22,7 +23,7 @@ export const OTHER_ACCOUNT = Account.create(
     issuer: "github",
     providerId: "github",
     accountId: "octodog",
-    userId: OTHER_USER_ID,
+    userId: EntityId.create(OTHER_USER_ID),
   },
   OTHER_ACCOUNT_ID,
 );
@@ -32,7 +33,7 @@ export const THIRD_ACCOUNT = Account.create(
     issuer: "github",
     providerId: "github",
     accountId: "octopus",
-    userId: USER_ID,
+    userId: EntityId.create(USER_ID),
   },
   THIRD_ACCOUNT_ID,
 );
@@ -44,7 +45,7 @@ export const UPDATED_ACCOUNT = Account.create(
     issuer: "github",
     providerId: "github",
     accountId: "octocat-updated",
-    userId: USER_ID,
+    userId: EntityId.create(USER_ID),
   },
   ACCOUNT_ID,
 );
@@ -53,7 +54,7 @@ export const FRESH_ACCOUNT = Account.create({
   issuer: "github",
   providerId: "github",
   accountId: "fresh-bot",
-  userId: USER_ID,
+  userId: EntityId.create(USER_ID),
 });
 
 function toAccountRow(entity: Account): typeof account.$inferInsert {

@@ -2,6 +2,7 @@ import { and, eq, gte, inArray, lte } from "drizzle-orm";
 
 import { CheckingAccount } from "@/business/entities/bank/checking-account.entity";
 import type { ICheckingAccount } from "@/business/interfaces/bank/checking-account.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import SignedMoney from "@/business/value-objects/signed-money.vo";
 import { checkingAccount } from "@/infrastructure/database/schemas";
 
@@ -60,7 +61,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
   private toEntity(row: typeof checkingAccount.$inferSelect): CheckingAccount {
     return CheckingAccount.create(
       {
-        bankAccountId: row.bankAccountId,
+        bankAccountId: EntityId.create(row.bankAccountId),
         date: row.date,
         value: SignedMoney.create(row.value),
       },

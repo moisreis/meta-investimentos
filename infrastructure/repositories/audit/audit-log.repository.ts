@@ -2,6 +2,7 @@ import { and, eq, inArray } from "drizzle-orm";
 
 import { AuditLog } from "@/business/entities/audit/audit-log.entity";
 import type { IAuditLog } from "@/business/interfaces/audit/audit-log.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { auditLog } from "@/infrastructure/database/schemas";
 
 import type { DbClient } from "../types";
@@ -55,10 +56,10 @@ export class AuditLogRepository implements IAuditLog {
     return AuditLog.create(
       {
         entity: row.entity,
-        entityId: row.entityId,
+        entityId: EntityId.create(row.entityId),
         action: row.action,
         changes: row.changes as Record<string, unknown> | null,
-        userId: row.userId,
+        userId: row.userId ? EntityId.create(row.userId) : null,
         createdAt: row.createdAt,
       },
       row.id,

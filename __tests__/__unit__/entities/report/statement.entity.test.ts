@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Statement } from "@/business/entities/report/statement.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("Statement.create", () => {
   const VALID_PROPS = {
@@ -40,8 +41,10 @@ describe("Statement.create", () => {
 
     const STATEMENT = Statement.create({
       ...VALID_PROPS,
-      portfolioId: "9a77b1c2-3d94-4a4a-9a6f-b3f916f7b4a2",
-      generatedByUserId: "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+      portfolioId: EntityId.create("9a77b1c2-3d94-4a4a-9a6f-b3f916f7b4a2"),
+      generatedByUserId: EntityId.create(
+        "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+      ),
       createdAt: CREATED_AT,
     });
 

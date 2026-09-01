@@ -1,4 +1,6 @@
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the properties required to create a
@@ -10,8 +12,8 @@ import type SignedPercentage from "@/business/value-objects/signed-percentage.vo
  * instance.
  */
 interface NormsPortfoliosProps {
-  normId: string;
-  portfolioId: string;
+  normId: EntityId;
+  portfolioId: EntityId;
   minAllocation: SignedPercentage;
   maxAllocation: SignedPercentage;
   targetAllocation: SignedPercentage;
@@ -46,7 +48,7 @@ interface NormsPortfoliosProps {
  * ```
  */
 export class NormsPortfolios {
-  private readonly _id?: string;
+  private readonly _id?: EntityId;
   private readonly props: Required<NormsPortfoliosProps>;
 
   // --------------------------------------
@@ -56,21 +58,21 @@ export class NormsPortfolios {
   /**
    * Returns the unique identifier of the norms-portfolios relation.
    */
-  get id(): string | undefined {
+  get id(): EntityId | undefined {
     return this._id;
   }
 
   /**
    * Returns the id of the norm of the relation.
    */
-  get normId(): string {
+  get normId(): EntityId {
     return this.props.normId;
   }
 
   /**
    * Returns the id of the portfolio of the relation.
    */
-  get portfolioId(): string {
+  get portfolioId(): EntityId {
     return this.props.portfolioId;
   }
 
@@ -114,7 +116,7 @@ export class NormsPortfolios {
    * the norms-portfolios relation's invariants.
    */
   private constructor(props: Required<NormsPortfoliosProps>, id?: string) {
-    this._id = id;
+    this._id = id ? EntityId.create(id) : undefined;
     this.props = props;
   }
 
@@ -134,30 +136,36 @@ export class NormsPortfolios {
    *
    * @returns A valid `NormsPortfolios` instance.
    *
-   * @throws {Error} If `props.normId` is blank.
-   * @throws {Error} If `props.portfolioId` is blank.
-   * @throws {Error} If `props.minAllocation` is missing.
-   * @throws {Error} If `props.maxAllocation` is missing.
-   * @throws {Error} If `props.targetAllocation` is missing.
+   * @throws {ValidationError} If `props.normId` is blank.
+   * @throws {ValidationError} If `props.portfolioId` is blank.
+   * @throws {ValidationError} If `props.minAllocation` is missing.
+   * @throws {ValidationError} If `props.maxAllocation` is missing.
+   * @throws {ValidationError} If `props.targetAllocation` is missing.
    */
   public static create(
     props: NormsPortfoliosProps,
     id?: string,
   ): NormsPortfolios {
     if (!props.normId || props.normId.trim() === "") {
-      throw new Error("NormsPortfolios must have a norm id.");
+      throw new ValidationError("NormsPortfolios must have a norm id.");
     }
     if (!props.portfolioId || props.portfolioId.trim() === "") {
-      throw new Error("NormsPortfolios must have a portfolio id.");
+      throw new ValidationError("NormsPortfolios must have a portfolio id.");
     }
     if (!props.minAllocation) {
-      throw new Error("NormsPortfolios must have a minimum allocation.");
+      throw new ValidationError(
+        "NormsPortfolios must have a minimum allocation.",
+      );
     }
     if (!props.maxAllocation) {
-      throw new Error("NormsPortfolios must have a maximum allocation.");
+      throw new ValidationError(
+        "NormsPortfolios must have a maximum allocation.",
+      );
     }
     if (!props.targetAllocation) {
-      throw new Error("NormsPortfolios must have a target allocation.");
+      throw new ValidationError(
+        "NormsPortfolios must have a target allocation.",
+      );
     }
 
     const NOW = new Date();
