@@ -1,4 +1,5 @@
 import type { PortfolioPerformance } from "@/business/entities/performance/portfolio-performance.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -14,10 +15,6 @@ import type { PortfolioPerformance } from "@/business/entities/performance/portf
  * `PortfolioPerformance` entities and back.
  */
 export interface IPortfolioPerformance {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the performance with the provided id.
    *
@@ -25,7 +22,7 @@ export interface IPortfolioPerformance {
    * @returns A promise resolving to the `PortfolioPerformance` or
    * `null` when not found.
    */
-  findById(id: string): Promise<PortfolioPerformance | null>;
+  findById(id: EntityId): Promise<PortfolioPerformance | null>;
 
   /**
    * Retrieves all performances belonging to the provided portfolio id.
@@ -34,7 +31,7 @@ export interface IPortfolioPerformance {
    * @returns A promise resolving to the `PortfolioPerformance` entries
    * or an empty array when there are no matches.
    */
-  findAllByPortfolioId(portfolioId: string): Promise<PortfolioPerformance[]>;
+  findAllByPortfolioId(portfolioId: EntityId): Promise<PortfolioPerformance[]>;
 
   /**
    * Retrieves the performance of the provided portfolio on the
@@ -46,7 +43,7 @@ export interface IPortfolioPerformance {
    * `null` when not found.
    */
   findByPortfolioIdAndDate(
-    portfolioId: string,
+    portfolioId: EntityId,
     date: Date,
   ): Promise<PortfolioPerformance | null>;
 
@@ -58,12 +55,8 @@ export interface IPortfolioPerformance {
    * the latest date or `null` when there is no performance.
    */
   findLatestByPortfolioId(
-    portfolioId: string,
+    portfolioId: EntityId,
   ): Promise<PortfolioPerformance | null>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided performance.
@@ -86,5 +79,5 @@ export interface IPortfolioPerformance {
    * @param id - The unique identifier of the performance.
    * @returns A promise that resolves when the performance is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

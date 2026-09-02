@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   FRESH_USER,
@@ -14,6 +14,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("UserRepository", () => {
   beforeEach(async () => {
@@ -28,13 +29,17 @@ describe("UserRepository", () => {
     it("returns the persisted user", async () => {
       await seedUsers();
 
-      const FOUND = await newUserRepository().findById(USER_ID);
+      const FOUND = await newUserRepository().findById(
+        EntityId.create(USER_ID),
+      );
 
       expect(FOUND?.equals(USER)).toBe(true);
     });
 
     it("returns null when the user does not exist", async () => {
-      expect(await newUserRepository().findById(USER_ID)).toBeNull();
+      expect(
+        await newUserRepository().findById(EntityId.create(USER_ID)),
+      ).toBeNull();
     });
   });
 
@@ -71,8 +76,8 @@ describe("UserRepository", () => {
       await seedUsers();
 
       const FOUND = await newUserRepository().findAllByIds([
-        USER_ID,
-        OTHER_USER_ID,
+        EntityId.create(USER_ID),
+        EntityId.create(OTHER_USER_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -83,7 +88,9 @@ describe("UserRepository", () => {
     it("filters out ids that do not exist", async () => {
       await seedUsers();
 
-      const FOUND = await newUserRepository().findAllByIds([USER_ID]);
+      const FOUND = await newUserRepository().findAllByIds([
+        EntityId.create(USER_ID),
+      ]);
 
       expect(FOUND).toHaveLength(1);
       expect(FOUND[0]?.equals(USER)).toBe(true);
@@ -101,7 +108,11 @@ describe("UserRepository", () => {
       expect(SAVED.id).toBeDefined();
       expect(SAVED.email).toBe(FRESH_USER.email);
       expect(
-        (await newUserRepository().findById(SAVED.id as string))?.equals(SAVED),
+        (
+          await newUserRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
@@ -110,7 +121,9 @@ describe("UserRepository", () => {
 
       await newUserRepository().save(UPDATED_USER);
 
-      const FOUND = await newUserRepository().findById(USER_ID);
+      const FOUND = await newUserRepository().findById(
+        EntityId.create(USER_ID),
+      );
 
       expect(FOUND?.name).toBe(UPDATED_USER.name);
       expect(FOUND?.equals(UPDATED_USER)).toBe(true);
@@ -121,9 +134,11 @@ describe("UserRepository", () => {
     it("removes the persisted user", async () => {
       await seedUsers();
 
-      await newUserRepository().delete(USER_ID);
+      await newUserRepository().delete(EntityId.create(USER_ID));
 
-      expect(await newUserRepository().findById(USER_ID)).toBeNull();
+      expect(
+        await newUserRepository().findById(EntityId.create(USER_ID)),
+      ).toBeNull();
     });
   });
 });

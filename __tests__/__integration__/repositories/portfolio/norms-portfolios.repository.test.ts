@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   ADDITIONAL_NORM_PORTFOLIOS,

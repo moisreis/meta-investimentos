@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   createInMemoryStatementRepository,
@@ -25,13 +25,15 @@ describe("IStatement", () => {
     it("returns the persisted statement", async () => {
       await REPOSITORY.save(STATEMENT);
 
-      const FOUND = await REPOSITORY.findById(STATEMENT_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(STATEMENT_ID));
 
       expect(FOUND?.id).toBe(STATEMENT.id);
     });
 
     it("returns null when the statement does not exist", async () => {
-      expect(await REPOSITORY.findById(STATEMENT_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(STATEMENT_ID)),
+      ).toBeNull();
     });
   });
 
@@ -51,7 +53,9 @@ describe("IStatement", () => {
       await REPOSITORY.save(STATEMENT);
       await REPOSITORY.save(SECOND_STATEMENT);
 
-      const FOUND = await REPOSITORY.findAllByPortfolioId(PORTFOLIO_ID);
+      const FOUND = await REPOSITORY.findAllByPortfolioId(
+        EntityId.create(PORTFOLIO_ID),
+      );
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.id).toBe(STATEMENT.id);
@@ -59,7 +63,9 @@ describe("IStatement", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByPortfolioId(PORTFOLIO_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByPortfolioId(EntityId.create(PORTFOLIO_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -79,7 +85,9 @@ describe("IStatement", () => {
       await REPOSITORY.save(STATEMENT);
       await REPOSITORY.save(SECOND_STATEMENT);
 
-      const FOUND = await REPOSITORY.findAllByGeneratedByUserId(USER_ID);
+      const FOUND = await REPOSITORY.findAllByGeneratedByUserId(
+        EntityId.create(USER_ID),
+      );
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.id).toBe(STATEMENT.id);
@@ -87,7 +95,9 @@ describe("IStatement", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByGeneratedByUserId(USER_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByGeneratedByUserId(EntityId.create(USER_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -95,7 +105,7 @@ describe("IStatement", () => {
     it("persists a new statement", async () => {
       await REPOSITORY.save(STATEMENT);
 
-      const FOUND = await REPOSITORY.findById(STATEMENT_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(STATEMENT_ID));
 
       expect(FOUND?.id).toBe(STATEMENT.id);
     });
@@ -116,7 +126,7 @@ describe("IStatement", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(STATEMENT_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(STATEMENT_ID));
 
       expect(FOUND?.fileUrl).toBe(
         "https://example.com/statements/july-updated.pdf",
@@ -128,9 +138,11 @@ describe("IStatement", () => {
     it("removes the persisted statement", async () => {
       await REPOSITORY.save(STATEMENT);
 
-      await REPOSITORY.delete(STATEMENT_ID);
+      await REPOSITORY.delete(EntityId.create(STATEMENT_ID));
 
-      expect(await REPOSITORY.findById(STATEMENT_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(STATEMENT_ID)),
+      ).toBeNull();
     });
   });
 });

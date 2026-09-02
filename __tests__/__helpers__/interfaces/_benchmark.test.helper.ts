@@ -1,37 +1,26 @@
-import { Benchmark } from "@/business/entities/benchmark/benchmark.entity";
+﻿import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import type { IBenchmark } from "@/business/interfaces/benchmark/benchmark.interface";
 
-export const BENCHMARK_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-
-export const BENCHMARK = Benchmark.create(
-  { acronym: "IBOV", name: "Ibovespa" },
+export {
+  BENCHMARK,
   BENCHMARK_ID,
-);
+  FRESH_BENCHMARK,
+  OTHER_BENCHMARK,
+  OTHER_BENCHMARK_ID,
+  UPDATED_BENCHMARK,
+} from "@/__tests__/__fixtures__";
 
 export function createInMemoryBenchmarkRepository(): IBenchmark {
-  const ROWS = new Map<string, Benchmark>();
+  const BASE = createInMemoryRepository<
+    Awaited<ReturnType<IBenchmark["save"]>>
+  >({ extractId: (b) => b.id });
 
   return {
-    async findById(id: string): Promise<Benchmark | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findByAcronym(acronym) {
+      return BASE.findOne((b) => b.acronym === acronym);
     },
-
-    async findByAcronym(acronym: string): Promise<Benchmark | null> {
-      for (const ROW of ROWS.values()) {
-        if (ROW.acronym === acronym) return ROW;
-      }
-
-      return null;
-    },
-
-    async save(benchmark: Benchmark): Promise<Benchmark> {
-      ROWS.set(benchmark.id ?? "generated-id", benchmark);
-
-      return benchmark;
-    },
-
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (benchmark) => BASE.save(benchmark),
+    delete: (id) => BASE.delete(id),
   };
 }

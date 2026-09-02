@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculatePortfolioInflationSpread } from "@/business/calculators/benchmark/inflation-spread.calculator";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("calculatePortfolioInflationSpread", () => {
   it("returns the difference between the portfolio return and the inflation index", () => {

@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   EXTERNAL_POSITION_PERFORMANCE,
@@ -22,6 +22,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("PositionPerformanceRepository", () => {
   beforeEach(async () => {
@@ -37,7 +38,7 @@ describe("PositionPerformanceRepository", () => {
       await seedPositionPerformances();
 
       const FOUND = await newPositionPerformanceRepository().findById(
-        POSITION_PERFORMANCE_ID,
+        EntityId.create(POSITION_PERFORMANCE_ID),
       );
 
       expect(FOUND?.equals(POSITION_PERFORMANCE)).toBe(true);
@@ -46,7 +47,7 @@ describe("PositionPerformanceRepository", () => {
     it("returns null when the performance does not exist", async () => {
       expect(
         await newPositionPerformanceRepository().findById(
-          POSITION_PERFORMANCE_ID,
+          EntityId.create(POSITION_PERFORMANCE_ID),
         ),
       ).toBeNull();
     });
@@ -58,7 +59,7 @@ describe("PositionPerformanceRepository", () => {
 
       const FOUND =
         await newPositionPerformanceRepository().findAllByPositionId(
-          POSITION_ID,
+          EntityId.create(POSITION_ID),
         );
 
       expect(FOUND).toHaveLength(3);
@@ -74,7 +75,7 @@ describe("PositionPerformanceRepository", () => {
     it("returns an empty array when the position has no performances", async () => {
       expect(
         await newPositionPerformanceRepository().findAllByPositionId(
-          POSITION_ID,
+          EntityId.create(POSITION_ID),
         ),
       ).toEqual([]);
     });
@@ -86,8 +87,8 @@ describe("PositionPerformanceRepository", () => {
 
       const FOUND =
         await newPositionPerformanceRepository().findAllByPositionIds([
-          POSITION_ID,
-          OTHER_POSITION_ID,
+          EntityId.create(POSITION_ID),
+          EntityId.create(OTHER_POSITION_ID),
         ]);
 
       expect(FOUND).toHaveLength(4);
@@ -110,7 +111,7 @@ describe("PositionPerformanceRepository", () => {
 
       const FOUND =
         await newPositionPerformanceRepository().findByPositionIdAndDate(
-          POSITION_ID,
+          EntityId.create(POSITION_ID),
           PERFORMANCE_DATE,
         );
 
@@ -122,7 +123,7 @@ describe("PositionPerformanceRepository", () => {
 
       const FOUND =
         await newPositionPerformanceRepository().findByPositionIdAndDate(
-          POSITION_ID,
+          EntityId.create(POSITION_ID),
           FEBRUARY_PERFORMANCE_DATE,
         );
 
@@ -136,7 +137,7 @@ describe("PositionPerformanceRepository", () => {
 
       const FOUND =
         await newPositionPerformanceRepository().findLatestByPositionId(
-          POSITION_ID,
+          EntityId.create(POSITION_ID),
         );
 
       expect(FOUND?.equals(PERIOD_OUTSIDE_POSITION_PERFORMANCE)).toBe(true);
@@ -145,7 +146,7 @@ describe("PositionPerformanceRepository", () => {
     it("returns null when the position has no performances", async () => {
       expect(
         await newPositionPerformanceRepository().findLatestByPositionId(
-          POSITION_ID,
+          EntityId.create(POSITION_ID),
         ),
       ).toBeNull();
     });
@@ -157,8 +158,8 @@ describe("PositionPerformanceRepository", () => {
 
       const FOUND =
         await newPositionPerformanceRepository().findLatestByPositionIds([
-          POSITION_ID,
-          OTHER_POSITION_ID,
+          EntityId.create(POSITION_ID),
+          EntityId.create(OTHER_POSITION_ID),
         ]);
 
       expect(FOUND).toHaveLength(2);
@@ -191,7 +192,9 @@ describe("PositionPerformanceRepository", () => {
       );
       expect(
         (
-          await newPositionPerformanceRepository().findById(SAVED.id as string)
+          await newPositionPerformanceRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
         )?.equals(SAVED),
       ).toBe(true);
     });
@@ -204,7 +207,7 @@ describe("PositionPerformanceRepository", () => {
       );
 
       const FOUND = await newPositionPerformanceRepository().findById(
-        POSITION_PERFORMANCE_ID,
+        EntityId.create(POSITION_PERFORMANCE_ID),
       );
 
       expect(FOUND?.earnings.value.toString()).toBe(
@@ -218,11 +221,13 @@ describe("PositionPerformanceRepository", () => {
     it("removes the persisted performance", async () => {
       await seedPositionPerformances();
 
-      await newPositionPerformanceRepository().delete(POSITION_PERFORMANCE_ID);
+      await newPositionPerformanceRepository().delete(
+        EntityId.create(POSITION_PERFORMANCE_ID),
+      );
 
       expect(
         await newPositionPerformanceRepository().findById(
-          POSITION_PERFORMANCE_ID,
+          EntityId.create(POSITION_PERFORMANCE_ID),
         ),
       ).toBeNull();
     });

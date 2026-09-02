@@ -1,4 +1,4 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -43,10 +43,6 @@ export class Verification {
   private readonly _id?: EntityId;
   private readonly props: Required<VerificationProps>;
 
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
-
   /**
    * Returns the unique identifier of the verification.
    */
@@ -89,10 +85,6 @@ export class Verification {
     return this.props.updatedAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `Verification`.
    *
@@ -102,12 +94,8 @@ export class Verification {
    */
   private constructor(props: Required<VerificationProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `Verification` from the provided properties.
@@ -144,10 +132,6 @@ export class Verification {
 
     return new Verification(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `Verification` represents the same

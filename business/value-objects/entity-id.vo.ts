@@ -7,10 +7,10 @@ const UUID_REGEX =
  * A branded string type representing a validated UUID identifier.
  *
  * `EntityId` is a lightweight domain primitive that ensures all
- * entity identifiers conform to the UUID v4 format. It is
- * assignable to `string` and works seamlessly with Drizzle ORM
- * queries, while providing compile-time type safety that prevents
- * mixing unrelated string values.
+ * entity identifiers conform to the UUID format. It is assignable
+ * to `string` and is usable across persistence layers, while
+ * providing compile-time type safety that prevents mixing unrelated
+ * string values.
  *
  * Use {@link EntityId.create} to validate and produce an `EntityId`.
  *
@@ -42,8 +42,8 @@ export const EntityId = {
   /**
    * Creates a valid `EntityId` from the provided string value.
    *
-   * The value must be a valid UUID (v4 format). It is normalized
-   * to lowercase before validation.
+   * The value must be a valid UUID (v4 format). The code
+   * normalizes the value to lowercase before validation.
    *
    * @param value - The string value to validate as an `EntityId`.
    * @returns A validated `EntityId` instance.
@@ -87,7 +87,8 @@ export const EntityId = {
    *
    * @param a - The first entity id.
    * @param b - The second entity id.
-   * @returns `true` when both identifiers are equal; otherwise, `false`.
+   * @returns `true` when both identifiers are equal;
+   *          otherwise, `false`.
    *
    * @example
    * ```ts

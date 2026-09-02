@@ -1,5 +1,5 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+import type { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -39,7 +39,7 @@ interface PortfolioProps {
  * ```ts
  * const PORTFOLIO = Portfolio.create({
  *   acronym: 'FIA',
- *   name: 'Fundo de Investimento em Ações',
+ *   name: 'Fundo de Investimento em AÃ§Ãµes',
  *   userId: 'ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2',
  *   annualInterestRate: SignedPercentage.create('10.5'),
  *   minAllocation: SignedPercentage.create('5'),
@@ -54,10 +54,6 @@ interface PortfolioProps {
 export class Portfolio {
   private readonly _id?: EntityId;
   private readonly props: Required<PortfolioProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the portfolio.
@@ -129,10 +125,6 @@ export class Portfolio {
     return this.props.updatedAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `Portfolio`.
    *
@@ -142,12 +134,8 @@ export class Portfolio {
    */
   private constructor(props: Required<PortfolioProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `Portfolio` from the provided properties.
@@ -166,6 +154,9 @@ export class Portfolio {
    * @throws {ValidationError} If `props.minAllocation` is missing.
    * @throws {ValidationError} If `props.maxAllocation` is missing.
    * @throws {ValidationError} If `props.targetAllocation` is missing.
+   * @throws {ValidationError} If `props.annualInterestRate` is negative.
+   * @throws {ValidationError} If `props.minAllocation` exceeds `props.targetAllocation`.
+   * @throws {ValidationError} If `props.targetAllocation` exceeds `props.maxAllocation`.
    */
   public static create(props: PortfolioProps, id?: string): Portfolio {
     if (!props.acronym || props.acronym.trim() === "") {
@@ -189,6 +180,21 @@ export class Portfolio {
     if (!props.targetAllocation) {
       throw new ValidationError("Portfolio must have a target allocation.");
     }
+    if (props.annualInterestRate.isNegative) {
+      throw new ValidationError(
+        "Portfolio annual interest rate must not be negative.",
+      );
+    }
+    if (props.minAllocation.value.gt(props.targetAllocation.value)) {
+      throw new ValidationError(
+        "Portfolio minimum allocation must not exceed target allocation.",
+      );
+    }
+    if (props.targetAllocation.value.gt(props.maxAllocation.value)) {
+      throw new ValidationError(
+        "Portfolio target allocation must not exceed maximum allocation.",
+      );
+    }
 
     const NOW = new Date();
 
@@ -200,10 +206,6 @@ export class Portfolio {
 
     return new Portfolio(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `Portfolio` represents the same portfolio as

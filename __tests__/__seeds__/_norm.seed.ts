@@ -1,61 +1,19 @@
-import { db } from "@/__tests__/__setup__/_database.setup";
-import { Norm } from "@/business/entities";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
-import { norm } from "@/infrastructure/database/schemas";
-import {
+﻿import {
   CATEGORY_ID,
+  FRESH_NORM,
+  NORM,
+  NORM_ID,
   OTHER_CATEGORY_ID,
-  seedCategoryById,
-} from "./_category.seed";
-
-export const NORM_ID = "3e3f4051-6a7b-4c8d-9e0f-1a2b3c4d5e6f";
-export const OTHER_NORM_ID = "4f405162-7b8c-4d9e-8f0a-2b3c4d5e6f70";
-
-export const NORM = Norm.create(
-  {
-    articleNumber: "Art. 1",
-    name: "Política de Investimento",
-    categoryId: EntityId.create(CATEGORY_ID),
-    minAllocation: SignedPercentage.create("5"),
-    maxAllocation: SignedPercentage.create("20"),
-    targetAllocation: SignedPercentage.create("12"),
-  },
-  NORM_ID,
-);
-
-export const OTHER_NORM = Norm.create(
-  {
-    articleNumber: "Art. 2",
-    name: "Norma Renda Fixa",
-    categoryId: EntityId.create(OTHER_CATEGORY_ID),
-    minAllocation: SignedPercentage.create("10"),
-    maxAllocation: SignedPercentage.create("30"),
-    targetAllocation: SignedPercentage.create("18"),
-  },
+  OTHER_NORM,
   OTHER_NORM_ID,
-);
+  UPDATED_NORM,
+} from "@/__tests__/__fixtures__";
+import { db } from "@/__tests__/__setup__/_database.setup";
+import type { Norm } from "@/business/entities";
+import { norm } from "@/infrastructure/database/schemas";
+import { seedCategoryById } from "./_category.seed";
 
-export const UPDATED_NORM = Norm.create(
-  {
-    articleNumber: NORM.articleNumber,
-    name: NORM.name,
-    categoryId: NORM.categoryId,
-    minAllocation: SignedPercentage.create("5"),
-    maxAllocation: SignedPercentage.create("20"),
-    targetAllocation: SignedPercentage.create("14"),
-  },
-  NORM_ID,
-);
-
-export const FRESH_NORM = Norm.create({
-  articleNumber: "Art. 3",
-  name: "Norma Multimercado",
-  categoryId: EntityId.create(CATEGORY_ID),
-  minAllocation: SignedPercentage.create("0"),
-  maxAllocation: SignedPercentage.create("25"),
-  targetAllocation: SignedPercentage.create("12"),
-});
+export { NORM_ID, OTHER_NORM_ID, NORM, OTHER_NORM, UPDATED_NORM, FRESH_NORM };
 
 export async function seedNorms(): Promise<Norm[]> {
   await seedCategoryById(CATEGORY_ID);

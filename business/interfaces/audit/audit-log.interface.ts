@@ -1,4 +1,5 @@
 import type { AuditLog } from "@/business/entities/audit/audit-log.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -14,10 +15,6 @@ import type { AuditLog } from "@/business/entities/audit/audit-log.entity";
  * `AuditLog` entities and back.
  */
 export interface IAuditLog {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the log with the provided id.
    *
@@ -25,7 +22,7 @@ export interface IAuditLog {
    * @returns A promise resolving to the `AuditLog` or `null` when
    * not found.
    */
-  findById(id: string): Promise<AuditLog | null>;
+  findById(id: EntityId): Promise<AuditLog | null>;
 
   /**
    * Retrieves all logs referring to the provided entity.
@@ -57,10 +54,6 @@ export interface IAuditLog {
    * empty array when there are no matches.
    */
   findAllByUserId(userId: string): Promise<AuditLog[]>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided log.

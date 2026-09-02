@@ -1,4 +1,4 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -36,10 +36,6 @@ export class Benchmark {
   private readonly _id?: EntityId;
   private readonly props: Required<BenchmarkProps>;
 
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
-
   /**
    * Returns the unique identifier of the benchmark.
    */
@@ -68,10 +64,6 @@ export class Benchmark {
     return this.props.createdAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `Benchmark`.
    *
@@ -81,12 +73,8 @@ export class Benchmark {
    */
   private constructor(props: Required<BenchmarkProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `Benchmark` from the provided properties.
@@ -119,10 +107,6 @@ export class Benchmark {
 
     return new Benchmark(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `Benchmark` represents the same benchmark

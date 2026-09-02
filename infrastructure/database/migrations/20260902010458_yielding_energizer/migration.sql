@@ -1,0 +1,2 @@
+ALTER TABLE "portfolio"."application" ADD CONSTRAINT "application_reversed_by_user_id_user_id_fkey" FOREIGN KEY ("reversed_by_user_id") REFERENCES "user"."user"("id");--> statement-breakpoint
+ALTER TABLE "portfolio"."withdrawal" ADD CONSTRAINT "withdrawal_reversed_by_user_id_user_id_fkey" FOREIGN KEY ("reversed_by_user_id") REFERENCES "user"."user"("id");

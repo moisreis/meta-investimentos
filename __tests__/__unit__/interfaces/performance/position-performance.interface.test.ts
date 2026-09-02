@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   createInMemoryPositionPerformanceRepository,
@@ -11,10 +11,10 @@ import {
 import { PositionPerformance } from "@/business/entities/performance/position-performance.entity";
 import type { IPositionPerformance } from "@/business/interfaces/performance/position-performance.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("IPositionPerformance", () => {
   let REPOSITORY: IPositionPerformance;
@@ -27,13 +27,15 @@ describe("IPositionPerformance", () => {
     it("returns the persisted performance", async () => {
       await REPOSITORY.save(PERFORMANCE);
 
-      const FOUND = await REPOSITORY.findById(PERFORMANCE_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(PERFORMANCE_ID));
 
       expect(FOUND?.equals(PERFORMANCE)).toBe(true);
     });
 
     it("returns null when the performance does not exist", async () => {
-      expect(await REPOSITORY.findById(PERFORMANCE_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(PERFORMANCE_ID)),
+      ).toBeNull();
     });
   });
 
@@ -58,7 +60,9 @@ describe("IPositionPerformance", () => {
       await REPOSITORY.save(PERFORMANCE);
       await REPOSITORY.save(SECOND_PERFORMANCE);
 
-      const FOUND = await REPOSITORY.findAllByPositionId(POSITION_ID);
+      const FOUND = await REPOSITORY.findAllByPositionId(
+        EntityId.create(POSITION_ID),
+      );
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.equals(PERFORMANCE)).toBe(true);
@@ -66,7 +70,9 @@ describe("IPositionPerformance", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByPositionId(POSITION_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByPositionId(EntityId.create(POSITION_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -75,7 +81,7 @@ describe("IPositionPerformance", () => {
       await REPOSITORY.save(PERFORMANCE);
 
       const FOUND = await REPOSITORY.findByPositionIdAndDate(
-        POSITION_ID,
+        EntityId.create(POSITION_ID),
         PERFORMANCE_DATE,
       );
 
@@ -84,7 +90,10 @@ describe("IPositionPerformance", () => {
 
     it("returns null when the performance does not exist", async () => {
       expect(
-        await REPOSITORY.findByPositionIdAndDate(POSITION_ID, PERFORMANCE_DATE),
+        await REPOSITORY.findByPositionIdAndDate(
+          EntityId.create(POSITION_ID),
+          PERFORMANCE_DATE,
+        ),
       ).toBeNull();
     });
   });
@@ -125,13 +134,17 @@ describe("IPositionPerformance", () => {
       await REPOSITORY.save(EARLIER);
       await REPOSITORY.save(LATER);
 
-      const FOUND = await REPOSITORY.findLatestByPositionId(POSITION_ID);
+      const FOUND = await REPOSITORY.findLatestByPositionId(
+        EntityId.create(POSITION_ID),
+      );
 
       expect(FOUND?.equals(LATER)).toBe(true);
     });
 
     it("returns null when there is no performance", async () => {
-      expect(await REPOSITORY.findLatestByPositionId(POSITION_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findLatestByPositionId(EntityId.create(POSITION_ID)),
+      ).toBeNull();
     });
   });
 
@@ -139,7 +152,7 @@ describe("IPositionPerformance", () => {
     it("persists a new performance", async () => {
       await REPOSITORY.save(PERFORMANCE);
 
-      const FOUND = await REPOSITORY.findById(PERFORMANCE_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(PERFORMANCE_ID));
 
       expect(FOUND?.equals(PERFORMANCE)).toBe(true);
     });
@@ -165,7 +178,7 @@ describe("IPositionPerformance", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(PERFORMANCE_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(PERFORMANCE_ID));
 
       expect(FOUND?.patrimony.value.toString()).toBe("1200000");
     });
@@ -175,9 +188,11 @@ describe("IPositionPerformance", () => {
     it("removes the persisted performance", async () => {
       await REPOSITORY.save(PERFORMANCE);
 
-      await REPOSITORY.delete(PERFORMANCE_ID);
+      await REPOSITORY.delete(EntityId.create(PERFORMANCE_ID));
 
-      expect(await REPOSITORY.findById(PERFORMANCE_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(PERFORMANCE_ID)),
+      ).toBeNull();
     });
   });
 });

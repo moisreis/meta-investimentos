@@ -1,4 +1,5 @@
 import type { Bank } from "@/business/entities/bank/bank.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,17 +14,13 @@ import type { Bank } from "@/business/entities/bank/bank.entity";
  * `Bank` entities and back.
  */
 export interface IBank {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the bank with the provided id.
    *
    * @param id - The unique identifier of the bank.
    * @returns A promise resolving to the `Bank` or `null` when not found.
    */
-  findById(id: string): Promise<Bank | null>;
+  findById(id: EntityId): Promise<Bank | null>;
 
   /**
    * Retrieves the bank with the provided code.
@@ -32,10 +29,6 @@ export interface IBank {
    * @returns A promise resolving to the `Bank` or `null` when not found.
    */
   findByCode(code: string): Promise<Bank | null>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided bank.
@@ -55,5 +48,5 @@ export interface IBank {
    * @param id - The unique identifier of the bank.
    * @returns A promise that resolves when the bank is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

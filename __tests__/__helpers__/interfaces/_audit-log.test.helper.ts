@@ -1,33 +1,44 @@
-import { AuditLog } from "@/business/entities/audit/audit-log.entity";
+﻿import {
+  AUDIT_LOG,
+  AUDIT_LOG_ID,
+  OTHER_AUDIT_LOG,
+  OTHER_AUDIT_LOG_ID,
+  OTHER_USER_ID,
+  PORTFOLIO_ID,
+  USER_ID,
+} from "@/__tests__/__fixtures__";
 import type { IAuditLog } from "@/business/interfaces/audit/audit-log.interface";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
 
-export const LOG_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-export const ENTITY = "Portfolio";
-export const ENTITY_ID = "c47d54e2-4a03-4f71-9c0d-3a58d2c33e90";
-export const ACTION = "UPDATED";
-export const USER_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
+export {
+  AUDIT_LOG_ID,
+  OTHER_AUDIT_LOG_ID,
+  USER_ID,
+  OTHER_USER_ID,
+  PORTFOLIO_ID,
+  AUDIT_LOG,
+  OTHER_AUDIT_LOG,
+};
 
-export const LOG = AuditLog.create(
-  {
-    entity: ENTITY,
-    entityId: EntityId.create(ENTITY_ID),
-    action: ACTION,
-    userId: EntityId.create(USER_ID),
-  },
-  LOG_ID,
-);
+export const ENTITY = AUDIT_LOG.entity;
+export const ENTITY_ID = AUDIT_LOG.entityId;
+export const ACTION = AUDIT_LOG.action;
+export const LOG_ID = AUDIT_LOG_ID;
+export const LOG = AUDIT_LOG;
 
 export function createInMemoryAuditLogRepository(): IAuditLog {
-  const ROWS = new Map<string, AuditLog>();
+  const ROWS = new Map<
+    string,
+    import("@/business/entities/audit/audit-log.entity").AuditLog
+  >();
 
   return {
-    async findById(id: string): Promise<AuditLog | null> {
+    async findById(id) {
       return ROWS.get(id) ?? null;
     },
 
-    async findAllByEntity(entity: string): Promise<AuditLog[]> {
-      const RESULT: AuditLog[] = [];
+    async findAllByEntity(entity) {
+      const RESULT: import("@/business/entities/audit/audit-log.entity").AuditLog[] =
+        [];
 
       for (const ROW of ROWS.values()) {
         if (ROW.entity === entity) RESULT.push(ROW);
@@ -36,11 +47,9 @@ export function createInMemoryAuditLogRepository(): IAuditLog {
       return RESULT;
     },
 
-    async findAllByEntityAndEntityId(
-      entity: string,
-      entityId: string,
-    ): Promise<AuditLog[]> {
-      const RESULT: AuditLog[] = [];
+    async findAllByEntityAndEntityId(entity, entityId) {
+      const RESULT: import("@/business/entities/audit/audit-log.entity").AuditLog[] =
+        [];
 
       for (const ROW of ROWS.values()) {
         if (ROW.entity === entity && ROW.entityId === entityId) {
@@ -51,8 +60,9 @@ export function createInMemoryAuditLogRepository(): IAuditLog {
       return RESULT;
     },
 
-    async findAllByUserId(userId: string): Promise<AuditLog[]> {
-      const RESULT: AuditLog[] = [];
+    async findAllByUserId(userId) {
+      const RESULT: import("@/business/entities/audit/audit-log.entity").AuditLog[] =
+        [];
 
       for (const ROW of ROWS.values()) {
         if (ROW.userId === userId) RESULT.push(ROW);
@@ -61,7 +71,7 @@ export function createInMemoryAuditLogRepository(): IAuditLog {
       return RESULT;
     },
 
-    async save(auditLog: AuditLog): Promise<AuditLog> {
+    async save(auditLog) {
       ROWS.set(auditLog.id ?? "generated-id", auditLog);
 
       return auditLog;

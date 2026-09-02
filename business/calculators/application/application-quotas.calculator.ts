@@ -1,6 +1,7 @@
-import type PositiveMoney from "@/business/value-objects/positive-money.vo";
-import type QuotaPrice from "@/business/value-objects/quota-price.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import type { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import type { QuotaPrice } from "@/business/value-objects/quota-price.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the inputs required to calculate
@@ -26,6 +27,8 @@ interface CalculateApplicationQuotasProps {
  *
  * @returns The calculated number of quotas.
  *
+ * @throws {ValidationError} If `quota` is zero.
+ *
  * @equation Qₜᴬ˒ⁱ = Aₜⁿ˒ⁱ / Qₜ
  *
  * @example
@@ -43,5 +46,11 @@ export function calculateApplicationQuotas({
   application,
   quota,
 }: CalculateApplicationQuotasProps): QuotaQuantity {
+  if (quota.value.isZero()) {
+    throw new ValidationError(
+      "Application quotas cannot be calculated with a zero quota price.",
+    );
+  }
+
   return QuotaQuantity.create(application.value.dividedBy(quota.value));
 }

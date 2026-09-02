@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   createInMemoryAuditLogRepository,
@@ -24,13 +24,13 @@ describe("IAuditLog", () => {
     it("returns the persisted log", async () => {
       await REPOSITORY.save(LOG);
 
-      const FOUND = await REPOSITORY.findById(LOG_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(LOG_ID));
 
       expect(FOUND?.equals(LOG)).toBe(true);
     });
 
     it("returns null when the log does not exist", async () => {
-      expect(await REPOSITORY.findById(LOG_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(LOG_ID))).toBeNull();
     });
   });
 
@@ -78,7 +78,7 @@ describe("IAuditLog", () => {
 
       const FOUND = await REPOSITORY.findAllByEntityAndEntityId(
         ENTITY,
-        ENTITY_ID,
+        EntityId.create(ENTITY_ID),
       );
 
       expect(FOUND.length).toBe(2);
@@ -88,7 +88,10 @@ describe("IAuditLog", () => {
 
     it("returns an empty array when there are no matches", async () => {
       expect(
-        await REPOSITORY.findAllByEntityAndEntityId(ENTITY, ENTITY_ID),
+        await REPOSITORY.findAllByEntityAndEntityId(
+          ENTITY,
+          EntityId.create(ENTITY_ID),
+        ),
       ).toEqual([]);
     });
   });
@@ -108,7 +111,7 @@ describe("IAuditLog", () => {
       await REPOSITORY.save(LOG);
       await REPOSITORY.save(SECOND_LOG);
 
-      const FOUND = await REPOSITORY.findAllByUserId(USER_ID);
+      const FOUND = await REPOSITORY.findAllByUserId(EntityId.create(USER_ID));
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.equals(LOG)).toBe(true);
@@ -116,7 +119,9 @@ describe("IAuditLog", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByUserId(USER_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByUserId(EntityId.create(USER_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -124,7 +129,7 @@ describe("IAuditLog", () => {
     it("persists a new log", async () => {
       await REPOSITORY.save(LOG);
 
-      const FOUND = await REPOSITORY.findById(LOG_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(LOG_ID));
 
       expect(FOUND?.equals(LOG)).toBe(true);
     });
@@ -144,7 +149,7 @@ describe("IAuditLog", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(LOG_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(LOG_ID));
 
       expect(FOUND?.action).toBe("DELETED");
     });

@@ -1,6 +1,6 @@
 import Decimal from "decimal.js";
 
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -21,14 +21,15 @@ interface CalculatePortfolioCumulativeTargetProps {
  * The result is expressed as a percentage, rounded to
  * 2 decimal places, and represented as a {@link SignedPercentage}.
  *
- * @param monthlyTargets - The monthly Target factors for the period,
- * in chronological order.
+ * @param monthlyTargets - The monthly Target factors for the
+ *                         period, in chronological order.
  *
  * @returns The calculated cumulative Target of the Portfolio.
  *
  * @equation T̄ₜ = ∏ₖ₌₁..ₜ (1 + Tₖ) − 1
  *
  * @example
+ * ```ts
  * const RESULT = calculatePortfolioCumulativeTarget({
  *   monthlyTargets: [
  *     { value: SignedPercentage.create('3.57') },
@@ -39,6 +40,7 @@ interface CalculatePortfolioCumulativeTargetProps {
  *
  * RESULT.value.toString()
  * // '10.25'
+ * ```
  */
 export function calculatePortfolioCumulativeTarget({
   monthlyTargets,

@@ -1,10 +1,11 @@
-import { and, eq, gte, inArray, lte } from "drizzle-orm";
+﻿import { and, eq, gte, inArray, lte } from "drizzle-orm";
 
 import { BenchmarkHistory } from "@/business/entities/benchmark/benchmark-history.entity";
 import type { IBenchmarkHistory } from "@/business/interfaces/benchmark/benchmark-history.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { benchmarkHistory } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -26,15 +27,7 @@ import type { DbClient } from "../types";
  * per benchmark.
  */
 export class BenchmarkHistoryRepository implements IBenchmarkHistory {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `BenchmarkHistoryRepository` bound to the provided
@@ -45,10 +38,6 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `benchmark_history` row to a
@@ -108,16 +97,12 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the history record with the provided id.
    *
    * @see {@link IBenchmarkHistory.findById}
    */
-  async findById(id: string): Promise<BenchmarkHistory | null> {
+  async findById(id: EntityId): Promise<BenchmarkHistory | null> {
     const [row] = await this.db
       .select()
       .from(benchmarkHistory)
@@ -133,7 +118,9 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    *
    * @see {@link IBenchmarkHistory.findAllByBenchmarkId}
    */
-  async findAllByBenchmarkId(benchmarkId: string): Promise<BenchmarkHistory[]> {
+  async findAllByBenchmarkId(
+    benchmarkId: EntityId,
+  ): Promise<BenchmarkHistory[]> {
     const rows = await this.db
       .select()
       .from(benchmarkHistory)
@@ -213,7 +200,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    * @see {@link IBenchmarkHistory.findByBenchmarkIdAndDate}
    */
   async findByBenchmarkIdAndDate(
-    benchmarkId: string,
+    benchmarkId: EntityId,
     date: Date,
   ): Promise<BenchmarkHistory | null> {
     const [row] = await this.db
@@ -230,10 +217,6 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
     return row ? this.toEntity(row) : null;
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided benchmark history record.
    *
@@ -248,7 +231,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
         .returning();
 
       if (!row) {
-        throw new Error(
+        throw new NotFoundError(
           `BenchmarkHistory with id ${persisted.id} was not found.`,
         );
       }
@@ -269,7 +252,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    *
    * @see {@link IBenchmarkHistory.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(benchmarkHistory).where(eq(benchmarkHistory.id, id));
   }
 }

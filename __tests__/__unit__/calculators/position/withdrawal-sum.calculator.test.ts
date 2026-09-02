@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculateWithdrawalSum } from "@/business/calculators/position/withdrawal-sum.calculator";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 
 describe("calculateWithdrawalSum", () => {
   it("returns the sum of multiple withdrawal amounts", () => {

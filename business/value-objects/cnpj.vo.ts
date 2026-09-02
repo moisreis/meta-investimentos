@@ -1,7 +1,13 @@
 import { ValidationError } from "@/shared/errors";
 
 /**
- * Represents the properties of a {@link CNPJ}.
+ * Represents a validated Brazilian CNPJ number.
+ *
+ * The code stores only the digits, stripped of any
+ * formatting characters such as dots, dashes, slashes,
+ * or spaces.
+ *
+ * Use {@link CNPJ.create} to create a valid `CNPJ` instance.
  */
 interface CNPJProps {
   value: string;
@@ -13,18 +19,20 @@ const FIRST_WEIGHTS = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 const SECOND_WEIGHTS = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
 /**
- * Value object representing a Brazilian CNPJ (Cadastro Nacional da
- * Pessoa Jurídica) — the corporate taxpayer identification number.
+ * Value object representing a Brazilian CNPJ (Cadastro Nacional
+ * da Pessoa Jurídica) — the corporate taxpayer identification
+ * number.
  *
  * A `CNPJ`:
  * - must be defined.
  * - must not be blank.
- * - must contain exactly 14 digits after stripping non-digit characters.
+ * - must contain exactly 14 digits after stripping non-digit
+ *   characters.
  * - must not be a sequence of identical digits.
  * - must pass the official check-digit algorithm.
  *
- * The value is stored with only digits, stripped of any formatting
- * characters (dots, dashes, slashes, spaces).
+ * The value is stored with only digits, stripped of any
+ * formatting characters (dots, dashes, slashes, spaces).
  *
  * `CNPJ` instances are immutable after creation.
  *
@@ -45,12 +53,8 @@ const SECOND_WEIGHTS = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
  * // true
  * ```
  */
-class CNPJ {
+export class CNPJ {
   private readonly props: CNPJProps;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the CNPJ value with only digits.
@@ -59,40 +63,35 @@ class CNPJ {
     return this.props.value;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `CNPJ`.
    *
    * The constructor is private to ensure that all instances
    * are created through {@link CNPJ.create} and therefore
-   * satisfy the CNPJ's invariants.
+   * satisfy the value object's invariants.
    */
   private constructor(props: CNPJProps) {
     this.props = props;
   }
 
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
-
   /**
    * Creates a valid `CNPJ` from the provided value.
    *
-   * The value may contain formatting characters (dots, dashes,
-   * slashes, spaces), which are stripped before validation. The
-   * resulting value contains only digits.
+   * The value may contain formatting characters (dots,
+   * dashes, slashes, spaces), which are stripped before
+   * validation. The resulting value contains only digits.
    *
    * @param value - The CNPJ string to validate and create.
    * @returns A valid `CNPJ` instance.
    *
    * @throws {ValidationError} If `value` is `undefined` or `null`.
    * @throws {ValidationError} If `value` is blank.
-   * @throws {ValidationError} If `value` does not contain exactly 14 digits.
-   * @throws {ValidationError} If `value` is a sequence of identical digits.
-   * @throws {ValidationError} If `value` does not pass the check-digit algorithm.
+   * @throws {ValidationError} If `value` does not contain exactly
+   *   14 digits.
+   * @throws {ValidationError} If `value` is a sequence of identical
+   *   digits.
+   * @throws {ValidationError} If `value` does not pass the
+   *   check-digit algorithm.
    *
    * @example
    * ```ts
@@ -130,18 +129,14 @@ class CNPJ {
     return new CNPJ({ value: DIGITS });
   }
 
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
-
   /**
    * Determines whether two `CNPJ` instances represent the same
    * corporate identification number.
    *
    * @param a - The first CNPJ.
    * @param b - The second CNPJ.
-   * @returns `true` when both CNPJs have equal values; otherwise,
-   * `false`.
+   * @returns `true` when both CNPJs have equal values;
+   *          otherwise, `false`.
    *
    * @example
    * ```ts
@@ -156,19 +151,16 @@ class CNPJ {
     return a.value === b.value;
   }
 
-  // --------------------------------------
-  // PRIVATE HELPERS
-  // --------------------------------------
-
   /**
    * Validates the CNPJ check-digit algorithm.
    *
-   * The algorithm computes two check digits using weighted sums
-   * modulo 11 and compares them against the last two digits of
-   * the CNPJ.
+   * The algorithm computes two check digits using weighted
+   * sums modulo 11 and compares them against the last two
+   * digits of the CNPJ.
    *
    * @param digits - The 14-digit CNPJ string.
-   * @returns `true` when the check digits are valid; otherwise, `false`.
+   * @returns `true` when the check digits are valid;
+   *          otherwise, `false`.
    */
   private static isValid(digits: string): boolean {
     const FIRST_TWELVE = digits.substring(0, 12);
@@ -185,12 +177,12 @@ class CNPJ {
   }
 
   /**
-   * Computes a single CNPJ check digit from the provided partial
-   * digit string using the weighted-sum algorithm.
+   * Computes a single CNPJ check digit from the provided
+   * partial digit string using the weighted-sum algorithm.
    *
    * @param partial - The partial digit string (12 or 13 digits).
    * @param weights - The weight array corresponding to the
-   * partial length.
+   *   partial length.
    * @returns The computed check digit as a string character.
    */
   private static computeCheckDigit(partial: string, weights: number[]): string {
@@ -207,5 +199,3 @@ class CNPJ {
     return DIGIT;
   }
 }
-
-export default CNPJ;

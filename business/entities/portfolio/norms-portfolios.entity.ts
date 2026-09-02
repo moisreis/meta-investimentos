@@ -1,5 +1,5 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+import type { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -51,10 +51,6 @@ export class NormsPortfolios {
   private readonly _id?: EntityId;
   private readonly props: Required<NormsPortfoliosProps>;
 
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
-
   /**
    * Returns the unique identifier of the norms-portfolios relation.
    */
@@ -104,10 +100,6 @@ export class NormsPortfolios {
     return this.props.createdAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `NormsPortfolios`.
    *
@@ -117,12 +109,8 @@ export class NormsPortfolios {
    */
   private constructor(props: Required<NormsPortfoliosProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `NormsPortfolios` from the provided properties.
@@ -141,6 +129,8 @@ export class NormsPortfolios {
    * @throws {ValidationError} If `props.minAllocation` is missing.
    * @throws {ValidationError} If `props.maxAllocation` is missing.
    * @throws {ValidationError} If `props.targetAllocation` is missing.
+   * @throws {ValidationError} If `props.minAllocation` exceeds `props.targetAllocation`.
+   * @throws {ValidationError} If `props.targetAllocation` exceeds `props.maxAllocation`.
    */
   public static create(
     props: NormsPortfoliosProps,
@@ -167,6 +157,16 @@ export class NormsPortfolios {
         "NormsPortfolios must have a target allocation.",
       );
     }
+    if (props.minAllocation.value.gt(props.targetAllocation.value)) {
+      throw new ValidationError(
+        "NormsPortfolios minimum allocation must not exceed target allocation.",
+      );
+    }
+    if (props.targetAllocation.value.gt(props.maxAllocation.value)) {
+      throw new ValidationError(
+        "NormsPortfolios target allocation must not exceed maximum allocation.",
+      );
+    }
 
     const NOW = new Date();
 
@@ -177,10 +177,6 @@ export class NormsPortfolios {
 
     return new NormsPortfolios(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `NormsPortfolios` represents the same

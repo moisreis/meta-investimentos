@@ -1,4 +1,4 @@
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 /**
  * Represents the inputs required to calculate

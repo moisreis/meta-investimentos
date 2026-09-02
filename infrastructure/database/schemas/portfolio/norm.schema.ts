@@ -1,5 +1,8 @@
+import { sql } from "drizzle-orm";
 import {
+  check,
   index,
+  integer,
   numeric,
   pgSchema,
   text,
@@ -36,12 +39,23 @@ export const norm = pgSchema("portfolio").table(
       precision: 5,
       scale: 2,
     }).notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
+    version: integer("version").default(0).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
   (table) => [
+    /**
+     * Enforces the allocation ordering invariant: min ≤ target ≤ max.
+     */
+    check(
+      "norm_allocation_order",
+      sql`${table.minAllocation} <= ${table.targetAllocation} AND ${table.targetAllocation} <= ${table.maxAllocation}`,
+    ),
+
     /**
      * Speeds up lookups of norms by their category.
      */

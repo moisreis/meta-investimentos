@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculatePortfolioEarnings } from "@/business/calculators/portfolio/earnings.calculator";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 describe("calculatePortfolioEarnings", () => {
   it("returns the proved earnings value for the period for `JACOPREV`", () => {

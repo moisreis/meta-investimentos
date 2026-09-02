@@ -1,9 +1,9 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { Fund } from "@/business/entities/fund/fund.entity";
-import CNPJ from "@/business/value-objects/cnpj.vo";
+import { CNPJ } from "@/business/value-objects/cnpj.vo";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("Fund.create", () => {
   const ADMINISTRATION_FEE = SignedPercentage.create("1.5");

@@ -1,10 +1,11 @@
-import { eq, inArray } from "drizzle-orm";
+﻿import { eq, inArray } from "drizzle-orm";
 
 import { Norm } from "@/business/entities/portfolio/norm.entity";
 import type { INorm } from "@/business/interfaces/portfolio/norm.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { norm } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -23,15 +24,7 @@ import type { DbClient } from "../types";
  * hook keeps the timestamp in sync with the mutation.
  */
 export class NormRepository implements INorm {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `NormRepository` bound to the provided database client.
@@ -41,10 +34,6 @@ export class NormRepository implements INorm {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `norm` row to a {@link Norm} entity.
@@ -108,16 +97,12 @@ export class NormRepository implements INorm {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the norm with the provided id.
    *
    * @see {@link INorm.findById}
    */
-  async findById(id: string): Promise<Norm | null> {
+  async findById(id: EntityId): Promise<Norm | null> {
     const [row] = await this.db
       .select()
       .from(norm)
@@ -132,7 +117,7 @@ export class NormRepository implements INorm {
    *
    * @see {@link INorm.findAllByCategoryId}
    */
-  async findAllByCategoryId(categoryId: string): Promise<Norm[]> {
+  async findAllByCategoryId(categoryId: EntityId): Promise<Norm[]> {
     const rows = await this.db
       .select()
       .from(norm)
@@ -164,10 +149,6 @@ export class NormRepository implements INorm {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided norm.
    *
@@ -182,7 +163,7 @@ export class NormRepository implements INorm {
         .returning();
 
       if (!row) {
-        throw new Error(`Norm with id ${persisted.id} was not found.`);
+        throw new NotFoundError(`Norm with id ${persisted.id} was not found.`);
       }
 
       return this.toEntity(row);
@@ -201,7 +182,7 @@ export class NormRepository implements INorm {
    *
    * @see {@link INorm.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(norm).where(eq(norm.id, id));
   }
 }

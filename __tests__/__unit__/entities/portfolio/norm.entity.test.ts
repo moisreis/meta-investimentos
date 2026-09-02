@@ -1,13 +1,13 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { Norm } from "@/business/entities/portfolio/norm.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("Norm.create", () => {
   const VALID_PROPS = {
     articleNumber: "Art. 12",
-    name: "Limite de Concentração",
+    name: "Limite de ConcentraÃ§Ã£o",
     categoryId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),
@@ -19,7 +19,7 @@ describe("Norm.create", () => {
 
     expect(NORM.id).toBeUndefined();
     expect(NORM.articleNumber).toBe("Art. 12");
-    expect(NORM.name).toBe("Limite de Concentração");
+    expect(NORM.name).toBe("Limite de ConcentraÃ§Ã£o");
     expect(NORM.categoryId).toBe("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2");
     expect(NORM.minAllocation.value.toString()).toBe("5");
     expect(NORM.maxAllocation.value.toString()).toBe("20");
@@ -92,6 +92,26 @@ describe("Norm.create", () => {
     ).toThrow("Norm must have a target allocation.");
   });
 
+  it("throws when the minimum allocation exceeds the target allocation", () => {
+    expect(() =>
+      Norm.create({
+        ...VALID_PROPS,
+        minAllocation: SignedPercentage.create("20"),
+        targetAllocation: SignedPercentage.create("12"),
+      }),
+    ).toThrow("Norm minimum allocation must not exceed target allocation.");
+  });
+
+  it("throws when the target allocation exceeds the maximum allocation", () => {
+    expect(() =>
+      Norm.create({
+        ...VALID_PROPS,
+        targetAllocation: SignedPercentage.create("25"),
+        maxAllocation: SignedPercentage.create("20"),
+      }),
+    ).toThrow("Norm target allocation must not exceed maximum allocation.");
+  });
+
   it("does not mutate its inputs", () => {
     const PROPS = { ...VALID_PROPS };
 
@@ -104,7 +124,7 @@ describe("Norm.create", () => {
 describe("Norm.equals", () => {
   const VALID_PROPS = {
     articleNumber: "Art. 12",
-    name: "Limite de Concentração",
+    name: "Limite de ConcentraÃ§Ã£o",
     categoryId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),

@@ -1,4 +1,5 @@
 import type { Withdrawal } from "@/business/entities/portfolio/withdrawal.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { Withdrawal } from "@/business/entities/portfolio/withdrawal.entity
  * `Withdrawal` entities and back.
  */
 export interface IWithdrawal {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the withdrawal with the provided id.
    *
@@ -24,7 +21,7 @@ export interface IWithdrawal {
    * @returns A promise resolving to the `Withdrawal` or `null` when not
    * found.
    */
-  findById(id: string): Promise<Withdrawal | null>;
+  findById(id: EntityId): Promise<Withdrawal | null>;
 
   /**
    * Retrieves all withdrawals belonging to the provided position id.
@@ -33,7 +30,7 @@ export interface IWithdrawal {
    * @returns A promise resolving to the `Withdrawal` entries or an empty
    * array when there are no matches.
    */
-  findAllByPositionId(positionId: string): Promise<Withdrawal[]>;
+  findAllByPositionId(positionId: EntityId): Promise<Withdrawal[]>;
 
   /**
    * Retrieves all withdrawals of the provided position whose date falls
@@ -46,14 +43,10 @@ export interface IWithdrawal {
    * array when there are no matches.
    */
   findAllByPositionIdInPeriod(
-    positionId: string,
+    positionId: EntityId,
     startDate: Date,
     endDate: Date,
   ): Promise<Withdrawal[]>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided withdrawal.
@@ -73,5 +66,5 @@ export interface IWithdrawal {
    * @param id - The unique identifier of the withdrawal.
    * @returns A promise that resolves when the withdrawal is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

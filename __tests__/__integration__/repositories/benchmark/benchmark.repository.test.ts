@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   BENCHMARK,
@@ -14,6 +14,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("BenchmarkRepository", () => {
   beforeEach(async () => {
@@ -28,13 +29,17 @@ describe("BenchmarkRepository", () => {
     it("returns the persisted benchmark", async () => {
       await seedBenchmarks();
 
-      const FOUND = await newBenchmarkRepository().findById(BENCHMARK_ID);
+      const FOUND = await newBenchmarkRepository().findById(
+        EntityId.create(BENCHMARK_ID),
+      );
 
       expect(FOUND?.equals(BENCHMARK)).toBe(true);
     });
 
     it("returns null when the benchmark does not exist", async () => {
-      expect(await newBenchmarkRepository().findById(BENCHMARK_ID)).toBeNull();
+      expect(
+        await newBenchmarkRepository().findById(EntityId.create(BENCHMARK_ID)),
+      ).toBeNull();
     });
   });
 
@@ -43,8 +48,8 @@ describe("BenchmarkRepository", () => {
       await seedBenchmarks();
 
       const FOUND = await newBenchmarkRepository().findAllByIds([
-        BENCHMARK_ID,
-        OTHER_BENCHMARK_ID,
+        EntityId.create(BENCHMARK_ID),
+        EntityId.create(OTHER_BENCHMARK_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -82,9 +87,11 @@ describe("BenchmarkRepository", () => {
       expect(SAVED.id).toBeDefined();
       expect(SAVED.acronym).toBe(FRESH_BENCHMARK.acronym);
       expect(
-        (await newBenchmarkRepository().findById(SAVED.id as string))?.equals(
-          SAVED,
-        ),
+        (
+          await newBenchmarkRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
@@ -93,7 +100,9 @@ describe("BenchmarkRepository", () => {
 
       await newBenchmarkRepository().save(UPDATED_BENCHMARK);
 
-      const FOUND = await newBenchmarkRepository().findById(BENCHMARK_ID);
+      const FOUND = await newBenchmarkRepository().findById(
+        EntityId.create(BENCHMARK_ID),
+      );
 
       expect(FOUND?.name).toBe(UPDATED_BENCHMARK.name);
       expect(FOUND?.equals(UPDATED_BENCHMARK)).toBe(true);
@@ -104,9 +113,11 @@ describe("BenchmarkRepository", () => {
     it("removes the persisted benchmark", async () => {
       await seedBenchmarks();
 
-      await newBenchmarkRepository().delete(BENCHMARK_ID);
+      await newBenchmarkRepository().delete(EntityId.create(BENCHMARK_ID));
 
-      expect(await newBenchmarkRepository().findById(BENCHMARK_ID)).toBeNull();
+      expect(
+        await newBenchmarkRepository().findById(EntityId.create(BENCHMARK_ID)),
+      ).toBeNull();
     });
   });
 });

@@ -1,6 +1,7 @@
-import type PositiveMoney from "@/business/value-objects/positive-money.vo";
-import type QuotaPrice from "@/business/value-objects/quota-price.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import type { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import type { QuotaPrice } from "@/business/value-objects/quota-price.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the inputs required to calculate
@@ -26,6 +27,8 @@ interface CalculateWithdrawalQuotasProps {
  *
  * @returns The calculated number of quotas.
  *
+ * @throws {ValidationError} If `quota` is zero.
+ *
  * @equation Qₜᵂˢ = Wₜⁿ / Qₜ
  *
  * @example
@@ -43,5 +46,11 @@ export function calculateWithdrawalQuotas({
   withdrawal,
   quota,
 }: CalculateWithdrawalQuotasProps): QuotaQuantity {
+  if (quota.value.isZero()) {
+    throw new ValidationError(
+      "Withdrawal quotas cannot be calculated with a zero quota price.",
+    );
+  }
+
   return QuotaQuantity.create(withdrawal.value.dividedBy(quota.value));
 }

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   createInMemoryPortfolioPerformanceRepository,
@@ -11,10 +11,10 @@ import {
 import { PortfolioPerformance } from "@/business/entities/performance/portfolio-performance.entity";
 import type { IPortfolioPerformance } from "@/business/interfaces/performance/portfolio-performance.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("IPortfolioPerformance", () => {
   let REPOSITORY: IPortfolioPerformance;
@@ -27,13 +27,15 @@ describe("IPortfolioPerformance", () => {
     it("returns the persisted performance", async () => {
       await REPOSITORY.save(PERFORMANCE);
 
-      const FOUND = await REPOSITORY.findById(PERFORMANCE_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(PERFORMANCE_ID));
 
       expect(FOUND?.equals(PERFORMANCE)).toBe(true);
     });
 
     it("returns null when the performance does not exist", async () => {
-      expect(await REPOSITORY.findById(PERFORMANCE_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(PERFORMANCE_ID)),
+      ).toBeNull();
     });
   });
 
@@ -57,7 +59,9 @@ describe("IPortfolioPerformance", () => {
       await REPOSITORY.save(PERFORMANCE);
       await REPOSITORY.save(SECOND_PERFORMANCE);
 
-      const FOUND = await REPOSITORY.findAllByPortfolioId(PORTFOLIO_ID);
+      const FOUND = await REPOSITORY.findAllByPortfolioId(
+        EntityId.create(PORTFOLIO_ID),
+      );
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.equals(PERFORMANCE)).toBe(true);
@@ -65,7 +69,9 @@ describe("IPortfolioPerformance", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByPortfolioId(PORTFOLIO_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByPortfolioId(EntityId.create(PORTFOLIO_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -74,7 +80,7 @@ describe("IPortfolioPerformance", () => {
       await REPOSITORY.save(PERFORMANCE);
 
       const FOUND = await REPOSITORY.findByPortfolioIdAndDate(
-        PORTFOLIO_ID,
+        EntityId.create(PORTFOLIO_ID),
         PERFORMANCE_DATE,
       );
 
@@ -84,7 +90,7 @@ describe("IPortfolioPerformance", () => {
     it("returns null when the performance does not exist", async () => {
       expect(
         await REPOSITORY.findByPortfolioIdAndDate(
-          PORTFOLIO_ID,
+          EntityId.create(PORTFOLIO_ID),
           PERFORMANCE_DATE,
         ),
       ).toBeNull();
@@ -125,13 +131,17 @@ describe("IPortfolioPerformance", () => {
       await REPOSITORY.save(EARLIER);
       await REPOSITORY.save(LATER);
 
-      const FOUND = await REPOSITORY.findLatestByPortfolioId(PORTFOLIO_ID);
+      const FOUND = await REPOSITORY.findLatestByPortfolioId(
+        EntityId.create(PORTFOLIO_ID),
+      );
 
       expect(FOUND?.equals(LATER)).toBe(true);
     });
 
     it("returns null when there is no performance", async () => {
-      expect(await REPOSITORY.findLatestByPortfolioId(PORTFOLIO_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findLatestByPortfolioId(EntityId.create(PORTFOLIO_ID)),
+      ).toBeNull();
     });
   });
 
@@ -139,7 +149,7 @@ describe("IPortfolioPerformance", () => {
     it("persists a new performance", async () => {
       await REPOSITORY.save(PERFORMANCE);
 
-      const FOUND = await REPOSITORY.findById(PERFORMANCE_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(PERFORMANCE_ID));
 
       expect(FOUND?.equals(PERFORMANCE)).toBe(true);
     });
@@ -164,7 +174,7 @@ describe("IPortfolioPerformance", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(PERFORMANCE_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(PERFORMANCE_ID));
 
       expect(FOUND?.patrimony.value.toString()).toBe("1200000");
     });
@@ -174,9 +184,11 @@ describe("IPortfolioPerformance", () => {
     it("removes the persisted performance", async () => {
       await REPOSITORY.save(PERFORMANCE);
 
-      await REPOSITORY.delete(PERFORMANCE_ID);
+      await REPOSITORY.delete(EntityId.create(PERFORMANCE_ID));
 
-      expect(await REPOSITORY.findById(PERFORMANCE_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(PERFORMANCE_ID)),
+      ).toBeNull();
     });
   });
 });

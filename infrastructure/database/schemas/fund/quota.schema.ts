@@ -1,4 +1,6 @@
+import { sql } from "drizzle-orm";
 import {
+  check,
   index,
   numeric,
   pgSchema,
@@ -21,11 +23,18 @@ export const quota = pgSchema("fund").table(
     fundId: uuid("fund_id")
       .notNull()
       .references(() => fund.id),
-    date: timestamp("date").notNull(),
-    price: numeric("price").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    date: timestamp("date", { withTimezone: true }).notNull(),
+    price: numeric("price", { precision: 18, scale: 6 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
+    /**
+     * Enforces that the quota price is non-negative.
+     */
+    check("quota_price_nonneg", sql`${table.price} >= 0`),
+
     /**
      * Enforces that a fund holds a single quota price per date.
      */

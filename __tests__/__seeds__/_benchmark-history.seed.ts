@@ -1,75 +1,43 @@
-import { db } from "@/__tests__/__setup__/_database.setup";
-import { BenchmarkHistory } from "@/business/entities";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
-import { benchmarkHistory } from "@/infrastructure/database/schemas";
-import {
+﻿import {
+  BENCHMARK_HISTORY,
+  BENCHMARK_HISTORY_ID,
   BENCHMARK_ID,
-  OTHER_BENCHMARK_ID,
-  seedBenchmarkById,
-} from "./_benchmark.seed";
-
-export const BENCHMARK_HISTORY_ID = "89012abc-def0-4afe-9012-3abcdef0123a";
-export const OTHER_BENCHMARK_HISTORY_ID =
-  "9a01bcde-f012-4afe-1234-bcdef01234ab";
-export const EXTERNAL_BENCHMARK_HISTORY_ID =
-  "ab01cdef-0123-4afe-3456-cdef012345ab";
-export const PERIOD_OUTSIDE_HISTORY_ID = "bc12def0-1234-4afe-5678-def0123456bc";
-
-export const HISTORY_DATE = new Date("2026-01-05T00:00:00.000Z");
-export const HISTORY_DUPLICATE_DATE = new Date("2026-01-15T00:00:00.000Z");
-export const FEBRUARY_HISTORY_DATE = new Date("2026-02-05T00:00:00.000Z");
-
-export const BENCHMARK_HISTORY = BenchmarkHistory.create(
-  {
-    benchmarkId: EntityId.create(BENCHMARK_ID),
-    date: HISTORY_DATE,
-    rate: SignedPercentage.create("1.25"),
-  },
-  BENCHMARK_HISTORY_ID,
-);
-
-export const OTHER_BENCHMARK_HISTORY = BenchmarkHistory.create(
-  {
-    benchmarkId: EntityId.create(OTHER_BENCHMARK_ID),
-    date: FEBRUARY_HISTORY_DATE,
-    rate: SignedPercentage.create("-0.5"),
-  },
-  OTHER_BENCHMARK_HISTORY_ID,
-);
-
-export const EXTERNAL_BENCHMARK_HISTORY = BenchmarkHistory.create(
-  {
-    benchmarkId: EntityId.create(BENCHMARK_ID),
-    date: HISTORY_DUPLICATE_DATE,
-    rate: SignedPercentage.create("0.75"),
-  },
+  EXTERNAL_BENCHMARK_HISTORY,
   EXTERNAL_BENCHMARK_HISTORY_ID,
-);
+  FEBRUARY_HISTORY_DATE,
+  FRESH_BENCHMARK_HISTORY,
+  HISTORY_DATE,
+  HISTORY_DUPLICATE_DATE,
+  OTHER_BENCHMARK_HISTORY,
+  OTHER_BENCHMARK_HISTORY_ID,
+  OTHER_BENCHMARK_ID,
+  PERIOD_OUTSIDE_BENCHMARK_HISTORY,
+  PERIOD_OUTSIDE_BENCHMARK_HISTORY_ID,
+  UPDATED_BENCHMARK_HISTORY,
+} from "@/__tests__/__fixtures__";
+import { db } from "@/__tests__/__setup__/_database.setup";
+import type { BenchmarkHistory } from "@/business/entities";
+import { benchmarkHistory } from "@/infrastructure/database/schemas";
+import { seedBenchmarkById } from "./_benchmark.seed";
 
-export const PERIOD_OUTSIDE_HISTORY = BenchmarkHistory.create(
-  {
-    benchmarkId: EntityId.create(BENCHMARK_ID),
-    date: new Date("2026-03-01T00:00:00.000Z"),
-    rate: SignedPercentage.create("2.0"),
-  },
-  PERIOD_OUTSIDE_HISTORY_ID,
-);
+const PERIOD_OUTSIDE_HISTORY_ID = PERIOD_OUTSIDE_BENCHMARK_HISTORY_ID;
+const PERIOD_OUTSIDE_HISTORY = PERIOD_OUTSIDE_BENCHMARK_HISTORY;
 
-export const UPDATED_BENCHMARK_HISTORY = BenchmarkHistory.create(
-  {
-    benchmarkId: EntityId.create(BENCHMARK_ID),
-    date: HISTORY_DATE,
-    rate: SignedPercentage.create("1.5"),
-  },
+export {
   BENCHMARK_HISTORY_ID,
-);
+  OTHER_BENCHMARK_HISTORY_ID,
+  EXTERNAL_BENCHMARK_HISTORY_ID,
+  HISTORY_DATE,
+  HISTORY_DUPLICATE_DATE,
+  FEBRUARY_HISTORY_DATE,
+  BENCHMARK_HISTORY,
+  OTHER_BENCHMARK_HISTORY,
+  EXTERNAL_BENCHMARK_HISTORY,
+  UPDATED_BENCHMARK_HISTORY,
+  FRESH_BENCHMARK_HISTORY,
+};
 
-export const FRESH_BENCHMARK_HISTORY = BenchmarkHistory.create({
-  benchmarkId: EntityId.create(BENCHMARK_ID),
-  date: new Date("2026-04-05T00:00:00.000Z"),
-  rate: SignedPercentage.create("1.1"),
-});
+export { PERIOD_OUTSIDE_HISTORY_ID, PERIOD_OUTSIDE_HISTORY };
 
 function toBenchmarkHistoryRow(
   entity: BenchmarkHistory,

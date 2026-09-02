@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   APPLICATION_SUM_AMOUNT,
@@ -18,10 +18,12 @@ import {
   APPLICATION_ID,
 } from "@/__tests__/__seeds__/_application.seed";
 import { POSITION_ID } from "@/__tests__/__seeds__/_position.seed";
+import { seedUserById, USER_ID } from "@/__tests__/__seeds__/_user.seed";
 import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("ApplicationRepository", () => {
   beforeEach(async () => {
@@ -36,14 +38,18 @@ describe("ApplicationRepository", () => {
     it("returns the persisted application", async () => {
       await seedApplications();
 
-      const FOUND = await newApplicationRepository().findById(APPLICATION_ID);
+      const FOUND = await newApplicationRepository().findById(
+        EntityId.create(APPLICATION_ID),
+      );
 
       expect(FOUND?.equals(APPLICATION)).toBe(true);
     });
 
     it("returns null when the application does not exist", async () => {
       expect(
-        await newApplicationRepository().findById(APPLICATION_ID),
+        await newApplicationRepository().findById(
+          EntityId.create(APPLICATION_ID),
+        ),
       ).toBeNull();
     });
   });
@@ -52,8 +58,9 @@ describe("ApplicationRepository", () => {
     it("returns the whole application series of the position", async () => {
       await seedAllApplications();
 
-      const FOUND =
-        await newApplicationRepository().findAllByPositionId(POSITION_ID);
+      const FOUND = await newApplicationRepository().findAllByPositionId(
+        EntityId.create(POSITION_ID),
+      );
 
       expect(FOUND).toHaveLength(4);
       expect(FOUND.some((ROW) => ROW.equals(APPLICATION))).toBe(true);
@@ -62,7 +69,9 @@ describe("ApplicationRepository", () => {
 
     it("returns an empty array when no applications exist", async () => {
       expect(
-        await newApplicationRepository().findAllByPositionId(POSITION_ID),
+        await newApplicationRepository().findAllByPositionId(
+          EntityId.create(POSITION_ID),
+        ),
       ).toEqual([]);
     });
   });
@@ -73,7 +82,7 @@ describe("ApplicationRepository", () => {
 
       const FOUND =
         await newApplicationRepository().findAllByPositionIdInPeriod(
-          POSITION_ID,
+          EntityId.create(POSITION_ID),
           JANUARY_WINDOW.start,
           JANUARY_WINDOW.end,
         );
@@ -91,7 +100,7 @@ describe("ApplicationRepository", () => {
 
       const FOUND =
         await newApplicationRepository().findAllByPositionIdsInPeriod(
-          [POSITION_ID, OTHER_POSITION_ID],
+          [EntityId.create(POSITION_ID), EntityId.create(OTHER_POSITION_ID)],
           JANUARY_WINDOW.start,
           JANUARY_WINDOW.end,
         );
@@ -117,7 +126,7 @@ describe("ApplicationRepository", () => {
       await seedAllApplications();
 
       const TOTALS = await newApplicationRepository().sumByPositionIdInPeriod(
-        POSITION_ID,
+        EntityId.create(POSITION_ID),
         JANUARY_WINDOW.start,
         JANUARY_WINDOW.end,
       );
@@ -134,7 +143,7 @@ describe("ApplicationRepository", () => {
       await seedAllApplications();
 
       const TOTALS = await newApplicationRepository().sumByPositionIdInPeriod(
-        POSITION_ID,
+        EntityId.create(POSITION_ID),
         new Date("2026-12-01T00:00:00.000Z"),
         new Date("2026-12-31T00:00:00.000Z"),
       );
@@ -155,18 +164,23 @@ describe("ApplicationRepository", () => {
         FRESH_APPLICATION.amount.value.toString(),
       );
       expect(
-        (await newApplicationRepository().findById(SAVED.id as string))?.equals(
-          SAVED,
-        ),
+        (
+          await newApplicationRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
     it("updates an existing application", async () => {
       await seedApplications();
+      await seedUserById(USER_ID);
 
       await newApplicationRepository().save(UPDATED_APPLICATION);
 
-      const FOUND = await newApplicationRepository().findById(APPLICATION_ID);
+      const FOUND = await newApplicationRepository().findById(
+        EntityId.create(APPLICATION_ID),
+      );
 
       expect(FOUND?.amount.value.toString()).toBe(
         UPDATED_APPLICATION.amount.value.toString(),
@@ -182,10 +196,12 @@ describe("ApplicationRepository", () => {
     it("removes the persisted application", async () => {
       await seedApplications();
 
-      await newApplicationRepository().delete(APPLICATION_ID);
+      await newApplicationRepository().delete(EntityId.create(APPLICATION_ID));
 
       expect(
-        await newApplicationRepository().findById(APPLICATION_ID),
+        await newApplicationRepository().findById(
+          EntityId.create(APPLICATION_ID),
+        ),
       ).toBeNull();
     });
   });

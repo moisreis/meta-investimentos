@@ -1,65 +1,28 @@
+﻿import {
+  BANK_ID,
+  BENCHMARK_ID,
+  CATEGORY_ID,
+  FRESH_FUND,
+  FUND,
+  FUND_ID,
+  OTHER_FUND,
+  OTHER_FUND_ID,
+  UPDATED_FUND,
+} from "@/__tests__/__fixtures__";
 import { db } from "@/__tests__/__setup__/_database.setup";
-import { Fund } from "@/business/entities";
-import CNPJ from "@/business/value-objects/cnpj.vo";
+import type { Fund } from "@/business/entities";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 import { fund } from "@/infrastructure/database/schemas";
 import { FundRepository } from "@/infrastructure/repositories";
-import { BANK_ID, OTHER_BANK_ID, seedBankById } from "./_bank.seed";
-import { BENCHMARK_ID, seedBenchmarkById } from "./_benchmark.seed";
-import { CATEGORY_ID, seedCategoryById } from "./_category.seed";
+import { seedBankById } from "./_bank.seed";
+import { seedBenchmarkById } from "./_benchmark.seed";
+import { seedCategoryById } from "./_category.seed";
 
-export const FUND_ID = "8c9d0e1f-2a3b-4c4d-9e5f-6a7b8c9d0e1f";
-export const OTHER_FUND_ID = "9d0e1f2a-3b4c-4d5e-8f6a-7b8c9d0e1f2a";
-
-export const FUND = Fund.create(
-  {
-    cnpj: CNPJ.create("12345678000195"),
-    name: "Fundo Ações",
-    bankId: EntityId.create(BANK_ID),
-    benchmarkId: EntityId.create(BENCHMARK_ID),
-    categoryId: EntityId.create(CATEGORY_ID),
-    administrationFee: SignedPercentage.create("1.5"),
-    performanceFee: SignedPercentage.create("20"),
-  },
-  FUND_ID,
-);
-
-export const OTHER_FUND = Fund.create(
-  {
-    cnpj: CNPJ.create("11222333000181"),
-    name: "Fundo Renda Fixa",
-    bankId: EntityId.create(OTHER_BANK_ID),
-  },
-  OTHER_FUND_ID,
-);
-
-export const FRESH_FUND = Fund.create({
-  cnpj: CNPJ.create("41142260000189"),
-  name: "Fundo Multimercado",
-  bankId: EntityId.create(BANK_ID),
-  benchmarkId: EntityId.create(BENCHMARK_ID),
-  categoryId: EntityId.create(CATEGORY_ID),
-  administrationFee: SignedPercentage.create("1.2"),
-  performanceFee: SignedPercentage.create("15"),
-});
-
-export const UPDATED_FUND = Fund.create(
-  {
-    cnpj: FUND.cnpj,
-    name: "Fundo Ações Rebrandeado",
-    bankId: FUND.bankId,
-    benchmarkId: FUND.benchmarkId,
-    categoryId: FUND.categoryId,
-    administrationFee: SignedPercentage.create("2.0"),
-    performanceFee: FUND.performanceFee,
-  },
-  FUND_ID,
-);
+export { FUND_ID, OTHER_FUND_ID, FUND, OTHER_FUND, FRESH_FUND, UPDATED_FUND };
 
 export async function seedFundById(id: string): Promise<Fund> {
   const REPOSITORY = new FundRepository(db);
-  const EXISTING = await REPOSITORY.findById(id);
+  const EXISTING = await REPOSITORY.findById(EntityId.create(id));
   if (EXISTING) return EXISTING;
 
   const FIXTURE = id === FUND_ID ? FUND : OTHER_FUND;

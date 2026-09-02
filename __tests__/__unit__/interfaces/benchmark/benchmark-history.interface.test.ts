@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   BENCHMARK_ID,
@@ -12,7 +12,7 @@ import {
 import { BenchmarkHistory } from "@/business/entities/benchmark/benchmark-history.entity";
 import type { IBenchmarkHistory } from "@/business/interfaces/benchmark/benchmark-history.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("IBenchmarkHistory", () => {
   let REPOSITORY: IBenchmarkHistory;
@@ -25,13 +25,13 @@ describe("IBenchmarkHistory", () => {
     it("returns the persisted benchmark history", async () => {
       await REPOSITORY.save(HISTORY);
 
-      const FOUND = await REPOSITORY.findById(HISTORY_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(HISTORY_ID));
 
       expect(FOUND?.equals(HISTORY)).toBe(true);
     });
 
     it("returns null when the benchmark history does not exist", async () => {
-      expect(await REPOSITORY.findById(HISTORY_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(HISTORY_ID))).toBeNull();
     });
   });
 
@@ -58,7 +58,9 @@ describe("IBenchmarkHistory", () => {
       await REPOSITORY.save(SECOND_HISTORY);
       await REPOSITORY.save(OTHER_HISTORY);
 
-      const FOUND = await REPOSITORY.findAllByBenchmarkId(BENCHMARK_ID);
+      const FOUND = await REPOSITORY.findAllByBenchmarkId(
+        EntityId.create(BENCHMARK_ID),
+      );
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.equals(HISTORY)).toBe(true);
@@ -66,7 +68,9 @@ describe("IBenchmarkHistory", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByBenchmarkId(BENCHMARK_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByBenchmarkId(EntityId.create(BENCHMARK_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -75,7 +79,7 @@ describe("IBenchmarkHistory", () => {
       await REPOSITORY.save(HISTORY);
 
       const FOUND = await REPOSITORY.findByBenchmarkIdAndDate(
-        BENCHMARK_ID,
+        EntityId.create(BENCHMARK_ID),
         HISTORY_DATE,
       );
 
@@ -84,7 +88,10 @@ describe("IBenchmarkHistory", () => {
 
     it("returns null when the benchmark history does not exist", async () => {
       expect(
-        await REPOSITORY.findByBenchmarkIdAndDate(BENCHMARK_ID, HISTORY_DATE),
+        await REPOSITORY.findByBenchmarkIdAndDate(
+          EntityId.create(BENCHMARK_ID),
+          HISTORY_DATE,
+        ),
       ).toBeNull();
     });
   });
@@ -93,7 +100,7 @@ describe("IBenchmarkHistory", () => {
     it("persists a new benchmark history", async () => {
       await REPOSITORY.save(HISTORY);
 
-      const FOUND = await REPOSITORY.findById(HISTORY_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(HISTORY_ID));
 
       expect(FOUND?.equals(HISTORY)).toBe(true);
     });
@@ -112,7 +119,7 @@ describe("IBenchmarkHistory", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(HISTORY_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(HISTORY_ID));
 
       expect(FOUND?.rate.value.toString()).toBe("13.5");
     });
@@ -122,9 +129,9 @@ describe("IBenchmarkHistory", () => {
     it("removes the persisted benchmark history", async () => {
       await REPOSITORY.save(HISTORY);
 
-      await REPOSITORY.delete(HISTORY_ID);
+      await REPOSITORY.delete(EntityId.create(HISTORY_ID));
 
-      expect(await REPOSITORY.findById(HISTORY_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(HISTORY_ID))).toBeNull();
     });
   });
 });

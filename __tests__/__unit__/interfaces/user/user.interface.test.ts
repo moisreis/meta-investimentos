@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   createInMemoryUserRepository,
@@ -8,6 +8,7 @@ import {
 
 import { User } from "@/business/entities/user/user.entity";
 import type { IUser } from "@/business/interfaces/user/user.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("IUser", () => {
   let REPOSITORY: IUser;
@@ -20,13 +21,13 @@ describe("IUser", () => {
     it("returns the persisted user", async () => {
       await REPOSITORY.save(USER);
 
-      const FOUND = await REPOSITORY.findById(USER_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(USER_ID));
 
       expect(FOUND?.equals(USER)).toBe(true);
     });
 
     it("returns null when the user does not exist", async () => {
-      expect(await REPOSITORY.findById(USER_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(USER_ID))).toBeNull();
     });
   });
 
@@ -63,7 +64,9 @@ describe("IUser", () => {
       const SAVED = await REPOSITORY.save(USER);
 
       expect(SAVED.equals(USER)).toBe(true);
-      expect((await REPOSITORY.findById(USER_ID))?.equals(USER)).toBe(true);
+      expect(
+        (await REPOSITORY.findById(EntityId.create(USER_ID)))?.equals(USER),
+      ).toBe(true);
     });
 
     it("updates an existing user", async () => {
@@ -71,7 +74,7 @@ describe("IUser", () => {
 
       const UPDATED = User.create(
         {
-          name: "José da Silva Junior",
+          name: "JosÃ© da Silva Junior",
           email: USER.email,
           firstName: USER.firstName,
           lastName: "da Silva Junior",
@@ -82,9 +85,9 @@ describe("IUser", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(USER_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(USER_ID));
 
-      expect(FOUND?.name).toBe("José da Silva Junior");
+      expect(FOUND?.name).toBe("JosÃ© da Silva Junior");
       expect(FOUND?.equals(UPDATED)).toBe(true);
     });
   });
@@ -93,9 +96,9 @@ describe("IUser", () => {
     it("removes the persisted user", async () => {
       await REPOSITORY.save(USER);
 
-      await REPOSITORY.delete(USER_ID);
+      await REPOSITORY.delete(EntityId.create(USER_ID));
 
-      expect(await REPOSITORY.findById(USER_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(USER_ID))).toBeNull();
     });
   });
 });

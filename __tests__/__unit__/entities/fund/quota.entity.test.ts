@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { Quota } from "@/business/entities/fund/quota.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import QuotaPrice from "@/business/value-objects/quota-price.vo";
+import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 
 describe("Quota.create", () => {
   const PRICE = QuotaPrice.create("4.428199");

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   CATEGORY_ID,
@@ -11,7 +11,7 @@ import {
 import { Norm } from "@/business/entities/portfolio/norm.entity";
 import type { INorm } from "@/business/interfaces/portfolio/norm.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("INorm", () => {
   let REPOSITORY: INorm;
@@ -24,13 +24,13 @@ describe("INorm", () => {
     it("returns the persisted norm", async () => {
       await REPOSITORY.save(NORM);
 
-      const FOUND = await REPOSITORY.findById(NORM_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(NORM_ID));
 
       expect(FOUND?.equals(NORM)).toBe(true);
     });
 
     it("returns null when the norm does not exist", async () => {
-      expect(await REPOSITORY.findById(NORM_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(NORM_ID))).toBeNull();
     });
   });
 
@@ -39,7 +39,7 @@ describe("INorm", () => {
       const SECOND_NORM = Norm.create(
         {
           articleNumber: "Art. 15",
-          name: "Limite de Exposição",
+          name: "Limite de ExposiÃ§Ã£o",
           categoryId: EntityId.create(CATEGORY_ID),
           minAllocation: SignedPercentage.create("3"),
           maxAllocation: SignedPercentage.create("30"),
@@ -63,7 +63,9 @@ describe("INorm", () => {
       await REPOSITORY.save(SECOND_NORM);
       await REPOSITORY.save(OTHER_NORM);
 
-      const FOUND = await REPOSITORY.findAllByCategoryId(CATEGORY_ID);
+      const FOUND = await REPOSITORY.findAllByCategoryId(
+        EntityId.create(CATEGORY_ID),
+      );
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.equals(NORM)).toBe(true);
@@ -71,7 +73,9 @@ describe("INorm", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByCategoryId(CATEGORY_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByCategoryId(EntityId.create(CATEGORY_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -79,7 +83,7 @@ describe("INorm", () => {
     it("persists a new norm", async () => {
       await REPOSITORY.save(NORM);
 
-      const FOUND = await REPOSITORY.findById(NORM_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(NORM_ID));
 
       expect(FOUND?.equals(NORM)).toBe(true);
     });
@@ -90,7 +94,7 @@ describe("INorm", () => {
       const UPDATED = Norm.create(
         {
           articleNumber: "Art. 12",
-          name: "Limite de Concentração Revisado",
+          name: "Limite de ConcentraÃ§Ã£o Revisado",
           categoryId: EntityId.create(CATEGORY_ID),
           minAllocation: SignedPercentage.create("5"),
           maxAllocation: SignedPercentage.create("25"),
@@ -101,7 +105,7 @@ describe("INorm", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(NORM_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(NORM_ID));
 
       expect(FOUND?.targetAllocation.value.toString()).toBe("15");
     });
@@ -111,9 +115,9 @@ describe("INorm", () => {
     it("removes the persisted norm", async () => {
       await REPOSITORY.save(NORM);
 
-      await REPOSITORY.delete(NORM_ID);
+      await REPOSITORY.delete(EntityId.create(NORM_ID));
 
-      expect(await REPOSITORY.findById(NORM_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(NORM_ID))).toBeNull();
     });
   });
 });

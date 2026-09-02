@@ -2,7 +2,9 @@ import { desc, eq, inArray } from "drizzle-orm";
 
 import { Benchmark } from "@/business/entities/benchmark/benchmark.entity";
 import type { IBenchmark } from "@/business/interfaces/benchmark/benchmark.interface";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 import { benchmark } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -16,15 +18,7 @@ import type { DbClient } from "../types";
  * existing row otherwise.
  */
 export class BenchmarkRepository implements IBenchmark {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `BenchmarkRepository` bound to the provided database
@@ -35,10 +29,6 @@ export class BenchmarkRepository implements IBenchmark {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `benchmark` row to a {@link Benchmark} entity.
@@ -88,16 +78,12 @@ export class BenchmarkRepository implements IBenchmark {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the benchmark with the provided id.
    *
    * @see {@link IBenchmark.findById}
    */
-  async findById(id: string): Promise<Benchmark | null> {
+  async findById(id: EntityId): Promise<Benchmark | null> {
     const [row] = await this.db
       .select()
       .from(benchmark)
@@ -149,10 +135,6 @@ export class BenchmarkRepository implements IBenchmark {
     return row ? this.toEntity(row) : null;
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided benchmark.
    *
@@ -167,7 +149,9 @@ export class BenchmarkRepository implements IBenchmark {
         .returning();
 
       if (!row) {
-        throw new Error(`Benchmark with id ${persisted.id} was not found.`);
+        throw new NotFoundError(
+          `Benchmark with id ${persisted.id} was not found.`,
+        );
       }
 
       return this.toEntity(row);
@@ -186,7 +170,7 @@ export class BenchmarkRepository implements IBenchmark {
    *
    * @see {@link IBenchmark.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(benchmark).where(eq(benchmark.id, id));
   }
 }

@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculateWithdrawalQuotasSum } from "@/business/calculators/position/withdrawal-quotas-sum.calculator";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 describe("calculateWithdrawalQuotasSum", () => {
   it("returns the sum of multiple quota quantities", () => {

@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculatePortfolioTarget } from "@/business/calculators/portfolio/target.calculator";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("calculatePortfolioTarget", () => {
   it("returns the monthly target return based on the annual interest rate and the inflation index", () => {
@@ -47,6 +47,17 @@ describe("calculatePortfolioTarget", () => {
     });
 
     expect(RESULT).toEqual(SignedPercentage.create("3.5"));
+  });
+
+  it("throws when the annual interest rate is below -100%", () => {
+    expect(() =>
+      calculatePortfolioTarget({
+        annualInterestRate: SignedPercentage.create("-110"),
+        inflationRate: SignedPercentage.create("0.45"),
+      }),
+    ).toThrow(
+      "Portfolio target cannot be calculated with an annual interest rate below -100%.",
+    );
   });
 
   it("does not mutate its inputs", () => {

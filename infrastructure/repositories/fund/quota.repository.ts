@@ -1,10 +1,11 @@
-import { and, desc, eq, gte, inArray, lte } from "drizzle-orm";
+﻿import { and, desc, eq, gte, inArray, lte } from "drizzle-orm";
 
 import { Quota } from "@/business/entities/fund/quota.entity";
 import type { IQuota } from "@/business/interfaces/fund/quota.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import QuotaPrice from "@/business/value-objects/quota-price.vo";
+import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 import { quota } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -25,15 +26,7 @@ import type { DbClient } from "../types";
  * of one query per fund.
  */
 export class QuotaRepository implements IQuota {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `QuotaRepository` bound to the provided database client.
@@ -43,10 +36,6 @@ export class QuotaRepository implements IQuota {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `quota` row to a {@link Quota} entity.
@@ -99,16 +88,12 @@ export class QuotaRepository implements IQuota {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the quota with the provided id.
    *
    * @see {@link IQuota.findById}
    */
-  async findById(id: string): Promise<Quota | null> {
+  async findById(id: EntityId): Promise<Quota | null> {
     const [row] = await this.db
       .select()
       .from(quota)
@@ -123,7 +108,7 @@ export class QuotaRepository implements IQuota {
    *
    * @see {@link IQuota.findAllByFundId}
    */
-  async findAllByFundId(fundId: string): Promise<Quota[]> {
+  async findAllByFundId(fundId: EntityId): Promise<Quota[]> {
     const rows = await this.db
       .select()
       .from(quota)
@@ -159,7 +144,10 @@ export class QuotaRepository implements IQuota {
    *
    * @see {@link IQuota.findByFundIdAndDate}
    */
-  async findByFundIdAndDate(fundId: string, date: Date): Promise<Quota | null> {
+  async findByFundIdAndDate(
+    fundId: EntityId,
+    date: Date,
+  ): Promise<Quota | null> {
     const [row] = await this.db
       .select()
       .from(quota)
@@ -210,7 +198,7 @@ export class QuotaRepository implements IQuota {
    *
    * @see {@link IQuota.findLatestByFundId}
    */
-  async findLatestByFundId(fundId: string): Promise<Quota | null> {
+  async findLatestByFundId(fundId: EntityId): Promise<Quota | null> {
     const [row] = await this.db
       .select()
       .from(quota)
@@ -246,10 +234,6 @@ export class QuotaRepository implements IQuota {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided quota.
    *
@@ -264,7 +248,7 @@ export class QuotaRepository implements IQuota {
         .returning();
 
       if (!row) {
-        throw new Error(`Quota with id ${persisted.id} was not found.`);
+        throw new NotFoundError(`Quota with id ${persisted.id} was not found.`);
       }
 
       return this.toEntity(row);
@@ -283,7 +267,7 @@ export class QuotaRepository implements IQuota {
    *
    * @see {@link IQuota.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(quota).where(eq(quota.id, id));
   }
 }

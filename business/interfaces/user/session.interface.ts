@@ -1,4 +1,5 @@
 import type { Session } from "@/business/entities/user/session.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { Session } from "@/business/entities/user/session.entity";
  * `Session` entities and back.
  */
 export interface ISession {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the session with the provided id.
    *
@@ -24,7 +21,7 @@ export interface ISession {
    * @returns A promise resolving to the `Session` or `null` when
    * not found.
    */
-  findById(id: string): Promise<Session | null>;
+  findById(id: EntityId): Promise<Session | null>;
 
   /**
    * Retrieves the session with the provided token.
@@ -41,11 +38,7 @@ export interface ISession {
    * @param userId - The id of the user the sessions belong to.
    * @returns A promise resolving to all matching `Session` entities.
    */
-  findAllByUserId(userId: string): Promise<Session[]>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
+  findAllByUserId(userId: EntityId): Promise<Session[]>;
 
   /**
    * Persists the provided session.
@@ -65,5 +58,5 @@ export interface ISession {
    * @param id - The unique identifier of the session.
    * @returns A promise that resolves when the session is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

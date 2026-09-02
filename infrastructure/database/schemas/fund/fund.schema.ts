@@ -23,15 +23,23 @@ export const fund = pgSchema("fund").table(
     id: uuid("id").primaryKey().defaultRandom(),
     cnpj: text("cnpj").notNull().unique(),
     name: text("name").notNull(),
-    administrationFee: numeric("administration_fee"),
-    performanceFee: numeric("performance_fee"),
+    administrationFee: numeric("administration_fee", {
+      precision: 18,
+      scale: 6,
+    }),
+    performanceFee: numeric("performance_fee", {
+      precision: 18,
+      scale: 6,
+    }),
     bankId: uuid("bank_id")
       .notNull()
       .references(() => bank.id),
     benchmarkId: uuid("benchmark_id").references(() => benchmark.id),
     categoryId: uuid("category_id").references(() => category.id),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },

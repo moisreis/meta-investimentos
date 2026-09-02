@@ -1,5 +1,5 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+import type { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -37,7 +37,7 @@ interface NormProps {
  * ```ts
  * const NORM = Norm.create({
  *   articleNumber: 'Art. 12',
- *   name: 'Limite de Concentração',
+ *   name: 'Limite de ConcentraÃ§Ã£o',
  *   categoryId: 'ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2',
  *   minAllocation: SignedPercentage.create('5'),
  *   maxAllocation: SignedPercentage.create('20'),
@@ -51,10 +51,6 @@ interface NormProps {
 export class Norm {
   private readonly _id?: EntityId;
   private readonly props: Required<NormProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the norm.
@@ -119,10 +115,6 @@ export class Norm {
     return this.props.updatedAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `Norm`.
    *
@@ -132,12 +124,8 @@ export class Norm {
    */
   private constructor(props: Required<NormProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `Norm` from the provided properties.
@@ -155,6 +143,8 @@ export class Norm {
    * @throws {ValidationError} If `props.minAllocation` is missing.
    * @throws {ValidationError} If `props.maxAllocation` is missing.
    * @throws {ValidationError} If `props.targetAllocation` is missing.
+   * @throws {ValidationError} If `props.minAllocation` exceeds `props.targetAllocation`.
+   * @throws {ValidationError} If `props.targetAllocation` exceeds `props.maxAllocation`.
    */
   public static create(props: NormProps, id?: string): Norm {
     if (!props.articleNumber || props.articleNumber.trim() === "") {
@@ -175,6 +165,16 @@ export class Norm {
     if (!props.targetAllocation) {
       throw new ValidationError("Norm must have a target allocation.");
     }
+    if (props.minAllocation.value.gt(props.targetAllocation.value)) {
+      throw new ValidationError(
+        "Norm minimum allocation must not exceed target allocation.",
+      );
+    }
+    if (props.targetAllocation.value.gt(props.maxAllocation.value)) {
+      throw new ValidationError(
+        "Norm target allocation must not exceed maximum allocation.",
+      );
+    }
 
     const NOW = new Date();
 
@@ -186,10 +186,6 @@ export class Norm {
 
     return new Norm(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `Norm` represents the same norm as the

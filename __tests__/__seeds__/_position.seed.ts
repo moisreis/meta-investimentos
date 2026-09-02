@@ -1,62 +1,38 @@
+﻿import {
+  FRESH_POSITION,
+  FUND_ID,
+  OTHER_FUND_ID,
+  OTHER_POSITION,
+  OTHER_POSITION_ID,
+  PORTFOLIO_ID,
+  POSITION,
+  POSITION_ID,
+  THIRD_POSITION,
+  THIRD_POSITION_ID,
+  UPDATED_POSITION,
+} from "@/__tests__/__fixtures__";
 import { db } from "@/__tests__/__setup__/_database.setup";
-import { Position } from "@/business/entities";
+import type { Position } from "@/business/entities";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
 import { position } from "@/infrastructure/database/schemas";
 import { PositionRepository } from "@/infrastructure/repositories";
-import { FUND_ID, OTHER_FUND_ID, seedFundById } from "./_fund.seed";
-import {
-  OTHER_PORTFOLIO_ID,
-  PORTFOLIO_ID,
-  seedPortfolioById,
-} from "./_portfolio.seed";
+import { seedFundById } from "./_fund.seed";
+import { seedPortfolioById } from "./_portfolio.seed";
 
-export const POSITION_ID = "2a3b4c5d-6e7f-4a8b-9c0d-1e2f3a4b5c6d";
-export const OTHER_POSITION_ID = "3b4c5d6e-7f8a-4b9c-8d0e-1f2a3b4c5d6e";
-export const THIRD_POSITION_ID = "10a1b2c3-4d5e-4f6a-8b7c-9d0e1f2a3b4c";
-
-export const POSITION = Position.create(
-  {
-    portfolioId: EntityId.create(PORTFOLIO_ID),
-    fundId: EntityId.create(FUND_ID),
-  },
+export {
   POSITION_ID,
-);
-
-export const OTHER_POSITION = Position.create(
-  {
-    portfolioId: EntityId.create(OTHER_PORTFOLIO_ID),
-    fundId: EntityId.create(OTHER_FUND_ID),
-  },
   OTHER_POSITION_ID,
-);
-
-export const THIRD_POSITION = Position.create(
-  {
-    portfolioId: EntityId.create(PORTFOLIO_ID),
-    fundId: EntityId.create(OTHER_FUND_ID),
-  },
   THIRD_POSITION_ID,
-);
-
-export const FRESH_POSITION = Position.create({
-  portfolioId: EntityId.create(PORTFOLIO_ID),
-  fundId: EntityId.create(FUND_ID),
-});
-
-export const UPDATED_POSITION = Position.create(
-  {
-    portfolioId: POSITION.portfolioId,
-    fundId: POSITION.fundId,
-    initialBalance: PositiveMoney.create("5000.00"),
-    initialBalanceDate: new Date("2026-01-10T00:00:00.000Z"),
-  },
-  POSITION_ID,
-);
+  POSITION,
+  OTHER_POSITION,
+  THIRD_POSITION,
+  FRESH_POSITION,
+  UPDATED_POSITION,
+};
 
 export async function seedPositionById(id: string): Promise<Position> {
   const REPOSITORY = new PositionRepository(db);
-  const EXISTING = await REPOSITORY.findById(id);
+  const EXISTING = await REPOSITORY.findById(EntityId.create(id));
   if (EXISTING) return EXISTING;
 
   const FIXTURE =

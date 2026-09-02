@@ -1,14 +1,18 @@
 import Decimal from "decimal.js";
+import {
+  QUANTITY_DECIMAL_PLACES,
+  ROUNDING_MODE,
+} from "@/business/value-objects/rounding";
 import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents a non-negative quota quantity.
  *
- * The quantity is stored as a {@link Decimal} to preserve
- * precision when performing quota calculations.
+ * The code stores the quantity as a {@link Decimal} to keep
+ * full precision during quota calculations.
  *
- * Values are normalized to a maximum of 6 decimal places
- * when the quantity is created.
+ * The code normalizes the value to a maximum of 6 decimal
+ * places when it creates the quantity.
  *
  * Use {@link QuotaQuantity.create} to create a valid
  * `QuotaQuantity` instance.
@@ -29,9 +33,7 @@ interface QuotaQuantityProps {
  *
  * @example
  * ```ts
- * const QUANTITY = QuotaQuantity.create(
- *  '10.123456789'
- * )
+ * const QUANTITY = QuotaQuantity.create('10.123456789')
  *
  * QUANTITY.value.toString()
  * // '10.123457'
@@ -46,12 +48,8 @@ interface QuotaQuantityProps {
  * // true
  * ```
  */
-class QuotaQuantity {
+export class QuotaQuantity {
   private readonly props: QuotaQuantityProps;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the quota quantity value.
@@ -59,10 +57,6 @@ class QuotaQuantity {
   get value(): Decimal {
     return this.props.value;
   }
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `QuotaQuantity`.
@@ -75,18 +69,15 @@ class QuotaQuantity {
     this.props = props;
   }
 
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
-
   /**
    * Creates a valid `QuotaQuantity` from a decimal-compatible value.
    *
-   * The value can be any value accepted by {@link Decimal.Value}.
-   * It must be defined and cannot be negative.
+   * The code accepts any value that {@link Decimal.Value}
+   * accepts. The value must be defined. The value cannot be
+   * negative.
    *
-   * The resulting value is converted to a {@link Decimal} and
-   * rounded to a maximum of 6 decimal places.
+   * The code converts the value to a {@link Decimal} and
+   * rounds it to a maximum of 6 decimal places.
    *
    * @param value - The decimal-compatible quota quantity to create.
    * @returns A valid `QuotaQuantity` instance.
@@ -123,12 +114,13 @@ class QuotaQuantity {
       );
     }
 
-    return new QuotaQuantity({ value: decimalValue.toDecimalPlaces(6) });
+    return new QuotaQuantity({
+      value: decimalValue.toDecimalPlaces(
+        QUANTITY_DECIMAL_PLACES,
+        ROUNDING_MODE,
+      ),
+    });
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether two `QuotaQuantity` instances
@@ -137,7 +129,7 @@ class QuotaQuantity {
    * @param a - The first quota quantity.
    * @param b - The second quota quantity.
    * @returns `true` when both quantities have equal values;
-   * otherwise, `false`.
+   *          otherwise, `false`.
    *
    * @example
    * ```ts
@@ -152,5 +144,3 @@ class QuotaQuantity {
     return a.value.equals(b.value);
   }
 }
-
-export default QuotaQuantity;

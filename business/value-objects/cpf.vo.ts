@@ -1,7 +1,12 @@
 import { ValidationError } from "@/shared/errors";
 
 /**
- * Represents the properties of a {@link CPF}.
+ * Represents a validated Brazilian CPF number.
+ *
+ * The code stores only the digits, stripped of any
+ * formatting characters such as dots, dashes, or spaces.
+ *
+ * Use {@link CPF.create} to create a valid `CPF` instance.
  */
 interface CPFProps {
   value: string;
@@ -16,12 +21,13 @@ const ALL_SAME_DIGIT = /^(\d)\1{10}$/;
  * A `CPF`:
  * - must be defined.
  * - must not be blank.
- * - must contain exactly 11 digits after stripping non-digit characters.
+ * - must contain exactly 11 digits after stripping non-digit
+ *   characters.
  * - must not be a sequence of identical digits.
  * - must pass the official check-digit algorithm.
  *
- * The value is stored with only digits, stripped of any formatting
- * characters (dots, dashes, spaces).
+ * The value is stored with only digits, stripped of any
+ * formatting characters (dots, dashes, spaces).
  *
  * `CPF` instances are immutable after creation.
  *
@@ -42,12 +48,8 @@ const ALL_SAME_DIGIT = /^(\d)\1{10}$/;
  * // true
  * ```
  */
-class CPF {
+export class CPF {
   private readonly props: CPFProps;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the CPF value with only digits.
@@ -56,40 +58,35 @@ class CPF {
     return this.props.value;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `CPF`.
    *
    * The constructor is private to ensure that all instances
    * are created through {@link CPF.create} and therefore
-   * satisfy the CPF's invariants.
+   * satisfy the value object's invariants.
    */
   private constructor(props: CPFProps) {
     this.props = props;
   }
 
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
-
   /**
    * Creates a valid `CPF` from the provided value.
    *
-   * The value may contain formatting characters (dots, dashes,
-   * spaces), which are stripped before validation. The resulting
-   * value contains only digits.
+   * The value may contain formatting characters (dots,
+   * dashes, spaces), which are stripped before validation.
+   * The resulting value contains only digits.
    *
    * @param value - The CPF string to validate and create.
    * @returns A valid `CPF` instance.
    *
    * @throws {ValidationError} If `value` is `undefined` or `null`.
    * @throws {ValidationError} If `value` is blank.
-   * @throws {ValidationError} If `value` does not contain exactly 11 digits.
-   * @throws {ValidationError} If `value` is a sequence of identical digits.
-   * @throws {ValidationError} If `value` does not pass the check-digit algorithm.
+   * @throws {ValidationError} If `value` does not contain exactly
+   *   11 digits.
+   * @throws {ValidationError} If `value` is a sequence of identical
+   *   digits.
+   * @throws {ValidationError} If `value` does not pass the
+   *   check-digit algorithm.
    *
    * @example
    * ```ts
@@ -127,17 +124,14 @@ class CPF {
     return new CPF({ value: DIGITS });
   }
 
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
-
   /**
    * Determines whether two `CPF` instances represent the same
    * taxpayer identification number.
    *
    * @param a - The first CPF.
    * @param b - The second CPF.
-   * @returns `true` when both CPFs have equal values; otherwise, `false`.
+   * @returns `true` when both CPFs have equal values;
+   *          otherwise, `false`.
    *
    * @example
    * ```ts
@@ -152,19 +146,16 @@ class CPF {
     return a.value === b.value;
   }
 
-  // --------------------------------------
-  // PRIVATE HELPERS
-  // --------------------------------------
-
   /**
    * Validates the CPF check-digit algorithm.
    *
-   * The algorithm computes two check digits using weighted sums
-   * modulo 11 and compares them against the last two digits of
-   * the CPF.
+   * The algorithm computes two check digits using weighted
+   * sums modulo 11 and compares them against the last two
+   * digits of the CPF.
    *
    * @param digits - The 11-digit CPF string.
-   * @returns `true` when the check digits are valid; otherwise, `false`.
+   * @returns `true` when the check digits are valid;
+   *          otherwise, `false`.
    */
   private static isValid(digits: string): boolean {
     const FIRST_NINE = digits.substring(0, 9);
@@ -181,12 +172,12 @@ class CPF {
   }
 
   /**
-   * Computes a single CPF check digit from the provided partial
-   * digit string using the weighted-sum algorithm.
+   * Computes a single CPF check digit from the provided
+   * partial digit string using the weighted-sum algorithm.
    *
    * @param partial - The partial digit string (9 or 10 digits).
    * @param weight - The starting weight (10 for the first check
-   * digit, 11 for the second).
+   *   digit, 11 for the second).
    * @returns The computed check digit as a string character.
    */
   private static computeCheckDigit(partial: string, weight: number): string {
@@ -203,5 +194,3 @@ class CPF {
     return DIGIT;
   }
 }
-
-export default CPF;

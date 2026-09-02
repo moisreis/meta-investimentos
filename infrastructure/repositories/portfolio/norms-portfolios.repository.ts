@@ -1,9 +1,9 @@
-import { and, eq, inArray } from "drizzle-orm";
+﻿import { and, eq, inArray } from "drizzle-orm";
 
 import { NormsPortfolios } from "@/business/entities/portfolio/norms-portfolios.entity";
 import type { INormsPortfolios } from "@/business/interfaces/portfolio/norms-portfolios.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { normsPortfolios } from "@/infrastructure/database/schemas";
 
 import type { DbClient } from "../types";
@@ -26,15 +26,7 @@ import type { DbClient } from "../types";
  * and persisted through their `.value.toString()` representation.
  */
 export class NormsPortfoliosRepository implements INormsPortfolios {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `NormsPortfoliosRepository` bound to the provided
@@ -45,10 +37,6 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `norms_portfolios` row to a
@@ -88,10 +76,6 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the relation between the provided norm id and portfolio
    * id.
@@ -99,8 +83,8 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    * @see {@link INormsPortfolios.findByNormIdAndPortfolioId}
    */
   async findByNormIdAndPortfolioId(
-    normId: string,
-    portfolioId: string,
+    normId: EntityId,
+    portfolioId: EntityId,
   ): Promise<NormsPortfolios | null> {
     const [row] = await this.db
       .select()
@@ -121,7 +105,9 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    *
    * @see {@link INormsPortfolios.findAllByPortfolioId}
    */
-  async findAllByPortfolioId(portfolioId: string): Promise<NormsPortfolios[]> {
+  async findAllByPortfolioId(
+    portfolioId: EntityId,
+  ): Promise<NormsPortfolios[]> {
     const rows = await this.db
       .select()
       .from(normsPortfolios)
@@ -162,7 +148,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    *
    * @see {@link INormsPortfolios.findAllByNormId}
    */
-  async findAllByNormId(normId: string): Promise<NormsPortfolios[]> {
+  async findAllByNormId(normId: EntityId): Promise<NormsPortfolios[]> {
     const rows = await this.db
       .select()
       .from(normsPortfolios)
@@ -170,10 +156,6 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
 
     return rows.map((row) => this.toEntity(row));
   }
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided norms-portfolios relation.
@@ -206,7 +188,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    *
    * @see {@link INormsPortfolios.delete}
    */
-  async delete(normId: string, portfolioId: string): Promise<void> {
+  async delete(normId: EntityId, portfolioId: EntityId): Promise<void> {
     await this.db
       .delete(normsPortfolios)
       .where(

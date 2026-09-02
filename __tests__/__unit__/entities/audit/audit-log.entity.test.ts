@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { AuditLog } from "@/business/entities/audit/audit-log.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Represents the properties required to create a {@link Statement}.
  *
  * The `portfolioId` and `generatedByUserId` default to `null`, and
@@ -44,10 +44,6 @@ interface StatementProps {
 export class Statement {
   private readonly _id?: EntityId;
   private readonly props: Required<StatementProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the statement.
@@ -98,10 +94,6 @@ export class Statement {
     return this.props.createdAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `Statement`.
    *
@@ -111,12 +103,8 @@ export class Statement {
    */
   private constructor(props: Required<StatementProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `Statement` from the provided properties.
@@ -133,6 +121,7 @@ export class Statement {
    * @throws {ValidationError} If `props.periodStart` is missing.
    * @throws {ValidationError} If `props.periodEnd` is missing.
    * @throws {ValidationError} If `props.fileUrl` is blank.
+   * @throws {ValidationError} If `props.periodStart` is after `props.periodEnd`.
    */
   public static create(props: StatementProps, id?: string): Statement {
     if (!props.periodStart) {
@@ -143,6 +132,11 @@ export class Statement {
     }
     if (!props.fileUrl || props.fileUrl.trim() === "") {
       throw new ValidationError("Statement must have a file url.");
+    }
+    if (props.periodStart.getTime() > props.periodEnd.getTime()) {
+      throw new ValidationError(
+        "Statement period start must not be after period end.",
+      );
     }
 
     const NOW = new Date();
@@ -156,10 +150,6 @@ export class Statement {
 
     return new Statement(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `Statement` represents the same statement

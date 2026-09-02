@@ -1,65 +1,33 @@
-import { Account } from "@/business/entities/user/account.entity";
+﻿import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import type { IAccount } from "@/business/interfaces/user/account.interface";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
 
-export const ACCOUNT_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-export const OTHER_ACCOUNT_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
-export const USER_ID = "9f5d9a1b-2c6e-4a3b-9c1d-3e2f4a6b8c0d";
-export const OTHER_USER_ID = "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d";
-
-export const ACCOUNT = Account.create(
-  {
-    issuer: "github",
-    providerId: "github",
-    accountId: "octocat",
-    userId: EntityId.create(USER_ID),
-  },
+export {
+  ACCOUNT,
   ACCOUNT_ID,
-);
-
-export const OTHER_ACCOUNT = Account.create(
-  {
-    issuer: "github",
-    providerId: "github",
-    accountId: "octodog",
-    userId: EntityId.create(OTHER_USER_ID),
-  },
+  FRESH_ACCOUNT,
+  OTHER_ACCOUNT,
   OTHER_ACCOUNT_ID,
-);
+  OTHER_USER_ID,
+  UPDATED_ACCOUNT,
+  USER_ID,
+} from "@/__tests__/__fixtures__";
 
 export function createInMemoryAccountRepository(): IAccount {
-  const ROWS = new Map<string, Account>();
+  const BASE = createInMemoryRepository<Awaited<ReturnType<IAccount["save"]>>>({
+    extractId: (a) => a.id,
+  });
 
   return {
-    async findById(id: string): Promise<Account | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findByIssuerAndAccountId(issuer, accountId) {
+      return BASE.findOne(
+        (a) => a.issuer === issuer && a.accountId === accountId,
+      );
     },
-    async findByIssuerAndAccountId(
-      issuer: string,
-      accountId: string,
-    ): Promise<Account | null> {
-      for (const ROW of ROWS.values()) {
-        if (ROW.issuer === issuer && ROW.accountId === accountId) return ROW;
-      }
-
-      return null;
+    async findAllByUserId(userId) {
+      return BASE.match((a) => a.userId === userId);
     },
-    async findAllByUserId(userId: string): Promise<Account[]> {
-      const MATCHES: Account[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.userId === userId) MATCHES.push(ROW);
-      }
-
-      return MATCHES;
-    },
-    async save(account: Account): Promise<Account> {
-      ROWS.set(account.id ?? "generated-id", account);
-
-      return account;
-    },
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (account) => BASE.save(account),
+    delete: (id) => BASE.delete(id),
   };
 }

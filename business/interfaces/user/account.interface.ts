@@ -1,4 +1,5 @@
 import type { Account } from "@/business/entities/user/account.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { Account } from "@/business/entities/user/account.entity";
  * `Account` entities and back.
  */
 export interface IAccount {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the account with the provided id.
    *
@@ -24,7 +21,7 @@ export interface IAccount {
    * @returns A promise resolving to the `Account` or `null` when
    * not found.
    */
-  findById(id: string): Promise<Account | null>;
+  findById(id: EntityId): Promise<Account | null>;
 
   /**
    * Retrieves the account linked to the provided issuer and account id.
@@ -45,11 +42,7 @@ export interface IAccount {
    * @param userId - The id of the user the accounts belong to.
    * @returns A promise resolving to all matching `Account` entities.
    */
-  findAllByUserId(userId: string): Promise<Account[]>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
+  findAllByUserId(userId: EntityId): Promise<Account[]>;
 
   /**
    * Persists the provided account.
@@ -69,5 +62,5 @@ export interface IAccount {
    * @param id - The unique identifier of the account.
    * @returns A promise that resolves when the account is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

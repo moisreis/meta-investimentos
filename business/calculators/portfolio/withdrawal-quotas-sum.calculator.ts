@@ -1,4 +1,4 @@
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -25,7 +25,8 @@ interface CalculatePortfolioWithdrawalQuotasSumProps {
  * The result is represented as a {@link QuotaQuantity}.
  *
  * @param quotaQuantity - The withdrawal quota quantities from
- * all positions in the portfolio to be summed.
+ *                        all positions in the portfolio to
+ *                        be summed.
  *
  * @returns The total number of quotas withdrawn across all
  * positions in the portfolio.

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   createInMemoryFundRepository,
@@ -8,7 +8,7 @@ import {
 
 import { Fund } from "@/business/entities/fund/fund.entity";
 import type { IFund } from "@/business/interfaces/fund/fund.interface";
-import CNPJ from "@/business/value-objects/cnpj.vo";
+import { CNPJ } from "@/business/value-objects/cnpj.vo";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("IFund", () => {
@@ -22,13 +22,13 @@ describe("IFund", () => {
     it("returns the persisted fund", async () => {
       await REPOSITORY.save(FUND);
 
-      const FOUND = await REPOSITORY.findById(FUND_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(FUND_ID));
 
       expect(FOUND?.equals(FUND)).toBe(true);
     });
 
     it("returns null when the fund does not exist", async () => {
-      expect(await REPOSITORY.findById(FUND_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(FUND_ID))).toBeNull();
     });
   });
 
@@ -50,7 +50,7 @@ describe("IFund", () => {
     it("persists a new fund", async () => {
       await REPOSITORY.save(FUND);
 
-      const FOUND = await REPOSITORY.findById(FUND_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(FUND_ID));
 
       expect(FOUND?.equals(FUND)).toBe(true);
     });
@@ -69,7 +69,7 @@ describe("IFund", () => {
 
       await REPOSITORY.save(UPDATED_FUND);
 
-      const FOUND = await REPOSITORY.findById(FUND_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(FUND_ID));
 
       expect(FOUND?.name).toBe("Fundo Teste Atualizado");
     });
@@ -79,9 +79,9 @@ describe("IFund", () => {
     it("removes the persisted fund", async () => {
       await REPOSITORY.save(FUND);
 
-      await REPOSITORY.delete(FUND_ID);
+      await REPOSITORY.delete(EntityId.create(FUND_ID));
 
-      expect(await REPOSITORY.findById(FUND_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(FUND_ID))).toBeNull();
     });
   });
 });

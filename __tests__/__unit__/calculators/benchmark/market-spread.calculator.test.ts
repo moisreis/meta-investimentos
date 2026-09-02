@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculatePortfolioMarketSpread } from "@/business/calculators/benchmark/market-spread.calculator";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("calculatePortfolioMarketSpread", () => {
   it("returns the difference between the portfolio return and the market index", () => {

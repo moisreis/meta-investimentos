@@ -1,61 +1,53 @@
-import { BankAccount } from "@/business/entities/bank/bank-account.entity";
+﻿import {
+  BANK_ACCOUNT,
+  BANK_ACCOUNT_ID,
+  BANK_ID,
+  FRESH_BANK_ACCOUNT,
+  OTHER_BANK_ACCOUNT,
+  OTHER_BANK_ID,
+  OTHER_PORTFOLIO_ID,
+  PORTFOLIO_ID,
+  THIRD_BANK_ACCOUNT,
+  UPDATED_BANK_ACCOUNT,
+} from "@/__tests__/__fixtures__";
+import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import type { IBankAccount } from "@/business/interfaces/bank/bank-account.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 
-export const BANK_ACCOUNT_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-export const PORTFOLIO_ID = "a1a2a3a4-a5a6-4a7a-8a9a-0a1a2a3a4a5a";
-export const BANK_ID = "b1b2b3b4-b5b6-4b7b-8b9b-0b1b2b3b4b5b";
+export {
+  BANK_ACCOUNT_ID,
+  PORTFOLIO_ID,
+  OTHER_PORTFOLIO_ID,
+  BANK_ID,
+  OTHER_BANK_ID,
+  BANK_ACCOUNT,
+  OTHER_BANK_ACCOUNT,
+  THIRD_BANK_ACCOUNT,
+  UPDATED_BANK_ACCOUNT,
+  FRESH_BANK_ACCOUNT,
+};
 
 export const PROPS = {
   portfolioId: EntityId.create(PORTFOLIO_ID),
   bankId: EntityId.create(BANK_ID),
-  agency: "1234",
-  accountNumber: "56789-0",
+  agency: "0001",
+  accountNumber: "12345-6",
 };
 
-export const BANK_ACCOUNT = BankAccount.create(PROPS, BANK_ACCOUNT_ID);
-
-export const UPDATED_BANK_ACCOUNT = BankAccount.create(
-  { ...PROPS, accountNumber: "56789-1" },
-  BANK_ACCOUNT_ID,
-);
-
 export function createInMemoryBankAccountRepository(): IBankAccount {
-  const ROWS = new Map<string, BankAccount>();
+  const BASE = createInMemoryRepository<
+    Awaited<ReturnType<IBankAccount["save"]>>
+  >({ extractId: (ba) => ba.id });
 
   return {
-    async findById(id: string): Promise<BankAccount | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findAllByPortfolioId(portfolioId) {
+      return BASE.match((ba) => ba.portfolioId === portfolioId);
     },
-
-    async findAllByPortfolioId(portfolioId: string): Promise<BankAccount[]> {
-      const FOUND: BankAccount[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.portfolioId === portfolioId) FOUND.push(ROW);
-      }
-
-      return FOUND;
+    async findAllByBankId(bankId) {
+      return BASE.match((ba) => ba.bankId === bankId);
     },
-
-    async findAllByBankId(bankId: string): Promise<BankAccount[]> {
-      const FOUND: BankAccount[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.bankId === bankId) FOUND.push(ROW);
-      }
-
-      return FOUND;
-    },
-
-    async save(bankAccount: BankAccount): Promise<BankAccount> {
-      ROWS.set(bankAccount.id ?? "generated-id", bankAccount);
-
-      return bankAccount;
-    },
-
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (bankAccount) => BASE.save(bankAccount),
+    delete: (id) => BASE.delete(id),
   };
 }

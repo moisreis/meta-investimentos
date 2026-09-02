@@ -1,4 +1,5 @@
 import type { PositionPerformance } from "@/business/entities/performance/position-performance.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -14,10 +15,6 @@ import type { PositionPerformance } from "@/business/entities/performance/positi
  * `PositionPerformance` entities and back.
  */
 export interface IPositionPerformance {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the performance with the provided id.
    *
@@ -25,7 +22,7 @@ export interface IPositionPerformance {
    * @returns A promise resolving to the `PositionPerformance` or
    * `null` when not found.
    */
-  findById(id: string): Promise<PositionPerformance | null>;
+  findById(id: EntityId): Promise<PositionPerformance | null>;
 
   /**
    * Retrieves all performances belonging to the provided position id.
@@ -34,7 +31,7 @@ export interface IPositionPerformance {
    * @returns A promise resolving to the `PositionPerformance` entries
    * or an empty array when there are no matches.
    */
-  findAllByPositionId(positionId: string): Promise<PositionPerformance[]>;
+  findAllByPositionId(positionId: EntityId): Promise<PositionPerformance[]>;
 
   /**
    * Retrieves the performance of the provided position on the
@@ -46,7 +43,7 @@ export interface IPositionPerformance {
    * `null` when not found.
    */
   findByPositionIdAndDate(
-    positionId: string,
+    positionId: EntityId,
     date: Date,
   ): Promise<PositionPerformance | null>;
 
@@ -58,12 +55,8 @@ export interface IPositionPerformance {
    * the latest date or `null` when there is no performance.
    */
   findLatestByPositionId(
-    positionId: string,
+    positionId: EntityId,
   ): Promise<PositionPerformance | null>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided performance.
@@ -84,5 +77,5 @@ export interface IPositionPerformance {
    * @param id - The unique identifier of the performance.
    * @returns A promise that resolves when the performance is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

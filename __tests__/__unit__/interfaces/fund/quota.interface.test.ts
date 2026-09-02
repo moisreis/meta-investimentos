@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   createInMemoryQuotaRepository,
@@ -12,7 +12,7 @@ import {
 import { Quota } from "@/business/entities/fund/quota.entity";
 import type { IQuota } from "@/business/interfaces/fund/quota.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import QuotaPrice from "@/business/value-objects/quota-price.vo";
+import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 
 describe("IQuota", () => {
   let REPOSITORY: IQuota;
@@ -25,13 +25,13 @@ describe("IQuota", () => {
     it("returns the persisted quota", async () => {
       await REPOSITORY.save(QUOTA);
 
-      const FOUND = await REPOSITORY.findById(QUOTA_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(QUOTA_ID));
 
       expect(FOUND?.equals(QUOTA)).toBe(true);
     });
 
     it("returns null when the quota does not exist", async () => {
-      expect(await REPOSITORY.findById(QUOTA_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(QUOTA_ID))).toBeNull();
     });
   });
 
@@ -41,7 +41,7 @@ describe("IQuota", () => {
       await REPOSITORY.save(EARLIER_QUOTA);
       await REPOSITORY.save(LATEST_QUOTA);
 
-      const FOUND = await REPOSITORY.findAllByFundId(FUND_ID);
+      const FOUND = await REPOSITORY.findAllByFundId(EntityId.create(FUND_ID));
 
       expect(FOUND).toHaveLength(3);
       expect(FOUND.some((QUOTA_ROW) => QUOTA_ROW.equals(QUOTA))).toBe(true);
@@ -54,7 +54,9 @@ describe("IQuota", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByFundId(FUND_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByFundId(EntityId.create(FUND_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -63,8 +65,8 @@ describe("IQuota", () => {
       await REPOSITORY.save(QUOTA);
 
       const FOUND = await REPOSITORY.findByFundIdAndDate(
-        FUND_ID,
-        new Date("2024-01-15T12:00:00.000Z"),
+        EntityId.create(FUND_ID),
+        new Date("2026-01-05T00:00:00.000Z"),
       );
 
       expect(FOUND?.equals(QUOTA)).toBe(true);
@@ -73,8 +75,8 @@ describe("IQuota", () => {
     it("returns null when the quota does not exist", async () => {
       expect(
         await REPOSITORY.findByFundIdAndDate(
-          FUND_ID,
-          new Date("2024-01-15T12:00:00.000Z"),
+          EntityId.create(FUND_ID),
+          new Date("2026-01-05T00:00:00.000Z"),
         ),
       ).toBeNull();
     });
@@ -86,13 +88,17 @@ describe("IQuota", () => {
       await REPOSITORY.save(EARLIER_QUOTA);
       await REPOSITORY.save(LATEST_QUOTA);
 
-      const FOUND = await REPOSITORY.findLatestByFundId(FUND_ID);
+      const FOUND = await REPOSITORY.findLatestByFundId(
+        EntityId.create(FUND_ID),
+      );
 
       expect(FOUND?.equals(LATEST_QUOTA)).toBe(true);
     });
 
     it("returns null when there are no quotas for the fund", async () => {
-      expect(await REPOSITORY.findLatestByFundId(FUND_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findLatestByFundId(EntityId.create(FUND_ID)),
+      ).toBeNull();
     });
   });
 
@@ -100,7 +106,7 @@ describe("IQuota", () => {
     it("persists a new quota", async () => {
       await REPOSITORY.save(QUOTA);
 
-      const FOUND = await REPOSITORY.findById(QUOTA_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(QUOTA_ID));
 
       expect(FOUND?.equals(QUOTA)).toBe(true);
     });
@@ -111,7 +117,7 @@ describe("IQuota", () => {
       const UPDATED_QUOTA = Quota.create(
         {
           fundId: EntityId.create(FUND_ID),
-          date: new Date("2024-01-15T12:00:00.000Z"),
+          date: new Date("2026-01-05T00:00:00.000Z"),
           price: QuotaPrice.create("12.75"),
         },
         QUOTA_ID,
@@ -119,7 +125,7 @@ describe("IQuota", () => {
 
       await REPOSITORY.save(UPDATED_QUOTA);
 
-      const FOUND = await REPOSITORY.findById(QUOTA_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(QUOTA_ID));
 
       expect(FOUND?.equals(QUOTA)).toBe(true);
       expect(FOUND?.price.value.toString()).toBe("12.75");
@@ -130,9 +136,9 @@ describe("IQuota", () => {
     it("removes the persisted quota", async () => {
       await REPOSITORY.save(QUOTA);
 
-      await REPOSITORY.delete(QUOTA_ID);
+      await REPOSITORY.delete(EntityId.create(QUOTA_ID));
 
-      expect(await REPOSITORY.findById(QUOTA_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(QUOTA_ID))).toBeNull();
     });
   });
 });

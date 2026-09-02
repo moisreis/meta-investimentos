@@ -1,28 +1,29 @@
+﻿import {
+  CATEGORY,
+  CATEGORY_ID,
+  FRESH_CATEGORY,
+  OTHER_CATEGORY,
+  OTHER_CATEGORY_ID,
+  UPDATED_CATEGORY,
+} from "@/__tests__/__fixtures__";
 import { db } from "@/__tests__/__setup__/_database.setup";
-import { Category } from "@/business/entities";
+import type { Category } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { category } from "@/infrastructure/database/schemas";
 import { CategoryRepository } from "@/infrastructure/repositories";
 
-export const CATEGORY_ID = "6a7b8c9d-0e1f-4a2b-9c3d-4e5f6a7b8c9d";
-export const OTHER_CATEGORY_ID = "7b8c9d0e-1f2a-4b3c-8d4e-5f6a7b8c9d0e";
-
-export const CATEGORY = Category.create({ name: "Ações" }, CATEGORY_ID);
-
-export const OTHER_CATEGORY = Category.create(
-  { name: "Renda Fixa" },
-  OTHER_CATEGORY_ID,
-);
-
-export const FRESH_CATEGORY = Category.create({ name: "Multimercado" });
-
-export const UPDATED_CATEGORY = Category.create(
-  { name: "Ações Brasileiras" },
+export {
   CATEGORY_ID,
-);
+  OTHER_CATEGORY_ID,
+  CATEGORY,
+  OTHER_CATEGORY,
+  FRESH_CATEGORY,
+  UPDATED_CATEGORY,
+};
 
 export async function seedCategoryById(id: string): Promise<Category> {
   const REPOSITORY = new CategoryRepository(db);
-  const EXISTING = await REPOSITORY.findById(id);
+  const EXISTING = await REPOSITORY.findById(EntityId.create(id));
   if (EXISTING) return EXISTING;
 
   const FIXTURE = id === CATEGORY_ID ? CATEGORY : OTHER_CATEGORY;

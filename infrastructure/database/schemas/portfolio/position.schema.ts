@@ -1,5 +1,8 @@
+import { sql } from "drizzle-orm";
 import {
+  check,
   index,
+  integer,
   numeric,
   pgSchema,
   timestamp,
@@ -25,14 +28,24 @@ export const position = pgSchema("portfolio").table(
     fundId: uuid("fund_id")
       .notNull()
       .references(() => fund.id),
-    initialBalance: numeric("initial_balance"),
-    initialBalanceDate: timestamp("initial_balance_date"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
+    initialBalance: numeric("initial_balance", { precision: 18, scale: 6 }),
+    initialBalanceDate: timestamp("initial_balance_date", {
+      withTimezone: true,
+    }),
+    version: integer("version").default(0).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
   (table) => [
+    /**
+     * Enforces that the initial balance is non-negative when set.
+     */
+    check("position_initial_balance_nonneg", sql`${table.initialBalance} >= 0`),
+
     /**
      * Enforces that a portfolio holds a single position per fund.
      */

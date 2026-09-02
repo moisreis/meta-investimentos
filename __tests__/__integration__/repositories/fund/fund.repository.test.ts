@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   BANK_ID,
@@ -19,6 +19,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("FundRepository", () => {
   beforeEach(async () => {
@@ -33,13 +34,17 @@ describe("FundRepository", () => {
     it("returns the persisted fund", async () => {
       await seedFunds();
 
-      const FOUND = await newFundRepository().findById(FUND_ID);
+      const FOUND = await newFundRepository().findById(
+        EntityId.create(FUND_ID),
+      );
 
       expect(FOUND?.equals(FUND)).toBe(true);
     });
 
     it("returns null when the fund does not exist", async () => {
-      expect(await newFundRepository().findById(FUND_ID)).toBeNull();
+      expect(
+        await newFundRepository().findById(EntityId.create(FUND_ID)),
+      ).toBeNull();
     });
   });
 
@@ -48,8 +53,8 @@ describe("FundRepository", () => {
       await seedFunds();
 
       const FOUND = await newFundRepository().findAllByIds([
-        FUND_ID,
-        OTHER_FUND_ID,
+        EntityId.create(FUND_ID),
+        EntityId.create(OTHER_FUND_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -80,7 +85,9 @@ describe("FundRepository", () => {
     it("returns the funds issued by the bank", async () => {
       await seedFunds();
 
-      const FOUND = await newFundRepository().findAllByBankId(BANK_ID);
+      const FOUND = await newFundRepository().findAllByBankId(
+        EntityId.create(BANK_ID),
+      );
 
       expect(FOUND).toHaveLength(1);
       expect(FOUND[0]?.equals(FUND)).toBe(true);
@@ -89,7 +96,9 @@ describe("FundRepository", () => {
     it("returns only the funds of the second bank", async () => {
       await seedFunds();
 
-      const FOUND = await newFundRepository().findAllByBankId(OTHER_BANK_ID);
+      const FOUND = await newFundRepository().findAllByBankId(
+        EntityId.create(OTHER_BANK_ID),
+      );
 
       expect(FOUND).toHaveLength(1);
       expect(FOUND[0]?.equals(OTHER_FUND)).toBe(true);
@@ -100,8 +109,9 @@ describe("FundRepository", () => {
     it("returns the funds benchmarked against the benchmark", async () => {
       await seedFunds();
 
-      const FOUND =
-        await newFundRepository().findAllByBenchmarkId(BENCHMARK_ID);
+      const FOUND = await newFundRepository().findAllByBenchmarkId(
+        EntityId.create(BENCHMARK_ID),
+      );
 
       expect(FOUND).toHaveLength(1);
       expect(FOUND[0]?.equals(FUND)).toBe(true);
@@ -112,7 +122,9 @@ describe("FundRepository", () => {
     it("returns the funds tagged with the category", async () => {
       await seedFunds();
 
-      const FOUND = await newFundRepository().findAllByCategoryId(CATEGORY_ID);
+      const FOUND = await newFundRepository().findAllByCategoryId(
+        EntityId.create(CATEGORY_ID),
+      );
 
       expect(FOUND).toHaveLength(1);
       expect(FOUND[0]?.equals(FUND)).toBe(true);
@@ -128,7 +140,11 @@ describe("FundRepository", () => {
       expect(SAVED.id).toBeDefined();
       expect(SAVED.name).toBe(FRESH_FUND.name);
       expect(
-        (await newFundRepository().findById(SAVED.id as string))?.equals(SAVED),
+        (
+          await newFundRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
@@ -137,7 +153,9 @@ describe("FundRepository", () => {
 
       await newFundRepository().save(UPDATED_FUND);
 
-      const FOUND = await newFundRepository().findById(FUND_ID);
+      const FOUND = await newFundRepository().findById(
+        EntityId.create(FUND_ID),
+      );
 
       expect(FOUND?.name).toBe(UPDATED_FUND.name);
       expect(FOUND?.administrationFee?.value.toString()).toBe(
@@ -151,9 +169,11 @@ describe("FundRepository", () => {
     it("removes the persisted fund", async () => {
       await seedFunds();
 
-      await newFundRepository().delete(FUND_ID);
+      await newFundRepository().delete(EntityId.create(FUND_ID));
 
-      expect(await newFundRepository().findById(FUND_ID)).toBeNull();
+      expect(
+        await newFundRepository().findById(EntityId.create(FUND_ID)),
+      ).toBeNull();
     });
   });
 });

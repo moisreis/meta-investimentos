@@ -1,92 +1,70 @@
-import { PositionPerformance } from "@/business/entities/performance/position-performance.entity";
+﻿import {
+  EXTERNAL_POSITION_PERFORMANCE,
+  EXTERNAL_POSITION_PERFORMANCE_ID,
+  FEBRUARY_PERFORMANCE_DATE,
+  FRESH_POSITION_PERFORMANCE,
+  OTHER_POSITION_ID,
+  OTHER_POSITION_PERFORMANCE,
+  OTHER_POSITION_PERFORMANCE_ID,
+  PERFORMANCE_DATE,
+  PERFORMANCE_DUPLICATE_DATE,
+  PERIOD_OUTSIDE_POSITION_PERFORMANCE,
+  PERIOD_OUTSIDE_POSITION_PERFORMANCE_ID,
+  POSITION_ID,
+  POSITION_PERFORMANCE,
+  POSITION_PERFORMANCE_ID,
+  UPDATED_POSITION_PERFORMANCE,
+} from "@/__tests__/__fixtures__";
+import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import type { IPositionPerformance } from "@/business/interfaces/performance/position-performance.interface";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
-export const PERFORMANCE_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-export const POSITION_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
-export const PERFORMANCE_DATE = new Date("2026-08-01T00:00:00.000Z");
+export {
+  POSITION_PERFORMANCE_ID,
+  OTHER_POSITION_PERFORMANCE_ID,
+  EXTERNAL_POSITION_PERFORMANCE_ID,
+  PERIOD_OUTSIDE_POSITION_PERFORMANCE_ID,
+  POSITION_ID,
+  OTHER_POSITION_ID,
+  PERFORMANCE_DATE,
+  PERFORMANCE_DUPLICATE_DATE,
+  FEBRUARY_PERFORMANCE_DATE,
+  POSITION_PERFORMANCE,
+  OTHER_POSITION_PERFORMANCE,
+  EXTERNAL_POSITION_PERFORMANCE,
+  PERIOD_OUTSIDE_POSITION_PERFORMANCE,
+  UPDATED_POSITION_PERFORMANCE,
+  FRESH_POSITION_PERFORMANCE,
+};
 
-export const PERFORMANCE = PositionPerformance.create(
-  {
-    positionId: EntityId.create(POSITION_ID),
-    date: PERFORMANCE_DATE,
-    quotasHeld: QuotaQuantity.create("100"),
-    patrimony: PositiveMoney.create("1000000"),
-    applicationTotal: PositiveMoney.create("1000000"),
-    redemptionTotal: PositiveMoney.create("0"),
-    cashFlowNet: SignedMoney.create("1000000"),
-    earnings: SignedMoney.create("0"),
-    returnDaily: SignedPercentage.create("0"),
-    allocation: SignedPercentage.create("100"),
-  },
-  PERFORMANCE_ID,
-);
+export const PERFORMANCE_ID = POSITION_PERFORMANCE_ID;
+export const PERFORMANCE = POSITION_PERFORMANCE;
 
 export function createInMemoryPositionPerformanceRepository(): IPositionPerformance {
-  const ROWS = new Map<string, PositionPerformance>();
+  const BASE = createInMemoryRepository<
+    Awaited<ReturnType<IPositionPerformance["save"]>>
+  >({ extractId: (pp) => pp.id });
 
   return {
-    async findById(id: string): Promise<PositionPerformance | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findAllByPositionId(positionId) {
+      return BASE.match((pp) => pp.positionId === positionId);
     },
-
-    async findAllByPositionId(
-      positionId: string,
-    ): Promise<PositionPerformance[]> {
-      const RESULT: PositionPerformance[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.positionId === positionId) RESULT.push(ROW);
-      }
-
-      return RESULT;
+    async findByPositionIdAndDate(positionId, date) {
+      return BASE.findOne(
+        (pp) =>
+          pp.positionId === positionId && pp.date.getTime() === date.getTime(),
+      );
     },
+    async findLatestByPositionId(positionId) {
+      const FOUND = BASE.match((pp) => pp.positionId === positionId);
 
-    async findByPositionIdAndDate(
-      positionId: string,
-      date: Date,
-    ): Promise<PositionPerformance | null> {
-      for (const ROW of ROWS.values()) {
-        if (
-          ROW.positionId === positionId &&
-          ROW.date.getTime() === date.getTime()
-        ) {
-          return ROW;
-        }
-      }
+      if (FOUND.length === 0) return null;
 
-      return null;
+      return FOUND.reduce((latest, current) =>
+        current.date.getTime() > latest.date.getTime() ? current : latest,
+      );
     },
-
-    async findLatestByPositionId(
-      positionId: string,
-    ): Promise<PositionPerformance | null> {
-      let LATEST: PositionPerformance | null = null;
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.positionId !== positionId) continue;
-        if (LATEST === null || ROW.date.getTime() > LATEST.date.getTime()) {
-          LATEST = ROW;
-        }
-      }
-
-      return LATEST;
-    },
-
-    async save(
-      positionPerformance: PositionPerformance,
-    ): Promise<PositionPerformance> {
-      ROWS.set(positionPerformance.id ?? "generated-id", positionPerformance);
-
-      return positionPerformance;
-    },
-
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (positionPerformance) => BASE.save(positionPerformance),
+    delete: (id) => BASE.delete(id),
   };
 }

@@ -27,8 +27,10 @@ export const bankAccount = pgSchema("bank").table(
       .references(() => bank.id),
     agency: text("agency").notNull(),
     accountNumber: text("account_number").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },

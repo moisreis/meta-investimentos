@@ -1,13 +1,14 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+﻿import { and, desc, eq, inArray } from "drizzle-orm";
 
 import { PortfolioPerformance } from "@/business/entities/performance/portfolio-performance.entity";
 import type { IPortfolioPerformance } from "@/business/interfaces/performance/portfolio-performance.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { portfolioPerformance } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -28,15 +29,7 @@ import type { DbClient } from "../types";
  * resolves the latest snapshot of many portfolios in a single query.
  */
 export class PortfolioPerformanceRepository implements IPortfolioPerformance {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `PortfolioPerformanceRepository` bound to the provided
@@ -47,10 +40,6 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `portfolio_performance` row to a
@@ -166,16 +155,12 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the portfolio performance with the provided id.
    *
    * @see {@link IPortfolioPerformance.findById}
    */
-  async findById(id: string): Promise<PortfolioPerformance | null> {
+  async findById(id: EntityId): Promise<PortfolioPerformance | null> {
     const [row] = await this.db
       .select()
       .from(portfolioPerformance)
@@ -191,7 +176,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    * @see {@link IPortfolioPerformance.findAllByPortfolioId}
    */
   async findAllByPortfolioId(
-    portfolioId: string,
+    portfolioId: EntityId,
   ): Promise<PortfolioPerformance[]> {
     const rows = await this.db
       .select()
@@ -235,7 +220,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    * @see {@link IPortfolioPerformance.findByPortfolioIdAndDate}
    */
   async findByPortfolioIdAndDate(
-    portfolioId: string,
+    portfolioId: EntityId,
     date: Date,
   ): Promise<PortfolioPerformance | null> {
     const [row] = await this.db
@@ -259,7 +244,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    * @see {@link IPortfolioPerformance.findLatestByPortfolioId}
    */
   async findLatestByPortfolioId(
-    portfolioId: string,
+    portfolioId: EntityId,
   ): Promise<PortfolioPerformance | null> {
     const [row] = await this.db
       .select()
@@ -303,10 +288,6 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided portfolio performance snapshot.
    *
@@ -321,7 +302,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
         .returning();
 
       if (!row) {
-        throw new Error(
+        throw new NotFoundError(
           `PortfolioPerformance with id ${persisted.id} was not found.`,
         );
       }
@@ -342,7 +323,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    *
    * @see {@link IPortfolioPerformance.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db
       .delete(portfolioPerformance)
       .where(eq(portfolioPerformance.id, id));

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { Statement } from "@/business/entities/report/statement.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
@@ -69,6 +69,16 @@ describe("Statement.create", () => {
     expect(() =>
       Statement.create(REST as Parameters<typeof Statement.create>[0]),
     ).toThrow("Statement must have a period end.");
+  });
+
+  it("throws when the period start is after the period end", () => {
+    expect(() =>
+      Statement.create({
+        ...VALID_PROPS,
+        periodStart: new Date("2026-02-01T00:00:00.000Z"),
+        periodEnd: new Date("2026-01-31T00:00:00.000Z"),
+      }),
+    ).toThrow("Statement period start must not be after period end.");
   });
 
   it("throws when the file url is blank", () => {

@@ -23,13 +23,22 @@ export const portfolioPerformance = pgSchema("performance").table(
     portfolioId: uuid("portfolio_id")
       .notNull()
       .references(() => portfolio.id),
-    date: timestamp("date").notNull(),
-    quotasHeld: numeric("quotas_held").notNull(),
-    patrimony: numeric("patrimony").notNull(),
-    applicationTotal: numeric("application_total").notNull(),
-    redemptionTotal: numeric("redemption_total").notNull(),
-    cashFlowNet: numeric("cash_flow_net").notNull(),
-    earnings: numeric("earnings").notNull(),
+    date: timestamp("date", { withTimezone: true }).notNull(),
+    quotasHeld: numeric("quotas_held", { precision: 18, scale: 6 }).notNull(),
+    patrimony: numeric("patrimony", { precision: 18, scale: 6 }).notNull(),
+    applicationTotal: numeric("application_total", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
+    redemptionTotal: numeric("redemption_total", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
+    cashFlowNet: numeric("cash_flow_net", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
+    earnings: numeric("earnings", { precision: 18, scale: 6 }).notNull(),
     returnDaily: numeric("return_daily").notNull(),
     returnMonthly: numeric("return_monthly"),
     returnYearly: numeric("return_yearly"),
@@ -39,7 +48,9 @@ export const portfolioPerformance = pgSchema("performance").table(
     inflationSpread: numeric("inflation_spread"),
     riskFreeSpread: numeric("risk_free_spread"),
     marketSpread: numeric("market_spread"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     /**

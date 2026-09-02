@@ -1,4 +1,4 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -25,10 +25,6 @@ interface CategoryProps {
 export class Category {
   private readonly _id?: EntityId;
   private readonly props: Required<CategoryProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the category.
@@ -58,10 +54,6 @@ export class Category {
     return this.props.updatedAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `Category`.
    *
@@ -71,12 +63,8 @@ export class Category {
    */
   private constructor(props: Required<CategoryProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `Category` from the provided properties.
@@ -106,10 +94,6 @@ export class Category {
 
     return new Category(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `Category` represents the same category

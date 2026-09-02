@@ -22,8 +22,8 @@ export const checkingAccount = pgSchema("bank").table(
     bankAccountId: uuid("bank_account_id")
       .notNull()
       .references(() => bankAccount.id),
-    date: timestamp("date").notNull(),
-    value: numeric("value").notNull(),
+    date: timestamp("date", { withTimezone: true }).notNull(),
+    value: numeric("value", { precision: 18, scale: 6 }).notNull(),
   },
   (table) => [
     /**

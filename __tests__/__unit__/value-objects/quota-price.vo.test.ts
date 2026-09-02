@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
-import QuotaPrice from "@/business/value-objects/quota-price.vo";
+import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 
 describe("QuotaPrice", () => {
   describe("create", () => {

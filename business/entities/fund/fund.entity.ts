@@ -1,6 +1,6 @@
-import type CNPJ from "@/business/value-objects/cnpj.vo";
+﻿import type { CNPJ } from "@/business/value-objects/cnpj.vo";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import type { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -37,10 +37,6 @@ interface FundProps {
 export class Fund {
   private readonly _id?: EntityId;
   private readonly props: Required<FundProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the fund.
@@ -112,10 +108,6 @@ export class Fund {
     return this.props.updatedAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `Fund`.
    *
@@ -125,12 +117,8 @@ export class Fund {
    */
   private constructor(props: Required<FundProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `Fund` from the provided properties.
@@ -173,10 +161,6 @@ export class Fund {
 
     return new Fund(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `Fund` represents the same fund as the

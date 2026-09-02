@@ -4,6 +4,7 @@ import { Statement } from "@/business/entities/report/statement.entity";
 import type { IStatement } from "@/business/interfaces/report/statement.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { statement } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -23,15 +24,7 @@ import type { DbClient } from "../types";
  * resolves statements of many portfolios in a single query.
  */
 export class StatementRepository implements IStatement {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `StatementRepository` bound to the provided database
@@ -42,10 +35,6 @@ export class StatementRepository implements IStatement {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `statement` row to a {@link Statement} entity.
@@ -106,16 +95,12 @@ export class StatementRepository implements IStatement {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the statement with the provided id.
    *
    * @see {@link IStatement.findById}
    */
-  async findById(id: string): Promise<Statement | null> {
+  async findById(id: EntityId): Promise<Statement | null> {
     const [row] = await this.db
       .select()
       .from(statement)
@@ -130,7 +115,7 @@ export class StatementRepository implements IStatement {
    *
    * @see {@link IStatement.findAllByPortfolioId}
    */
-  async findAllByPortfolioId(portfolioId: string): Promise<Statement[]> {
+  async findAllByPortfolioId(portfolioId: EntityId): Promise<Statement[]> {
     const rows = await this.db
       .select()
       .from(statement)
@@ -168,7 +153,7 @@ export class StatementRepository implements IStatement {
    *
    * @see {@link IStatement.findAllByGeneratedByUserId}
    */
-  async findAllByGeneratedByUserId(userId: string): Promise<Statement[]> {
+  async findAllByGeneratedByUserId(userId: EntityId): Promise<Statement[]> {
     const rows = await this.db
       .select()
       .from(statement)
@@ -199,10 +184,6 @@ export class StatementRepository implements IStatement {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided statement.
    *
@@ -217,7 +198,9 @@ export class StatementRepository implements IStatement {
         .returning();
 
       if (!row) {
-        throw new Error(`Statement with id ${persisted.id} was not found.`);
+        throw new NotFoundError(
+          `Statement with id ${persisted.id} was not found.`,
+        );
       }
 
       return this.toEntity(row);
@@ -236,7 +219,7 @@ export class StatementRepository implements IStatement {
    *
    * @see {@link IStatement.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(statement).where(eq(statement.id, id));
   }
 }

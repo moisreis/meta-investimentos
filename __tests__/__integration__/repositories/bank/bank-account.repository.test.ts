@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   BANK_ACCOUNT,
@@ -19,6 +19,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("BankAccountRepository", () => {
   beforeEach(async () => {
@@ -33,14 +34,18 @@ describe("BankAccountRepository", () => {
     it("returns the persisted bank account", async () => {
       await seedBankAccounts();
 
-      const FOUND = await newBankAccountRepository().findById(BANK_ACCOUNT_ID);
+      const FOUND = await newBankAccountRepository().findById(
+        EntityId.create(BANK_ACCOUNT_ID),
+      );
 
       expect(FOUND?.equals(BANK_ACCOUNT)).toBe(true);
     });
 
     it("returns null when the bank account does not exist", async () => {
       expect(
-        await newBankAccountRepository().findById(BANK_ACCOUNT_ID),
+        await newBankAccountRepository().findById(
+          EntityId.create(BANK_ACCOUNT_ID),
+        ),
       ).toBeNull();
     });
   });
@@ -50,8 +55,9 @@ describe("BankAccountRepository", () => {
       await seedBankAccounts();
       await seedThirdBankAccount();
 
-      const FOUND =
-        await newBankAccountRepository().findAllByPortfolioId(PORTFOLIO_ID);
+      const FOUND = await newBankAccountRepository().findAllByPortfolioId(
+        EntityId.create(PORTFOLIO_ID),
+      );
 
       expect(FOUND).toHaveLength(2);
       expect(FOUND.some((ROW) => ROW.equals(BANK_ACCOUNT))).toBe(true);
@@ -60,7 +66,9 @@ describe("BankAccountRepository", () => {
 
     it("returns an empty array when no accounts exist", async () => {
       expect(
-        await newBankAccountRepository().findAllByPortfolioId(PORTFOLIO_ID),
+        await newBankAccountRepository().findAllByPortfolioId(
+          EntityId.create(PORTFOLIO_ID),
+        ),
       ).toEqual([]);
     });
   });
@@ -70,8 +78,8 @@ describe("BankAccountRepository", () => {
       await seedBankAccounts();
 
       const FOUND = await newBankAccountRepository().findAllByPortfolioIds([
-        PORTFOLIO_ID,
-        OTHER_PORTFOLIO_ID,
+        EntityId.create(PORTFOLIO_ID),
+        EntityId.create(OTHER_PORTFOLIO_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -91,7 +99,9 @@ describe("BankAccountRepository", () => {
       await seedBankAccounts();
       await seedThirdBankAccount();
 
-      const FOUND = await newBankAccountRepository().findAllByBankId(BANK_ID);
+      const FOUND = await newBankAccountRepository().findAllByBankId(
+        EntityId.create(BANK_ID),
+      );
 
       expect(FOUND).toHaveLength(1);
       expect(FOUND[0]?.equals(BANK_ACCOUNT)).toBe(true);
@@ -103,8 +113,8 @@ describe("BankAccountRepository", () => {
       await seedBankAccounts();
 
       const FOUND = await newBankAccountRepository().findAllByBankIds([
-        BANK_ID,
-        OTHER_BANK_ID,
+        EntityId.create(BANK_ID),
+        EntityId.create(OTHER_BANK_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -126,9 +136,11 @@ describe("BankAccountRepository", () => {
       expect(SAVED.id).toBeDefined();
       expect(SAVED.accountNumber).toBe(FRESH_BANK_ACCOUNT.accountNumber);
       expect(
-        (await newBankAccountRepository().findById(SAVED.id as string))?.equals(
-          SAVED,
-        ),
+        (
+          await newBankAccountRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
@@ -137,7 +149,9 @@ describe("BankAccountRepository", () => {
 
       await newBankAccountRepository().save(UPDATED_BANK_ACCOUNT);
 
-      const FOUND = await newBankAccountRepository().findById(BANK_ACCOUNT_ID);
+      const FOUND = await newBankAccountRepository().findById(
+        EntityId.create(BANK_ACCOUNT_ID),
+      );
 
       expect(FOUND?.accountNumber).toBe(UPDATED_BANK_ACCOUNT.accountNumber);
       expect(FOUND?.equals(UPDATED_BANK_ACCOUNT)).toBe(true);
@@ -148,10 +162,12 @@ describe("BankAccountRepository", () => {
     it("removes the persisted bank account", async () => {
       await seedBankAccounts();
 
-      await newBankAccountRepository().delete(BANK_ACCOUNT_ID);
+      await newBankAccountRepository().delete(EntityId.create(BANK_ACCOUNT_ID));
 
       expect(
-        await newBankAccountRepository().findById(BANK_ACCOUNT_ID),
+        await newBankAccountRepository().findById(
+          EntityId.create(BANK_ACCOUNT_ID),
+        ),
       ).toBeNull();
     });
   });

@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   BANK,
@@ -14,6 +14,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("BankRepository", () => {
   beforeEach(async () => {
@@ -28,13 +29,17 @@ describe("BankRepository", () => {
     it("returns the persisted bank", async () => {
       await seedBanks();
 
-      const FOUND = await newBankRepository().findById(BANK_ID);
+      const FOUND = await newBankRepository().findById(
+        EntityId.create(BANK_ID),
+      );
 
       expect(FOUND?.equals(BANK)).toBe(true);
     });
 
     it("returns null when the bank does not exist", async () => {
-      expect(await newBankRepository().findById(BANK_ID)).toBeNull();
+      expect(
+        await newBankRepository().findById(EntityId.create(BANK_ID)),
+      ).toBeNull();
     });
   });
 
@@ -57,8 +62,8 @@ describe("BankRepository", () => {
       await seedBanks();
 
       const FOUND = await newBankRepository().findAllByIds([
-        BANK_ID,
-        OTHER_BANK_ID,
+        EntityId.create(BANK_ID),
+        EntityId.create(OTHER_BANK_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -78,7 +83,11 @@ describe("BankRepository", () => {
       expect(SAVED.id).toBeDefined();
       expect(SAVED.code).toBe(FRESH_BANK.code);
       expect(
-        (await newBankRepository().findById(SAVED.id as string))?.equals(SAVED),
+        (
+          await newBankRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
@@ -87,7 +96,9 @@ describe("BankRepository", () => {
 
       await newBankRepository().save(UPDATED_BANK);
 
-      const FOUND = await newBankRepository().findById(BANK_ID);
+      const FOUND = await newBankRepository().findById(
+        EntityId.create(BANK_ID),
+      );
 
       expect(FOUND?.name).toBe(UPDATED_BANK.name);
       expect(FOUND?.equals(UPDATED_BANK)).toBe(true);
@@ -98,9 +109,11 @@ describe("BankRepository", () => {
     it("removes the persisted bank", async () => {
       await seedBanks();
 
-      await newBankRepository().delete(BANK_ID);
+      await newBankRepository().delete(EntityId.create(BANK_ID));
 
-      expect(await newBankRepository().findById(BANK_ID)).toBeNull();
+      expect(
+        await newBankRepository().findById(EntityId.create(BANK_ID)),
+      ).toBeNull();
     });
   });
 });

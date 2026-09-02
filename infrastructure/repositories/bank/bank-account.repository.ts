@@ -4,6 +4,7 @@ import { BankAccount } from "@/business/entities/bank/bank-account.entity";
 import type { IBankAccount } from "@/business/interfaces/bank/bank-account.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { bankAccount } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -19,15 +20,7 @@ import type { DbClient } from "../types";
  * hook keeps the timestamp in sync with the mutation.
  */
 export class BankAccountRepository implements IBankAccount {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `BankAccountRepository` bound to the provided database
@@ -38,10 +31,6 @@ export class BankAccountRepository implements IBankAccount {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `bank_account` row to a {@link BankAccount}
@@ -103,16 +92,12 @@ export class BankAccountRepository implements IBankAccount {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the bank account with the provided id.
    *
    * @see {@link IBankAccount.findById}
    */
-  async findById(id: string): Promise<BankAccount | null> {
+  async findById(id: EntityId): Promise<BankAccount | null> {
     const [row] = await this.db
       .select()
       .from(bankAccount)
@@ -127,7 +112,7 @@ export class BankAccountRepository implements IBankAccount {
    *
    * @see {@link IBankAccount.findAllByPortfolioId}
    */
-  async findAllByPortfolioId(portfolioId: string): Promise<BankAccount[]> {
+  async findAllByPortfolioId(portfolioId: EntityId): Promise<BankAccount[]> {
     const rows = await this.db
       .select()
       .from(bankAccount)
@@ -166,7 +151,7 @@ export class BankAccountRepository implements IBankAccount {
    *
    * @see {@link IBankAccount.findAllByBankId}
    */
-  async findAllByBankId(bankId: string): Promise<BankAccount[]> {
+  async findAllByBankId(bankId: EntityId): Promise<BankAccount[]> {
     const rows = await this.db
       .select()
       .from(bankAccount)
@@ -200,10 +185,6 @@ export class BankAccountRepository implements IBankAccount {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided bank account.
    *
@@ -218,7 +199,9 @@ export class BankAccountRepository implements IBankAccount {
         .returning();
 
       if (!row) {
-        throw new Error(`BankAccount with id ${persisted.id} was not found.`);
+        throw new NotFoundError(
+          `BankAccount with id ${persisted.id} was not found.`,
+        );
       }
 
       return this.toEntity(row);
@@ -237,7 +220,7 @@ export class BankAccountRepository implements IBankAccount {
    *
    * @see {@link IBankAccount.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(bankAccount).where(eq(bankAccount.id, id));
   }
 }

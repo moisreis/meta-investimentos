@@ -1,13 +1,13 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("Portfolio.create", () => {
   const VALID_PROPS = {
     acronym: "FIA",
-    name: "Fundo de Investimento em Ações",
+    name: "Fundo de Investimento em AÃ§Ãµes",
     userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     annualInterestRate: SignedPercentage.create("10.5"),
     minAllocation: SignedPercentage.create("5"),
@@ -20,7 +20,7 @@ describe("Portfolio.create", () => {
 
     expect(PORTFOLIO.id).toBeUndefined();
     expect(PORTFOLIO.acronym).toBe("FIA");
-    expect(PORTFOLIO.name).toBe("Fundo de Investimento em Ações");
+    expect(PORTFOLIO.name).toBe("Fundo de Investimento em AÃ§Ãµes");
     expect(PORTFOLIO.userId).toBe("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2");
     expect(PORTFOLIO.annualInterestRate.value.toString()).toBe("10.5");
     expect(PORTFOLIO.minAllocation.value.toString()).toBe("5");
@@ -102,6 +102,39 @@ describe("Portfolio.create", () => {
     ).toThrow("Portfolio must have a target allocation.");
   });
 
+  it("throws when the annual interest rate is negative", () => {
+    expect(() =>
+      Portfolio.create({
+        ...VALID_PROPS,
+        annualInterestRate: SignedPercentage.create("-10"),
+      }),
+    ).toThrow("Portfolio annual interest rate must not be negative.");
+  });
+
+  it("throws when the minimum allocation exceeds the target allocation", () => {
+    expect(() =>
+      Portfolio.create({
+        ...VALID_PROPS,
+        minAllocation: SignedPercentage.create("20"),
+        targetAllocation: SignedPercentage.create("12"),
+      }),
+    ).toThrow(
+      "Portfolio minimum allocation must not exceed target allocation.",
+    );
+  });
+
+  it("throws when the target allocation exceeds the maximum allocation", () => {
+    expect(() =>
+      Portfolio.create({
+        ...VALID_PROPS,
+        targetAllocation: SignedPercentage.create("25"),
+        maxAllocation: SignedPercentage.create("20"),
+      }),
+    ).toThrow(
+      "Portfolio target allocation must not exceed maximum allocation.",
+    );
+  });
+
   it("does not mutate its inputs", () => {
     const PROPS = { ...VALID_PROPS };
 
@@ -114,7 +147,7 @@ describe("Portfolio.create", () => {
 describe("Portfolio.equals", () => {
   const VALID_PROPS = {
     acronym: "FIA",
-    name: "Fundo de Investimento em Ações",
+    name: "Fundo de Investimento em AÃ§Ãµes",
     userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     annualInterestRate: SignedPercentage.create("10.5"),
     minAllocation: SignedPercentage.create("5"),

@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   newPositionRepository,
@@ -22,6 +22,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("PositionRepository", () => {
   beforeEach(async () => {
@@ -36,13 +37,17 @@ describe("PositionRepository", () => {
     it("returns the persisted position", async () => {
       await seedPositions();
 
-      const FOUND = await newPositionRepository().findById(POSITION_ID);
+      const FOUND = await newPositionRepository().findById(
+        EntityId.create(POSITION_ID),
+      );
 
       expect(FOUND?.equals(POSITION)).toBe(true);
     });
 
     it("returns null when the position does not exist", async () => {
-      expect(await newPositionRepository().findById(POSITION_ID)).toBeNull();
+      expect(
+        await newPositionRepository().findById(EntityId.create(POSITION_ID)),
+      ).toBeNull();
     });
   });
 
@@ -50,8 +55,9 @@ describe("PositionRepository", () => {
     it("returns every position of the portfolio", async () => {
       await seedPositions();
 
-      const FOUND =
-        await newPositionRepository().findAllByPortfolioId(PORTFOLIO_ID);
+      const FOUND = await newPositionRepository().findAllByPortfolioId(
+        EntityId.create(PORTFOLIO_ID),
+      );
 
       expect(FOUND).toHaveLength(2);
       expect(FOUND.some((ROW) => ROW.equals(POSITION))).toBe(true);
@@ -61,7 +67,9 @@ describe("PositionRepository", () => {
 
     it("returns an empty array when the portfolio has no positions", async () => {
       expect(
-        await newPositionRepository().findAllByPortfolioId(PORTFOLIO_ID),
+        await newPositionRepository().findAllByPortfolioId(
+          EntityId.create(PORTFOLIO_ID),
+        ),
       ).toEqual([]);
     });
   });
@@ -71,8 +79,8 @@ describe("PositionRepository", () => {
       await seedPositions();
 
       const FOUND = await newPositionRepository().findAllByPortfolioIds([
-        PORTFOLIO_ID,
-        OTHER_PORTFOLIO_ID,
+        EntityId.create(PORTFOLIO_ID),
+        EntityId.create(OTHER_PORTFOLIO_ID),
       ]);
 
       expect(FOUND).toHaveLength(3);
@@ -93,8 +101,8 @@ describe("PositionRepository", () => {
       await seedPositions();
 
       const FOUND = await newPositionRepository().findByPortfolioIdAndFundId(
-        PORTFOLIO_ID,
-        OTHER_FUND_ID,
+        EntityId.create(PORTFOLIO_ID),
+        EntityId.create(OTHER_FUND_ID),
       );
 
       expect(FOUND?.equals(THIRD_POSITION)).toBe(true);
@@ -104,8 +112,8 @@ describe("PositionRepository", () => {
       await seedPositions();
 
       const FOUND = await newPositionRepository().findByPortfolioIdAndFundId(
-        OTHER_PORTFOLIO_ID,
-        FUND_ID,
+        EntityId.create(OTHER_PORTFOLIO_ID),
+        EntityId.create(FUND_ID),
       );
 
       expect(FOUND).toBeNull();
@@ -121,9 +129,11 @@ describe("PositionRepository", () => {
       expect(SAVED.id).toBeDefined();
       expect(SAVED.portfolioId).toBe(FRESH_POSITION.portfolioId);
       expect(
-        (await newPositionRepository().findById(SAVED.id as string))?.equals(
-          SAVED,
-        ),
+        (
+          await newPositionRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
@@ -132,7 +142,9 @@ describe("PositionRepository", () => {
 
       await newPositionRepository().save(UPDATED_POSITION);
 
-      const FOUND = await newPositionRepository().findById(POSITION_ID);
+      const FOUND = await newPositionRepository().findById(
+        EntityId.create(POSITION_ID),
+      );
 
       expect(FOUND?.initialBalance?.value.toString()).toBe(
         UPDATED_POSITION.initialBalance?.value.toString(),
@@ -148,9 +160,11 @@ describe("PositionRepository", () => {
     it("removes the persisted position", async () => {
       await seedPositions();
 
-      await newPositionRepository().delete(POSITION_ID);
+      await newPositionRepository().delete(EntityId.create(POSITION_ID));
 
-      expect(await newPositionRepository().findById(POSITION_ID)).toBeNull();
+      expect(
+        await newPositionRepository().findById(EntityId.create(POSITION_ID)),
+      ).toBeNull();
     });
   });
 });

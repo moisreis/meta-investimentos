@@ -1,4 +1,5 @@
 import type { Norm } from "@/business/entities/portfolio/norm.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,17 +14,13 @@ import type { Norm } from "@/business/entities/portfolio/norm.entity";
  * entities and back.
  */
 export interface INorm {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the norm with the provided id.
    *
    * @param id - The unique identifier of the norm.
    * @returns A promise resolving to the `Norm` or `null` when not found.
    */
-  findById(id: string): Promise<Norm | null>;
+  findById(id: EntityId): Promise<Norm | null>;
 
   /**
    * Retrieves all norms belonging to the provided category id.
@@ -32,11 +29,7 @@ export interface INorm {
    * @returns A promise resolving to the `Norm` entries or an empty array
    * when there are no matches.
    */
-  findAllByCategoryId(categoryId: string): Promise<Norm[]>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
+  findAllByCategoryId(categoryId: EntityId): Promise<Norm[]>;
 
   /**
    * Persists the provided norm.
@@ -56,5 +49,5 @@ export interface INorm {
    * @param id - The unique identifier of the norm.
    * @returns A promise that resolves when the norm is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

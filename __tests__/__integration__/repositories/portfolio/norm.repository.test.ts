@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   FRESH_NORM,
@@ -18,6 +18,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("NormRepository", () => {
   beforeEach(async () => {
@@ -32,13 +33,17 @@ describe("NormRepository", () => {
     it("returns the persisted norm", async () => {
       await seedNorms();
 
-      const FOUND = await newNormRepository().findById(NORM_ID);
+      const FOUND = await newNormRepository().findById(
+        EntityId.create(NORM_ID),
+      );
 
       expect(FOUND?.equals(NORM)).toBe(true);
     });
 
     it("returns null when the norm does not exist", async () => {
-      expect(await newNormRepository().findById(NORM_ID)).toBeNull();
+      expect(
+        await newNormRepository().findById(EntityId.create(NORM_ID)),
+      ).toBeNull();
     });
   });
 
@@ -46,7 +51,9 @@ describe("NormRepository", () => {
     it("returns every norm of the category", async () => {
       await seedNorms();
 
-      const FOUND = await newNormRepository().findAllByCategoryId(CATEGORY_ID);
+      const FOUND = await newNormRepository().findAllByCategoryId(
+        EntityId.create(CATEGORY_ID),
+      );
 
       expect(FOUND).toHaveLength(1);
       expect(FOUND.some((ROW) => ROW.equals(NORM))).toBe(true);
@@ -55,7 +62,9 @@ describe("NormRepository", () => {
 
     it("returns an empty array when the category has no norms", async () => {
       expect(
-        await newNormRepository().findAllByCategoryId(CATEGORY_ID),
+        await newNormRepository().findAllByCategoryId(
+          EntityId.create(CATEGORY_ID),
+        ),
       ).toEqual([]);
     });
   });
@@ -65,8 +74,8 @@ describe("NormRepository", () => {
       await seedNorms();
 
       const FOUND = await newNormRepository().findAllByCategoryIds([
-        CATEGORY_ID,
-        OTHER_CATEGORY_ID,
+        EntityId.create(CATEGORY_ID),
+        EntityId.create(OTHER_CATEGORY_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -88,7 +97,11 @@ describe("NormRepository", () => {
       expect(SAVED.id).toBeDefined();
       expect(SAVED.articleNumber).toBe(FRESH_NORM.articleNumber);
       expect(
-        (await newNormRepository().findById(SAVED.id as string))?.equals(SAVED),
+        (
+          await newNormRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
@@ -97,7 +110,9 @@ describe("NormRepository", () => {
 
       await newNormRepository().save(UPDATED_NORM);
 
-      const FOUND = await newNormRepository().findById(NORM_ID);
+      const FOUND = await newNormRepository().findById(
+        EntityId.create(NORM_ID),
+      );
 
       expect(FOUND?.targetAllocation.value.toString()).toBe(
         UPDATED_NORM.targetAllocation.value.toString(),
@@ -110,9 +125,11 @@ describe("NormRepository", () => {
     it("removes the persisted norm", async () => {
       await seedNorms();
 
-      await newNormRepository().delete(NORM_ID);
+      await newNormRepository().delete(EntityId.create(NORM_ID));
 
-      expect(await newNormRepository().findById(NORM_ID)).toBeNull();
+      expect(
+        await newNormRepository().findById(EntityId.create(NORM_ID)),
+      ).toBeNull();
     });
   });
 });

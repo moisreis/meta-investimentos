@@ -1,60 +1,52 @@
-import { Statement } from "@/business/entities/report/statement.entity";
-import type { IStatement } from "@/business/interfaces/report/statement.interface";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-
-export const STATEMENT_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-export const PORTFOLIO_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
-export const USER_ID = "c47d54e2-4a03-4f71-9c0d-3a58d2c33e90";
-export const PERIOD_START = new Date("2026-07-01T00:00:00.000Z");
-export const PERIOD_END = new Date("2026-07-31T00:00:00.000Z");
-
-export const STATEMENT = Statement.create(
-  {
-    portfolioId: EntityId.create(PORTFOLIO_ID),
-    periodStart: PERIOD_START,
-    periodEnd: PERIOD_END,
-    fileUrl: "https://example.com/statements/july.pdf",
-    generatedByUserId: EntityId.create(USER_ID),
-  },
+﻿import {
+  FRESH_STATEMENT,
+  OTHER_PORTFOLIO_ID,
+  OTHER_STATEMENT,
+  OTHER_STATEMENT_ID,
+  OTHER_USER_ID,
+  PORTFOLIO_ID,
+  STATEMENT,
   STATEMENT_ID,
-);
+  THIRD_STATEMENT,
+  THIRD_STATEMENT_ID,
+  UPDATED_STATEMENT,
+  USER_ID,
+} from "@/__tests__/__fixtures__";
+import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
+import type { IStatement } from "@/business/interfaces/report/statement.interface";
+
+export {
+  STATEMENT_ID,
+  OTHER_STATEMENT_ID,
+  THIRD_STATEMENT_ID,
+  PORTFOLIO_ID,
+  OTHER_PORTFOLIO_ID,
+  USER_ID,
+  OTHER_USER_ID,
+  STATEMENT,
+  OTHER_STATEMENT,
+  THIRD_STATEMENT,
+  UPDATED_STATEMENT,
+  FRESH_STATEMENT,
+};
+
+export const PERIOD_START = STATEMENT.periodStart;
+export const PERIOD_END = STATEMENT.periodEnd;
 
 export function createInMemoryStatementRepository(): IStatement {
-  const ROWS = new Map<string, Statement>();
+  const BASE = createInMemoryRepository<
+    Awaited<ReturnType<IStatement["save"]>>
+  >({ extractId: (s) => s.id });
 
   return {
-    async findById(id: string): Promise<Statement | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findAllByPortfolioId(portfolioId) {
+      return BASE.match((s) => s.portfolioId === portfolioId);
     },
-
-    async findAllByPortfolioId(portfolioId: string): Promise<Statement[]> {
-      const RESULT: Statement[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.portfolioId === portfolioId) RESULT.push(ROW);
-      }
-
-      return RESULT;
+    async findAllByGeneratedByUserId(userId) {
+      return BASE.match((s) => s.generatedByUserId === userId);
     },
-
-    async findAllByGeneratedByUserId(userId: string): Promise<Statement[]> {
-      const RESULT: Statement[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.generatedByUserId === userId) RESULT.push(ROW);
-      }
-
-      return RESULT;
-    },
-
-    async save(statement: Statement): Promise<Statement> {
-      ROWS.set(statement.id ?? "generated-id", statement);
-
-      return statement;
-    },
-
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (statement) => BASE.save(statement),
+    delete: (id) => BASE.delete(id),
   };
 }

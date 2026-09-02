@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   APPLICATION,
@@ -12,8 +12,8 @@ import {
 import { Application } from "@/business/entities/portfolio/application.entity";
 import type { IApplication } from "@/business/interfaces/portfolio/application.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 describe("IApplication", () => {
   let REPOSITORY: IApplication;
@@ -26,13 +26,15 @@ describe("IApplication", () => {
     it("returns the persisted application", async () => {
       await REPOSITORY.save(APPLICATION);
 
-      const FOUND = await REPOSITORY.findById(APPLICATION_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(APPLICATION_ID));
 
       expect(FOUND?.equals(APPLICATION)).toBe(true);
     });
 
     it("returns null when the application does not exist", async () => {
-      expect(await REPOSITORY.findById(APPLICATION_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(APPLICATION_ID)),
+      ).toBeNull();
     });
   });
 
@@ -61,7 +63,9 @@ describe("IApplication", () => {
       await REPOSITORY.save(SECOND_APPLICATION);
       await REPOSITORY.save(OTHER_APPLICATION);
 
-      const FOUND = await REPOSITORY.findAllByPositionId(POSITION_ID);
+      const FOUND = await REPOSITORY.findAllByPositionId(
+        EntityId.create(POSITION_ID),
+      );
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.equals(APPLICATION)).toBe(true);
@@ -69,7 +73,9 @@ describe("IApplication", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByPositionId(POSITION_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByPositionId(EntityId.create(POSITION_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -111,7 +117,7 @@ describe("IApplication", () => {
       const END_DATE = new Date("2026-01-20T00:00:00.000Z");
 
       const FOUND = await REPOSITORY.findAllByPositionIdInPeriod(
-        POSITION_ID,
+        EntityId.create(POSITION_ID),
         START_DATE,
         END_DATE,
       );
@@ -126,7 +132,7 @@ describe("IApplication", () => {
 
       expect(
         await REPOSITORY.findAllByPositionIdInPeriod(
-          POSITION_ID,
+          EntityId.create(POSITION_ID),
           START_DATE,
           END_DATE,
         ),
@@ -138,7 +144,7 @@ describe("IApplication", () => {
     it("persists a new application", async () => {
       await REPOSITORY.save(APPLICATION);
 
-      const FOUND = await REPOSITORY.findById(APPLICATION_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(APPLICATION_ID));
 
       expect(FOUND?.equals(APPLICATION)).toBe(true);
     });
@@ -158,7 +164,7 @@ describe("IApplication", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(APPLICATION_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(APPLICATION_ID));
 
       expect(FOUND?.quotas.value.toString()).toBe("18.75");
     });
@@ -168,9 +174,11 @@ describe("IApplication", () => {
     it("removes the persisted application", async () => {
       await REPOSITORY.save(APPLICATION);
 
-      await REPOSITORY.delete(APPLICATION_ID);
+      await REPOSITORY.delete(EntityId.create(APPLICATION_ID));
 
-      expect(await REPOSITORY.findById(APPLICATION_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(APPLICATION_ID)),
+      ).toBeNull();
     });
   });
 });

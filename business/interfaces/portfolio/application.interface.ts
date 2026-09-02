@@ -1,4 +1,5 @@
 import type { Application } from "@/business/entities/portfolio/application.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { Application } from "@/business/entities/portfolio/application.enti
  * `Application` entities and back.
  */
 export interface IApplication {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the application with the provided id.
    *
@@ -24,7 +21,7 @@ export interface IApplication {
    * @returns A promise resolving to the `Application` or `null` when not
    * found.
    */
-  findById(id: string): Promise<Application | null>;
+  findById(id: EntityId): Promise<Application | null>;
 
   /**
    * Retrieves all applications belonging to the provided position id.
@@ -33,7 +30,7 @@ export interface IApplication {
    * @returns A promise resolving to the `Application` entries or an empty
    * array when there are no matches.
    */
-  findAllByPositionId(positionId: string): Promise<Application[]>;
+  findAllByPositionId(positionId: EntityId): Promise<Application[]>;
 
   /**
    * Retrieves all applications of the provided position whose date
@@ -46,14 +43,10 @@ export interface IApplication {
    * array when there are no matches.
    */
   findAllByPositionIdInPeriod(
-    positionId: string,
+    positionId: EntityId,
     startDate: Date,
     endDate: Date,
   ): Promise<Application[]>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided application.
@@ -73,5 +66,5 @@ export interface IApplication {
    * @param id - The unique identifier of the application.
    * @returns A promise that resolves when the application is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   BANK_ACCOUNT_ID,
@@ -21,6 +21,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("CheckingAccountRepository", () => {
   beforeEach(async () => {
@@ -35,15 +36,18 @@ describe("CheckingAccountRepository", () => {
     it("returns the persisted balance", async () => {
       await seedCheckingAccounts();
 
-      const FOUND =
-        await newCheckingAccountRepository().findById(CHECKING_ACCOUNT_ID);
+      const FOUND = await newCheckingAccountRepository().findById(
+        EntityId.create(CHECKING_ACCOUNT_ID),
+      );
 
       expect(FOUND?.equals(CHECKING_ACCOUNT)).toBe(true);
     });
 
     it("returns null when the balance does not exist", async () => {
       expect(
-        await newCheckingAccountRepository().findById(CHECKING_ACCOUNT_ID),
+        await newCheckingAccountRepository().findById(
+          EntityId.create(CHECKING_ACCOUNT_ID),
+        ),
       ).toBeNull();
     });
   });
@@ -52,10 +56,9 @@ describe("CheckingAccountRepository", () => {
     it("returns the whole balance series of the bank account", async () => {
       await seedAllCheckingAccounts();
 
-      const FOUND =
-        await newCheckingAccountRepository().findAllByBankAccountId(
-          BANK_ACCOUNT_ID,
-        );
+      const FOUND = await newCheckingAccountRepository().findAllByBankAccountId(
+        EntityId.create(BANK_ACCOUNT_ID),
+      );
 
       expect(FOUND).toHaveLength(3);
       expect(FOUND.some((ROW) => ROW.equals(CHECKING_ACCOUNT))).toBe(true);
@@ -70,7 +73,7 @@ describe("CheckingAccountRepository", () => {
     it("returns an empty array when no balances exist", async () => {
       expect(
         await newCheckingAccountRepository().findAllByBankAccountId(
-          BANK_ACCOUNT_ID,
+          EntityId.create(BANK_ACCOUNT_ID),
         ),
       ).toEqual([]);
     });
@@ -82,8 +85,8 @@ describe("CheckingAccountRepository", () => {
 
       const FOUND =
         await newCheckingAccountRepository().findAllByBankAccountIds([
-          BANK_ACCOUNT_ID,
-          OTHER_BANK_ACCOUNT_ID,
+          EntityId.create(BANK_ACCOUNT_ID),
+          EntityId.create(OTHER_BANK_ACCOUNT_ID),
         ]);
 
       expect(FOUND).toHaveLength(4);
@@ -106,7 +109,10 @@ describe("CheckingAccountRepository", () => {
 
       const FOUND =
         await newCheckingAccountRepository().findAllByBankAccountIdsInPeriod(
-          [BANK_ACCOUNT_ID, OTHER_BANK_ACCOUNT_ID],
+          [
+            EntityId.create(BANK_ACCOUNT_ID),
+            EntityId.create(OTHER_BANK_ACCOUNT_ID),
+          ],
           JANUARY_DATE,
           JANUARY_DUPLICATE_DATE,
         );
@@ -141,7 +147,7 @@ describe("CheckingAccountRepository", () => {
 
       const FOUND =
         await newCheckingAccountRepository().findByBankAccountIdAndDate(
-          BANK_ACCOUNT_ID,
+          EntityId.create(BANK_ACCOUNT_ID),
           JANUARY_DATE,
         );
 
@@ -153,7 +159,7 @@ describe("CheckingAccountRepository", () => {
 
       const FOUND =
         await newCheckingAccountRepository().findByBankAccountIdAndDate(
-          BANK_ACCOUNT_ID,
+          EntityId.create(BANK_ACCOUNT_ID),
           FEBRUARY_DATE,
         );
 
@@ -175,7 +181,9 @@ describe("CheckingAccountRepository", () => {
       );
       expect(
         (
-          await newCheckingAccountRepository().findById(SAVED.id as string)
+          await newCheckingAccountRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
         )?.equals(SAVED),
       ).toBe(true);
     });
@@ -185,8 +193,9 @@ describe("CheckingAccountRepository", () => {
 
       await newCheckingAccountRepository().save(UPDATED_CHECKING_ACCOUNT);
 
-      const FOUND =
-        await newCheckingAccountRepository().findById(CHECKING_ACCOUNT_ID);
+      const FOUND = await newCheckingAccountRepository().findById(
+        EntityId.create(CHECKING_ACCOUNT_ID),
+      );
 
       expect(FOUND?.value.value.toString()).toBe(
         UPDATED_CHECKING_ACCOUNT.value.value.toString(),
@@ -199,10 +208,14 @@ describe("CheckingAccountRepository", () => {
     it("removes the persisted balance", async () => {
       await seedCheckingAccounts();
 
-      await newCheckingAccountRepository().delete(CHECKING_ACCOUNT_ID);
+      await newCheckingAccountRepository().delete(
+        EntityId.create(CHECKING_ACCOUNT_ID),
+      );
 
       expect(
-        await newCheckingAccountRepository().findById(CHECKING_ACCOUNT_ID),
+        await newCheckingAccountRepository().findById(
+          EntityId.create(CHECKING_ACCOUNT_ID),
+        ),
       ).toBeNull();
     });
   });

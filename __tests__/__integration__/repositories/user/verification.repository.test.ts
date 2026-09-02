@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   FRESH_VERIFICATION,
@@ -15,6 +15,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("VerificationRepository", () => {
   beforeEach(async () => {
@@ -29,14 +30,18 @@ describe("VerificationRepository", () => {
     it("returns the persisted verification", async () => {
       await seedVerifications();
 
-      const FOUND = await newVerificationRepository().findById(VERIFICATION_ID);
+      const FOUND = await newVerificationRepository().findById(
+        EntityId.create(VERIFICATION_ID),
+      );
 
       expect(FOUND?.equals(VERIFICATION)).toBe(true);
     });
 
     it("returns null when the verification does not exist", async () => {
       expect(
-        await newVerificationRepository().findById(VERIFICATION_ID),
+        await newVerificationRepository().findById(
+          EntityId.create(VERIFICATION_ID),
+        ),
       ).toBeNull();
     });
   });
@@ -99,7 +104,9 @@ describe("VerificationRepository", () => {
       expect(SAVED.value).toBe(FRESH_VERIFICATION.value);
       expect(
         (
-          await newVerificationRepository().findById(SAVED.id as string)
+          await newVerificationRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
         )?.equals(SAVED),
       ).toBe(true);
     });
@@ -109,7 +116,9 @@ describe("VerificationRepository", () => {
 
       await newVerificationRepository().save(UPDATED_VERIFICATION);
 
-      const FOUND = await newVerificationRepository().findById(VERIFICATION_ID);
+      const FOUND = await newVerificationRepository().findById(
+        EntityId.create(VERIFICATION_ID),
+      );
 
       expect(FOUND?.value).toBe(UPDATED_VERIFICATION.value);
       expect(FOUND?.equals(UPDATED_VERIFICATION)).toBe(true);
@@ -120,10 +129,14 @@ describe("VerificationRepository", () => {
     it("removes the persisted verification", async () => {
       await seedVerifications();
 
-      await newVerificationRepository().delete(VERIFICATION_ID);
+      await newVerificationRepository().delete(
+        EntityId.create(VERIFICATION_ID),
+      );
 
       expect(
-        await newVerificationRepository().findById(VERIFICATION_ID),
+        await newVerificationRepository().findById(
+          EntityId.create(VERIFICATION_ID),
+        ),
       ).toBeNull();
     });
   });

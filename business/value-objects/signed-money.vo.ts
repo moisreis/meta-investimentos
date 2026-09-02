@@ -1,14 +1,19 @@
 import Decimal from "decimal.js";
+import {
+  MONEY_DECIMAL_PLACES,
+  ROUNDING_MODE,
+} from "@/business/value-objects/rounding";
 import { ValidationError } from "@/shared/errors";
 
 /**
- * Represents a monetary amount that can be positive, negative, or zero.
+ * Represents a monetary amount that can be positive, negative,
+ * or zero.
  *
- * The amount is stored as a {@link Decimal} to preserve
- * precision when performing monetary calculations.
+ * The code stores the amount as a {@link Decimal} to keep
+ * full precision during monetary calculations.
  *
- * Values are normalized to a maximum of 2 decimal places
- * when the amount is created.
+ * The code normalizes the value to a maximum of 2 decimal
+ * places when it creates the amount.
  *
  * Use {@link SignedMoney.create} to create a valid
  * `SignedMoney` instance.
@@ -29,9 +34,7 @@ interface SignedMoneyProps {
  *
  * @example
  * ```ts
- * const MONEY = SignedMoney.create(
- *  '-10.123'
- * )
+ * const MONEY = SignedMoney.create('-10.123')
  *
  * MONEY.value.toString()
  * // '-10.12'
@@ -46,12 +49,8 @@ interface SignedMoneyProps {
  * // true
  * ```
  */
-class SignedMoney {
+export class SignedMoney {
   private readonly props: SignedMoneyProps;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the monetary value.
@@ -70,7 +69,7 @@ class SignedMoney {
   /**
    * Returns whether the monetary value is positive.
    *
-   * Note: zero is not considered positive.
+   * A value of `0` is not considered positive.
    */
   get isPositive(): boolean {
     return this.props.value.isPositive() && !this.props.value.isZero();
@@ -83,10 +82,6 @@ class SignedMoney {
     return this.props.value.isZero();
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `SignedMoney`.
    *
@@ -98,19 +93,15 @@ class SignedMoney {
     this.props = props;
   }
 
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
-
   /**
    * Creates a valid `SignedMoney` from a decimal-compatible value.
    *
-   * The value can be any value accepted by {@link Decimal.Value}.
-   * It must be defined. Unlike {@link PositiveMoney}, negative
-   * values are allowed.
+   * The code accepts any value that {@link Decimal.Value}
+   * accepts. The value must be defined. Unlike
+   * {@link PositiveMoney}, negative values are allowed.
    *
-   * The resulting value is converted to a {@link Decimal} and
-   * rounded to a maximum of 2 decimal places.
+   * The code converts the value to a {@link Decimal} and
+   * rounds it to a maximum of 2 decimal places.
    *
    * @param value - The decimal-compatible monetary amount to create.
    * @returns A valid `SignedMoney` instance.
@@ -141,13 +132,9 @@ class SignedMoney {
     const DECIMAL_VALUE = new Decimal(value);
 
     return new SignedMoney({
-      value: DECIMAL_VALUE.toDecimalPlaces(2),
+      value: DECIMAL_VALUE.toDecimalPlaces(MONEY_DECIMAL_PLACES, ROUNDING_MODE),
     });
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether two `SignedMoney` instances
@@ -156,7 +143,7 @@ class SignedMoney {
    * @param a - The first monetary amount.
    * @param b - The second monetary amount.
    * @returns `true` when both monetary amounts have equal values;
-   * otherwise, `false`.
+   *          otherwise, `false`.
    *
    * @example
    * ```ts
@@ -171,5 +158,3 @@ class SignedMoney {
     return a.value.equals(b.value);
   }
 }
-
-export default SignedMoney;

@@ -1,70 +1,64 @@
-import { CheckingAccount } from "@/business/entities/bank/checking-account.entity";
+﻿import {
+  BANK_ACCOUNT_ID,
+  CHECKING_ACCOUNT,
+  CHECKING_ACCOUNT_ID,
+  EXTERNAL_CHECKING_ACCOUNT,
+  EXTERNAL_CHECKING_ACCOUNT_ID,
+  FEBRUARY_DATE,
+  FRESH_CHECKING_ACCOUNT,
+  JANUARY_DATE,
+  OTHER_CHECKING_ACCOUNT,
+  OTHER_CHECKING_ACCOUNT_ID,
+  PERIOD_OUTSIDE_CHECKING_ACCOUNT,
+  PERIOD_OUTSIDE_CHECKING_ACCOUNT_ID,
+  UPDATED_CHECKING_ACCOUNT,
+} from "@/__tests__/__fixtures__";
+import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import type { ICheckingAccount } from "@/business/interfaces/bank/checking-account.interface";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
 
-export const CHECKING_ACCOUNT_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
+
+export {
+  BANK_ACCOUNT_ID,
+  CHECKING_ACCOUNT_ID,
+  OTHER_CHECKING_ACCOUNT_ID,
+  EXTERNAL_CHECKING_ACCOUNT_ID,
+  PERIOD_OUTSIDE_CHECKING_ACCOUNT_ID,
+  JANUARY_DATE,
+  FEBRUARY_DATE,
+  CHECKING_ACCOUNT,
+  OTHER_CHECKING_ACCOUNT,
+  EXTERNAL_CHECKING_ACCOUNT,
+  PERIOD_OUTSIDE_CHECKING_ACCOUNT,
+  UPDATED_CHECKING_ACCOUNT,
+  FRESH_CHECKING_ACCOUNT,
+};
 
 export const PROPS = {
-  bankAccountId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
-  date: new Date("2026-01-01T00:00:00.000Z"),
+  bankAccountId: EntityId.create(BANK_ACCOUNT_ID),
+  date: new Date("2026-01-05T00:00:00.000Z"),
   value: SignedMoney.create("-123.45"),
 };
 
-export const CHECKING_ACCOUNT = CheckingAccount.create(
-  PROPS,
-  CHECKING_ACCOUNT_ID,
-);
-
-export const UPDATED_CHECKING_ACCOUNT = CheckingAccount.create(
-  { ...PROPS, value: SignedMoney.create("99.99") },
-  CHECKING_ACCOUNT_ID,
-);
-
 export function createInMemoryCheckingAccountRepository(): ICheckingAccount {
-  const ROWS = new Map<string, CheckingAccount>();
+  const BASE = createInMemoryRepository<
+    Awaited<ReturnType<ICheckingAccount["save"]>>
+  >({ extractId: (ca) => ca.id });
 
   return {
-    async findById(id: string): Promise<CheckingAccount | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findAllByBankAccountId(bankAccountId) {
+      return BASE.match((ca) => ca.bankAccountId === bankAccountId);
     },
-
-    async findAllByBankAccountId(
-      bankAccountId: string,
-    ): Promise<CheckingAccount[]> {
-      const FOUND: CheckingAccount[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.bankAccountId === bankAccountId) FOUND.push(ROW);
-      }
-
-      return FOUND;
+    async findByBankAccountIdAndDate(bankAccountId, date) {
+      return BASE.findOne(
+        (ca) =>
+          ca.bankAccountId === bankAccountId &&
+          ca.date.getTime() === date.getTime(),
+      );
     },
-
-    async findByBankAccountIdAndDate(
-      bankAccountId: string,
-      date: Date,
-    ): Promise<CheckingAccount | null> {
-      for (const ROW of ROWS.values()) {
-        if (
-          ROW.bankAccountId === bankAccountId &&
-          ROW.date.getTime() === date.getTime()
-        ) {
-          return ROW;
-        }
-      }
-
-      return null;
-    },
-
-    async save(checkingAccount: CheckingAccount): Promise<CheckingAccount> {
-      ROWS.set(checkingAccount.id ?? "generated-id", checkingAccount);
-
-      return checkingAccount;
-    },
-
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (checkingAccount) => BASE.save(checkingAccount),
+    delete: (id) => BASE.delete(id),
   };
 }

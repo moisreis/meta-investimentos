@@ -1,13 +1,13 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { User, type UserRole } from "@/business/entities/user/user.entity";
-import CPF from "@/business/value-objects/cpf.vo";
+import { CPF } from "@/business/value-objects/cpf.vo";
 
 describe("User.create", () => {
   const VALID_PROPS = {
-    name: "José da Silva",
+    name: "JosÃ© da Silva",
     email: "jose@example.com",
-    firstName: "José",
+    firstName: "JosÃ©",
     lastName: "da Silva",
     cpf: CPF.create("52998224725"),
   };
@@ -16,11 +16,12 @@ describe("User.create", () => {
     const USER = User.create(VALID_PROPS);
 
     expect(USER.id).toBeUndefined();
-    expect(USER.name).toBe("José da Silva");
+    expect(USER.name).toBe("JosÃ© da Silva");
     expect(USER.email).toBe("jose@example.com");
-    expect(USER.firstName).toBe("José");
+    expect(USER.firstName).toBe("JosÃ©");
     expect(USER.lastName).toBe("da Silva");
     expect(USER.cpf.value).toBe("52998224725");
+    expect(USER.maskedCpf).toBe("529.***.***-25");
     expect(USER.role).toBe("USER");
     expect(USER.emailVerified).toBe(false);
     expect(USER.image).toBeNull();
@@ -73,6 +74,12 @@ describe("User.create", () => {
     ).toThrow("User must have a valid email.");
   });
 
+  it("throws when the email has an @ but lacks a domain suffix", () => {
+    expect(() =>
+      User.create({ ...VALID_PROPS, email: "jose@example" }),
+    ).toThrow("User must have a valid email.");
+  });
+
   it("throws when the first name is blank", () => {
     expect(() => User.create({ ...VALID_PROPS, firstName: " " })).toThrow(
       "User must have a first name.",
@@ -102,9 +109,9 @@ describe("User.create", () => {
 
 describe("User.equals", () => {
   const VALID_PROPS = {
-    name: "José da Silva",
+    name: "JosÃ© da Silva",
     email: "jose@example.com",
-    firstName: "José",
+    firstName: "JosÃ©",
     lastName: "da Silva",
     cpf: CPF.create("52998224725"),
   };

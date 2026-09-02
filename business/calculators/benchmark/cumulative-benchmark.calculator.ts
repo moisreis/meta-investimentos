@@ -1,6 +1,6 @@
 import Decimal from "decimal.js";
 
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -26,14 +26,16 @@ interface CalculatePortfolioCumulativeBenchmarkProps {
  * The result is expressed as a percentage, rounded to
  * 2 decimal places, and represented as a {@link SignedPercentage}.
  *
- * @param monthlyIndexValues - The monthly values of the reference
- * index for the period, in chronological order.
+ * @param monthlyIndexValues - The monthly values of the
+ *                             reference index for the period,
+ *                             in chronological order.
  *
  * @returns The calculated cumulative value of the reference index.
  *
  * @equation BR̄ₜ = ∏ₖ₌₁..ₜ (1 + BRₖ) − 1
  *
  * @example
+ * ```ts
  * const RESULT = calculatePortfolioCumulativeBenchmark({
  *   monthlyIndexValues: [
  *     { value: SignedPercentage.create('0.45') },
@@ -44,6 +46,7 @@ interface CalculatePortfolioCumulativeBenchmarkProps {
  *
  * RESULT.value.toString()
  * // '1.39'
+ * ```
  */
 export function calculatePortfolioCumulativeBenchmark({
   monthlyIndexValues,

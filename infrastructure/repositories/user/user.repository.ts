@@ -1,9 +1,11 @@
-import { eq, inArray } from "drizzle-orm";
+﻿import { eq, inArray } from "drizzle-orm";
 
 import { User } from "@/business/entities/user/user.entity";
 import type { IUser } from "@/business/interfaces/user/user.interface";
-import CPF from "@/business/value-objects/cpf.vo";
+import { CPF } from "@/business/value-objects/cpf.vo";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 import { user } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -25,15 +27,7 @@ import type { DbClient } from "../types";
  * trails or statements) would otherwise issue one query per user.
  */
 export class UserRepository implements IUser {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `UserRepository` bound to the provided database client.
@@ -43,10 +37,6 @@ export class UserRepository implements IUser {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `user` row to a {@link User} entity.
@@ -116,16 +106,12 @@ export class UserRepository implements IUser {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the user with the provided id.
    *
    * @see {@link IUser.findById}
    */
-  async findById(id: string): Promise<User | null> {
+  async findById(id: EntityId): Promise<User | null> {
     const [row] = await this.db
       .select()
       .from(user)
@@ -185,10 +171,6 @@ export class UserRepository implements IUser {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided user.
    *
@@ -203,7 +185,7 @@ export class UserRepository implements IUser {
         .returning();
 
       if (!row) {
-        throw new Error(`User with id ${persisted.id} was not found.`);
+        throw new NotFoundError(`User with id ${persisted.id} was not found.`);
       }
 
       return this.toEntity(row);
@@ -222,7 +204,7 @@ export class UserRepository implements IUser {
    *
    * @see {@link IUser.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(user).where(eq(user.id, id));
   }
 }

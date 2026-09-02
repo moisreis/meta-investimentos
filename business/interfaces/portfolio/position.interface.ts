@@ -1,4 +1,5 @@
 import type { Position } from "@/business/entities/portfolio/position.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { Position } from "@/business/entities/portfolio/position.entity";
  * `Position` entities and back.
  */
 export interface IPosition {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the position with the provided id.
    *
@@ -24,7 +21,7 @@ export interface IPosition {
    * @returns A promise resolving to the `Position` or `null` when not
    * found.
    */
-  findById(id: string): Promise<Position | null>;
+  findById(id: EntityId): Promise<Position | null>;
 
   /**
    * Retrieves all positions belonging to the provided portfolio id.
@@ -33,7 +30,17 @@ export interface IPosition {
    * @returns A promise resolving to the `Position` entries or an empty
    * array when there are no matches.
    */
-  findAllByPortfolioId(portfolioId: string): Promise<Position[]>;
+  findAllByPortfolioId(portfolioId: EntityId): Promise<Position[]>;
+
+  /**
+   * Retrieves all positions belonging to any of the provided portfolio
+   * ids.
+   *
+   * @param portfolioIds - The unique identifiers of the portfolios.
+   * @returns A promise resolving to the `Position` entries or an empty
+   * array when there are no matches.
+   */
+  findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<Position[]>;
 
   /**
    * Retrieves the position of the provided fund within the provided
@@ -45,13 +52,9 @@ export interface IPosition {
    * found.
    */
   findByPortfolioIdAndFundId(
-    portfolioId: string,
-    fundId: string,
+    portfolioId: EntityId,
+    fundId: EntityId,
   ): Promise<Position | null>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided position.
@@ -60,8 +63,15 @@ export interface IPosition {
    * record and the persisted `Position` (with its generated id) is
    * returned; otherwise the existing record is updated.
    *
+   * Updates are protected by optimistic locking: an update succeeds
+   * only when the persisted version matches the stored version, and it
+   * bumps the stored version.
+   *
    * @param position - The position to persist.
    * @returns A promise resolving to the persisted `Position`.
+   *
+   * @throws {NotFoundError} If the position to update does not exist.
+   * @throws {ConcurrencyError} If the persisted version is stale.
    */
   save(position: Position): Promise<Position>;
 
@@ -71,5 +81,5 @@ export interface IPosition {
    * @param id - The unique identifier of the position.
    * @returns A promise that resolves when the position is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

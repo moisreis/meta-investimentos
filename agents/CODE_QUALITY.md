@@ -171,6 +171,20 @@ Follow these five rules.
   Name the class in backticks inside the message: `` "`QuotaPrice`
   must be equal or greater than 0." ``
 
+### Entities
+
+- Make each entity immutable after creation. Store the properties in a
+  `private readonly` field. Freeze the properties object in the
+  constructor with `Object.freeze(props)`.
+- Build a fresh normalized properties object inside `create()` and pass
+  that object to the constructor. Never freeze the caller's own object,
+  which would mutate the caller's input.
+- `Object.freeze` is shallow. It freezes the top-level properties object
+  only. Nested values such as a `Date`, a value object, or an array are
+  not frozen. Rely on value objects being immutable and on domain
+  aggregate rules to keep nested state stable. Document any mutable
+  nested collection explicitly.
+
 ### Calculators
 
 - Write each calculator as a pure, named-export function. The same
@@ -273,6 +287,17 @@ export function calculateWithdrawalQuotas({
 - Compare expected values as value objects built through factories,
   such as `toEqual(QuotaQuantity.create("25"))`. Do not compare against
   a raw number or a snapshot.
+- Keep the two assertion styles distinct by intent:
+  1. Use `toEqual(VO.create(...))` when the assertion verifies a
+     produced result — the output of a calculator, an aggregation, or a
+     helper. Build the expected value object through its factory.
+  2. Use `.value.toString()` with `toBe(...)` when the assertion
+     verifies the normalized primitive of a value object itself — for
+     example, a `create()` test that proves a stored or normalized
+     `Decimal` (`expect(MONEY.value.toString()).toBe("100.5")`). This
+     matches the example style in `agents/DOCUMENTATION_STANDARDS.md`.
+  Do not mix the two in a single assertion. Do not use `.value.toString()`
+  to compare a produced result; use `toEqual(VO.create(...))`.
 - Include these four cases in every calculator test suite.
   1. The proven worked example from `agents/TRD.md`. For example, the
      Carteira LP A values `'1000000'` and `'4.428199'` produce

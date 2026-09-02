@@ -1,8 +1,8 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type PositiveMoney from "@/business/value-objects/positive-money.vo";
-import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
-import type SignedMoney from "@/business/value-objects/signed-money.vo";
-import type SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+import type { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import type { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
+import type { SignedMoney } from "@/business/value-objects/signed-money.vo";
+import type { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -52,10 +52,6 @@ interface PositionPerformanceProps {
 export class PositionPerformance {
   private readonly _id?: EntityId;
   private readonly props: Required<PositionPerformanceProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the position performance.
@@ -162,10 +158,6 @@ export class PositionPerformance {
     return this.props.createdAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `PositionPerformance`.
    *
@@ -175,12 +167,8 @@ export class PositionPerformance {
    */
   private constructor(props: Required<PositionPerformanceProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `PositionPerformance` from the provided properties.
@@ -257,10 +245,6 @@ export class PositionPerformance {
 
     return new PositionPerformance(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `PositionPerformance` represents the same

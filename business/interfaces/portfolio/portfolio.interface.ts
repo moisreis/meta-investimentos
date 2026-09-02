@@ -1,4 +1,5 @@
 import type { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
  * `Portfolio` entities and back.
  */
 export interface IPortfolio {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the portfolio with the provided id.
    *
@@ -24,7 +21,7 @@ export interface IPortfolio {
    * @returns A promise resolving to the `Portfolio` or `null` when
    * not found.
    */
-  findById(id: string): Promise<Portfolio | null>;
+  findById(id: EntityId): Promise<Portfolio | null>;
 
   /**
    * Retrieves all portfolios belonging to the provided user id.
@@ -33,11 +30,7 @@ export interface IPortfolio {
    * @returns A promise resolving to the `Portfolio` entries or an empty
    * array when there are no matches.
    */
-  findAllByUserId(userId: string): Promise<Portfolio[]>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
+  findAllByUserId(userId: EntityId): Promise<Portfolio[]>;
 
   /**
    * Persists the provided portfolio.
@@ -57,5 +50,5 @@ export interface IPortfolio {
    * @param id - The unique identifier of the portfolio.
    * @returns A promise that resolves when the portfolio is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

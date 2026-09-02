@@ -1,8 +1,8 @@
-import { calculateDailyFactor } from "@/business/calculators/position/daily-factor.calculator";
-import type GrowthFactor from "@/business/value-objects/growth-factor.vo";
-import QuotaPrice from "@/business/value-objects/quota-price.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+﻿import { calculateDailyFactor } from "@/business/calculators/position/daily-factor.calculator";
+import type { GrowthFactor } from "@/business/value-objects/growth-factor.vo";
+import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 interface BuildPositionDailyGrowthFactorsProps {
   quotaValues: Record<string, string>;

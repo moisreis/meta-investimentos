@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   BENCHMARK,
@@ -8,6 +8,7 @@ import {
 
 import { Benchmark } from "@/business/entities/benchmark/benchmark.entity";
 import type { IBenchmark } from "@/business/interfaces/benchmark/benchmark.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("IBenchmark", () => {
   let REPOSITORY: IBenchmark;
@@ -20,13 +21,15 @@ describe("IBenchmark", () => {
     it("returns the persisted benchmark", async () => {
       await REPOSITORY.save(BENCHMARK);
 
-      const FOUND = await REPOSITORY.findById(BENCHMARK_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(BENCHMARK_ID));
 
       expect(FOUND?.equals(BENCHMARK)).toBe(true);
     });
 
     it("returns null when the benchmark does not exist", async () => {
-      expect(await REPOSITORY.findById(BENCHMARK_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(BENCHMARK_ID)),
+      ).toBeNull();
     });
   });
 
@@ -48,7 +51,7 @@ describe("IBenchmark", () => {
     it("persists a new benchmark", async () => {
       await REPOSITORY.save(BENCHMARK);
 
-      const FOUND = await REPOSITORY.findById(BENCHMARK_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(BENCHMARK_ID));
 
       expect(FOUND?.equals(BENCHMARK)).toBe(true);
     });
@@ -63,7 +66,7 @@ describe("IBenchmark", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(BENCHMARK_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(BENCHMARK_ID));
 
       expect(FOUND?.name).toBe("Ibovespa B3");
     });
@@ -73,9 +76,11 @@ describe("IBenchmark", () => {
     it("removes the persisted benchmark", async () => {
       await REPOSITORY.save(BENCHMARK);
 
-      await REPOSITORY.delete(BENCHMARK_ID);
+      await REPOSITORY.delete(EntityId.create(BENCHMARK_ID));
 
-      expect(await REPOSITORY.findById(BENCHMARK_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(BENCHMARK_ID)),
+      ).toBeNull();
     });
   });
 });

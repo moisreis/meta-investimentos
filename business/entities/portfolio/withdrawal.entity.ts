@@ -1,6 +1,6 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type PositiveMoney from "@/business/value-objects/positive-money.vo";
-import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+import type { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import type { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -49,10 +49,6 @@ interface WithdrawalProps {
 export class Withdrawal {
   private readonly _id?: EntityId;
   private readonly props: Required<WithdrawalProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the withdrawal.
@@ -117,10 +113,6 @@ export class Withdrawal {
     return this.props.updatedAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `Withdrawal`.
    *
@@ -130,12 +122,8 @@ export class Withdrawal {
    */
   private constructor(props: Required<WithdrawalProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `Withdrawal` from the provided properties.
@@ -180,10 +168,6 @@ export class Withdrawal {
 
     return new Withdrawal(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `Withdrawal` represents the same withdrawal

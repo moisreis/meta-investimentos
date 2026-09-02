@@ -1,4 +1,4 @@
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -26,12 +26,16 @@ interface CalculatePortfolioEarningsProps {
  * The result is represented as a {@link SignedMoney}, allowing
  * portfolio earnings to be positive, zero, or negative.
  *
- * @param sumOfPositionCurrentBalances - The sum of the current
- * balances of all positions in the portfolio.
+ * @param sumOfPositionCurrentBalances - The sum of the
+ *                                      current balances of
+ *                                      all positions in the
+ *                                      portfolio.
  * @param sumOfPositionInitialBalance - The sum of the initial
- * balances of all positions in the portfolio.
- * @param cashFlow - The net cash flow of the portfolio during
- * the period.
+ *                                      balances of all
+ *                                      positions in the
+ *                                      portfolio.
+ * @param cashFlow - The net cash flow of the portfolio
+ *                   during the period.
  *
  * @returns The calculated portfolio earnings.
  *

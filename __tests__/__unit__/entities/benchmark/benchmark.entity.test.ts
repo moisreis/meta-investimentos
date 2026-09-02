@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { Benchmark } from "@/business/entities/benchmark/benchmark.entity";
 

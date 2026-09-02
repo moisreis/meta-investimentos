@@ -1,5 +1,5 @@
-import type PositiveMoney from "@/business/value-objects/positive-money.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+import type { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -27,9 +27,9 @@ interface CalculatePortfolioCashFlowNetProps {
  * the portfolio's net cash flow to be positive, zero, or negative.
  *
  * @param applications - The total application amount across
- * all positions in the portfolio.
+ *                       all positions in the portfolio.
  * @param withdrawals - The total withdrawal amount across
- * all positions in the portfolio.
+ *                      all positions in the portfolio.
  *
  * @returns The calculated net cash flow of the portfolio.
  *

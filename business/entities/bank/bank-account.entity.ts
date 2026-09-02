@@ -1,4 +1,4 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -45,10 +45,6 @@ interface BankAccountProps {
 export class BankAccount {
   private readonly _id?: EntityId;
   private readonly props: Required<BankAccountProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the bank account.
@@ -99,10 +95,6 @@ export class BankAccount {
     return this.props.updatedAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `BankAccount`.
    *
@@ -112,12 +104,8 @@ export class BankAccount {
    */
   private constructor(props: Required<BankAccountProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `BankAccount` from the provided properties.
@@ -158,10 +146,6 @@ export class BankAccount {
 
     return new BankAccount(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `BankAccount` represents the same bank

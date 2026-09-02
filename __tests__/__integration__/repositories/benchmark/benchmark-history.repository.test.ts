@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   BENCHMARK_HISTORY,
@@ -21,6 +21,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("BenchmarkHistoryRepository", () => {
   beforeEach(async () => {
@@ -35,15 +36,18 @@ describe("BenchmarkHistoryRepository", () => {
     it("returns the persisted history record", async () => {
       await seedBenchmarkHistories();
 
-      const FOUND =
-        await newBenchmarkHistoryRepository().findById(BENCHMARK_HISTORY_ID);
+      const FOUND = await newBenchmarkHistoryRepository().findById(
+        EntityId.create(BENCHMARK_HISTORY_ID),
+      );
 
       expect(FOUND?.equals(BENCHMARK_HISTORY)).toBe(true);
     });
 
     it("returns null when the history record does not exist", async () => {
       expect(
-        await newBenchmarkHistoryRepository().findById(BENCHMARK_HISTORY_ID),
+        await newBenchmarkHistoryRepository().findById(
+          EntityId.create(BENCHMARK_HISTORY_ID),
+        ),
       ).toBeNull();
     });
   });
@@ -52,10 +56,9 @@ describe("BenchmarkHistoryRepository", () => {
     it("returns the whole rate series of the benchmark", async () => {
       await seedAllBenchmarkHistories();
 
-      const FOUND =
-        await newBenchmarkHistoryRepository().findAllByBenchmarkId(
-          BENCHMARK_ID,
-        );
+      const FOUND = await newBenchmarkHistoryRepository().findAllByBenchmarkId(
+        EntityId.create(BENCHMARK_ID),
+      );
 
       expect(FOUND).toHaveLength(3);
       expect(FOUND.some((ROW) => ROW.equals(BENCHMARK_HISTORY))).toBe(true);
@@ -70,7 +73,7 @@ describe("BenchmarkHistoryRepository", () => {
     it("returns an empty array when no records exist", async () => {
       expect(
         await newBenchmarkHistoryRepository().findAllByBenchmarkId(
-          BENCHMARK_ID,
+          EntityId.create(BENCHMARK_ID),
         ),
       ).toEqual([]);
     });
@@ -81,7 +84,7 @@ describe("BenchmarkHistoryRepository", () => {
       await seedAllBenchmarkHistories();
 
       const FOUND = await newBenchmarkHistoryRepository().findAllByBenchmarkIds(
-        [BENCHMARK_ID, OTHER_BENCHMARK_ID],
+        [EntityId.create(BENCHMARK_ID), EntityId.create(OTHER_BENCHMARK_ID)],
       );
 
       expect(FOUND).toHaveLength(4);
@@ -104,7 +107,7 @@ describe("BenchmarkHistoryRepository", () => {
 
       const FOUND =
         await newBenchmarkHistoryRepository().findAllByBenchmarkIdsInPeriod(
-          [BENCHMARK_ID, OTHER_BENCHMARK_ID],
+          [EntityId.create(BENCHMARK_ID), EntityId.create(OTHER_BENCHMARK_ID)],
           HISTORY_DATE,
           HISTORY_DUPLICATE_DATE,
         );
@@ -139,7 +142,7 @@ describe("BenchmarkHistoryRepository", () => {
 
       const FOUND =
         await newBenchmarkHistoryRepository().findByBenchmarkIdAndDate(
-          BENCHMARK_ID,
+          EntityId.create(BENCHMARK_ID),
           HISTORY_DATE,
         );
 
@@ -151,7 +154,7 @@ describe("BenchmarkHistoryRepository", () => {
 
       const FOUND =
         await newBenchmarkHistoryRepository().findByBenchmarkIdAndDate(
-          BENCHMARK_ID,
+          EntityId.create(BENCHMARK_ID),
           FEBRUARY_HISTORY_DATE,
         );
 
@@ -173,7 +176,9 @@ describe("BenchmarkHistoryRepository", () => {
       );
       expect(
         (
-          await newBenchmarkHistoryRepository().findById(SAVED.id as string)
+          await newBenchmarkHistoryRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
         )?.equals(SAVED),
       ).toBe(true);
     });
@@ -183,8 +188,9 @@ describe("BenchmarkHistoryRepository", () => {
 
       await newBenchmarkHistoryRepository().save(UPDATED_BENCHMARK_HISTORY);
 
-      const FOUND =
-        await newBenchmarkHistoryRepository().findById(BENCHMARK_HISTORY_ID);
+      const FOUND = await newBenchmarkHistoryRepository().findById(
+        EntityId.create(BENCHMARK_HISTORY_ID),
+      );
 
       expect(FOUND?.rate.value.toString()).toBe(
         UPDATED_BENCHMARK_HISTORY.rate.value.toString(),
@@ -197,10 +203,14 @@ describe("BenchmarkHistoryRepository", () => {
     it("removes the persisted history record", async () => {
       await seedBenchmarkHistories();
 
-      await newBenchmarkHistoryRepository().delete(BENCHMARK_HISTORY_ID);
+      await newBenchmarkHistoryRepository().delete(
+        EntityId.create(BENCHMARK_HISTORY_ID),
+      );
 
       expect(
-        await newBenchmarkHistoryRepository().findById(BENCHMARK_HISTORY_ID),
+        await newBenchmarkHistoryRepository().findById(
+          EntityId.create(BENCHMARK_HISTORY_ID),
+        ),
       ).toBeNull();
     });
   });

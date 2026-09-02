@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculatePortfolioCumulativeBenchmark } from "@/business/calculators/benchmark/cumulative-benchmark.calculator";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("calculatePortfolioCumulativeBenchmark", () => {
   it("returns zero when there are no monthly index values", () => {

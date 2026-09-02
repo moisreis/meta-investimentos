@@ -1,10 +1,11 @@
-import { and, eq, gte, inArray, lte } from "drizzle-orm";
+﻿import { and, eq, gte, inArray, lte } from "drizzle-orm";
 
 import { CheckingAccount } from "@/business/entities/bank/checking-account.entity";
 import type { ICheckingAccount } from "@/business/interfaces/bank/checking-account.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 import { checkingAccount } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -27,15 +28,7 @@ import type { DbClient } from "../types";
  * is resolved with one query instead of one query per account.
  */
 export class CheckingAccountRepository implements ICheckingAccount {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `CheckingAccountRepository` bound to the provided
@@ -46,10 +39,6 @@ export class CheckingAccountRepository implements ICheckingAccount {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `checking_account` row to a
@@ -103,16 +92,12 @@ export class CheckingAccountRepository implements ICheckingAccount {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the checking account balance with the provided id.
    *
    * @see {@link ICheckingAccount.findById}
    */
-  async findById(id: string): Promise<CheckingAccount | null> {
+  async findById(id: EntityId): Promise<CheckingAccount | null> {
     const [row] = await this.db
       .select()
       .from(checkingAccount)
@@ -128,7 +113,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
    * @see {@link ICheckingAccount.findAllByBankAccountId}
    */
   async findAllByBankAccountId(
-    bankAccountId: string,
+    bankAccountId: EntityId,
   ): Promise<CheckingAccount[]> {
     const rows = await this.db
       .select()
@@ -209,7 +194,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
    * @see {@link ICheckingAccount.findByBankAccountIdAndDate}
    */
   async findByBankAccountIdAndDate(
-    bankAccountId: string,
+    bankAccountId: EntityId,
     date: Date,
   ): Promise<CheckingAccount | null> {
     const [row] = await this.db
@@ -226,10 +211,6 @@ export class CheckingAccountRepository implements ICheckingAccount {
     return row ? this.toEntity(row) : null;
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided checking account balance.
    *
@@ -244,7 +225,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
         .returning();
 
       if (!row) {
-        throw new Error(
+        throw new NotFoundError(
           `CheckingAccount with id ${persisted.id} was not found.`,
         );
       }
@@ -265,7 +246,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
    *
    * @see {@link ICheckingAccount.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(checkingAccount).where(eq(checkingAccount.id, id));
   }
 }

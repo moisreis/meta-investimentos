@@ -1,4 +1,5 @@
 import type { CheckingAccount } from "@/business/entities/bank/checking-account.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { CheckingAccount } from "@/business/entities/bank/checking-account.
  * `CheckingAccount` entities and back.
  */
 export interface ICheckingAccount {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the checking account with the provided id.
    *
@@ -24,7 +21,7 @@ export interface ICheckingAccount {
    * @returns A promise resolving to the `CheckingAccount` or `null`
    *   when not found.
    */
-  findById(id: string): Promise<CheckingAccount | null>;
+  findById(id: EntityId): Promise<CheckingAccount | null>;
 
   /**
    * Retrieves all checking accounts of the provided bank account.
@@ -33,7 +30,7 @@ export interface ICheckingAccount {
    * @returns A promise resolving to the `CheckingAccount` array of the
    *   bank account.
    */
-  findAllByBankAccountId(bankAccountId: string): Promise<CheckingAccount[]>;
+  findAllByBankAccountId(bankAccountId: EntityId): Promise<CheckingAccount[]>;
 
   /**
    * Retrieves the checking account of the provided bank account on the
@@ -45,13 +42,9 @@ export interface ICheckingAccount {
    *   when not found.
    */
   findByBankAccountIdAndDate(
-    bankAccountId: string,
+    bankAccountId: EntityId,
     date: Date,
   ): Promise<CheckingAccount | null>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided checking account.
@@ -72,5 +65,5 @@ export interface ICheckingAccount {
    * @returns A promise that resolves when the checking account is
    *   removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

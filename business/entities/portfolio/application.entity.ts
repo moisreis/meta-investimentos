@@ -1,6 +1,6 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type PositiveMoney from "@/business/value-objects/positive-money.vo";
-import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+import type { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import type { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -49,10 +49,6 @@ interface ApplicationProps {
 export class Application {
   private readonly _id?: EntityId;
   private readonly props: Required<ApplicationProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the application.
@@ -117,10 +113,6 @@ export class Application {
     return this.props.updatedAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates an `Application`.
    *
@@ -130,12 +122,8 @@ export class Application {
    */
   private constructor(props: Required<ApplicationProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `Application` from the provided properties.
@@ -180,10 +168,6 @@ export class Application {
 
     return new Application(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `Application` represents the same application

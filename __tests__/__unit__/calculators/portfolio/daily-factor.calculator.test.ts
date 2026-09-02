@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculatePortfolioDailyFactor } from "@/business/calculators/portfolio/daily-factor.calculator";
-import GrowthFactor from "@/business/value-objects/growth-factor.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+import { GrowthFactor } from "@/business/value-objects/growth-factor.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 describe("calculatePortfolioDailyFactor", () => {
   it("returns the daily growth factor based on the current and previous portfolio values", () => {
@@ -53,6 +53,18 @@ describe("calculatePortfolioDailyFactor", () => {
     });
 
     expect(RESULT).toEqual(GrowthFactor.create("2.5"));
+  });
+
+  it("throws when the previous day portfolio value is zero", () => {
+    expect(() =>
+      calculatePortfolioDailyFactor({
+        currentDayPortfolioValue: SignedMoney.create("200"),
+        currentDayCashFlow: SignedMoney.create("50"),
+        previousDayPortfolioValue: SignedMoney.create("0"),
+      }),
+    ).toThrow(
+      "Portfolio daily factor cannot be calculated with a zero previous day value.",
+    );
   });
 
   it("preserves precision with decimal values", () => {

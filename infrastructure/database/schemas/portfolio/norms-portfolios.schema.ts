@@ -1,5 +1,8 @@
+import { sql } from "drizzle-orm";
 import {
+  check,
   index,
+  integer,
   numeric,
   pgSchema,
   primaryKey,
@@ -38,12 +41,23 @@ export const normsPortfolios = pgSchema("portfolio").table(
       precision: 5,
       scale: 2,
     }).notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    version: integer("version").default(0).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     primaryKey({
       columns: [table.normId, table.portfolioId],
     }),
+
+    /**
+     * Enforces the allocation ordering invariant: min ≤ target ≤ max.
+     */
+    check(
+      "norms_portfolios_allocation_order",
+      sql`${table.minAllocation} <= ${table.targetAllocation} AND ${table.targetAllocation} <= ${table.maxAllocation}`,
+    ),
 
     /**
      * Speeds up lookups of norm/portfolio links by their portfolio.

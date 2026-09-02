@@ -1,4 +1,4 @@
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -23,8 +23,9 @@ interface CalculatePortfolioQuotasHeldSumProps {
  *
  * The result is represented as a {@link QuotaQuantity}.
  *
- * @param quotaQuantity - The quota quantities held by all positions
- * in the portfolio to be summed.
+ * @param quotaQuantity - The quota quantities held by all
+ *                        positions in the portfolio to be
+ *                        summed.
  *
  * @returns The total number of quotas held across all positions
  * in the portfolio.

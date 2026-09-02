@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculateCashFlowNet } from "@/business/calculators/position/cash-flow-net.calculator";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 describe("calculateCashFlowNet", () => {
   it("returns the difference between applications and withdrawals", () => {

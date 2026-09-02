@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { Position } from "@/business/entities/portfolio/position.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 
 describe("Position.create", () => {
   const VALID_PROPS = {

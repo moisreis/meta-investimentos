@@ -1,5 +1,4 @@
 import react from "@vitejs/plugin-react";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 /**
@@ -22,18 +21,24 @@ import { defineConfig } from "vitest/config";
  * ```
  */
 export default defineConfig({
-  // --------------------------------------
-  // VITEST PLUGINS
-  // --------------------------------------
-  plugins: [tsconfigPaths(), react()],
+  plugins: [react()],
+  resolve: {
+    tsconfigPaths: true,
+  },
+
   test: {
-    // --------------------------------------
-    // PROJECT LIST
-    // --------------------------------------
+    coverage: {
+      provider: "v8",
+      include: ["business/**/*.ts"],
+      reporter: ["text", "lcov"],
+      thresholds: {
+        statements: 90,
+        branches: 80,
+        functions: 90,
+        lines: 90,
+      },
+    },
     projects: [
-      // --------------------------------------
-      // CALCULATOR TESTS
-      // --------------------------------------
       {
         extends: true,
         test: {
@@ -42,10 +47,6 @@ export default defineConfig({
           environment: "jsdom",
         },
       },
-
-      // --------------------------------------
-      // VALUE OBJECT TESTS
-      // --------------------------------------
       {
         extends: true,
         test: {
@@ -56,10 +57,6 @@ export default defineConfig({
           environment: "jsdom",
         },
       },
-
-      // --------------------------------------
-      // ENTITY TESTS
-      // --------------------------------------
       {
         extends: true,
         test: {
@@ -68,10 +65,6 @@ export default defineConfig({
           environment: "jsdom",
         },
       },
-
-      // --------------------------------------
-      // REPOSITORY INTERFACE TESTS
-      // --------------------------------------
       {
         extends: true,
         test: {
@@ -80,26 +73,16 @@ export default defineConfig({
           environment: "jsdom",
         },
       },
-
-      // --------------------------------------
-      // INTEGRATION TESTS
-      // --------------------------------------
       {
         extends: true,
         test: {
           name: { label: "REPOSITORIES", color: "white" },
-          include: ["**/__integration__/repositories/**/*.{test,spec}.{ts,tsx,js,jsx}"],
-          // Repository tests talk to a real Neon database through the
-          // serverless WebSocket driver, which clashes with the jsdom
-          // global `Event`. They are plain Node tests.
+          include: [
+            "**/__integration__/repositories/**/*.{test,spec}.{ts,tsx,js,jsx}",
+          ],
           environment: "node",
-          // Tests hit a remote database; give hooks and tests enough
-          // head-room to tolerate latency without flaking.
           testTimeout: 30_000,
           hookTimeout: 30_000,
-          // Tests share a single PostgreSQL database and wipe it through
-          // `resetDatabase`; running files in parallel would make each
-          // file truncate the other's fixtures mid-suite.
           fileParallelism: false,
         },
       },

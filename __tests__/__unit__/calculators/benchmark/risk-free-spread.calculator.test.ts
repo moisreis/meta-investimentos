@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculatePortfolioRiskFreeSpread } from "@/business/calculators/benchmark/risk-free-spread.calculator";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("calculatePortfolioRiskFreeSpread", () => {
   it("returns the difference between the portfolio return and the risk-free index", () => {

@@ -1,4 +1,5 @@
 import type { Fund } from "@/business/entities/fund/fund.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { Fund } from "@/business/entities/fund/fund.entity";
  * `Fund` entities and back.
  */
 export interface IFund {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the fund with the provided id.
    *
@@ -24,7 +21,7 @@ export interface IFund {
    * @returns A promise resolving to the `Fund` or `null` when
    * not found.
    */
-  findById(id: string): Promise<Fund | null>;
+  findById(id: EntityId): Promise<Fund | null>;
 
   /**
    * Retrieves the fund with the provided cnpj.
@@ -34,10 +31,6 @@ export interface IFund {
    * not found.
    */
   findByCnpj(cnpj: string): Promise<Fund | null>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided fund.
@@ -57,5 +50,5 @@ export interface IFund {
    * @param id - The unique identifier of the fund.
    * @returns A promise that resolves when the fund is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

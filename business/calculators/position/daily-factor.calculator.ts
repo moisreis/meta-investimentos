@@ -1,7 +1,8 @@
-import GrowthFactor from "@/business/value-objects/growth-factor.vo";
-import type QuotaPrice from "@/business/value-objects/quota-price.vo";
-import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
-import type SignedMoney from "@/business/value-objects/signed-money.vo";
+import { GrowthFactor } from "@/business/value-objects/growth-factor.vo";
+import type { QuotaPrice } from "@/business/value-objects/quota-price.vo";
+import type { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
+import type { SignedMoney } from "@/business/value-objects/signed-money.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the inputs required to calculate
@@ -40,6 +41,8 @@ interface CalculateDailyFactorProps {
  *
  * @returns The calculated daily growth factor.
  *
+ * @throws {ValidationError} If the previous day quota value or quantity is zero.
+ *
  * @equation (Vₖᴾ - Δₖᴾ) / Vₖ₋₁ᴾ
  *
  * @example
@@ -63,12 +66,20 @@ export function calculateDailyFactor({
   previousDayQuotaValue,
   previousDayQuotaQuantity,
 }: CalculateDailyFactorProps): GrowthFactor {
+  const PREVIOUS_DAY_VALUE = previousDayQuotaQuantity.value.times(
+    previousDayQuotaValue.value,
+  );
+
+  if (PREVIOUS_DAY_VALUE.isZero()) {
+    throw new ValidationError(
+      "Daily factor cannot be calculated with a zero previous day quota value.",
+    );
+  }
+
   return GrowthFactor.create(
     currentDayQuotaValue.value
       .times(currentDayQuotaQuantity.value)
       .minus(currentDayCashFlow.value)
-      .dividedBy(
-        previousDayQuotaQuantity.value.times(previousDayQuotaValue.value),
-      ),
+      .dividedBy(PREVIOUS_DAY_VALUE),
   );
 }

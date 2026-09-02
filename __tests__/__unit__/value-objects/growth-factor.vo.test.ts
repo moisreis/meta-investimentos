@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
-import GrowthFactor from "@/business/value-objects/growth-factor.vo";
+import { GrowthFactor } from "@/business/value-objects/growth-factor.vo";
 
 describe("GrowthFactor", () => {
   describe("create", () => {

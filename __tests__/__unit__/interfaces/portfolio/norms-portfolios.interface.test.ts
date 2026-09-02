@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   createInMemoryNormsPortfoliosRepository,
@@ -12,7 +12,7 @@ import {
 import { NormsPortfolios } from "@/business/entities/portfolio/norms-portfolios.entity";
 import type { INormsPortfolios } from "@/business/interfaces/portfolio/norms-portfolios.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("INormsPortfolios", () => {
   let REPOSITORY: INormsPortfolios;
@@ -26,8 +26,8 @@ describe("INormsPortfolios", () => {
       await REPOSITORY.save(RELATION);
 
       const FOUND = await REPOSITORY.findByNormIdAndPortfolioId(
-        NORM_ID,
-        PORTFOLIO_ID,
+        EntityId.create(NORM_ID),
+        EntityId.create(PORTFOLIO_ID),
       );
 
       expect(FOUND?.normId).toBe(RELATION.normId);
@@ -36,7 +36,10 @@ describe("INormsPortfolios", () => {
 
     it("returns null when the relation does not exist", async () => {
       expect(
-        await REPOSITORY.findByNormIdAndPortfolioId(NORM_ID, PORTFOLIO_ID),
+        await REPOSITORY.findByNormIdAndPortfolioId(
+          EntityId.create(NORM_ID),
+          EntityId.create(PORTFOLIO_ID),
+        ),
       ).toBeNull();
     });
   });
@@ -62,7 +65,9 @@ describe("INormsPortfolios", () => {
       await REPOSITORY.save(SECOND_RELATION);
       await REPOSITORY.save(OTHER_RELATION);
 
-      const FOUND = await REPOSITORY.findAllByPortfolioId(PORTFOLIO_ID);
+      const FOUND = await REPOSITORY.findAllByPortfolioId(
+        EntityId.create(PORTFOLIO_ID),
+      );
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.normId).toBe(RELATION.normId);
@@ -70,7 +75,9 @@ describe("INormsPortfolios", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByPortfolioId(PORTFOLIO_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByPortfolioId(EntityId.create(PORTFOLIO_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -95,7 +102,7 @@ describe("INormsPortfolios", () => {
       await REPOSITORY.save(SECOND_RELATION);
       await REPOSITORY.save(OTHER_RELATION);
 
-      const FOUND = await REPOSITORY.findAllByNormId(NORM_ID);
+      const FOUND = await REPOSITORY.findAllByNormId(EntityId.create(NORM_ID));
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.portfolioId).toBe(RELATION.portfolioId);
@@ -103,7 +110,9 @@ describe("INormsPortfolios", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByNormId(NORM_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByNormId(EntityId.create(NORM_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -112,8 +121,8 @@ describe("INormsPortfolios", () => {
       await REPOSITORY.save(RELATION);
 
       const FOUND = await REPOSITORY.findByNormIdAndPortfolioId(
-        NORM_ID,
-        PORTFOLIO_ID,
+        EntityId.create(NORM_ID),
+        EntityId.create(PORTFOLIO_ID),
       );
 
       expect(FOUND?.targetAllocation.value.toString()).toBe("12");
@@ -133,8 +142,8 @@ describe("INormsPortfolios", () => {
       await REPOSITORY.save(UPDATED);
 
       const FOUND = await REPOSITORY.findByNormIdAndPortfolioId(
-        NORM_ID,
-        PORTFOLIO_ID,
+        EntityId.create(NORM_ID),
+        EntityId.create(PORTFOLIO_ID),
       );
 
       expect(FOUND?.targetAllocation.value.toString()).toBe("16");
@@ -145,10 +154,16 @@ describe("INormsPortfolios", () => {
     it("removes the persisted relation", async () => {
       await REPOSITORY.save(RELATION);
 
-      await REPOSITORY.delete(NORM_ID, PORTFOLIO_ID);
+      await REPOSITORY.delete(
+        EntityId.create(NORM_ID),
+        EntityId.create(PORTFOLIO_ID),
+      );
 
       expect(
-        await REPOSITORY.findByNormIdAndPortfolioId(NORM_ID, PORTFOLIO_ID),
+        await REPOSITORY.findByNormIdAndPortfolioId(
+          EntityId.create(NORM_ID),
+          EntityId.create(PORTFOLIO_ID),
+        ),
       ).toBeNull();
     });
   });

@@ -1,91 +1,71 @@
-import { PortfolioPerformance } from "@/business/entities/performance/portfolio-performance.entity";
+﻿import {
+  EXTERNAL_PORTFOLIO_PERFORMANCE,
+  EXTERNAL_PORTFOLIO_PERFORMANCE_ID,
+  FEBRUARY_PERFORMANCE_DATE,
+  FRESH_PORTFOLIO_PERFORMANCE,
+  OTHER_PORTFOLIO_ID,
+  OTHER_PORTFOLIO_PERFORMANCE,
+  OTHER_PORTFOLIO_PERFORMANCE_ID,
+  PERFORMANCE_DATE,
+  PERFORMANCE_DUPLICATE_DATE,
+  PERIOD_OUTSIDE_PORTFOLIO_PERFORMANCE,
+  PERIOD_OUTSIDE_PORTFOLIO_PERFORMANCE_ID,
+  PORTFOLIO_ID,
+  PORTFOLIO_PERFORMANCE,
+  PORTFOLIO_PERFORMANCE_ID,
+  UPDATED_PORTFOLIO_PERFORMANCE,
+} from "@/__tests__/__fixtures__";
+import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import type { IPortfolioPerformance } from "@/business/interfaces/performance/portfolio-performance.interface";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
-export const PERFORMANCE_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-export const PORTFOLIO_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
-export const PERFORMANCE_DATE = new Date("2026-08-01T00:00:00.000Z");
+export {
+  PORTFOLIO_PERFORMANCE_ID,
+  OTHER_PORTFOLIO_PERFORMANCE_ID,
+  EXTERNAL_PORTFOLIO_PERFORMANCE_ID,
+  PERIOD_OUTSIDE_PORTFOLIO_PERFORMANCE_ID,
+  PORTFOLIO_ID,
+  OTHER_PORTFOLIO_ID,
+  PERFORMANCE_DATE,
+  PERFORMANCE_DUPLICATE_DATE,
+  FEBRUARY_PERFORMANCE_DATE,
+  PORTFOLIO_PERFORMANCE,
+  OTHER_PORTFOLIO_PERFORMANCE,
+  EXTERNAL_PORTFOLIO_PERFORMANCE,
+  PERIOD_OUTSIDE_PORTFOLIO_PERFORMANCE,
+  UPDATED_PORTFOLIO_PERFORMANCE,
+  FRESH_PORTFOLIO_PERFORMANCE,
+};
 
-export const PERFORMANCE = PortfolioPerformance.create(
-  {
-    portfolioId: EntityId.create(PORTFOLIO_ID),
-    date: PERFORMANCE_DATE,
-    quotasHeld: QuotaQuantity.create("100"),
-    patrimony: PositiveMoney.create("1000000"),
-    applicationTotal: PositiveMoney.create("1000000"),
-    redemptionTotal: PositiveMoney.create("0"),
-    cashFlowNet: SignedMoney.create("1000000"),
-    earnings: SignedMoney.create("0"),
-    returnDaily: SignedPercentage.create("0"),
-  },
-  PERFORMANCE_ID,
-);
+export const PERFORMANCE_ID = PORTFOLIO_PERFORMANCE_ID;
+export const PERFORMANCE = PORTFOLIO_PERFORMANCE;
 
 export function createInMemoryPortfolioPerformanceRepository(): IPortfolioPerformance {
-  const ROWS = new Map<string, PortfolioPerformance>();
+  const BASE = createInMemoryRepository<
+    Awaited<ReturnType<IPortfolioPerformance["save"]>>
+  >({ extractId: (pp) => pp.id });
 
   return {
-    async findById(id: string): Promise<PortfolioPerformance | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findAllByPortfolioId(portfolioId) {
+      return BASE.match((pp) => pp.portfolioId === portfolioId);
     },
-
-    async findAllByPortfolioId(
-      portfolioId: string,
-    ): Promise<PortfolioPerformance[]> {
-      const RESULT: PortfolioPerformance[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.portfolioId === portfolioId) RESULT.push(ROW);
-      }
-
-      return RESULT;
+    async findByPortfolioIdAndDate(portfolioId, date) {
+      return BASE.findOne(
+        (pp) =>
+          pp.portfolioId === portfolioId &&
+          pp.date.getTime() === date.getTime(),
+      );
     },
+    async findLatestByPortfolioId(portfolioId) {
+      const FOUND = BASE.match((pp) => pp.portfolioId === portfolioId);
 
-    async findByPortfolioIdAndDate(
-      portfolioId: string,
-      date: Date,
-    ): Promise<PortfolioPerformance | null> {
-      for (const ROW of ROWS.values()) {
-        if (
-          ROW.portfolioId === portfolioId &&
-          ROW.date.getTime() === date.getTime()
-        ) {
-          return ROW;
-        }
-      }
+      if (FOUND.length === 0) return null;
 
-      return null;
+      return FOUND.reduce((latest, current) =>
+        current.date.getTime() > latest.date.getTime() ? current : latest,
+      );
     },
-
-    async findLatestByPortfolioId(
-      portfolioId: string,
-    ): Promise<PortfolioPerformance | null> {
-      let LATEST: PortfolioPerformance | null = null;
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.portfolioId !== portfolioId) continue;
-        if (LATEST === null || ROW.date.getTime() > LATEST.date.getTime()) {
-          LATEST = ROW;
-        }
-      }
-
-      return LATEST;
-    },
-
-    async save(
-      portfolioPerformance: PortfolioPerformance,
-    ): Promise<PortfolioPerformance> {
-      ROWS.set(portfolioPerformance.id ?? "generated-id", portfolioPerformance);
-
-      return portfolioPerformance;
-    },
-
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (portfolioPerformance) => BASE.save(portfolioPerformance),
+    delete: (id) => BASE.delete(id),
   };
 }

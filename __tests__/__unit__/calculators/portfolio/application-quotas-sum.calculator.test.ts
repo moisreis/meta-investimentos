@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculatePortfolioApplicationQuotasSum } from "@/business/calculators/portfolio/application-quotas-sum.calculator";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 describe("calculatePortfolioApplicationQuotasSum", () => {
   it("returns the sum of multiple quota quantities", () => {

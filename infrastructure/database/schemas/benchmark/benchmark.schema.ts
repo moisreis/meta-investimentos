@@ -20,7 +20,9 @@ export const benchmark = pgSchema("benchmark").table(
     id: uuid("id").primaryKey().defaultRandom(),
     acronym: text("acronym").notNull(),
     name: text("name").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     /**

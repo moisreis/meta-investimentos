@@ -1,4 +1,4 @@
-import { INVESTMENT_FUND_IDS } from "@/__tests__/__datasets__/_investment-funds.dataset";
+﻿import { INVESTMENT_FUND_IDS } from "@/__tests__/__datasets__/_investment-funds.dataset";
 
 export const QUOTA_VALUES: Record<number, Record<string, string>> = {
   [INVESTMENT_FUND_IDS.CAIXA_BRASIL_IRF_M_1_TITULOS_PUBLICOS_FI_RF]: {

@@ -1,10 +1,10 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculateQuotasHeld } from "@/business/calculators/position/quotas-held.calculator";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 describe("calculateQuotasHeld", () => {
-  it("returns the proved value for the position at the end of the period for `CAIXA BRASIL IRF-M 1 TÍTULOS PÚBLICOS FI RENDA FIXA`", () => {
+  it("returns the proved value for the position at the end of the period for `CAIXA BRASIL IRF-M 1 TÃTULOS PÃšBLICOS FI RENDA FIXA`", () => {
     const RESULT = calculateQuotasHeld({
       lastPeriodQuotaQuantity: QuotaQuantity.create("342021.111191"),
       applicationQuotasQuantity: QuotaQuantity.create("225825.442804"),

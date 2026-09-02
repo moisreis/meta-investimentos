@@ -1,10 +1,11 @@
-import { and, eq, inArray } from "drizzle-orm";
+﻿import { and, eq, inArray } from "drizzle-orm";
 
 import { Position } from "@/business/entities/portfolio/position.entity";
 import type { IPosition } from "@/business/interfaces/portfolio/position.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 import { position } from "@/infrastructure/database/schemas";
+import { ConcurrencyError, NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -20,19 +21,14 @@ import type { DbClient } from "../types";
  * object and persisted through its `.value.toString()` representation.
  *
  * A save inserts a new row when the entity has no id and updates the
- * existing row otherwise. Updates omit `updatedAt` so the `$onUpdate`
- * hook keeps the timestamp in sync with the mutation.
+ * existing row otherwise. Updates are protected by optimistic locking:
+ * the update only applies when the persisted version matches the
+ * stored one, and the stored version is bumped on success. Updates omit
+ * `updatedAt` so the `$onUpdate` hook keeps the timestamp in sync with
+ * the mutation.
  */
 export class PositionRepository implements IPosition {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `PositionRepository` bound to the provided database
@@ -43,10 +39,6 @@ export class PositionRepository implements IPosition {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `position` row to a {@link Position} entity.
@@ -63,6 +55,7 @@ export class PositionRepository implements IPosition {
           ? PositiveMoney.create(row.initialBalance)
           : null,
         initialBalanceDate: row.initialBalanceDate,
+        version: row.version,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
       },
@@ -83,6 +76,7 @@ export class PositionRepository implements IPosition {
       fundId: entity.fundId,
       initialBalance: entity.initialBalance?.value.toString() ?? null,
       initialBalanceDate: entity.initialBalanceDate,
+      version: entity.version,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     };
@@ -104,19 +98,16 @@ export class PositionRepository implements IPosition {
       fundId: entity.fundId,
       initialBalance: entity.initialBalance?.value.toString() ?? null,
       initialBalanceDate: entity.initialBalanceDate,
+      version: entity.version + 1,
     };
   }
-
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
 
   /**
    * Retrieves the position with the provided id.
    *
    * @see {@link IPosition.findById}
    */
-  async findById(id: string): Promise<Position | null> {
+  async findById(id: EntityId): Promise<Position | null> {
     const [row] = await this.db
       .select()
       .from(position)
@@ -131,7 +122,7 @@ export class PositionRepository implements IPosition {
    *
    * @see {@link IPosition.findAllByPortfolioId}
    */
-  async findAllByPortfolioId(portfolioId: string): Promise<Position[]> {
+  async findAllByPortfolioId(portfolioId: EntityId): Promise<Position[]> {
     const rows = await this.db
       .select()
       .from(position)
@@ -151,7 +142,7 @@ export class PositionRepository implements IPosition {
    *   positions for.
    * @returns A promise resolving to the matching `Position` entities.
    */
-  async findAllByPortfolioIds(portfolioIds: string[]): Promise<Position[]> {
+  async findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<Position[]> {
     if (portfolioIds.length === 0) {
       return [];
     }
@@ -171,8 +162,8 @@ export class PositionRepository implements IPosition {
    * @see {@link IPosition.findByPortfolioIdAndFundId}
    */
   async findByPortfolioIdAndFundId(
-    portfolioId: string,
-    fundId: string,
+    portfolioId: EntityId,
+    fundId: EntityId,
   ): Promise<Position | null> {
     const [row] = await this.db
       .select()
@@ -185,12 +176,12 @@ export class PositionRepository implements IPosition {
     return row ? this.toEntity(row) : null;
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided position.
+   *
+   * When the position has no id, a new row is inserted; otherwise the
+   * existing row is updated only when the persisted version matches the
+   * stored version, and its version is bumped.
    *
    * @see {@link IPosition.save}
    */
@@ -199,14 +190,33 @@ export class PositionRepository implements IPosition {
       const [row] = await this.db
         .update(position)
         .set(this.toUpdate(persisted))
-        .where(eq(position.id, persisted.id))
+        .where(
+          and(
+            eq(position.id, persisted.id),
+            eq(position.version, persisted.version),
+          ),
+        )
         .returning();
 
-      if (!row) {
-        throw new Error(`Position with id ${persisted.id} was not found.`);
+      if (row) {
+        return this.toEntity(row);
       }
 
-      return this.toEntity(row);
+      const [existing] = await this.db
+        .select({ id: position.id })
+        .from(position)
+        .where(eq(position.id, persisted.id))
+        .limit(1);
+
+      if (!existing) {
+        throw new NotFoundError(
+          `Position with id ${persisted.id} was not found.`,
+        );
+      }
+
+      throw new ConcurrencyError(
+        `Position with id ${persisted.id} has a stale version.`,
+      );
     }
 
     const [row] = await this.db
@@ -222,7 +232,7 @@ export class PositionRepository implements IPosition {
    *
    * @see {@link IPosition.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(position).where(eq(position.id, id));
   }
 }

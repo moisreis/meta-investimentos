@@ -1,11 +1,10 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
-import CNPJ from "@/business/value-objects/cnpj.vo";
+import { CNPJ } from "@/business/value-objects/cnpj.vo";
 
 const VALID_CNPJ = "12345678000195";
 const VALID_CNPJ_FORMATTED = "12.345.678/0001-95";
 const DIFFERENT_CNPJ = "11222333000181";
-// Note: 12345678000195 and 11222333000181 are both valid CNPJs.
 
 describe("CNPJ", () => {
   describe("create", () => {
@@ -28,12 +27,12 @@ describe("CNPJ", () => {
     });
 
     it("throws when the value is undefined", () => {
-      // @ts-expect-error — testing runtime validation
+      // @ts-expect-error â€” testing runtime validation
       expect(() => CNPJ.create(undefined)).toThrow("`CNPJ` must be defined.");
     });
 
     it("throws when the value is null", () => {
-      // @ts-expect-error — testing runtime validation
+      // @ts-expect-error â€” testing runtime validation
       expect(() => CNPJ.create(null)).toThrow("`CNPJ` must be defined.");
     });
 

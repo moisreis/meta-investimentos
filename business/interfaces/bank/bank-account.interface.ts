@@ -1,4 +1,5 @@
 import type { BankAccount } from "@/business/entities/bank/bank-account.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { BankAccount } from "@/business/entities/bank/bank-account.entity";
  * `BankAccount` entities and back.
  */
 export interface IBankAccount {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the bank account with the provided id.
    *
@@ -24,7 +21,7 @@ export interface IBankAccount {
    * @returns A promise resolving to the `BankAccount` or `null` when
    *   not found.
    */
-  findById(id: string): Promise<BankAccount | null>;
+  findById(id: EntityId): Promise<BankAccount | null>;
 
   /**
    * Retrieves all bank accounts of the provided portfolio.
@@ -33,7 +30,7 @@ export interface IBankAccount {
    * @returns A promise resolving to the `BankAccount` array of the
    *   portfolio.
    */
-  findAllByPortfolioId(portfolioId: string): Promise<BankAccount[]>;
+  findAllByPortfolioId(portfolioId: EntityId): Promise<BankAccount[]>;
 
   /**
    * Retrieves all bank accounts of the provided bank.
@@ -42,11 +39,7 @@ export interface IBankAccount {
    * @returns A promise resolving to the `BankAccount` array of the
    *   bank.
    */
-  findAllByBankId(bankId: string): Promise<BankAccount[]>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
+  findAllByBankId(bankId: EntityId): Promise<BankAccount[]>;
 
   /**
    * Persists the provided bank account.
@@ -66,5 +59,5 @@ export interface IBankAccount {
    * @param id - The unique identifier of the bank account.
    * @returns A promise that resolves when the bank account is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

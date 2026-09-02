@@ -1,56 +1,32 @@
-import { db } from "@/__tests__/__setup__/_database.setup";
-import { Session } from "@/business/entities";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import { session } from "@/infrastructure/database/schemas";
-import { EXPIRES_AT, OTHER_USER_ID, seedUserById, USER_ID } from "./_user.seed";
-
-export const SESSION_ID = "c3d4e5f6-7a8b-4c9d-8e0f-1a2b3c4d5e6f";
-export const OTHER_SESSION_ID = "d4e5f6a7-8b9c-4d0e-9f1a-2b3c4d5e6f7a";
-export const THIRD_SESSION_ID = "e5f6a7b8-9c0d-4e1f-8a2b-3c4d5e6f7a8b";
-
-export const SESSION = Session.create(
-  {
-    userId: EntityId.create(USER_ID),
-    token: "session-token",
-    expiresAt: EXPIRES_AT,
-  },
-  SESSION_ID,
-);
-
-export const OTHER_SESSION = Session.create(
-  {
-    userId: EntityId.create(OTHER_USER_ID),
-    token: "other-session-token",
-    expiresAt: EXPIRES_AT,
-  },
+﻿import {
+  FRESH_SESSION,
+  OTHER_SESSION,
   OTHER_SESSION_ID,
-);
-
-export const THIRD_SESSION = Session.create(
-  {
-    userId: EntityId.create(USER_ID),
-    token: "third-session-token",
-    expiresAt: EXPIRES_AT,
-  },
-  THIRD_SESSION_ID,
-);
-
-export const SESSIONS = [SESSION, OTHER_SESSION];
-
-export const UPDATED_SESSION = Session.create(
-  {
-    userId: EntityId.create(USER_ID),
-    token: "updated-session-token",
-    expiresAt: EXPIRES_AT,
-  },
+  OTHER_USER_ID,
+  SESSION,
   SESSION_ID,
-);
+  SESSIONS,
+  THIRD_SESSION,
+  THIRD_SESSION_ID,
+  UPDATED_SESSION,
+  USER_ID,
+} from "@/__tests__/__fixtures__";
+import { db } from "@/__tests__/__setup__/_database.setup";
+import type { Session } from "@/business/entities";
+import { session } from "@/infrastructure/database/schemas";
+import { seedUserById } from "./_user.seed";
 
-export const FRESH_SESSION = Session.create({
-  userId: EntityId.create(USER_ID),
-  token: "fresh-session-token",
-  expiresAt: EXPIRES_AT,
-});
+export {
+  SESSION_ID,
+  OTHER_SESSION_ID,
+  THIRD_SESSION_ID,
+  SESSION,
+  OTHER_SESSION,
+  THIRD_SESSION,
+  UPDATED_SESSION,
+  FRESH_SESSION,
+  SESSIONS,
+};
 
 function toSessionRow(entity: Session): typeof session.$inferInsert {
   return {

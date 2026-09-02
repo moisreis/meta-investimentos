@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculatePortfolioApplicationSum } from "@/business/calculators/portfolio/application-sum.calculator";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 
 describe("calculatePortfolioApplicationSum", () => {
   it("returns the sum of multiple application amounts for `JACOPREV`", () => {

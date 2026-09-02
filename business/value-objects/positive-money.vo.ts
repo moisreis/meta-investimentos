@@ -1,14 +1,18 @@
 import Decimal from "decimal.js";
+import {
+  MONEY_DECIMAL_PLACES,
+  ROUNDING_MODE,
+} from "@/business/value-objects/rounding";
 import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents a non-negative monetary amount.
  *
- * The amount is stored as a {@link Decimal} to preserve
- * precision when performing monetary calculations.
+ * The code stores the amount as a {@link Decimal} to keep
+ * full precision during monetary calculations.
  *
- * Values are normalized to a maximum of 2 decimal places
- * when the amount is created.
+ * The code normalizes the value to a maximum of 2 decimal
+ * places when it creates the amount.
  *
  * Use {@link PositiveMoney.create} to create a valid
  * `PositiveMoney` instance.
@@ -29,9 +33,7 @@ interface PositiveMoneyProps {
  *
  * @example
  * ```ts
- * const MONEY = PositiveMoney.create(
- *  '10.123'
- * )
+ * const MONEY = PositiveMoney.create('10.123')
  *
  * MONEY.value.toString()
  * // '10.12'
@@ -46,12 +48,8 @@ interface PositiveMoneyProps {
  * // true
  * ```
  */
-class PositiveMoney {
+export class PositiveMoney {
   private readonly props: PositiveMoneyProps;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the monetary value.
@@ -59,10 +57,6 @@ class PositiveMoney {
   get value(): Decimal {
     return this.props.value;
   }
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `PositiveMoney`.
@@ -75,18 +69,15 @@ class PositiveMoney {
     this.props = props;
   }
 
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
-
   /**
    * Creates a valid `PositiveMoney` from a decimal-compatible value.
    *
-   * The value can be any value accepted by {@link Decimal.Value}.
-   * It must be defined and cannot be negative.
+   * The code accepts any value that {@link Decimal.Value}
+   * accepts. The value must be defined. The value cannot be
+   * negative.
    *
-   * The resulting value is converted to a {@link Decimal} and
-   * rounded to a maximum of 2 decimal places.
+   * The code converts the value to a {@link Decimal} and
+   * rounds it to a maximum of 2 decimal places.
    *
    * @param value - The decimal-compatible monetary amount to create.
    * @returns A valid `PositiveMoney` instance.
@@ -124,13 +115,9 @@ class PositiveMoney {
     }
 
     return new PositiveMoney({
-      value: decimalValue.toDecimalPlaces(2),
+      value: decimalValue.toDecimalPlaces(MONEY_DECIMAL_PLACES, ROUNDING_MODE),
     });
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether two `PositiveMoney` instances
@@ -139,7 +126,7 @@ class PositiveMoney {
    * @param a - The first monetary amount.
    * @param b - The second monetary amount.
    * @returns `true` when both monetary amounts have equal values;
-   * otherwise, `false`.
+   *          otherwise, `false`.
    *
    * @example
    * ```ts
@@ -154,5 +141,3 @@ class PositiveMoney {
     return a.value.equals(b.value);
   }
 }
-
-export default PositiveMoney;

@@ -1,5 +1,5 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type SignedMoney from "@/business/value-objects/signed-money.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+import type { SignedMoney } from "@/business/value-objects/signed-money.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -40,10 +40,6 @@ export class CheckingAccount {
   private readonly _id?: EntityId;
   private readonly props: Required<CheckingAccountProps>;
 
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
-
   /**
    * Returns the unique identifier of the checking account.
    */
@@ -73,10 +69,6 @@ export class CheckingAccount {
     return this.props.value;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `CheckingAccount`.
    *
@@ -86,12 +78,8 @@ export class CheckingAccount {
    */
   private constructor(props: Required<CheckingAccountProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `CheckingAccount` from the provided properties.
@@ -126,10 +114,6 @@ export class CheckingAccount {
 
     return new CheckingAccount(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `CheckingAccount` represents the same

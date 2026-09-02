@@ -1,8 +1,8 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type PositiveMoney from "@/business/value-objects/positive-money.vo";
-import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
-import type SignedMoney from "@/business/value-objects/signed-money.vo";
-import type SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+import type { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import type { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
+import type { SignedMoney } from "@/business/value-objects/signed-money.vo";
+import type { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -55,10 +55,6 @@ interface PortfolioPerformanceProps {
 export class PortfolioPerformance {
   private readonly _id?: EntityId;
   private readonly props: Required<PortfolioPerformanceProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the portfolio performance.
@@ -193,10 +189,6 @@ export class PortfolioPerformance {
     return this.props.createdAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `PortfolioPerformance`.
    *
@@ -206,12 +198,8 @@ export class PortfolioPerformance {
    */
   private constructor(props: Required<PortfolioPerformanceProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `PortfolioPerformance` from the provided properties.
@@ -294,10 +282,6 @@ export class PortfolioPerformance {
 
     return new PortfolioPerformance(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `PortfolioPerformance` represents the same

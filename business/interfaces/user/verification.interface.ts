@@ -1,4 +1,5 @@
 import type { Verification } from "@/business/entities/user/verification.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { Verification } from "@/business/entities/user/verification.entity"
  * `Verification` entities and back.
  */
 export interface IVerification {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the verification with the provided id.
    *
@@ -24,7 +21,7 @@ export interface IVerification {
    * @returns A promise resolving to the `Verification` or `null` when
    * not found.
    */
-  findById(id: string): Promise<Verification | null>;
+  findById(id: EntityId): Promise<Verification | null>;
 
   /**
    * Retrieves all verifications tied to the provided identifier.
@@ -33,10 +30,6 @@ export interface IVerification {
    * @returns A promise resolving to all matching `Verification` entities.
    */
   findAllByIdentifier(identifier: string): Promise<Verification[]>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided verification.
@@ -56,5 +49,5 @@ export interface IVerification {
    * @param id - The unique identifier of the verification.
    * @returns A promise that resolves when the verification is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

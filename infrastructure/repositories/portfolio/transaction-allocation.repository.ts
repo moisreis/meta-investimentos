@@ -1,10 +1,11 @@
-import { eq, inArray, sql } from "drizzle-orm";
+﻿import { eq, inArray, sql } from "drizzle-orm";
 
 import { TransactionAllocation } from "@/business/entities/portfolio/transaction-allocation.entity";
 import type { ITransactionAllocation } from "@/business/interfaces/portfolio/transaction-allocation.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 import { transactionAllocation } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -24,15 +25,7 @@ import type { DbClient } from "../types";
  * existing row otherwise.
  */
 export class TransactionAllocationRepository implements ITransactionAllocation {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `TransactionAllocationRepository` bound to the provided
@@ -43,10 +36,6 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `transaction_allocation` row to a
@@ -106,16 +95,12 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the transaction allocation with the provided id.
    *
    * @see {@link ITransactionAllocation.findById}
    */
-  async findById(id: string): Promise<TransactionAllocation | null> {
+  async findById(id: EntityId): Promise<TransactionAllocation | null> {
     const [row] = await this.db
       .select()
       .from(transactionAllocation)
@@ -132,7 +117,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    * @see {@link ITransactionAllocation.findAllByApplicationId}
    */
   async findAllByApplicationId(
-    applicationId: string,
+    applicationId: EntityId,
   ): Promise<TransactionAllocation[]> {
     const rows = await this.db
       .select()
@@ -176,7 +161,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    * @see {@link ITransactionAllocation.findAllByWithdrawalId}
    */
   async findAllByWithdrawalId(
-    withdrawId: string,
+    withdrawId: EntityId,
   ): Promise<TransactionAllocation[]> {
     const rows = await this.db
       .select()
@@ -238,10 +223,6 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
     return row.quotasConsumed ? QuotaQuantity.create(row.quotasConsumed) : null;
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided transaction allocation.
    *
@@ -256,7 +237,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
         .returning();
 
       if (!row) {
-        throw new Error(
+        throw new NotFoundError(
           `TransactionAllocation with id ${persisted.id} was not found.`,
         );
       }
@@ -277,7 +258,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    *
    * @see {@link ITransactionAllocation.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db
       .delete(transactionAllocation)
       .where(eq(transactionAllocation.id, id));

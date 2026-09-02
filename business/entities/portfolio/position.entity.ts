@@ -1,5 +1,5 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type PositiveMoney from "@/business/value-objects/positive-money.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+import type { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -15,6 +15,7 @@ interface PositionProps {
   fundId: EntityId;
   initialBalance?: PositiveMoney | null;
   initialBalanceDate?: Date | null;
+  version?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -42,10 +43,6 @@ interface PositionProps {
 export class Position {
   private readonly _id?: EntityId;
   private readonly props: Required<PositionProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the position.
@@ -83,6 +80,13 @@ export class Position {
   }
 
   /**
+   * Returns the optimistic-locking version of the position.
+   */
+  get version(): number {
+    return this.props.version;
+  }
+
+  /**
    * Returns the creation timestamp of the position.
    */
   get createdAt(): Date {
@@ -96,10 +100,6 @@ export class Position {
     return this.props.updatedAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `Position`.
    *
@@ -109,12 +109,8 @@ export class Position {
    */
   private constructor(props: Required<PositionProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `Position` from the provided properties.
@@ -145,16 +141,13 @@ export class Position {
       ...props,
       initialBalance: props.initialBalance ?? null,
       initialBalanceDate: props.initialBalanceDate ?? null,
+      version: props.version ?? 0,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
     };
 
     return new Position(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `Position` represents the same position as

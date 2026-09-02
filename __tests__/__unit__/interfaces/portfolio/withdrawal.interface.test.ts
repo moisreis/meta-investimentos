@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   createInMemoryWithdrawalRepository,
@@ -12,8 +12,8 @@ import {
 import { Withdrawal } from "@/business/entities/portfolio/withdrawal.entity";
 import type { IWithdrawal } from "@/business/interfaces/portfolio/withdrawal.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 describe("IWithdrawal", () => {
   let REPOSITORY: IWithdrawal;
@@ -26,13 +26,15 @@ describe("IWithdrawal", () => {
     it("returns the persisted withdrawal", async () => {
       await REPOSITORY.save(WITHDRAWAL);
 
-      const FOUND = await REPOSITORY.findById(WITHDRAWAL_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(WITHDRAWAL_ID));
 
       expect(FOUND?.equals(WITHDRAWAL)).toBe(true);
     });
 
     it("returns null when the withdrawal does not exist", async () => {
-      expect(await REPOSITORY.findById(WITHDRAWAL_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(WITHDRAWAL_ID)),
+      ).toBeNull();
     });
   });
 
@@ -61,7 +63,9 @@ describe("IWithdrawal", () => {
       await REPOSITORY.save(SECOND_WITHDRAWAL);
       await REPOSITORY.save(OTHER_WITHDRAWAL);
 
-      const FOUND = await REPOSITORY.findAllByPositionId(POSITION_ID);
+      const FOUND = await REPOSITORY.findAllByPositionId(
+        EntityId.create(POSITION_ID),
+      );
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.equals(WITHDRAWAL)).toBe(true);
@@ -69,7 +73,9 @@ describe("IWithdrawal", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByPositionId(POSITION_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByPositionId(EntityId.create(POSITION_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -111,7 +117,7 @@ describe("IWithdrawal", () => {
       const END_DATE = new Date("2026-01-20T00:00:00.000Z");
 
       const FOUND = await REPOSITORY.findAllByPositionIdInPeriod(
-        POSITION_ID,
+        EntityId.create(POSITION_ID),
         START_DATE,
         END_DATE,
       );
@@ -126,7 +132,7 @@ describe("IWithdrawal", () => {
 
       expect(
         await REPOSITORY.findAllByPositionIdInPeriod(
-          POSITION_ID,
+          EntityId.create(POSITION_ID),
           START_DATE,
           END_DATE,
         ),
@@ -138,7 +144,7 @@ describe("IWithdrawal", () => {
     it("persists a new withdrawal", async () => {
       await REPOSITORY.save(WITHDRAWAL);
 
-      const FOUND = await REPOSITORY.findById(WITHDRAWAL_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(WITHDRAWAL_ID));
 
       expect(FOUND?.equals(WITHDRAWAL)).toBe(true);
     });
@@ -158,7 +164,7 @@ describe("IWithdrawal", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(WITHDRAWAL_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(WITHDRAWAL_ID));
 
       expect(FOUND?.quotas.value.toString()).toBe("9.25");
     });
@@ -168,9 +174,11 @@ describe("IWithdrawal", () => {
     it("removes the persisted withdrawal", async () => {
       await REPOSITORY.save(WITHDRAWAL);
 
-      await REPOSITORY.delete(WITHDRAWAL_ID);
+      await REPOSITORY.delete(EntityId.create(WITHDRAWAL_ID));
 
-      expect(await REPOSITORY.findById(WITHDRAWAL_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(WITHDRAWAL_ID)),
+      ).toBeNull();
     });
   });
 });

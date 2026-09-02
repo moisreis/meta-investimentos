@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { BenchmarkHistory } from "@/business/entities/benchmark/benchmark-history.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("BenchmarkHistory.create", () => {
   const DATE = new Date("2026-01-01T00:00:00.000Z");

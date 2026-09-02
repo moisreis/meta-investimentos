@@ -22,15 +22,7 @@ import type { DbClient } from "../types";
  * id.
  */
 export class AuditLogRepository implements IAuditLog {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates an `AuditLogRepository` bound to the provided database
@@ -41,10 +33,6 @@ export class AuditLogRepository implements IAuditLog {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `audit_log` row to an {@link AuditLog} entity.
@@ -84,16 +72,12 @@ export class AuditLogRepository implements IAuditLog {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the log with the provided id.
    *
    * @see {@link IAuditLog.findById}
    */
-  async findById(id: string): Promise<AuditLog | null> {
+  async findById(id: EntityId): Promise<AuditLog | null> {
     const [row] = await this.db
       .select()
       .from(auditLog)
@@ -198,10 +182,6 @@ export class AuditLogRepository implements IAuditLog {
 
     return rows.map((row) => this.toEntity(row));
   }
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided log.

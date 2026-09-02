@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   ACCOUNT,
@@ -24,13 +24,13 @@ describe("IAccount", () => {
     it("returns the persisted account", async () => {
       await REPOSITORY.save(ACCOUNT);
 
-      const FOUND = await REPOSITORY.findById(ACCOUNT_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(ACCOUNT_ID));
 
       expect(FOUND?.equals(ACCOUNT)).toBe(true);
     });
 
     it("returns null when the account does not exist", async () => {
-      expect(await REPOSITORY.findById(ACCOUNT_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(ACCOUNT_ID))).toBeNull();
     });
   });
 
@@ -73,7 +73,9 @@ describe("IAccount", () => {
 
       await REPOSITORY.save(FIRST);
 
-      const FOUND = await REPOSITORY.findAllByUserId(OTHER_USER_ID);
+      const FOUND = await REPOSITORY.findAllByUserId(
+        EntityId.create(OTHER_USER_ID),
+      );
 
       expect(FOUND).toHaveLength(2);
       expect(FOUND.some((ROW) => ROW.equals(OTHER_ACCOUNT))).toBe(true);
@@ -81,7 +83,9 @@ describe("IAccount", () => {
     });
 
     it("returns an empty array when the user has no accounts", async () => {
-      expect(await REPOSITORY.findAllByUserId(USER_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByUserId(EntityId.create(USER_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -90,9 +94,11 @@ describe("IAccount", () => {
       const SAVED = await REPOSITORY.save(ACCOUNT);
 
       expect(SAVED.equals(ACCOUNT)).toBe(true);
-      expect((await REPOSITORY.findById(ACCOUNT_ID))?.equals(ACCOUNT)).toBe(
-        true,
-      );
+      expect(
+        (await REPOSITORY.findById(EntityId.create(ACCOUNT_ID)))?.equals(
+          ACCOUNT,
+        ),
+      ).toBe(true);
     });
 
     it("updates an existing account", async () => {
@@ -111,7 +117,7 @@ describe("IAccount", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(ACCOUNT_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(ACCOUNT_ID));
 
       expect(FOUND?.accessToken).toBe("updated-token");
       expect(FOUND?.equals(UPDATED)).toBe(true);
@@ -122,9 +128,9 @@ describe("IAccount", () => {
     it("removes the persisted account", async () => {
       await REPOSITORY.save(ACCOUNT);
 
-      await REPOSITORY.delete(ACCOUNT_ID);
+      await REPOSITORY.delete(EntityId.create(ACCOUNT_ID));
 
-      expect(await REPOSITORY.findById(ACCOUNT_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(ACCOUNT_ID))).toBeNull();
     });
   });
 });

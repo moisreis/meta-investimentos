@@ -1,4 +1,4 @@
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -21,16 +21,17 @@ interface CalculatePortfolioInflationSpreadProps {
  * The result is expressed as a percentage, rounded to
  * 2 decimal places, and represented as a {@link SignedPercentage}.
  *
- * @param portfolioReturn - The Portfolio return for the period,
- * in percentage terms.
+ * @param portfolioReturn - The Portfolio return for the
+ *                          period, in percentage terms.
  * @param inflationRate - The monthly inflation index (IPCA),
- * in percentage terms.
+ *                        in percentage terms.
  *
  * @returns The calculated inflation spread of the Portfolio.
  *
  * @equation Sₜᵖ = Rₜᵖ − πₜ
  *
  * @example
+ * ```ts
  * const RESULT = calculatePortfolioInflationSpread({
  *   portfolioReturn: SignedPercentage.create('1.04'),
  *   inflationRate: SignedPercentage.create('0.45'),
@@ -38,6 +39,7 @@ interface CalculatePortfolioInflationSpreadProps {
  *
  * RESULT.value.toString()
  * // '0.59'
+ * ```
  */
 export function calculatePortfolioInflationSpread({
   portfolioReturn,

@@ -1,6 +1,7 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
+  BANK_ACCOUNT_ID,
   CHECKING_ACCOUNT,
   CHECKING_ACCOUNT_ID,
   createInMemoryCheckingAccountRepository,
@@ -10,7 +11,8 @@ import {
 
 import { CheckingAccount } from "@/business/entities/bank/checking-account.entity";
 import type { ICheckingAccount } from "@/business/interfaces/bank/checking-account.interface";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 describe("ICheckingAccount", () => {
   let REPOSITORY: ICheckingAccount;
@@ -23,13 +25,17 @@ describe("ICheckingAccount", () => {
     it("returns the persisted checking account", async () => {
       await REPOSITORY.save(CHECKING_ACCOUNT);
 
-      const FOUND = await REPOSITORY.findById(CHECKING_ACCOUNT_ID);
+      const FOUND = await REPOSITORY.findById(
+        EntityId.create(CHECKING_ACCOUNT_ID),
+      );
 
       expect(FOUND?.equals(CHECKING_ACCOUNT)).toBe(true);
     });
 
     it("returns null when the checking account does not exist", async () => {
-      expect(await REPOSITORY.findById(CHECKING_ACCOUNT_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(CHECKING_ACCOUNT_ID)),
+      ).toBeNull();
     });
   });
 
@@ -48,7 +54,7 @@ describe("ICheckingAccount", () => {
       await REPOSITORY.save(OTHER);
 
       const FOUND = await REPOSITORY.findAllByBankAccountId(
-        "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+        EntityId.create(BANK_ACCOUNT_ID),
       );
 
       expect(FOUND).toHaveLength(2);
@@ -59,7 +65,7 @@ describe("ICheckingAccount", () => {
     it("returns an empty array when there are no matches", async () => {
       expect(
         await REPOSITORY.findAllByBankAccountId(
-          "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
+          EntityId.create(BANK_ACCOUNT_ID),
         ),
       ).toEqual([]);
     });
@@ -70,8 +76,8 @@ describe("ICheckingAccount", () => {
       await REPOSITORY.save(CHECKING_ACCOUNT);
 
       const FOUND = await REPOSITORY.findByBankAccountIdAndDate(
-        "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
-        new Date("2026-01-01T00:00:00.000Z"),
+        EntityId.create(BANK_ACCOUNT_ID),
+        new Date("2026-01-05T00:00:00.000Z"),
       );
 
       expect(FOUND?.equals(CHECKING_ACCOUNT)).toBe(true);
@@ -80,8 +86,8 @@ describe("ICheckingAccount", () => {
     it("returns null when the checking account does not exist", async () => {
       expect(
         await REPOSITORY.findByBankAccountIdAndDate(
-          "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2",
-          new Date("2026-01-01T00:00:00.000Z"),
+          EntityId.create(BANK_ACCOUNT_ID),
+          new Date("2026-01-05T00:00:00.000Z"),
         ),
       ).toBeNull();
     });
@@ -91,7 +97,9 @@ describe("ICheckingAccount", () => {
     it("persists a new checking account", async () => {
       await REPOSITORY.save(CHECKING_ACCOUNT);
 
-      const FOUND = await REPOSITORY.findById(CHECKING_ACCOUNT_ID);
+      const FOUND = await REPOSITORY.findById(
+        EntityId.create(CHECKING_ACCOUNT_ID),
+      );
 
       expect(FOUND?.equals(CHECKING_ACCOUNT)).toBe(true);
     });
@@ -101,10 +109,12 @@ describe("ICheckingAccount", () => {
 
       await REPOSITORY.save(UPDATED_CHECKING_ACCOUNT);
 
-      const FOUND = await REPOSITORY.findById(CHECKING_ACCOUNT_ID);
+      const FOUND = await REPOSITORY.findById(
+        EntityId.create(CHECKING_ACCOUNT_ID),
+      );
 
       expect(FOUND?.equals(CHECKING_ACCOUNT)).toBe(true);
-      expect(FOUND?.value.value.toString()).toBe("99.99");
+      expect(FOUND?.value.value.toString()).toBe("4321.1");
     });
   });
 
@@ -112,9 +122,11 @@ describe("ICheckingAccount", () => {
     it("removes the persisted checking account", async () => {
       await REPOSITORY.save(CHECKING_ACCOUNT);
 
-      await REPOSITORY.delete(CHECKING_ACCOUNT_ID);
+      await REPOSITORY.delete(EntityId.create(CHECKING_ACCOUNT_ID));
 
-      expect(await REPOSITORY.findById(CHECKING_ACCOUNT_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(CHECKING_ACCOUNT_ID)),
+      ).toBeNull();
     });
   });
 });

@@ -1,66 +1,62 @@
-import { BenchmarkHistory } from "@/business/entities/benchmark/benchmark-history.entity";
+﻿import {
+  BENCHMARK_HISTORY,
+  BENCHMARK_HISTORY_ID,
+  BENCHMARK_ID,
+  EXTERNAL_BENCHMARK_HISTORY,
+  EXTERNAL_BENCHMARK_HISTORY_ID,
+  FEBRUARY_HISTORY_DATE,
+  FRESH_BENCHMARK_HISTORY,
+  HISTORY_DATE,
+  HISTORY_DUPLICATE_DATE,
+  OTHER_BENCHMARK_HISTORY,
+  OTHER_BENCHMARK_HISTORY_ID,
+  OTHER_BENCHMARK_ID,
+  PERIOD_OUTSIDE_BENCHMARK_HISTORY,
+  PERIOD_OUTSIDE_BENCHMARK_HISTORY_ID,
+  UPDATED_BENCHMARK_HISTORY,
+} from "@/__tests__/__fixtures__";
+import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import type { IBenchmarkHistory } from "@/business/interfaces/benchmark/benchmark-history.interface";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
-export const HISTORY_ID = "f8c1b1a7-3f92-4c58-b6e1-2b47c1b21d78";
-export const BENCHMARK_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-export const OTHER_BENCHMARK_ID = "c47d54e2-4a03-4f71-9c0d-3a58d2c33e90";
-export const HISTORY_DATE = new Date("2026-01-01T00:00:00.000Z");
+export {
+  BENCHMARK_HISTORY_ID,
+  OTHER_BENCHMARK_HISTORY_ID,
+  EXTERNAL_BENCHMARK_HISTORY_ID,
+  PERIOD_OUTSIDE_BENCHMARK_HISTORY_ID,
+  BENCHMARK_ID,
+  OTHER_BENCHMARK_ID,
+  HISTORY_DATE,
+  HISTORY_DUPLICATE_DATE,
+  FEBRUARY_HISTORY_DATE,
+  BENCHMARK_HISTORY,
+  OTHER_BENCHMARK_HISTORY,
+  EXTERNAL_BENCHMARK_HISTORY,
+  PERIOD_OUTSIDE_BENCHMARK_HISTORY,
+  UPDATED_BENCHMARK_HISTORY,
+  FRESH_BENCHMARK_HISTORY,
+};
 
-export const HISTORY = BenchmarkHistory.create(
-  {
-    benchmarkId: EntityId.create(BENCHMARK_ID),
-    date: HISTORY_DATE,
-    rate: SignedPercentage.create("12.345"),
-  },
-  HISTORY_ID,
-);
+export const HISTORY_ID = BENCHMARK_HISTORY_ID;
+export const HISTORY = BENCHMARK_HISTORY;
 
 export function createInMemoryBenchmarkHistoryRepository(): IBenchmarkHistory {
-  const ROWS = new Map<string, BenchmarkHistory>();
+  const BASE = createInMemoryRepository<
+    Awaited<ReturnType<IBenchmarkHistory["save"]>>
+  >({ extractId: (bh) => bh.id });
 
   return {
-    async findById(id: string): Promise<BenchmarkHistory | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findAllByBenchmarkId(benchmarkId) {
+      return BASE.match((bh) => bh.benchmarkId === benchmarkId);
     },
-
-    async findAllByBenchmarkId(
-      benchmarkId: string,
-    ): Promise<BenchmarkHistory[]> {
-      const MATCHES: BenchmarkHistory[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.benchmarkId === benchmarkId) MATCHES.push(ROW);
-      }
-
-      return MATCHES;
+    async findByBenchmarkIdAndDate(benchmarkId, date) {
+      return BASE.findOne(
+        (bh) =>
+          bh.benchmarkId === benchmarkId &&
+          bh.date.getTime() === date.getTime(),
+      );
     },
-
-    async findByBenchmarkIdAndDate(
-      benchmarkId: string,
-      date: Date,
-    ): Promise<BenchmarkHistory | null> {
-      for (const ROW of ROWS.values()) {
-        if (
-          ROW.benchmarkId === benchmarkId &&
-          ROW.date.getTime() === date.getTime()
-        ) {
-          return ROW;
-        }
-      }
-
-      return null;
-    },
-
-    async save(benchmarkHistory: BenchmarkHistory): Promise<BenchmarkHistory> {
-      ROWS.set(benchmarkHistory.id ?? "generated-id", benchmarkHistory);
-
-      return benchmarkHistory;
-    },
-
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (benchmarkHistory) => BASE.save(benchmarkHistory),
+    delete: (id) => BASE.delete(id),
   };
 }

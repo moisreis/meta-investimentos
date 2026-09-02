@@ -1,64 +1,33 @@
-import { db } from "@/__tests__/__setup__/_database.setup";
-import { BankAccount } from "@/business/entities";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import { bankAccount } from "@/infrastructure/database/schemas";
-import { BANK_ID, OTHER_BANK_ID, seedBankById } from "./_bank.seed";
-import {
+﻿import {
+  BANK_ACCOUNT,
+  BANK_ACCOUNT_ID,
+  BANK_ID,
+  FRESH_BANK_ACCOUNT,
+  OTHER_BANK_ACCOUNT,
+  OTHER_BANK_ACCOUNT_ID,
+  OTHER_BANK_ID,
   OTHER_PORTFOLIO_ID,
   PORTFOLIO_ID,
-  seedPortfolioById,
-} from "./_portfolio.seed";
-
-export const BANK_ACCOUNT_ID = "12345678-90ab-4cde-f012-3456789abcde";
-export const OTHER_BANK_ACCOUNT_ID = "23456789-0abc-4def-a123-456789abcdef";
-export const THIRD_BANK_ACCOUNT_ID = "3456789a-bc0d-4efa-b234-56789abcde0f";
-
-export const BANK_ACCOUNT = BankAccount.create(
-  {
-    portfolioId: EntityId.create(PORTFOLIO_ID),
-    bankId: EntityId.create(BANK_ID),
-    agency: "0001",
-    accountNumber: "12345-6",
-  },
-  BANK_ACCOUNT_ID,
-);
-
-export const OTHER_BANK_ACCOUNT = BankAccount.create(
-  {
-    portfolioId: EntityId.create(OTHER_PORTFOLIO_ID),
-    bankId: EntityId.create(OTHER_BANK_ID),
-    agency: "0002",
-    accountNumber: "67890-1",
-  },
-  OTHER_BANK_ACCOUNT_ID,
-);
-
-export const THIRD_BANK_ACCOUNT = BankAccount.create(
-  {
-    portfolioId: EntityId.create(PORTFOLIO_ID),
-    bankId: EntityId.create(OTHER_BANK_ID),
-    agency: "0003",
-    accountNumber: "11111-2",
-  },
+  THIRD_BANK_ACCOUNT,
   THIRD_BANK_ACCOUNT_ID,
-);
+  UPDATED_BANK_ACCOUNT,
+} from "@/__tests__/__fixtures__";
+import { db } from "@/__tests__/__setup__/_database.setup";
+import type { BankAccount } from "@/business/entities";
+import { bankAccount } from "@/infrastructure/database/schemas";
+import { seedBankById } from "./_bank.seed";
+import { seedPortfolioById } from "./_portfolio.seed";
 
-export const UPDATED_BANK_ACCOUNT = BankAccount.create(
-  {
-    portfolioId: EntityId.create(PORTFOLIO_ID),
-    bankId: EntityId.create(BANK_ID),
-    agency: "0001",
-    accountNumber: "54321-0",
-  },
+export {
   BANK_ACCOUNT_ID,
-);
-
-export const FRESH_BANK_ACCOUNT = BankAccount.create({
-  portfolioId: EntityId.create(PORTFOLIO_ID),
-  bankId: EntityId.create(BANK_ID),
-  agency: "0004",
-  accountNumber: "99999-9",
-});
+  OTHER_BANK_ACCOUNT_ID,
+  THIRD_BANK_ACCOUNT_ID,
+  BANK_ACCOUNT,
+  OTHER_BANK_ACCOUNT,
+  THIRD_BANK_ACCOUNT,
+  UPDATED_BANK_ACCOUNT,
+  FRESH_BANK_ACCOUNT,
+};
 
 function toBankAccountRow(
   entity: BankAccount,

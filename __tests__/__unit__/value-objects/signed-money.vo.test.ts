@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 describe("SignedMoney", () => {
   describe("create", () => {

@@ -1,42 +1,26 @@
-import { Bank } from "@/business/entities/bank/bank.entity";
+﻿import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import type { IBank } from "@/business/interfaces/bank/bank.interface";
 
-export const BANK_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-
-export const BANK = Bank.create(
-  { code: "001", name: "Banco do Brasil" },
+export {
+  BANK,
   BANK_ID,
-);
-
-export const UPDATED_BANK = Bank.create(
-  { code: "001", name: "Banco do Brasil Ltda" },
-  BANK_ID,
-);
+  FRESH_BANK,
+  OTHER_BANK,
+  OTHER_BANK_ID,
+  UPDATED_BANK,
+} from "@/__tests__/__fixtures__";
 
 export function createInMemoryBankRepository(): IBank {
-  const ROWS = new Map<string, Bank>();
+  const BASE = createInMemoryRepository<Awaited<ReturnType<IBank["save"]>>>({
+    extractId: (b) => b.id,
+  });
 
   return {
-    async findById(id: string): Promise<Bank | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findByCode(code) {
+      return BASE.findOne((b) => b.code === code);
     },
-
-    async findByCode(code: string): Promise<Bank | null> {
-      for (const ROW of ROWS.values()) {
-        if (ROW.code === code) return ROW;
-      }
-
-      return null;
-    },
-
-    async save(bank: Bank): Promise<Bank> {
-      ROWS.set(bank.id ?? "generated-id", bank);
-
-      return bank;
-    },
-
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (bank) => BASE.save(bank),
+    delete: (id) => BASE.delete(id),
   };
 }

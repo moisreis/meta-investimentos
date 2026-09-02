@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   CATEGORY,
@@ -13,6 +13,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("CategoryRepository", () => {
   beforeEach(async () => {
@@ -27,13 +28,17 @@ describe("CategoryRepository", () => {
     it("returns the persisted category", async () => {
       await seedCategories();
 
-      const FOUND = await newCategoryRepository().findById(CATEGORY_ID);
+      const FOUND = await newCategoryRepository().findById(
+        EntityId.create(CATEGORY_ID),
+      );
 
       expect(FOUND?.equals(CATEGORY)).toBe(true);
     });
 
     it("returns null when the category does not exist", async () => {
-      expect(await newCategoryRepository().findById(CATEGORY_ID)).toBeNull();
+      expect(
+        await newCategoryRepository().findById(EntityId.create(CATEGORY_ID)),
+      ).toBeNull();
     });
   });
 
@@ -58,8 +63,8 @@ describe("CategoryRepository", () => {
       await seedCategories();
 
       const FOUND = await newCategoryRepository().findAllByIds([
-        CATEGORY_ID,
-        OTHER_CATEGORY_ID,
+        EntityId.create(CATEGORY_ID),
+        EntityId.create(OTHER_CATEGORY_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -78,9 +83,11 @@ describe("CategoryRepository", () => {
       expect(SAVED.id).toBeDefined();
       expect(SAVED.name).toBe(FRESH_CATEGORY.name);
       expect(
-        (await newCategoryRepository().findById(SAVED.id as string))?.equals(
-          SAVED,
-        ),
+        (
+          await newCategoryRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
@@ -89,7 +96,9 @@ describe("CategoryRepository", () => {
 
       await newCategoryRepository().save(UPDATED_CATEGORY);
 
-      const FOUND = await newCategoryRepository().findById(CATEGORY_ID);
+      const FOUND = await newCategoryRepository().findById(
+        EntityId.create(CATEGORY_ID),
+      );
 
       expect(FOUND?.name).toBe(UPDATED_CATEGORY.name);
       expect(FOUND?.equals(UPDATED_CATEGORY)).toBe(true);
@@ -100,9 +109,11 @@ describe("CategoryRepository", () => {
     it("removes the persisted category", async () => {
       await seedCategories();
 
-      await newCategoryRepository().delete(CATEGORY_ID);
+      await newCategoryRepository().delete(EntityId.create(CATEGORY_ID));
 
-      expect(await newCategoryRepository().findById(CATEGORY_ID)).toBeNull();
+      expect(
+        await newCategoryRepository().findById(EntityId.create(CATEGORY_ID)),
+      ).toBeNull();
     });
   });
 });

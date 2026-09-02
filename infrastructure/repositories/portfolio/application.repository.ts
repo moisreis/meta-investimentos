@@ -1,11 +1,12 @@
-import { and, eq, gte, inArray, lte, sql } from "drizzle-orm";
+﻿import { and, eq, gte, inArray, lte, sql } from "drizzle-orm";
 
 import { Application } from "@/business/entities/portfolio/application.entity";
 import type { IApplication } from "@/business/interfaces/portfolio/application.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 import { application } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -46,15 +47,7 @@ export interface ApplicationTotals {
  * hook keeps the timestamp in sync with the mutation.
  */
 export class ApplicationRepository implements IApplication {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates an `ApplicationRepository` bound to the provided database
@@ -65,10 +58,6 @@ export class ApplicationRepository implements IApplication {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `application` row to an {@link Application}
@@ -138,16 +127,12 @@ export class ApplicationRepository implements IApplication {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the application with the provided id.
    *
    * @see {@link IApplication.findById}
    */
-  async findById(id: string): Promise<Application | null> {
+  async findById(id: EntityId): Promise<Application | null> {
     const [row] = await this.db
       .select()
       .from(application)
@@ -162,7 +147,7 @@ export class ApplicationRepository implements IApplication {
    *
    * @see {@link IApplication.findAllByPositionId}
    */
-  async findAllByPositionId(positionId: string): Promise<Application[]> {
+  async findAllByPositionId(positionId: EntityId): Promise<Application[]> {
     const rows = await this.db
       .select()
       .from(application)
@@ -178,7 +163,7 @@ export class ApplicationRepository implements IApplication {
    * @see {@link IApplication.findAllByPositionIdInPeriod}
    */
   async findAllByPositionIdInPeriod(
-    positionId: string,
+    positionId: EntityId,
     startDate: Date,
     endDate: Date,
   ): Promise<Application[]> {
@@ -271,10 +256,6 @@ export class ApplicationRepository implements IApplication {
     };
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided application.
    *
@@ -289,7 +270,9 @@ export class ApplicationRepository implements IApplication {
         .returning();
 
       if (!row) {
-        throw new Error(`Application with id ${persisted.id} was not found.`);
+        throw new NotFoundError(
+          `Application with id ${persisted.id} was not found.`,
+        );
       }
 
       return this.toEntity(row);
@@ -308,7 +291,7 @@ export class ApplicationRepository implements IApplication {
    *
    * @see {@link IApplication.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(application).where(eq(application.id, id));
   }
 }

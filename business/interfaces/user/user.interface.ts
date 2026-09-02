@@ -1,4 +1,5 @@
 import type { User } from "@/business/entities/user/user.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { User } from "@/business/entities/user/user.entity";
  * `User` entities and back.
  */
 export interface IUser {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the user with the provided id.
    *
@@ -24,7 +21,7 @@ export interface IUser {
    * @returns A promise resolving to the `User` or `null` when
    * not found.
    */
-  findById(id: string): Promise<User | null>;
+  findById(id: EntityId): Promise<User | null>;
 
   /**
    * Retrieves the user with the provided email.
@@ -44,10 +41,6 @@ export interface IUser {
    */
   findByCpf(cpf: string): Promise<User | null>;
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided user.
    *
@@ -66,5 +59,5 @@ export interface IUser {
    * @param id - The unique identifier of the user.
    * @returns A promise that resolves when the user is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

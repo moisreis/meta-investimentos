@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   CONSUMED_QUOTAS_SUM,
@@ -24,6 +24,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("TransactionAllocationRepository", () => {
   beforeEach(async () => {
@@ -39,7 +40,7 @@ describe("TransactionAllocationRepository", () => {
       await seedAllocations();
 
       const FOUND = await newTransactionAllocationRepository().findById(
-        TRANSACTION_ALLOCATION_ID,
+        EntityId.create(TRANSACTION_ALLOCATION_ID),
       );
 
       expect(FOUND?.equals(TRANSACTION_ALLOCATION)).toBe(true);
@@ -48,7 +49,7 @@ describe("TransactionAllocationRepository", () => {
     it("returns null when the allocation does not exist", async () => {
       expect(
         await newTransactionAllocationRepository().findById(
-          TRANSACTION_ALLOCATION_ID,
+          EntityId.create(TRANSACTION_ALLOCATION_ID),
         ),
       ).toBeNull();
     });
@@ -60,7 +61,7 @@ describe("TransactionAllocationRepository", () => {
 
       const FOUND =
         await newTransactionAllocationRepository().findAllByApplicationId(
-          APPLICATION_ID,
+          EntityId.create(APPLICATION_ID),
         );
 
       expect(FOUND).toHaveLength(2);
@@ -73,7 +74,7 @@ describe("TransactionAllocationRepository", () => {
     it("returns an empty array when no allocations exist", async () => {
       expect(
         await newTransactionAllocationRepository().findAllByApplicationId(
-          APPLICATION_ID,
+          EntityId.create(APPLICATION_ID),
         ),
       ).toEqual([]);
     });
@@ -85,8 +86,8 @@ describe("TransactionAllocationRepository", () => {
 
       const FOUND =
         await newTransactionAllocationRepository().findAllByApplicationIds([
-          APPLICATION_ID,
-          OTHER_APPLICATION_ID,
+          EntityId.create(APPLICATION_ID),
+          EntityId.create(OTHER_APPLICATION_ID),
         ]);
 
       expect(FOUND).toHaveLength(3);
@@ -105,7 +106,7 @@ describe("TransactionAllocationRepository", () => {
 
       const FOUND =
         await newTransactionAllocationRepository().findAllByWithdrawalId(
-          WITHDRAWAL_ID,
+          EntityId.create(WITHDRAWAL_ID),
         );
 
       expect(FOUND).toHaveLength(1);
@@ -119,8 +120,8 @@ describe("TransactionAllocationRepository", () => {
 
       const FOUND =
         await newTransactionAllocationRepository().findAllByWithdrawIds([
-          WITHDRAWAL_ID,
-          OTHER_WITHDRAWAL_ID,
+          EntityId.create(WITHDRAWAL_ID),
+          EntityId.create(OTHER_WITHDRAWAL_ID),
         ]);
 
       expect(FOUND).toHaveLength(3);
@@ -139,7 +140,7 @@ describe("TransactionAllocationRepository", () => {
 
       const TOTAL =
         await newTransactionAllocationRepository().sumQuotasConsumedByApplicationId(
-          APPLICATION_ID,
+          EntityId.create(APPLICATION_ID),
         );
 
       expect(TOTAL?.value.toString()).toBe(
@@ -152,7 +153,7 @@ describe("TransactionAllocationRepository", () => {
 
       const TOTAL =
         await newTransactionAllocationRepository().sumQuotasConsumedByApplicationId(
-          OTHER_APPLICATION_ID,
+          EntityId.create(OTHER_APPLICATION_ID),
         );
 
       expect(TOTAL?.value.toString()).toBe(
@@ -175,7 +176,7 @@ describe("TransactionAllocationRepository", () => {
       expect(
         (
           await newTransactionAllocationRepository().findById(
-            SAVED.id as string,
+            EntityId.create(SAVED.id as string),
           )
         )?.equals(SAVED),
       ).toBe(true);
@@ -189,7 +190,7 @@ describe("TransactionAllocationRepository", () => {
       );
 
       const FOUND = await newTransactionAllocationRepository().findById(
-        TRANSACTION_ALLOCATION_ID,
+        EntityId.create(TRANSACTION_ALLOCATION_ID),
       );
 
       expect(FOUND?.quotasConsumed.value.toString()).toBe(
@@ -204,12 +205,12 @@ describe("TransactionAllocationRepository", () => {
       await seedAllocations();
 
       await newTransactionAllocationRepository().delete(
-        TRANSACTION_ALLOCATION_ID,
+        EntityId.create(TRANSACTION_ALLOCATION_ID),
       );
 
       expect(
         await newTransactionAllocationRepository().findById(
-          TRANSACTION_ALLOCATION_ID,
+          EntityId.create(TRANSACTION_ALLOCATION_ID),
         ),
       ).toBeNull();
     });

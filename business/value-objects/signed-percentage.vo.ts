@@ -1,11 +1,21 @@
 import Decimal from "decimal.js";
+import {
+  PERCENTAGE_DECIMAL_PLACES,
+  ROUNDING_MODE,
+} from "@/business/value-objects/rounding";
 import { ValidationError } from "@/shared/errors";
 
 /**
- * Represents the properties of a signed percentage.
+ * Represents a signed percentage value.
  *
- * The value is stored as a {@link Decimal} to preserve
- * precision when performing percentage calculations.
+ * The code stores the value as a {@link Decimal} to keep
+ * full precision during percentage calculations.
+ *
+ * The code normalizes the value to a maximum of 2 decimal
+ * places when it creates the percentage.
+ *
+ * Use {@link SignedPercentage.create} to create a valid
+ * `SignedPercentage` instance.
  */
 interface SignedPercentageProps {
   value: Decimal;
@@ -31,26 +41,15 @@ interface SignedPercentageProps {
  *
  * @example
  * ```ts
- * const NEGATIVE = SignedPercentage.create('-10')
- * const POSITIVE = SignedPercentage.create('10')
- * const ZERO = SignedPercentage.create('0')
+ * const A = SignedPercentage.create('10')
+ * const B = SignedPercentage.create('10.00')
  *
- * NEGATIVE.isNegative
- * // true
- *
- * POSITIVE.isPositive
- * // true
- *
- * ZERO.isZero
+ * SignedPercentage.equals(A, B)
  * // true
  * ```
  */
-class SignedPercentage {
+export class SignedPercentage {
   private readonly props: SignedPercentageProps;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the percentage value.
@@ -60,63 +59,56 @@ class SignedPercentage {
   }
 
   /**
-   * Determines whether the percentage is negative.
+   * Returns whether the percentage is negative.
    *
    * @returns `true` when the percentage is less than `0`;
-   * otherwise, `false`.
+   *          otherwise, `false`.
    */
   get isNegative(): boolean {
     return this.props.value.isNegative();
   }
 
   /**
-   * Determines whether the percentage is positive.
+   * Returns whether the percentage is positive.
    *
    * A value of `0` is not considered positive.
    *
    * @returns `true` when the percentage is greater than `0`;
-   * otherwise, `false`.
+   *          otherwise, `false`.
    */
   get isPositive(): boolean {
     return this.props.value.isPositive() && !this.props.value.isZero();
   }
 
   /**
-   * Determines whether the percentage is zero.
+   * Returns whether the percentage is zero.
    *
    * @returns `true` when the percentage equals `0`;
-   * otherwise, `false`.
+   *          otherwise, `false`.
    */
   get isZero(): boolean {
     return this.props.value.isZero();
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `SignedPercentage`.
    *
    * The constructor is private to ensure that all instances
-   * are created through {@link SignedPercentage.create}.
+   * are created through {@link SignedPercentage.create} and
+   * therefore satisfy the value object's invariants.
    */
   private constructor(props: SignedPercentageProps) {
     this.props = props;
   }
 
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
-
   /**
    * Creates a valid `SignedPercentage` from a decimal-compatible value.
    *
-   * The value can be any value accepted by {@link Decimal.Value}.
-   * It may be positive, negative, or zero.
+   * The code accepts any value that {@link Decimal.Value}
+   * accepts. The value may be positive, negative, or zero.
    *
-   * The resulting value is converted to a {@link Decimal} and
-   * rounded to a maximum of 2 decimal places.
+   * The code converts the value to a {@link Decimal} and
+   * rounds it to a maximum of 2 decimal places.
    *
    * @param value - The decimal-compatible percentage value to create.
    * @returns A valid `SignedPercentage` instance.
@@ -147,13 +139,12 @@ class SignedPercentage {
     const DECIMAL_VALUE = new Decimal(value);
 
     return new SignedPercentage({
-      value: DECIMAL_VALUE.toDecimalPlaces(2),
+      value: DECIMAL_VALUE.toDecimalPlaces(
+        PERCENTAGE_DECIMAL_PLACES,
+        ROUNDING_MODE,
+      ),
     });
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether two `SignedPercentage` instances
@@ -162,7 +153,7 @@ class SignedPercentage {
    * @param a - The first percentage.
    * @param b - The second percentage.
    * @returns `true` when both percentages have equal values;
-   * otherwise, `false`.
+   *          otherwise, `false`.
    *
    * @example
    * ```ts
@@ -177,5 +168,3 @@ class SignedPercentage {
     return a.value.equals(b.value);
   }
 }
-
-export default SignedPercentage;

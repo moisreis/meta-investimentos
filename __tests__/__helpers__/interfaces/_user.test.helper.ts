@@ -1,48 +1,29 @@
-import { User } from "@/business/entities/user/user.entity";
+﻿import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import type { IUser } from "@/business/interfaces/user/user.interface";
-import CPF from "@/business/value-objects/cpf.vo";
 
-export const USER_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-
-export const USER = User.create(
-  {
-    name: "José da Silva",
-    email: "jose@example.com",
-    firstName: "José",
-    lastName: "da Silva",
-    cpf: CPF.create("52998224725"),
-  },
+export {
+  FRESH_USER,
+  OTHER_USER,
+  OTHER_USER_ID,
+  UPDATED_USER,
+  USER,
   USER_ID,
-);
+} from "@/__tests__/__fixtures__";
 
 export function createInMemoryUserRepository(): IUser {
-  const ROWS = new Map<string, User>();
+  const BASE = createInMemoryRepository<Awaited<ReturnType<IUser["save"]>>>({
+    extractId: (u) => u.id,
+  });
 
   return {
-    async findById(id: string): Promise<User | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findByEmail(email) {
+      return BASE.findOne((u) => u.email === email);
     },
-    async findByEmail(email: string): Promise<User | null> {
-      for (const ROW of ROWS.values()) {
-        if (ROW.email === email) return ROW;
-      }
-
-      return null;
+    async findByCpf(cpf) {
+      return BASE.findOne((u) => u.cpf.value === cpf);
     },
-    async findByCpf(cpf: string): Promise<User | null> {
-      for (const ROW of ROWS.values()) {
-        if (ROW.cpf.value === cpf) return ROW;
-      }
-
-      return null;
-    },
-    async save(user: User): Promise<User> {
-      ROWS.set(user.id ?? "generated-id", user);
-
-      return user;
-    },
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (user) => BASE.save(user),
+    delete: (id) => BASE.delete(id),
   };
 }

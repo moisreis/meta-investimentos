@@ -1,51 +1,30 @@
-import { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
+﻿import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import type { IPortfolio } from "@/business/interfaces/portfolio/portfolio.interface";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
 
-export const PORTFOLIO_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-export const USER_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
-export const OTHER_USER_ID = "c47d54e2-4a03-4f71-9c0d-3a58d2c33e90";
-
-export const PORTFOLIO = Portfolio.create(
-  {
-    acronym: "FIA",
-    name: "Fundo de Investimento em Ações",
-    userId: EntityId.create(USER_ID),
-    annualInterestRate: SignedPercentage.create("10"),
-    minAllocation: SignedPercentage.create("5"),
-    maxAllocation: SignedPercentage.create("20"),
-    targetAllocation: SignedPercentage.create("12"),
-  },
+export {
+  FRESH_PORTFOLIO,
+  OTHER_PORTFOLIO,
+  OTHER_PORTFOLIO_ID,
+  OTHER_USER_ID,
+  PORTFOLIO,
   PORTFOLIO_ID,
-);
+  THIRD_PORTFOLIO,
+  THIRD_PORTFOLIO_ID,
+  UPDATED_PORTFOLIO,
+  USER_ID,
+} from "@/__tests__/__fixtures__";
 
 export function createInMemoryPortfolioRepository(): IPortfolio {
-  const ROWS = new Map<string, Portfolio>();
+  const BASE = createInMemoryRepository<
+    Awaited<ReturnType<IPortfolio["save"]>>
+  >({ extractId: (p) => p.id });
 
   return {
-    async findById(id: string): Promise<Portfolio | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findAllByUserId(userId) {
+      return BASE.match((p) => p.userId === userId);
     },
-
-    async findAllByUserId(userId: string): Promise<Portfolio[]> {
-      const MATCHES: Portfolio[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.userId === userId) MATCHES.push(ROW);
-      }
-
-      return MATCHES;
-    },
-
-    async save(portfolio: Portfolio): Promise<Portfolio> {
-      ROWS.set(portfolio.id ?? "generated-id", portfolio);
-
-      return portfolio;
-    },
-
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (portfolio) => BASE.save(portfolio),
+    delete: (id) => BASE.delete(id),
   };
 }

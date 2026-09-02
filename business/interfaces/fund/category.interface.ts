@@ -1,4 +1,5 @@
 import type { Category } from "@/business/entities/fund/category.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { Category } from "@/business/entities/fund/category.entity";
  * `Category` entities and back.
  */
 export interface ICategory {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the category with the provided id.
    *
@@ -24,7 +21,7 @@ export interface ICategory {
    * @returns A promise resolving to the `Category` or `null` when
    * not found.
    */
-  findById(id: string): Promise<Category | null>;
+  findById(id: EntityId): Promise<Category | null>;
 
   /**
    * Retrieves the category with the provided name.
@@ -34,10 +31,6 @@ export interface ICategory {
    * not found.
    */
   findByName(name: string): Promise<Category | null>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided category.
@@ -57,5 +50,5 @@ export interface ICategory {
    * @param id - The unique identifier of the category.
    * @returns A promise that resolves when the category is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

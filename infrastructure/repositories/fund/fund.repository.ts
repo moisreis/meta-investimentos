@@ -1,11 +1,12 @@
-import { eq, inArray } from "drizzle-orm";
+﻿import { eq, inArray } from "drizzle-orm";
 
 import { Fund } from "@/business/entities/fund/fund.entity";
 import type { IFund } from "@/business/interfaces/fund/fund.interface";
-import CNPJ from "@/business/value-objects/cnpj.vo";
+import { CNPJ } from "@/business/value-objects/cnpj.vo";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { fund } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -25,15 +26,7 @@ import type { DbClient } from "../types";
  * hook keeps the timestamp in sync with the mutation.
  */
 export class FundRepository implements IFund {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `FundRepository` bound to the provided database client.
@@ -43,10 +36,6 @@ export class FundRepository implements IFund {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `fund` row to a {@link Fund} entity.
@@ -117,16 +106,12 @@ export class FundRepository implements IFund {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the fund with the provided id.
    *
    * @see {@link IFund.findById}
    */
-  async findById(id: string): Promise<Fund | null> {
+  async findById(id: EntityId): Promise<Fund | null> {
     const [row] = await this.db
       .select()
       .from(fund)
@@ -212,10 +197,6 @@ export class FundRepository implements IFund {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided fund.
    *
@@ -230,7 +211,7 @@ export class FundRepository implements IFund {
         .returning();
 
       if (!row) {
-        throw new Error(`Fund with id ${persisted.id} was not found.`);
+        throw new NotFoundError(`Fund with id ${persisted.id} was not found.`);
       }
 
       return this.toEntity(row);
@@ -249,7 +230,7 @@ export class FundRepository implements IFund {
    *
    * @see {@link IFund.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(fund).where(eq(fund.id, id));
   }
 }

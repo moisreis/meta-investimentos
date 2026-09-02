@@ -1,34 +1,29 @@
+﻿import {
+  BENCHMARK,
+  BENCHMARK_ID,
+  FRESH_BENCHMARK,
+  OTHER_BENCHMARK,
+  OTHER_BENCHMARK_ID,
+  UPDATED_BENCHMARK,
+} from "@/__tests__/__fixtures__";
 import { db } from "@/__tests__/__setup__/_database.setup";
-import { Benchmark } from "@/business/entities";
+import type { Benchmark } from "@/business/entities";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { benchmark } from "@/infrastructure/database/schemas";
 import { BenchmarkRepository } from "@/infrastructure/repositories";
 
-export const BENCHMARK_ID = "4e5f6a7b-8c9d-4e0f-8a1b-2c3d4e5f6a7b";
-export const OTHER_BENCHMARK_ID = "5f6a7b8c-9d0e-4f1a-9b2c-3d4e5f6a7b8c";
-
-export const BENCHMARK = Benchmark.create(
-  { acronym: "IBOV", name: "Ibovespa" },
+export {
   BENCHMARK_ID,
-);
-
-export const OTHER_BENCHMARK = Benchmark.create(
-  { acronym: "CDI", name: "CDI" },
   OTHER_BENCHMARK_ID,
-);
-
-export const FRESH_BENCHMARK = Benchmark.create({
-  acronym: "IPCA",
-  name: "IPCA+",
-});
-
-export const UPDATED_BENCHMARK = Benchmark.create(
-  { acronym: BENCHMARK.acronym, name: "Ibovespa B3" },
-  BENCHMARK_ID,
-);
+  BENCHMARK,
+  OTHER_BENCHMARK,
+  FRESH_BENCHMARK,
+  UPDATED_BENCHMARK,
+};
 
 export async function seedBenchmarkById(id: string): Promise<Benchmark> {
   const REPOSITORY = new BenchmarkRepository(db);
-  const EXISTING = await REPOSITORY.findById(id);
+  const EXISTING = await REPOSITORY.findById(EntityId.create(id));
   if (EXISTING) return EXISTING;
 
   const FIXTURE = id === BENCHMARK_ID ? BENCHMARK : OTHER_BENCHMARK;

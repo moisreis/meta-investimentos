@@ -1,14 +1,18 @@
 import Decimal from "decimal.js";
+import {
+  PRICE_DECIMAL_PLACES,
+  ROUNDING_MODE,
+} from "@/business/value-objects/rounding";
 import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents a non-negative quota price.
  *
- * The price is stored as a {@link Decimal} to preserve
- * precision when performing quota pricing calculations.
+ * The code stores the price as a {@link Decimal} to keep
+ * full precision during quota pricing calculations.
  *
- * Values are normalized to a maximum of 6 decimal places
- * when the price is created.
+ * The code normalizes the value to a maximum of 6 decimal
+ * places when it creates the price.
  *
  * Use {@link QuotaPrice.create} to create a valid
  * `QuotaPrice` instance.
@@ -29,9 +33,7 @@ interface QuotaPriceProps {
  *
  * @example
  * ```ts
- * const PRICE = QuotaPrice.create(
- *  '10.123456789'
- * )
+ * const PRICE = QuotaPrice.create('10.123456789')
  *
  * PRICE.value.toString()
  * // '10.123457'
@@ -46,12 +48,8 @@ interface QuotaPriceProps {
  * // true
  * ```
  */
-class QuotaPrice {
+export class QuotaPrice {
   private readonly props: QuotaPriceProps;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the quota price value.
@@ -59,10 +57,6 @@ class QuotaPrice {
   get value(): Decimal {
     return this.props.value;
   }
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `QuotaPrice`.
@@ -75,18 +69,15 @@ class QuotaPrice {
     this.props = props;
   }
 
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
-
   /**
    * Creates a valid `QuotaPrice` from a decimal-compatible value.
    *
-   * The value can be any value accepted by {@link Decimal.Value}.
-   * It must be defined and cannot be negative.
+   * The code accepts any value that {@link Decimal.Value}
+   * accepts. The value must be defined. The value cannot be
+   * negative.
    *
-   * The resulting value is converted to a {@link Decimal} and
-   * rounded to a maximum of 6 decimal places.
+   * The code converts the value to a {@link Decimal} and
+   * rounds it to a maximum of 6 decimal places.
    *
    * @param value - The decimal-compatible quota price to create.
    * @returns A valid `QuotaPrice` instance.
@@ -124,13 +115,9 @@ class QuotaPrice {
     }
 
     return new QuotaPrice({
-      value: DECIMAL_VALUE.toDecimalPlaces(6),
+      value: DECIMAL_VALUE.toDecimalPlaces(PRICE_DECIMAL_PLACES, ROUNDING_MODE),
     });
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether two `QuotaPrice` instances
@@ -139,7 +126,7 @@ class QuotaPrice {
    * @param a - The first quota price.
    * @param b - The second quota price.
    * @returns `true` when both quota prices have equal values;
-   * otherwise, `false`.
+   *          otherwise, `false`.
    *
    * @example
    * ```ts
@@ -154,5 +141,3 @@ class QuotaPrice {
     return a.value.equals(b.value);
   }
 }
-
-export default QuotaPrice;

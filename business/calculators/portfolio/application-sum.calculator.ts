@@ -1,4 +1,4 @@
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -23,8 +23,9 @@ interface CalculatePortfolioApplicationSumProps {
  *
  * The result is represented as a {@link PositiveMoney}.
  *
- * @param application - The application amounts from all positions
- * in the portfolio to be summed.
+ * @param application - The application amounts from all
+ *                      positions in the portfolio to be
+ *                      summed.
  *
  * @returns The total application amount across all positions
  * in the portfolio.

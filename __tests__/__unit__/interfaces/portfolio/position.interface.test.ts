@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   createInMemoryPositionRepository,
@@ -25,13 +25,15 @@ describe("IPosition", () => {
     it("returns the persisted position", async () => {
       await REPOSITORY.save(POSITION);
 
-      const FOUND = await REPOSITORY.findById(POSITION_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(POSITION_ID));
 
       expect(FOUND?.equals(POSITION)).toBe(true);
     });
 
     it("returns null when the position does not exist", async () => {
-      expect(await REPOSITORY.findById(POSITION_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(POSITION_ID)),
+      ).toBeNull();
     });
   });
 
@@ -56,7 +58,9 @@ describe("IPosition", () => {
       await REPOSITORY.save(SECOND_POSITION);
       await REPOSITORY.save(OTHER_POSITION);
 
-      const FOUND = await REPOSITORY.findAllByPortfolioId(PORTFOLIO_ID);
+      const FOUND = await REPOSITORY.findAllByPortfolioId(
+        EntityId.create(PORTFOLIO_ID),
+      );
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.equals(POSITION)).toBe(true);
@@ -64,7 +68,9 @@ describe("IPosition", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByPortfolioId(PORTFOLIO_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByPortfolioId(EntityId.create(PORTFOLIO_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -73,8 +79,8 @@ describe("IPosition", () => {
       await REPOSITORY.save(POSITION);
 
       const FOUND = await REPOSITORY.findByPortfolioIdAndFundId(
-        PORTFOLIO_ID,
-        FUND_ID,
+        EntityId.create(PORTFOLIO_ID),
+        EntityId.create(FUND_ID),
       );
 
       expect(FOUND?.equals(POSITION)).toBe(true);
@@ -82,7 +88,10 @@ describe("IPosition", () => {
 
     it("returns null when the position does not exist", async () => {
       expect(
-        await REPOSITORY.findByPortfolioIdAndFundId(PORTFOLIO_ID, FUND_ID),
+        await REPOSITORY.findByPortfolioIdAndFundId(
+          EntityId.create(PORTFOLIO_ID),
+          EntityId.create(FUND_ID),
+        ),
       ).toBeNull();
     });
   });
@@ -91,7 +100,7 @@ describe("IPosition", () => {
     it("persists a new position", async () => {
       await REPOSITORY.save(POSITION);
 
-      const FOUND = await REPOSITORY.findById(POSITION_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(POSITION_ID));
 
       expect(FOUND?.equals(POSITION)).toBe(true);
     });
@@ -109,7 +118,7 @@ describe("IPosition", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(POSITION_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(POSITION_ID));
 
       expect(FOUND?.fundId).toBe(OTHER_FUND_ID);
     });
@@ -119,9 +128,11 @@ describe("IPosition", () => {
     it("removes the persisted position", async () => {
       await REPOSITORY.save(POSITION);
 
-      await REPOSITORY.delete(POSITION_ID);
+      await REPOSITORY.delete(EntityId.create(POSITION_ID));
 
-      expect(await REPOSITORY.findById(POSITION_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(POSITION_ID)),
+      ).toBeNull();
     });
   });
 });

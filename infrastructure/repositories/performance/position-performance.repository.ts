@@ -1,13 +1,14 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+﻿import { and, desc, eq, inArray } from "drizzle-orm";
 
 import { PositionPerformance } from "@/business/entities/performance/position-performance.entity";
 import type { IPositionPerformance } from "@/business/interfaces/performance/position-performance.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { positionPerformance } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -28,15 +29,7 @@ import type { DbClient } from "../types";
  * resolves the latest snapshot of many positions in a single query.
  */
 export class PositionPerformanceRepository implements IPositionPerformance {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `PositionPerformanceRepository` bound to the provided
@@ -47,10 +40,6 @@ export class PositionPerformanceRepository implements IPositionPerformance {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `position_performance` row to a
@@ -146,16 +135,12 @@ export class PositionPerformanceRepository implements IPositionPerformance {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the position performance with the provided id.
    *
    * @see {@link IPositionPerformance.findById}
    */
-  async findById(id: string): Promise<PositionPerformance | null> {
+  async findById(id: EntityId): Promise<PositionPerformance | null> {
     const [row] = await this.db
       .select()
       .from(positionPerformance)
@@ -171,7 +156,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * @see {@link IPositionPerformance.findAllByPositionId}
    */
   async findAllByPositionId(
-    positionId: string,
+    positionId: EntityId,
   ): Promise<PositionPerformance[]> {
     const rows = await this.db
       .select()
@@ -215,7 +200,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * @see {@link IPositionPerformance.findByPositionIdAndDate}
    */
   async findByPositionIdAndDate(
-    positionId: string,
+    positionId: EntityId,
     date: Date,
   ): Promise<PositionPerformance | null> {
     const [row] = await this.db
@@ -239,7 +224,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * @see {@link IPositionPerformance.findLatestByPositionId}
    */
   async findLatestByPositionId(
-    positionId: string,
+    positionId: EntityId,
   ): Promise<PositionPerformance | null> {
     const [row] = await this.db
       .select()
@@ -280,10 +265,6 @@ export class PositionPerformanceRepository implements IPositionPerformance {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided position performance snapshot.
    *
@@ -298,7 +279,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
         .returning();
 
       if (!row) {
-        throw new Error(
+        throw new NotFoundError(
           `PositionPerformance with id ${persisted.id} was not found.`,
         );
       }
@@ -319,7 +300,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    *
    * @see {@link IPositionPerformance.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db
       .delete(positionPerformance)
       .where(eq(positionPerformance.id, id));

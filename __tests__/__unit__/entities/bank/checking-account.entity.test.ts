@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { CheckingAccount } from "@/business/entities/bank/checking-account.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 describe("CheckingAccount.create", () => {
   const VALID_PROPS = {

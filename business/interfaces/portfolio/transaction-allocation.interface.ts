@@ -1,4 +1,5 @@
 import type { TransactionAllocation } from "@/business/entities/portfolio/transaction-allocation.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { TransactionAllocation } from "@/business/entities/portfolio/transa
  * `TransactionAllocation` entities and back.
  */
 export interface ITransactionAllocation {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the transaction allocation with the provided id.
    *
@@ -24,7 +21,7 @@ export interface ITransactionAllocation {
    * @returns A promise resolving to the `TransactionAllocation` or `null`
    * when not found.
    */
-  findById(id: string): Promise<TransactionAllocation | null>;
+  findById(id: EntityId): Promise<TransactionAllocation | null>;
 
   /**
    * Retrieves all transaction allocations belonging to the provided
@@ -35,7 +32,7 @@ export interface ITransactionAllocation {
    * an empty array when there are no matches.
    */
   findAllByApplicationId(
-    applicationId: string,
+    applicationId: EntityId,
   ): Promise<TransactionAllocation[]>;
 
   /**
@@ -46,11 +43,7 @@ export interface ITransactionAllocation {
    * @returns A promise resolving to the `TransactionAllocation` entries or
    * an empty array when there are no matches.
    */
-  findAllByWithdrawalId(withdrawId: string): Promise<TransactionAllocation[]>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
+  findAllByWithdrawalId(withdrawId: EntityId): Promise<TransactionAllocation[]>;
 
   /**
    * Persists the provided transaction allocation.
@@ -73,5 +66,5 @@ export interface ITransactionAllocation {
    * @returns A promise that resolves when the transaction allocation is
    * removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

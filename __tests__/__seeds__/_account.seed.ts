@@ -1,61 +1,32 @@
-import { db } from "@/__tests__/__setup__/_database.setup";
-import { Account } from "@/business/entities";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import { account } from "@/infrastructure/database/schemas";
-import { OTHER_USER_ID, seedUserById, USER_ID } from "./_user.seed";
-
-export const ACCOUNT_ID = "a1b2c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d";
-export const OTHER_ACCOUNT_ID = "b2c3d4e5-6f7a-4b8c-9d0e-1f2a3b4c5d6e";
-export const THIRD_ACCOUNT_ID = "c3d4e5f6-7a8b-4c9d-8e0f-1a2b3c4d5e6f";
-
-export const ACCOUNT = Account.create(
-  {
-    issuer: "github",
-    providerId: "github",
-    accountId: "octocat",
-    userId: EntityId.create(USER_ID),
-  },
+﻿import {
+  ACCOUNT,
   ACCOUNT_ID,
-);
-
-export const OTHER_ACCOUNT = Account.create(
-  {
-    issuer: "github",
-    providerId: "github",
-    accountId: "octodog",
-    userId: EntityId.create(OTHER_USER_ID),
-  },
+  ACCOUNTS,
+  FRESH_ACCOUNT,
+  OTHER_ACCOUNT,
   OTHER_ACCOUNT_ID,
-);
-
-export const THIRD_ACCOUNT = Account.create(
-  {
-    issuer: "github",
-    providerId: "github",
-    accountId: "octopus",
-    userId: EntityId.create(USER_ID),
-  },
+  OTHER_USER_ID,
+  THIRD_ACCOUNT,
   THIRD_ACCOUNT_ID,
-);
+  UPDATED_ACCOUNT,
+  USER_ID,
+} from "@/__tests__/__fixtures__";
+import { db } from "@/__tests__/__setup__/_database.setup";
+import type { Account } from "@/business/entities";
+import { account } from "@/infrastructure/database/schemas";
+import { seedUserById } from "./_user.seed";
 
-export const ACCOUNTS = [ACCOUNT, OTHER_ACCOUNT];
-
-export const UPDATED_ACCOUNT = Account.create(
-  {
-    issuer: "github",
-    providerId: "github",
-    accountId: "octocat-updated",
-    userId: EntityId.create(USER_ID),
-  },
+export {
   ACCOUNT_ID,
-);
-
-export const FRESH_ACCOUNT = Account.create({
-  issuer: "github",
-  providerId: "github",
-  accountId: "fresh-bot",
-  userId: EntityId.create(USER_ID),
-});
+  OTHER_ACCOUNT_ID,
+  THIRD_ACCOUNT_ID,
+  ACCOUNT,
+  OTHER_ACCOUNT,
+  THIRD_ACCOUNT,
+  UPDATED_ACCOUNT,
+  FRESH_ACCOUNT,
+  ACCOUNTS,
+};
 
 function toAccountRow(entity: Account): typeof account.$inferInsert {
   return {

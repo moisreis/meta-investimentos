@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   newPortfolioRepository,
@@ -19,6 +19,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("PortfolioRepository", () => {
   beforeEach(async () => {
@@ -33,13 +34,17 @@ describe("PortfolioRepository", () => {
     it("returns the persisted portfolio", async () => {
       await seedPortfolios();
 
-      const FOUND = await newPortfolioRepository().findById(PORTFOLIO_ID);
+      const FOUND = await newPortfolioRepository().findById(
+        EntityId.create(PORTFOLIO_ID),
+      );
 
       expect(FOUND?.equals(PORTFOLIO)).toBe(true);
     });
 
     it("returns null when the portfolio does not exist", async () => {
-      expect(await newPortfolioRepository().findById(PORTFOLIO_ID)).toBeNull();
+      expect(
+        await newPortfolioRepository().findById(EntityId.create(PORTFOLIO_ID)),
+      ).toBeNull();
     });
   });
 
@@ -47,7 +52,9 @@ describe("PortfolioRepository", () => {
     it("returns every portfolio of the user", async () => {
       await seedPortfolios();
 
-      const FOUND = await newPortfolioRepository().findAllByUserId(USER_ID);
+      const FOUND = await newPortfolioRepository().findAllByUserId(
+        EntityId.create(USER_ID),
+      );
 
       expect(FOUND).toHaveLength(2);
       expect(FOUND.some((ROW) => ROW.equals(PORTFOLIO))).toBe(true);
@@ -56,9 +63,11 @@ describe("PortfolioRepository", () => {
     });
 
     it("returns an empty array when the user has no portfolios", async () => {
-      expect(await newPortfolioRepository().findAllByUserId(USER_ID)).toEqual(
-        [],
-      );
+      expect(
+        await newPortfolioRepository().findAllByUserId(
+          EntityId.create(USER_ID),
+        ),
+      ).toEqual([]);
     });
   });
 
@@ -67,8 +76,8 @@ describe("PortfolioRepository", () => {
       await seedPortfolios();
 
       const FOUND = await newPortfolioRepository().findAllByIds([
-        PORTFOLIO_ID,
-        OTHER_PORTFOLIO_ID,
+        EntityId.create(PORTFOLIO_ID),
+        EntityId.create(OTHER_PORTFOLIO_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -90,9 +99,11 @@ describe("PortfolioRepository", () => {
       expect(SAVED.id).toBeDefined();
       expect(SAVED.acronym).toBe(FRESH_PORTFOLIO.acronym);
       expect(
-        (await newPortfolioRepository().findById(SAVED.id as string))?.equals(
-          SAVED,
-        ),
+        (
+          await newPortfolioRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
@@ -101,7 +112,9 @@ describe("PortfolioRepository", () => {
 
       await newPortfolioRepository().save(UPDATED_PORTFOLIO);
 
-      const FOUND = await newPortfolioRepository().findById(PORTFOLIO_ID);
+      const FOUND = await newPortfolioRepository().findById(
+        EntityId.create(PORTFOLIO_ID),
+      );
 
       expect(FOUND?.annualInterestRate.value.toString()).toBe(
         UPDATED_PORTFOLIO.annualInterestRate.value.toString(),
@@ -117,9 +130,11 @@ describe("PortfolioRepository", () => {
     it("removes the persisted portfolio", async () => {
       await seedPortfolios();
 
-      await newPortfolioRepository().delete(PORTFOLIO_ID);
+      await newPortfolioRepository().delete(EntityId.create(PORTFOLIO_ID));
 
-      expect(await newPortfolioRepository().findById(PORTFOLIO_ID)).toBeNull();
+      expect(
+        await newPortfolioRepository().findById(EntityId.create(PORTFOLIO_ID)),
+      ).toBeNull();
     });
   });
 });

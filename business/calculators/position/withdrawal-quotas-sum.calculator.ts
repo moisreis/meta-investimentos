@@ -1,4 +1,4 @@
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 /**
  * Represents the inputs required to calculate

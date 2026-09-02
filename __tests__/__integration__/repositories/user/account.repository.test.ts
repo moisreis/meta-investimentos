@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   ACCOUNT,
@@ -17,6 +17,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("AccountRepository", () => {
   beforeEach(async () => {
@@ -31,13 +32,17 @@ describe("AccountRepository", () => {
     it("returns the persisted account", async () => {
       await seedAccounts();
 
-      const FOUND = await newAccountRepository().findById(ACCOUNT_ID);
+      const FOUND = await newAccountRepository().findById(
+        EntityId.create(ACCOUNT_ID),
+      );
 
       expect(FOUND?.equals(ACCOUNT)).toBe(true);
     });
 
     it("returns null when the account does not exist", async () => {
-      expect(await newAccountRepository().findById(ACCOUNT_ID)).toBeNull();
+      expect(
+        await newAccountRepository().findById(EntityId.create(ACCOUNT_ID)),
+      ).toBeNull();
     });
   });
 
@@ -70,7 +75,9 @@ describe("AccountRepository", () => {
       await seedAccounts();
       await seedThirdAccount();
 
-      const FOUND = await newAccountRepository().findAllByUserId(USER_ID);
+      const FOUND = await newAccountRepository().findAllByUserId(
+        EntityId.create(USER_ID),
+      );
 
       expect(FOUND).toHaveLength(2);
       expect(FOUND.some((ROW) => ROW.equals(ACCOUNT))).toBe(true);
@@ -78,7 +85,9 @@ describe("AccountRepository", () => {
     });
 
     it("returns an empty array when no accounts exist", async () => {
-      expect(await newAccountRepository().findAllByUserId(USER_ID)).toEqual([]);
+      expect(
+        await newAccountRepository().findAllByUserId(EntityId.create(USER_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -87,8 +96,8 @@ describe("AccountRepository", () => {
       await seedAccounts();
 
       const FOUND = await newAccountRepository().findAllByUserIds([
-        USER_ID,
-        OTHER_USER_ID,
+        EntityId.create(USER_ID),
+        EntityId.create(OTHER_USER_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -110,9 +119,11 @@ describe("AccountRepository", () => {
       expect(SAVED.id).toBeDefined();
       expect(SAVED.accountId).toBe(FRESH_ACCOUNT.accountId);
       expect(
-        (await newAccountRepository().findById(SAVED.id as string))?.equals(
-          SAVED,
-        ),
+        (
+          await newAccountRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
@@ -121,7 +132,9 @@ describe("AccountRepository", () => {
 
       await newAccountRepository().save(UPDATED_ACCOUNT);
 
-      const FOUND = await newAccountRepository().findById(ACCOUNT_ID);
+      const FOUND = await newAccountRepository().findById(
+        EntityId.create(ACCOUNT_ID),
+      );
 
       expect(FOUND?.accountId).toBe(UPDATED_ACCOUNT.accountId);
       expect(FOUND?.equals(UPDATED_ACCOUNT)).toBe(true);
@@ -132,9 +145,11 @@ describe("AccountRepository", () => {
     it("removes the persisted account", async () => {
       await seedAccounts();
 
-      await newAccountRepository().delete(ACCOUNT_ID);
+      await newAccountRepository().delete(EntityId.create(ACCOUNT_ID));
 
-      expect(await newAccountRepository().findById(ACCOUNT_ID)).toBeNull();
+      expect(
+        await newAccountRepository().findById(EntityId.create(ACCOUNT_ID)),
+      ).toBeNull();
     });
   });
 });

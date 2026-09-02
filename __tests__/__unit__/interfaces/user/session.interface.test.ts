@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   createInMemorySessionRepository,
@@ -25,13 +25,13 @@ describe("ISession", () => {
     it("returns the persisted session", async () => {
       await REPOSITORY.save(SESSION);
 
-      const FOUND = await REPOSITORY.findById(SESSION_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(SESSION_ID));
 
       expect(FOUND?.equals(SESSION)).toBe(true);
     });
 
     it("returns null when the session does not exist", async () => {
-      expect(await REPOSITORY.findById(SESSION_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(SESSION_ID))).toBeNull();
     });
   });
 
@@ -65,7 +65,9 @@ describe("ISession", () => {
 
       await REPOSITORY.save(FIRST);
 
-      const FOUND = await REPOSITORY.findAllByUserId(OTHER_USER_ID);
+      const FOUND = await REPOSITORY.findAllByUserId(
+        EntityId.create(OTHER_USER_ID),
+      );
 
       expect(FOUND).toHaveLength(2);
       expect(FOUND.some((ROW) => ROW.equals(OTHER_SESSION))).toBe(true);
@@ -73,7 +75,9 @@ describe("ISession", () => {
     });
 
     it("returns an empty array when the user has no sessions", async () => {
-      expect(await REPOSITORY.findAllByUserId(USER_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByUserId(EntityId.create(USER_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -82,9 +86,11 @@ describe("ISession", () => {
       const SAVED = await REPOSITORY.save(SESSION);
 
       expect(SAVED.equals(SESSION)).toBe(true);
-      expect((await REPOSITORY.findById(SESSION_ID))?.equals(SESSION)).toBe(
-        true,
-      );
+      expect(
+        (await REPOSITORY.findById(EntityId.create(SESSION_ID)))?.equals(
+          SESSION,
+        ),
+      ).toBe(true);
     });
 
     it("updates an existing session", async () => {
@@ -101,7 +107,7 @@ describe("ISession", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(SESSION_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(SESSION_ID));
 
       expect(FOUND?.token).toBe("updated-session-token");
       expect(FOUND?.equals(UPDATED)).toBe(true);
@@ -112,9 +118,9 @@ describe("ISession", () => {
     it("removes the persisted session", async () => {
       await REPOSITORY.save(SESSION);
 
-      await REPOSITORY.delete(SESSION_ID);
+      await REPOSITORY.delete(EntityId.create(SESSION_ID));
 
-      expect(await REPOSITORY.findById(SESSION_ID)).toBeNull();
+      expect(await REPOSITORY.findById(EntityId.create(SESSION_ID))).toBeNull();
     });
   });
 });

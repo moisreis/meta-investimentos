@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   ALLOCATION,
@@ -13,7 +13,7 @@ import {
 import { TransactionAllocation } from "@/business/entities/portfolio/transaction-allocation.entity";
 import type { ITransactionAllocation } from "@/business/interfaces/portfolio/transaction-allocation.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 describe("ITransactionAllocation", () => {
   let REPOSITORY: ITransactionAllocation;
@@ -26,13 +26,15 @@ describe("ITransactionAllocation", () => {
     it("returns the persisted transaction allocation", async () => {
       await REPOSITORY.save(ALLOCATION);
 
-      const FOUND = await REPOSITORY.findById(ALLOCATION_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(ALLOCATION_ID));
 
       expect(FOUND?.equals(ALLOCATION)).toBe(true);
     });
 
     it("returns null when the transaction allocation does not exist", async () => {
-      expect(await REPOSITORY.findById(ALLOCATION_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(ALLOCATION_ID)),
+      ).toBeNull();
     });
   });
 
@@ -59,7 +61,9 @@ describe("ITransactionAllocation", () => {
       await REPOSITORY.save(SECOND_ALLOCATION);
       await REPOSITORY.save(OTHER_ALLOCATION);
 
-      const FOUND = await REPOSITORY.findAllByApplicationId(APPLICATION_ID);
+      const FOUND = await REPOSITORY.findAllByApplicationId(
+        EntityId.create(APPLICATION_ID),
+      );
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.equals(ALLOCATION)).toBe(true);
@@ -67,9 +71,11 @@ describe("ITransactionAllocation", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByApplicationId(APPLICATION_ID)).toEqual(
-        [],
-      );
+      expect(
+        await REPOSITORY.findAllByApplicationId(
+          EntityId.create(APPLICATION_ID),
+        ),
+      ).toEqual([]);
     });
   });
 
@@ -96,7 +102,9 @@ describe("ITransactionAllocation", () => {
       await REPOSITORY.save(SECOND_ALLOCATION);
       await REPOSITORY.save(OTHER_ALLOCATION);
 
-      const FOUND = await REPOSITORY.findAllByWithdrawalId(WITHDRAW_ID);
+      const FOUND = await REPOSITORY.findAllByWithdrawalId(
+        EntityId.create(WITHDRAW_ID),
+      );
 
       expect(FOUND.length).toBe(2);
       expect(FOUND[0]?.equals(ALLOCATION)).toBe(true);
@@ -104,7 +112,9 @@ describe("ITransactionAllocation", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByWithdrawalId(WITHDRAW_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByWithdrawalId(EntityId.create(WITHDRAW_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -112,7 +122,7 @@ describe("ITransactionAllocation", () => {
     it("persists a new transaction allocation", async () => {
       await REPOSITORY.save(ALLOCATION);
 
-      const FOUND = await REPOSITORY.findById(ALLOCATION_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(ALLOCATION_ID));
 
       expect(FOUND?.equals(ALLOCATION)).toBe(true);
     });
@@ -131,7 +141,7 @@ describe("ITransactionAllocation", () => {
 
       await REPOSITORY.save(UPDATED);
 
-      const FOUND = await REPOSITORY.findById(ALLOCATION_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(ALLOCATION_ID));
 
       expect(FOUND?.withdrawId).toBe(OTHER_WITHDRAW_ID);
     });
@@ -141,9 +151,11 @@ describe("ITransactionAllocation", () => {
     it("removes the persisted transaction allocation", async () => {
       await REPOSITORY.save(ALLOCATION);
 
-      await REPOSITORY.delete(ALLOCATION_ID);
+      await REPOSITORY.delete(EntityId.create(ALLOCATION_ID));
 
-      expect(await REPOSITORY.findById(ALLOCATION_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(ALLOCATION_ID)),
+      ).toBeNull();
     });
   });
 });

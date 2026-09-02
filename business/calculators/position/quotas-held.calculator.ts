@@ -1,4 +1,4 @@
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -20,9 +20,17 @@ interface CalculateQuotasHeldProps {
  *
  * The result is represented as a {@link QuotaQuantity}.
  *
- * @param lastPeriodQuotaQuantity - The number of quotas held at the end of the previous period.
- * @param applicationQuotasQuantity - The number of quotas acquired through applications during the period.
- * @param withdrawalQuotasQuantity - The number of quotas redeemed through withdrawals during the period.
+ * @param lastPeriodQuotaQuantity - The number of quotas held
+ *                                  at the end of the previous
+ *                                  period.
+ * @param applicationQuotasQuantity - The number of quotas
+ *                                    acquired through
+ *                                    applications during the
+ *                                    period.
+ * @param withdrawalQuotasQuantity - The number of quotas
+ *                                   redeemed through
+ *                                   withdrawals during the
+ *                                   period.
  *
  * @returns The calculated number of quotas held.
  *

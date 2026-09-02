@@ -1,4 +1,4 @@
-import { INVESTMENT_FUND_IDS } from "@/__tests__/__datasets__/_investment-funds.dataset";
+﻿import { INVESTMENT_FUND_IDS } from "@/__tests__/__datasets__/_investment-funds.dataset";
 
 export const QUOTA_BALANCES: [fundId: number, quotas: string][] = [
   [

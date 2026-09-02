@@ -1,10 +1,11 @@
-import { and, eq, gte, inArray, lte, sql } from "drizzle-orm";
+﻿import { and, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { Withdrawal } from "@/business/entities/portfolio/withdrawal.entity";
 import type { IWithdrawal } from "@/business/interfaces/portfolio/withdrawal.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 import { withdrawal } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -45,15 +46,7 @@ export interface WithdrawalTotals {
  * hook keeps the timestamp in sync with the mutation.
  */
 export class WithdrawalRepository implements IWithdrawal {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `WithdrawalRepository` bound to the provided database
@@ -64,10 +57,6 @@ export class WithdrawalRepository implements IWithdrawal {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `withdrawal` row to a {@link Withdrawal} entity.
@@ -136,16 +125,12 @@ export class WithdrawalRepository implements IWithdrawal {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the withdrawal with the provided id.
    *
    * @see {@link IWithdrawal.findById}
    */
-  async findById(id: string): Promise<Withdrawal | null> {
+  async findById(id: EntityId): Promise<Withdrawal | null> {
     const [row] = await this.db
       .select()
       .from(withdrawal)
@@ -160,7 +145,7 @@ export class WithdrawalRepository implements IWithdrawal {
    *
    * @see {@link IWithdrawal.findAllByPositionId}
    */
-  async findAllByPositionId(positionId: string): Promise<Withdrawal[]> {
+  async findAllByPositionId(positionId: EntityId): Promise<Withdrawal[]> {
     const rows = await this.db
       .select()
       .from(withdrawal)
@@ -176,7 +161,7 @@ export class WithdrawalRepository implements IWithdrawal {
    * @see {@link IWithdrawal.findAllByPositionIdInPeriod}
    */
   async findAllByPositionIdInPeriod(
-    positionId: string,
+    positionId: EntityId,
     startDate: Date,
     endDate: Date,
   ): Promise<Withdrawal[]> {
@@ -269,10 +254,6 @@ export class WithdrawalRepository implements IWithdrawal {
     };
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided withdrawal.
    *
@@ -287,7 +268,9 @@ export class WithdrawalRepository implements IWithdrawal {
         .returning();
 
       if (!row) {
-        throw new Error(`Withdrawal with id ${persisted.id} was not found.`);
+        throw new NotFoundError(
+          `Withdrawal with id ${persisted.id} was not found.`,
+        );
       }
 
       return this.toEntity(row);
@@ -306,7 +289,7 @@ export class WithdrawalRepository implements IWithdrawal {
    *
    * @see {@link IWithdrawal.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(withdrawal).where(eq(withdrawal.id, id));
   }
 }

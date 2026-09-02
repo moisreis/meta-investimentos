@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { TransactionAllocation } from "@/business/entities/portfolio/transaction-allocation.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 describe("TransactionAllocation.create", () => {
   const VALID_PROPS = {

@@ -2,7 +2,9 @@ import { eq, inArray } from "drizzle-orm";
 
 import { Bank } from "@/business/entities/bank/bank.entity";
 import type { IBank } from "@/business/interfaces/bank/bank.interface";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 import { bank } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -17,15 +19,7 @@ import type { DbClient } from "../types";
  * hook keeps the timestamp in sync with the mutation.
  */
 export class BankRepository implements IBank {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `BankRepository` bound to the provided database client.
@@ -35,10 +29,6 @@ export class BankRepository implements IBank {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `bank` row to a {@link Bank} entity.
@@ -90,16 +80,12 @@ export class BankRepository implements IBank {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the bank with the provided id.
    *
    * @see {@link IBank.findById}
    */
-  async findById(id: string): Promise<Bank | null> {
+  async findById(id: EntityId): Promise<Bank | null> {
     const [row] = await this.db
       .select()
       .from(bank)
@@ -143,10 +129,6 @@ export class BankRepository implements IBank {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided bank.
    *
@@ -161,7 +143,7 @@ export class BankRepository implements IBank {
         .returning();
 
       if (!row) {
-        throw new Error(`Bank with id ${persisted.id} was not found.`);
+        throw new NotFoundError(`Bank with id ${persisted.id} was not found.`);
       }
 
       return this.toEntity(row);
@@ -180,7 +162,7 @@ export class BankRepository implements IBank {
    *
    * @see {@link IBank.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(bank).where(eq(bank.id, id));
   }
 }

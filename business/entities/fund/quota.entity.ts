@@ -1,5 +1,5 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type QuotaPrice from "@/business/value-objects/quota-price.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+import type { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -30,10 +30,6 @@ interface QuotaProps {
 export class Quota {
   private readonly _id?: EntityId;
   private readonly props: Required<QuotaProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the quota.
@@ -70,10 +66,6 @@ export class Quota {
     return this.props.createdAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `Quota`.
    *
@@ -83,12 +75,8 @@ export class Quota {
    */
   private constructor(props: Required<QuotaProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `Quota` from the provided properties.
@@ -125,10 +113,6 @@ export class Quota {
 
     return new Quota(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `Quota` represents the same quota as the

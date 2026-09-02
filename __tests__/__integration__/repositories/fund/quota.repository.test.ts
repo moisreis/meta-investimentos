@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   EXTERNAL_QUOTA,
@@ -21,6 +21,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("QuotaRepository", () => {
   beforeEach(async () => {
@@ -35,13 +36,17 @@ describe("QuotaRepository", () => {
     it("returns the persisted quota", async () => {
       await seedQuotas();
 
-      const FOUND = await newQuotaRepository().findById(QUOTA_ID);
+      const FOUND = await newQuotaRepository().findById(
+        EntityId.create(QUOTA_ID),
+      );
 
       expect(FOUND?.equals(QUOTA)).toBe(true);
     });
 
     it("returns null when the quota does not exist", async () => {
-      expect(await newQuotaRepository().findById(QUOTA_ID)).toBeNull();
+      expect(
+        await newQuotaRepository().findById(EntityId.create(QUOTA_ID)),
+      ).toBeNull();
     });
   });
 
@@ -49,7 +54,9 @@ describe("QuotaRepository", () => {
     it("returns the whole quota series of the fund", async () => {
       await seedAllQuotas();
 
-      const FOUND = await newQuotaRepository().findAllByFundId(FUND_ID);
+      const FOUND = await newQuotaRepository().findAllByFundId(
+        EntityId.create(FUND_ID),
+      );
 
       expect(FOUND).toHaveLength(3);
       expect(FOUND.some((ROW) => ROW.equals(QUOTA))).toBe(true);
@@ -58,7 +65,9 @@ describe("QuotaRepository", () => {
     });
 
     it("returns an empty array when no quotas exist", async () => {
-      expect(await newQuotaRepository().findAllByFundId(FUND_ID)).toEqual([]);
+      expect(
+        await newQuotaRepository().findAllByFundId(EntityId.create(FUND_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -67,8 +76,8 @@ describe("QuotaRepository", () => {
       await seedAllQuotas();
 
       const FOUND = await newQuotaRepository().findAllByFundIds([
-        FUND_ID,
-        OTHER_FUND_ID,
+        EntityId.create(FUND_ID),
+        EntityId.create(OTHER_FUND_ID),
       ]);
 
       expect(FOUND).toHaveLength(4);
@@ -86,7 +95,7 @@ describe("QuotaRepository", () => {
       await seedQuotas();
 
       const FOUND = await newQuotaRepository().findByFundIdAndDate(
-        FUND_ID,
+        EntityId.create(FUND_ID),
         QUOTA_DATE,
       );
 
@@ -97,7 +106,7 @@ describe("QuotaRepository", () => {
       await seedQuotas();
 
       const FOUND = await newQuotaRepository().findByFundIdAndDate(
-        FUND_ID,
+        EntityId.create(FUND_ID),
         FEBRUARY_QUOTA_DATE,
       );
 
@@ -110,7 +119,7 @@ describe("QuotaRepository", () => {
       await seedAllQuotas();
 
       const FOUND = await newQuotaRepository().findAllByFundIdsInPeriod(
-        [FUND_ID, OTHER_FUND_ID],
+        [EntityId.create(FUND_ID), EntityId.create(OTHER_FUND_ID)],
         QUOTA_DATE,
         QUOTA_DUPLICATE_DATE,
       );
@@ -137,13 +146,17 @@ describe("QuotaRepository", () => {
     it("returns the quota with the most recent date", async () => {
       await seedAllQuotas();
 
-      const FOUND = await newQuotaRepository().findLatestByFundId(FUND_ID);
+      const FOUND = await newQuotaRepository().findLatestByFundId(
+        EntityId.create(FUND_ID),
+      );
 
       expect(FOUND?.equals(PERIOD_OUTSIDE_QUOTA)).toBe(true);
     });
 
     it("returns null when the fund has no quotas", async () => {
-      expect(await newQuotaRepository().findLatestByFundId(FUND_ID)).toBeNull();
+      expect(
+        await newQuotaRepository().findLatestByFundId(EntityId.create(FUND_ID)),
+      ).toBeNull();
     });
   });
 
@@ -152,8 +165,8 @@ describe("QuotaRepository", () => {
       await seedAllQuotas();
 
       const FOUND = await newQuotaRepository().findLatestByFundIds([
-        FUND_ID,
-        OTHER_FUND_ID,
+        EntityId.create(FUND_ID),
+        EntityId.create(OTHER_FUND_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -177,9 +190,11 @@ describe("QuotaRepository", () => {
         FRESH_QUOTA.price.value.toString(),
       );
       expect(
-        (await newQuotaRepository().findById(SAVED.id as string))?.equals(
-          SAVED,
-        ),
+        (
+          await newQuotaRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
@@ -188,7 +203,9 @@ describe("QuotaRepository", () => {
 
       await newQuotaRepository().save(UPDATED_QUOTA);
 
-      const FOUND = await newQuotaRepository().findById(QUOTA_ID);
+      const FOUND = await newQuotaRepository().findById(
+        EntityId.create(QUOTA_ID),
+      );
 
       expect(FOUND?.price.value.toString()).toBe(
         UPDATED_QUOTA.price.value.toString(),
@@ -201,9 +218,11 @@ describe("QuotaRepository", () => {
     it("removes the persisted quota", async () => {
       await seedQuotas();
 
-      await newQuotaRepository().delete(QUOTA_ID);
+      await newQuotaRepository().delete(EntityId.create(QUOTA_ID));
 
-      expect(await newQuotaRepository().findById(QUOTA_ID)).toBeNull();
+      expect(
+        await newQuotaRepository().findById(EntityId.create(QUOTA_ID)),
+      ).toBeNull();
     });
   });
 });

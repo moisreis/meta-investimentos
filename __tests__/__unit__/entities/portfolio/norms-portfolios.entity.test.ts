@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { NormsPortfolios } from "@/business/entities/portfolio/norms-portfolios.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 describe("NormsPortfolios.create", () => {
   const VALID_PROPS = {
@@ -90,6 +90,30 @@ describe("NormsPortfolios.create", () => {
         REST as Parameters<typeof NormsPortfolios.create>[0],
       ),
     ).toThrow("NormsPortfolios must have a target allocation.");
+  });
+
+  it("throws when the minimum allocation exceeds the target allocation", () => {
+    expect(() =>
+      NormsPortfolios.create({
+        ...VALID_PROPS,
+        minAllocation: SignedPercentage.create("20"),
+        targetAllocation: SignedPercentage.create("12"),
+      }),
+    ).toThrow(
+      "NormsPortfolios minimum allocation must not exceed target allocation.",
+    );
+  });
+
+  it("throws when the target allocation exceeds the maximum allocation", () => {
+    expect(() =>
+      NormsPortfolios.create({
+        ...VALID_PROPS,
+        targetAllocation: SignedPercentage.create("25"),
+        maxAllocation: SignedPercentage.create("20"),
+      }),
+    ).toThrow(
+      "NormsPortfolios target allocation must not exceed maximum allocation.",
+    );
   });
 
   it("does not mutate its inputs", () => {

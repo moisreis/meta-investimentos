@@ -22,9 +22,11 @@ export const benchmarkHistory = pgSchema("benchmark").table(
     benchmarkId: uuid("benchmark_id")
       .notNull()
       .references(() => benchmark.id),
-    date: timestamp("date").notNull(),
-    rate: numeric("rate").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    date: timestamp("date", { withTimezone: true }).notNull(),
+    rate: numeric("rate", { precision: 18, scale: 6 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     /**

@@ -1,70 +1,45 @@
-import { Withdrawal } from "@/business/entities/portfolio/withdrawal.entity";
+﻿import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import type { IWithdrawal } from "@/business/interfaces/portfolio/withdrawal.interface";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 
-export const WITHDRAWAL_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-export const POSITION_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
-export const OTHER_POSITION_ID = "c47d54e2-4a03-4f71-9c0d-3a58d2c33e90";
-export const WITHDRAWAL_DATE = new Date("2026-01-15T00:00:00.000Z");
-
-export const WITHDRAWAL = Withdrawal.create(
-  {
-    positionId: EntityId.create(POSITION_ID),
-    date: WITHDRAWAL_DATE,
-    amount: PositiveMoney.create("500.00"),
-    quotas: QuotaQuantity.create("6.123"),
-  },
+export {
+  EXTERNAL_WITHDRAWAL,
+  EXTERNAL_WITHDRAWAL_ID,
+  FRESH_WITHDRAWAL,
+  OTHER_POSITION_ID,
+  OTHER_WITHDRAWAL,
+  OTHER_WITHDRAWAL_DATE,
+  OTHER_WITHDRAWAL_ID,
+  PERIOD_OUTSIDE_WITHDRAWAL,
+  PERIOD_OUTSIDE_WITHDRAWAL_ID,
+  POSITION_ID,
+  UPDATED_WITHDRAWAL,
+  WITHDRAWAL,
+  WITHDRAWAL_DATE,
   WITHDRAWAL_ID,
-);
+  WITHDRAWAL_SUM_AMOUNT,
+  WITHDRAWAL_SUM_QUOTAS,
+  WITHDRAWALS,
+} from "@/__tests__/__fixtures__";
 
 export function createInMemoryWithdrawalRepository(): IWithdrawal {
-  const ROWS = new Map<string, Withdrawal>();
+  const BASE = createInMemoryRepository<
+    Awaited<ReturnType<IWithdrawal["save"]>>
+  >({ extractId: (w) => w.id });
 
   return {
-    async findById(id: string): Promise<Withdrawal | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findAllByPositionId(positionId) {
+      return BASE.match((w) => w.positionId === positionId);
     },
-
-    async findAllByPositionId(positionId: string): Promise<Withdrawal[]> {
-      const MATCHES: Withdrawal[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.positionId === positionId) MATCHES.push(ROW);
-      }
-
-      return MATCHES;
+    async findAllByPositionIdInPeriod(positionId, startDate, endDate) {
+      return BASE.match(
+        (w) =>
+          w.positionId === positionId &&
+          w.date.getTime() >= startDate.getTime() &&
+          w.date.getTime() <= endDate.getTime(),
+      );
     },
-
-    async findAllByPositionIdInPeriod(
-      positionId: string,
-      startDate: Date,
-      endDate: Date,
-    ): Promise<Withdrawal[]> {
-      const MATCHES: Withdrawal[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (
-          ROW.positionId === positionId &&
-          ROW.date.getTime() >= startDate.getTime() &&
-          ROW.date.getTime() <= endDate.getTime()
-        ) {
-          MATCHES.push(ROW);
-        }
-      }
-
-      return MATCHES;
-    },
-
-    async save(withdrawal: Withdrawal): Promise<Withdrawal> {
-      ROWS.set(withdrawal.id ?? "generated-id", withdrawal);
-
-      return withdrawal;
-    },
-
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (withdrawal) => BASE.save(withdrawal),
+    delete: (id) => BASE.delete(id),
   };
 }

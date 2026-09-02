@@ -1,4 +1,4 @@
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 
 /**
  * Represents the inputs required to calculate

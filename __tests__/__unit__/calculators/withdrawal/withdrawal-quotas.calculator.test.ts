@@ -1,12 +1,12 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import { calculateWithdrawalQuotas } from "@/business/calculators/withdrawal/withdrawal-quotas.calculator";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaPrice from "@/business/value-objects/quota-price.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
+import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 describe("calculateWithdrawalQuotas", () => {
-  it("returns the proved value for the `CAIXA BRASIL IRF-M 1 TÍTULOS PÚBLICOS FI RENDA FIXA` at 19/5/2026", () => {
+  it("returns the proved value for the `CAIXA BRASIL IRF-M 1 TÃTULOS PÃšBLICOS FI RENDA FIXA` at 19/5/2026", () => {
     const RESULT = calculateWithdrawalQuotas({
       withdrawal: PositiveMoney.create(1000000),
       quota: QuotaPrice.create(4.450869),
@@ -50,6 +50,17 @@ describe("calculateWithdrawalQuotas", () => {
           QuotaPrice.create(1.000001).value,
         ),
       ),
+    );
+  });
+
+  it("throws when the quota price is zero", () => {
+    expect(() =>
+      calculateWithdrawalQuotas({
+        withdrawal: PositiveMoney.create(1000000),
+        quota: QuotaPrice.create(0),
+      }),
+    ).toThrow(
+      "Withdrawal quotas cannot be calculated with a zero quota price.",
     );
   });
 

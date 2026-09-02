@@ -1,70 +1,45 @@
-import { Application } from "@/business/entities/portfolio/application.entity";
+﻿import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import type { IApplication } from "@/business/interfaces/portfolio/application.interface";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
-import QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
 
-export const APPLICATION_ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
-export const POSITION_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
-export const OTHER_POSITION_ID = "c47d54e2-4a03-4f71-9c0d-3a58d2c33e90";
-export const APPLICATION_DATE = new Date("2026-01-15T00:00:00.000Z");
-
-export const APPLICATION = Application.create(
-  {
-    positionId: EntityId.create(POSITION_ID),
-    date: APPLICATION_DATE,
-    amount: PositiveMoney.create("1000.00"),
-    quotas: QuotaQuantity.create("12.345"),
-  },
+export {
+  APPLICATION,
+  APPLICATION_DATE,
   APPLICATION_ID,
-);
+  APPLICATION_SUM_AMOUNT,
+  APPLICATION_SUM_QUOTAS,
+  APPLICATIONS,
+  EXTERNAL_APPLICATION,
+  EXTERNAL_APPLICATION_ID,
+  FRESH_APPLICATION,
+  OTHER_APPLICATION,
+  OTHER_APPLICATION_DATE,
+  OTHER_APPLICATION_ID,
+  OTHER_POSITION_ID,
+  PERIOD_OUTSIDE_APPLICATION,
+  PERIOD_OUTSIDE_APPLICATION_ID,
+  POSITION_ID,
+  UPDATED_APPLICATION,
+} from "@/__tests__/__fixtures__";
 
 export function createInMemoryApplicationRepository(): IApplication {
-  const ROWS = new Map<string, Application>();
+  const BASE = createInMemoryRepository<
+    Awaited<ReturnType<IApplication["save"]>>
+  >({ extractId: (a) => a.id });
 
   return {
-    async findById(id: string): Promise<Application | null> {
-      return ROWS.get(id) ?? null;
+    findById: (id) => BASE.findById(id),
+    async findAllByPositionId(positionId) {
+      return BASE.match((a) => a.positionId === positionId);
     },
-
-    async findAllByPositionId(positionId: string): Promise<Application[]> {
-      const MATCHES: Application[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (ROW.positionId === positionId) MATCHES.push(ROW);
-      }
-
-      return MATCHES;
+    async findAllByPositionIdInPeriod(positionId, startDate, endDate) {
+      return BASE.match(
+        (a) =>
+          a.positionId === positionId &&
+          a.date.getTime() >= startDate.getTime() &&
+          a.date.getTime() <= endDate.getTime(),
+      );
     },
-
-    async findAllByPositionIdInPeriod(
-      positionId: string,
-      startDate: Date,
-      endDate: Date,
-    ): Promise<Application[]> {
-      const MATCHES: Application[] = [];
-
-      for (const ROW of ROWS.values()) {
-        if (
-          ROW.positionId === positionId &&
-          ROW.date.getTime() >= startDate.getTime() &&
-          ROW.date.getTime() <= endDate.getTime()
-        ) {
-          MATCHES.push(ROW);
-        }
-      }
-
-      return MATCHES;
-    },
-
-    async save(application: Application): Promise<Application> {
-      ROWS.set(application.id ?? "generated-id", application);
-
-      return application;
-    },
-
-    async delete(id: string): Promise<void> {
-      ROWS.delete(id);
-    },
+    save: (application) => BASE.save(application),
+    delete: (id) => BASE.delete(id),
   };
 }

@@ -1,4 +1,4 @@
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -21,16 +21,17 @@ interface CalculatePortfolioRiskFreeSpreadProps {
  * The result is expressed as a percentage, rounded to
  * 2 decimal places, and represented as a {@link SignedPercentage}.
  *
- * @param portfolioReturn - The Portfolio return for the period,
- * in percentage terms.
+ * @param portfolioReturn - The Portfolio return for the
+ *                          period, in percentage terms.
  * @param riskFreeRate - The monthly risk-free index (CDI),
- * in percentage terms.
+ *                       in percentage terms.
  *
  * @returns The calculated risk-free spread of the Portfolio.
  *
  * @equation Sₜᵖ = Rₜᵖ − fₜ
  *
  * @example
+ * ```ts
  * const RESULT = calculatePortfolioRiskFreeSpread({
  *   portfolioReturn: SignedPercentage.create('1.04'),
  *   riskFreeRate: SignedPercentage.create('0.95'),
@@ -38,6 +39,7 @@ interface CalculatePortfolioRiskFreeSpreadProps {
  *
  * RESULT.value.toString()
  * // '0.09'
+ * ```
  */
 export function calculatePortfolioRiskFreeSpread({
   portfolioReturn,

@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   FRESH_SESSION,
@@ -17,6 +17,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("SessionRepository", () => {
   beforeEach(async () => {
@@ -31,13 +32,17 @@ describe("SessionRepository", () => {
     it("returns the persisted session", async () => {
       await seedSessions();
 
-      const FOUND = await newSessionRepository().findById(SESSION_ID);
+      const FOUND = await newSessionRepository().findById(
+        EntityId.create(SESSION_ID),
+      );
 
       expect(FOUND?.equals(SESSION)).toBe(true);
     });
 
     it("returns null when the session does not exist", async () => {
-      expect(await newSessionRepository().findById(SESSION_ID)).toBeNull();
+      expect(
+        await newSessionRepository().findById(EntityId.create(SESSION_ID)),
+      ).toBeNull();
     });
   });
 
@@ -62,7 +67,9 @@ describe("SessionRepository", () => {
       await seedSessions();
       await seedThirdSession();
 
-      const FOUND = await newSessionRepository().findAllByUserId(USER_ID);
+      const FOUND = await newSessionRepository().findAllByUserId(
+        EntityId.create(USER_ID),
+      );
 
       expect(FOUND).toHaveLength(2);
       expect(FOUND.some((ROW) => ROW.equals(SESSION))).toBe(true);
@@ -70,7 +77,9 @@ describe("SessionRepository", () => {
     });
 
     it("returns an empty array when no sessions exist", async () => {
-      expect(await newSessionRepository().findAllByUserId(USER_ID)).toEqual([]);
+      expect(
+        await newSessionRepository().findAllByUserId(EntityId.create(USER_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -79,8 +88,8 @@ describe("SessionRepository", () => {
       await seedSessions();
 
       const FOUND = await newSessionRepository().findAllByUserIds([
-        USER_ID,
-        OTHER_USER_ID,
+        EntityId.create(USER_ID),
+        EntityId.create(OTHER_USER_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -102,9 +111,11 @@ describe("SessionRepository", () => {
       expect(SAVED.id).toBeDefined();
       expect(SAVED.token).toBe(FRESH_SESSION.token);
       expect(
-        (await newSessionRepository().findById(SAVED.id as string))?.equals(
-          SAVED,
-        ),
+        (
+          await newSessionRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
@@ -113,7 +124,9 @@ describe("SessionRepository", () => {
 
       await newSessionRepository().save(UPDATED_SESSION);
 
-      const FOUND = await newSessionRepository().findById(SESSION_ID);
+      const FOUND = await newSessionRepository().findById(
+        EntityId.create(SESSION_ID),
+      );
 
       expect(FOUND?.token).toBe(UPDATED_SESSION.token);
       expect(FOUND?.equals(UPDATED_SESSION)).toBe(true);
@@ -124,9 +137,11 @@ describe("SessionRepository", () => {
     it("removes the persisted session", async () => {
       await seedSessions();
 
-      await newSessionRepository().delete(SESSION_ID);
+      await newSessionRepository().delete(EntityId.create(SESSION_ID));
 
-      expect(await newSessionRepository().findById(SESSION_ID)).toBeNull();
+      expect(
+        await newSessionRepository().findById(EntityId.create(SESSION_ID)),
+      ).toBeNull();
     });
   });
 });

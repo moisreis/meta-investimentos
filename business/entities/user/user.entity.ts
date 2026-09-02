@@ -1,4 +1,4 @@
-import type CPF from "@/business/value-objects/cpf.vo";
+﻿import type { CPF } from "@/business/value-objects/cpf.vo";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { ValidationError } from "@/shared/errors";
 
@@ -6,6 +6,15 @@ import { ValidationError } from "@/shared/errors";
  * Represents the role assigned to a {@link User}.
  */
 export type UserRole = "USER" | "MANAGER";
+
+/**
+ * Matches a valid email address.
+ *
+ * The pattern requires a local part, an `@` and a domain part that
+ * contains at least one dot, so addresses without a domain suffix are
+ * rejected.
+ */
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * Represents the properties required to create a {@link User}.
@@ -34,7 +43,7 @@ interface UserProps {
  *
  * A `User`:
  * - must have a name.
- * - must have a valid email containing an `@`.
+ * - must have a valid email.
  * - must have a first name.
  * - must have a last name.
  * - must have a cpf.
@@ -45,9 +54,9 @@ interface UserProps {
  * @example
  * ```ts
  * const USER = User.create({
- *   name: 'José da Silva',
+ *   name: 'JosÃ© da Silva',
  *   email: 'jose@example.com',
- *   firstName: 'José',
+ *   firstName: 'JosÃ©',
  *   lastName: 'da Silva',
  *   cpf: '24301457030',
  * })
@@ -68,10 +77,6 @@ interface UserProps {
 export class User {
   private readonly _id?: EntityId;
   private readonly props: Required<UserProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the user.
@@ -116,6 +121,17 @@ export class User {
   }
 
   /**
+   * Returns a masked representation of the user's cpf.
+   *
+   * Only the first three digits and the last two digits are shown; the
+   * middle digits are replaced with asterisks.
+   */
+  get maskedCpf(): string {
+    const VALUE = this.props.cpf.value;
+    return `${VALUE.slice(0, 3)}.***.***-${VALUE.slice(-2)}`;
+  }
+
+  /**
    * Returns the role of the user.
    */
   get role(): UserRole {
@@ -150,10 +166,6 @@ export class User {
     return this.props.updatedAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `User`.
    *
@@ -163,12 +175,8 @@ export class User {
    */
   private constructor(props: Required<UserProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `User` from the provided properties.
@@ -183,7 +191,7 @@ export class User {
    * @returns A valid `User` instance.
    *
    * @throws {ValidationError} If `props.name` is blank.
-   * @throws {ValidationError} If `props.email` does not contain an `@`.
+   * @throws {ValidationError} If `props.email` is not a valid email.
    * @throws {ValidationError} If `props.firstName` is blank.
    * @throws {ValidationError} If `props.lastName` is blank.
    * @throws {ValidationError} If `props.cpf` is blank.
@@ -193,7 +201,7 @@ export class User {
     if (!props.name || props.name.trim() === "") {
       throw new ValidationError("User must have a name.");
     }
-    if (!props.email || !props.email.includes("@")) {
+    if (!props.email || !EMAIL_PATTERN.test(props.email)) {
       throw new ValidationError("User must have a valid email.");
     }
     if (!props.firstName || props.firstName.trim() === "") {
@@ -226,10 +234,6 @@ export class User {
 
     return new User(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `User` represents the same user as the

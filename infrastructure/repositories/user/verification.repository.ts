@@ -2,7 +2,9 @@ import { eq, inArray } from "drizzle-orm";
 
 import { Verification } from "@/business/entities/user/verification.entity";
 import type { IVerification } from "@/business/interfaces/user/verification.interface";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 import { verification } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -18,15 +20,7 @@ import type { DbClient } from "../types";
  * hook keeps the timestamp in sync with the mutation.
  */
 export class VerificationRepository implements IVerification {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `VerificationRepository` bound to the provided database
@@ -37,10 +31,6 @@ export class VerificationRepository implements IVerification {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `verification` row to a {@link Verification}
@@ -99,16 +89,12 @@ export class VerificationRepository implements IVerification {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the verification with the provided id.
    *
    * @see {@link IVerification.findById}
    */
-  async findById(id: string): Promise<Verification | null> {
+  async findById(id: EntityId): Promise<Verification | null> {
     const [row] = await this.db
       .select()
       .from(verification)
@@ -156,10 +142,6 @@ export class VerificationRepository implements IVerification {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided verification.
    *
@@ -174,7 +156,9 @@ export class VerificationRepository implements IVerification {
         .returning();
 
       if (!row) {
-        throw new Error(`Verification with id ${persisted.id} was not found.`);
+        throw new NotFoundError(
+          `Verification with id ${persisted.id} was not found.`,
+        );
       }
 
       return this.toEntity(row);
@@ -193,7 +177,7 @@ export class VerificationRepository implements IVerification {
    *
    * @see {@link IVerification.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(verification).where(eq(verification.id, id));
   }
 }

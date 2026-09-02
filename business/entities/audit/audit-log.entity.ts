@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Represents the properties required to create an {@link AuditLog}.
  *
  * The `changes` and `userId` default to `null`, and the `createdAt`
@@ -43,10 +43,6 @@ interface AuditLogProps {
 export class AuditLog {
   private readonly _id?: EntityId;
   private readonly props: Required<AuditLogProps>;
-
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
 
   /**
    * Returns the unique identifier of the audit log.
@@ -97,10 +93,6 @@ export class AuditLog {
     return this.props.createdAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates an `AuditLog`.
    *
@@ -110,12 +102,8 @@ export class AuditLog {
    */
   private constructor(props: Required<AuditLogProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `AuditLog` from the provided properties.
@@ -154,10 +142,6 @@ export class AuditLog {
 
     return new AuditLog(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `AuditLog` represents the same audit log

@@ -1,8 +1,8 @@
-import Decimal from "decimal.js";
+﻿import Decimal from "decimal.js";
 
 import { calculatePortfolioDailyFactor } from "@/business/calculators/portfolio/daily-factor.calculator";
-import type GrowthFactor from "@/business/value-objects/growth-factor.vo";
-import SignedMoney from "@/business/value-objects/signed-money.vo";
+import type { GrowthFactor } from "@/business/value-objects/growth-factor.vo";
+import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 interface BuildPortfolioDailyGrowthFactorsProps {
   businessDays: string[];

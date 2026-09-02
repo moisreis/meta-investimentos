@@ -1,5 +1,6 @@
-import GrowthFactor from "@/business/value-objects/growth-factor.vo";
-import type SignedMoney from "@/business/value-objects/signed-money.vo";
+import { GrowthFactor } from "@/business/value-objects/growth-factor.vo";
+import type { SignedMoney } from "@/business/value-objects/signed-money.vo";
+import { ValidationError } from "@/shared/errors";
 
 /**
  * Represents the inputs required to calculate
@@ -31,13 +32,15 @@ interface CalculatePortfolioDailyFactorProps {
  * The result is represented as a {@link GrowthFactor}.
  *
  * @param currentDayPortfolioValue - The current day total
- * portfolio value.
+ *                                   portfolio value.
  * @param currentDayCashFlow - The current day net cash flow
- * of the portfolio.
+ *                             of the portfolio.
  * @param previousDayPortfolioValue - The previous day total
- * portfolio value.
+ *                                    portfolio value.
  *
  * @returns The calculated daily growth factor of the portfolio.
+ *
+ * @throws {ValidationError} If `previousDayPortfolioValue` is zero.
  *
  * @equation (Vₖᴾ - Δₖᴾ) / Vₖ₋₁ᴾ
  *
@@ -58,6 +61,12 @@ export function calculatePortfolioDailyFactor({
   currentDayCashFlow,
   previousDayPortfolioValue,
 }: CalculatePortfolioDailyFactorProps): GrowthFactor {
+  if (previousDayPortfolioValue.value.isZero()) {
+    throw new ValidationError(
+      "Portfolio daily factor cannot be calculated with a zero previous day value.",
+    );
+  }
+
   return GrowthFactor.create(
     currentDayPortfolioValue.value
       .minus(currentDayCashFlow.value)

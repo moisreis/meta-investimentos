@@ -1,5 +1,8 @@
+import { sql } from "drizzle-orm";
 import {
+  check,
   index,
+  integer,
   numeric,
   pgSchema,
   timestamp,
@@ -27,10 +30,24 @@ export const transactionAllocation = pgSchema("portfolio").table(
     withdrawId: uuid("withdraw_id")
       .notNull()
       .references(() => withdrawal.id),
-    quotasConsumed: numeric("quotas_consumed").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    quotasConsumed: numeric("quotas_consumed", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
+    version: integer("version").default(0).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
+    /**
+     * Enforces that the consumed quotas are non-negative.
+     */
+    check(
+      "transaction_allocation_quotas_consumed_nonneg",
+      sql`${table.quotasConsumed} >= 0`,
+    ),
+
     /**
      * Enforces that an application/withdrawal pair is allocated
      * at most once.

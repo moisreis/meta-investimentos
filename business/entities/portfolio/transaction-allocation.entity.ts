@@ -1,5 +1,5 @@
-import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type QuotaQuantity from "@/business/value-objects/quota-quantity.vo";
+﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+import type { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 import { ValidationError } from "@/shared/errors";
 
 /**
@@ -45,10 +45,6 @@ export class TransactionAllocation {
   private readonly _id?: EntityId;
   private readonly props: Required<TransactionAllocationProps>;
 
-  // --------------------------------------
-  // GETTERS
-  // --------------------------------------
-
   /**
    * Returns the unique identifier of the transaction allocation.
    */
@@ -84,10 +80,6 @@ export class TransactionAllocation {
     return this.props.createdAt;
   }
 
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
-
   /**
    * Creates a `TransactionAllocation`.
    *
@@ -100,12 +92,8 @@ export class TransactionAllocation {
     id?: string,
   ) {
     this._id = id ? EntityId.create(id) : undefined;
-    this.props = props;
+    this.props = Object.freeze(props);
   }
-
-  // --------------------------------------
-  // FACTORY METHODS
-  // --------------------------------------
 
   /**
    * Creates a valid `TransactionAllocation` from the provided properties.
@@ -152,10 +140,6 @@ export class TransactionAllocation {
 
     return new TransactionAllocation(NORMALIZED_PROPS, id);
   }
-
-  // --------------------------------------
-  // COMPARISON METHODS
-  // --------------------------------------
 
   /**
    * Determines whether this `TransactionAllocation` represents the same

@@ -1,4 +1,5 @@
 import type { BenchmarkHistory } from "@/business/entities/benchmark/benchmark-history.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { BenchmarkHistory } from "@/business/entities/benchmark/benchmark-h
  * `BenchmarkHistory` entities and back.
  */
 export interface IBenchmarkHistory {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the benchmark history with the provided id.
    *
@@ -24,7 +21,7 @@ export interface IBenchmarkHistory {
    * @returns A promise resolving to the `BenchmarkHistory` or `null`
    * when not found.
    */
-  findById(id: string): Promise<BenchmarkHistory | null>;
+  findById(id: EntityId): Promise<BenchmarkHistory | null>;
 
   /**
    * Retrieves all benchmark histories belonging to the provided
@@ -34,7 +31,7 @@ export interface IBenchmarkHistory {
    * @returns A promise resolving to the `BenchmarkHistory` entries or
    * an empty array when there are no matches.
    */
-  findAllByBenchmarkId(benchmarkId: string): Promise<BenchmarkHistory[]>;
+  findAllByBenchmarkId(benchmarkId: EntityId): Promise<BenchmarkHistory[]>;
 
   /**
    * Retrieves the benchmark history of the provided benchmark on the
@@ -46,13 +43,9 @@ export interface IBenchmarkHistory {
    * when not found.
    */
   findByBenchmarkIdAndDate(
-    benchmarkId: string,
+    benchmarkId: EntityId,
     date: Date,
   ): Promise<BenchmarkHistory | null>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided benchmark history.
@@ -74,5 +67,5 @@ export interface IBenchmarkHistory {
    * @returns A promise that resolves when the benchmark history is
    * removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

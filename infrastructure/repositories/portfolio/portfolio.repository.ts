@@ -1,10 +1,11 @@
-import { eq, inArray } from "drizzle-orm";
+﻿import { eq, inArray } from "drizzle-orm";
 
 import { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
 import type { IPortfolio } from "@/business/interfaces/portfolio/portfolio.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { portfolio } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -23,15 +24,7 @@ import type { DbClient } from "../types";
  * hook keeps the timestamp in sync with the mutation.
  */
 export class PortfolioRepository implements IPortfolio {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `PortfolioRepository` bound to the provided database
@@ -42,10 +35,6 @@ export class PortfolioRepository implements IPortfolio {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `portfolio` row to a {@link Portfolio} entity.
@@ -113,16 +102,12 @@ export class PortfolioRepository implements IPortfolio {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the portfolio with the provided id.
    *
    * @see {@link IPortfolio.findById}
    */
-  async findById(id: string): Promise<Portfolio | null> {
+  async findById(id: EntityId): Promise<Portfolio | null> {
     const [row] = await this.db
       .select()
       .from(portfolio)
@@ -137,7 +122,7 @@ export class PortfolioRepository implements IPortfolio {
    *
    * @see {@link IPortfolio.findAllByUserId}
    */
-  async findAllByUserId(userId: string): Promise<Portfolio[]> {
+  async findAllByUserId(userId: EntityId): Promise<Portfolio[]> {
     const rows = await this.db
       .select()
       .from(portfolio)
@@ -168,10 +153,6 @@ export class PortfolioRepository implements IPortfolio {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided portfolio.
    *
@@ -186,7 +167,9 @@ export class PortfolioRepository implements IPortfolio {
         .returning();
 
       if (!row) {
-        throw new Error(`Portfolio with id ${persisted.id} was not found.`);
+        throw new NotFoundError(
+          `Portfolio with id ${persisted.id} was not found.`,
+        );
       }
 
       return this.toEntity(row);
@@ -205,7 +188,7 @@ export class PortfolioRepository implements IPortfolio {
    *
    * @see {@link IPortfolio.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(portfolio).where(eq(portfolio.id, id));
   }
 }

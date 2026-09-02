@@ -17,16 +17,10 @@ import { db } from "@/infrastructure/clients/drizzle.client";
  * import `auth` from here rather than creating a new client.
  */
 export const auth = betterAuth({
-  // --------------------------------------
-  // DATABASE ADAPTER
-  // --------------------------------------
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
 
-  // --------------------------------------
-  // AUTHENTICATION METHODS
-  // --------------------------------------
   emailAndPassword: {
     enabled: true,
   },

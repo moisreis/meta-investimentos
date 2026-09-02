@@ -1,4 +1,5 @@
 import type { NormsPortfolios } from "@/business/entities/portfolio/norms-portfolios.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -16,10 +17,6 @@ import type { NormsPortfolios } from "@/business/entities/portfolio/norms-portfo
  * `NormsPortfolios` entities and back.
  */
 export interface INormsPortfolios {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the relation between the provided norm id and portfolio id.
    *
@@ -29,8 +26,8 @@ export interface INormsPortfolios {
    * not found.
    */
   findByNormIdAndPortfolioId(
-    normId: string,
-    portfolioId: string,
+    normId: EntityId,
+    portfolioId: EntityId,
   ): Promise<NormsPortfolios | null>;
 
   /**
@@ -40,7 +37,7 @@ export interface INormsPortfolios {
    * @returns A promise resolving to the `NormsPortfolios` entries or an
    * empty array when there are no matches.
    */
-  findAllByPortfolioId(portfolioId: string): Promise<NormsPortfolios[]>;
+  findAllByPortfolioId(portfolioId: EntityId): Promise<NormsPortfolios[]>;
 
   /**
    * Retrieves all relations belonging to the provided norm id.
@@ -49,11 +46,7 @@ export interface INormsPortfolios {
    * @returns A promise resolving to the `NormsPortfolios` entries or an
    * empty array when there are no matches.
    */
-  findAllByNormId(normId: string): Promise<NormsPortfolios[]>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
+  findAllByNormId(normId: EntityId): Promise<NormsPortfolios[]>;
 
   /**
    * Persists the provided norms-portfolios relation.
@@ -73,5 +66,5 @@ export interface INormsPortfolios {
    * @param portfolioId - The unique identifier of the portfolio.
    * @returns A promise that resolves when the relation is removed.
    */
-  delete(normId: string, portfolioId: string): Promise<void>;
+  delete(normId: EntityId, portfolioId: EntityId): Promise<void>;
 }

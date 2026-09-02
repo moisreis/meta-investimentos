@@ -1,4 +1,4 @@
-import PositiveMoney from "@/business/value-objects/positive-money.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -23,8 +23,9 @@ interface CalculatePortfolioWithdrawalSumProps {
  *
  * The result is represented as a {@link PositiveMoney}.
  *
- * @param withdrawal - The withdrawal amounts from all positions
- * in the portfolio to be summed.
+ * @param withdrawal - The withdrawal amounts from all
+ *                     positions in the portfolio to be
+ *                     summed.
  *
  * @returns The total withdrawal amount across all positions
  * in the portfolio.

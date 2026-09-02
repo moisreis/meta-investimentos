@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   AUDIT_LOG,
@@ -11,6 +11,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("AuditLogRepository", () => {
   beforeEach(async () => {
@@ -26,7 +27,9 @@ describe("AuditLogRepository", () => {
       const [SAVED] = await seedAuditLogs();
       const SAVED_ID = SAVED.id as string;
 
-      const FOUND = await newAuditLogRepository().findById(SAVED_ID);
+      const FOUND = await newAuditLogRepository().findById(
+        EntityId.create(SAVED_ID),
+      );
 
       expect(FOUND?.equals(SAVED)).toBe(true);
       expect(FOUND?.entity).toBe(AUDIT_LOG.entity);
@@ -36,7 +39,9 @@ describe("AuditLogRepository", () => {
     });
 
     it("returns null when the audit log does not exist", async () => {
-      expect(await newAuditLogRepository().findById(USER_ID)).toBeNull();
+      expect(
+        await newAuditLogRepository().findById(EntityId.create(USER_ID)),
+      ).toBeNull();
     });
   });
 
@@ -61,7 +66,7 @@ describe("AuditLogRepository", () => {
 
       const FOUND = await newAuditLogRepository().findAllByEntityAndEntityId(
         "user",
-        USER_ID,
+        EntityId.create(USER_ID),
       );
 
       expect(FOUND).toHaveLength(1);
@@ -72,7 +77,7 @@ describe("AuditLogRepository", () => {
       expect(
         await newAuditLogRepository().findAllByEntityAndEntityId(
           "user",
-          USER_ID,
+          EntityId.create(USER_ID),
         ),
       ).toEqual([]);
     });
@@ -84,7 +89,7 @@ describe("AuditLogRepository", () => {
 
       const FOUND = await newAuditLogRepository().findAllByEntityAndEntityIds(
         "user",
-        [USER_ID],
+        [EntityId.create(USER_ID)],
       );
 
       expect(FOUND).toHaveLength(1);
@@ -105,16 +110,18 @@ describe("AuditLogRepository", () => {
     it("returns every audit log performed by the user", async () => {
       await seedAuditLogs();
 
-      const FOUND = await newAuditLogRepository().findAllByUserId(USER_ID);
+      const FOUND = await newAuditLogRepository().findAllByUserId(
+        EntityId.create(USER_ID),
+      );
 
       expect(FOUND).toHaveLength(1);
       expect(FOUND[0]?.userId).toBe(USER_ID);
     });
 
     it("returns an empty array when the user has no audit logs", async () => {
-      expect(await newAuditLogRepository().findAllByUserId(USER_ID)).toEqual(
-        [],
-      );
+      expect(
+        await newAuditLogRepository().findAllByUserId(EntityId.create(USER_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -123,8 +130,8 @@ describe("AuditLogRepository", () => {
       await seedAuditLogs();
 
       const FOUND = await newAuditLogRepository().findAllByUserIds([
-        USER_ID,
-        OTHER_USER_ID,
+        EntityId.create(USER_ID),
+        EntityId.create(OTHER_USER_ID),
       ]);
 
       expect(FOUND).toHaveLength(2);
@@ -144,7 +151,7 @@ describe("AuditLogRepository", () => {
       const FIRST = await REPOSITORY.save(AUDIT_LOG);
       const SECOND = await REPOSITORY.save(AUDIT_LOG);
 
-      const FOUND = await REPOSITORY.findAllByUserId(USER_ID);
+      const FOUND = await REPOSITORY.findAllByUserId(EntityId.create(USER_ID));
 
       expect(FIRST.id).not.toBe(SECOND.id);
       expect(FOUND).toHaveLength(3);

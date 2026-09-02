@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   EXTERNAL_PORTFOLIO_PERFORMANCE,
@@ -22,6 +22,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("PortfolioPerformanceRepository", () => {
   beforeEach(async () => {
@@ -37,7 +38,7 @@ describe("PortfolioPerformanceRepository", () => {
       await seedPortfolioPerformances();
 
       const FOUND = await newPortfolioPerformanceRepository().findById(
-        PORTFOLIO_PERFORMANCE_ID,
+        EntityId.create(PORTFOLIO_PERFORMANCE_ID),
       );
 
       expect(FOUND?.equals(PORTFOLIO_PERFORMANCE)).toBe(true);
@@ -46,7 +47,7 @@ describe("PortfolioPerformanceRepository", () => {
     it("returns null when the performance does not exist", async () => {
       expect(
         await newPortfolioPerformanceRepository().findById(
-          PORTFOLIO_PERFORMANCE_ID,
+          EntityId.create(PORTFOLIO_PERFORMANCE_ID),
         ),
       ).toBeNull();
     });
@@ -58,7 +59,7 @@ describe("PortfolioPerformanceRepository", () => {
 
       const FOUND =
         await newPortfolioPerformanceRepository().findAllByPortfolioId(
-          PORTFOLIO_ID,
+          EntityId.create(PORTFOLIO_ID),
         );
 
       expect(FOUND).toHaveLength(3);
@@ -74,7 +75,7 @@ describe("PortfolioPerformanceRepository", () => {
     it("returns an empty array when the portfolio has no performances", async () => {
       expect(
         await newPortfolioPerformanceRepository().findAllByPortfolioId(
-          PORTFOLIO_ID,
+          EntityId.create(PORTFOLIO_ID),
         ),
       ).toEqual([]);
     });
@@ -86,8 +87,8 @@ describe("PortfolioPerformanceRepository", () => {
 
       const FOUND =
         await newPortfolioPerformanceRepository().findAllByPortfolioIds([
-          PORTFOLIO_ID,
-          OTHER_PORTFOLIO_ID,
+          EntityId.create(PORTFOLIO_ID),
+          EntityId.create(OTHER_PORTFOLIO_ID),
         ]);
 
       expect(FOUND).toHaveLength(4);
@@ -110,7 +111,7 @@ describe("PortfolioPerformanceRepository", () => {
 
       const FOUND =
         await newPortfolioPerformanceRepository().findByPortfolioIdAndDate(
-          PORTFOLIO_ID,
+          EntityId.create(PORTFOLIO_ID),
           PERFORMANCE_DATE,
         );
 
@@ -122,7 +123,7 @@ describe("PortfolioPerformanceRepository", () => {
 
       const FOUND =
         await newPortfolioPerformanceRepository().findByPortfolioIdAndDate(
-          PORTFOLIO_ID,
+          EntityId.create(PORTFOLIO_ID),
           FEBRUARY_PERFORMANCE_DATE,
         );
 
@@ -136,7 +137,7 @@ describe("PortfolioPerformanceRepository", () => {
 
       const FOUND =
         await newPortfolioPerformanceRepository().findLatestByPortfolioId(
-          PORTFOLIO_ID,
+          EntityId.create(PORTFOLIO_ID),
         );
 
       expect(FOUND?.equals(PERIOD_OUTSIDE_PORTFOLIO_PERFORMANCE)).toBe(true);
@@ -145,7 +146,7 @@ describe("PortfolioPerformanceRepository", () => {
     it("returns null when the portfolio has no performances", async () => {
       expect(
         await newPortfolioPerformanceRepository().findLatestByPortfolioId(
-          PORTFOLIO_ID,
+          EntityId.create(PORTFOLIO_ID),
         ),
       ).toBeNull();
     });
@@ -157,8 +158,8 @@ describe("PortfolioPerformanceRepository", () => {
 
       const FOUND =
         await newPortfolioPerformanceRepository().findLatestByPortfolioIds([
-          PORTFOLIO_ID,
-          OTHER_PORTFOLIO_ID,
+          EntityId.create(PORTFOLIO_ID),
+          EntityId.create(OTHER_PORTFOLIO_ID),
         ]);
 
       expect(FOUND).toHaveLength(2);
@@ -191,7 +192,9 @@ describe("PortfolioPerformanceRepository", () => {
       );
       expect(
         (
-          await newPortfolioPerformanceRepository().findById(SAVED.id as string)
+          await newPortfolioPerformanceRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
         )?.equals(SAVED),
       ).toBe(true);
     });
@@ -204,7 +207,7 @@ describe("PortfolioPerformanceRepository", () => {
       );
 
       const FOUND = await newPortfolioPerformanceRepository().findById(
-        PORTFOLIO_PERFORMANCE_ID,
+        EntityId.create(PORTFOLIO_PERFORMANCE_ID),
       );
 
       expect(FOUND?.patrimony.value.toString()).toBe(
@@ -219,12 +222,12 @@ describe("PortfolioPerformanceRepository", () => {
       await seedPortfolioPerformances();
 
       await newPortfolioPerformanceRepository().delete(
-        PORTFOLIO_PERFORMANCE_ID,
+        EntityId.create(PORTFOLIO_PERFORMANCE_ID),
       );
 
       expect(
         await newPortfolioPerformanceRepository().findById(
-          PORTFOLIO_PERFORMANCE_ID,
+          EntityId.create(PORTFOLIO_PERFORMANCE_ID),
         ),
       ).toBeNull();
     });

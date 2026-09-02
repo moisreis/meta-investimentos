@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   BANK_ACCOUNT,
@@ -12,6 +12,7 @@ import {
 
 import { BankAccount } from "@/business/entities/bank/bank-account.entity";
 import type { IBankAccount } from "@/business/interfaces/bank/bank-account.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("IBankAccount", () => {
   let REPOSITORY: IBankAccount;
@@ -24,13 +25,15 @@ describe("IBankAccount", () => {
     it("returns the persisted bank account", async () => {
       await REPOSITORY.save(BANK_ACCOUNT);
 
-      const FOUND = await REPOSITORY.findById(BANK_ACCOUNT_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(BANK_ACCOUNT_ID));
 
       expect(FOUND?.equals(BANK_ACCOUNT)).toBe(true);
     });
 
     it("returns null when the bank account does not exist", async () => {
-      expect(await REPOSITORY.findById(BANK_ACCOUNT_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(BANK_ACCOUNT_ID)),
+      ).toBeNull();
     });
   });
 
@@ -44,7 +47,9 @@ describe("IBankAccount", () => {
       await REPOSITORY.save(BANK_ACCOUNT);
       await REPOSITORY.save(OTHER);
 
-      const FOUND = await REPOSITORY.findAllByPortfolioId(PORTFOLIO_ID);
+      const FOUND = await REPOSITORY.findAllByPortfolioId(
+        EntityId.create(PORTFOLIO_ID),
+      );
 
       expect(FOUND).toHaveLength(2);
       expect(FOUND[0]?.equals(BANK_ACCOUNT)).toBe(true);
@@ -52,7 +57,9 @@ describe("IBankAccount", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByPortfolioId(PORTFOLIO_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByPortfolioId(EntityId.create(PORTFOLIO_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -66,7 +73,7 @@ describe("IBankAccount", () => {
       await REPOSITORY.save(BANK_ACCOUNT);
       await REPOSITORY.save(OTHER);
 
-      const FOUND = await REPOSITORY.findAllByBankId(BANK_ID);
+      const FOUND = await REPOSITORY.findAllByBankId(EntityId.create(BANK_ID));
 
       expect(FOUND).toHaveLength(2);
       expect(FOUND[0]?.equals(BANK_ACCOUNT)).toBe(true);
@@ -74,7 +81,9 @@ describe("IBankAccount", () => {
     });
 
     it("returns an empty array when there are no matches", async () => {
-      expect(await REPOSITORY.findAllByBankId(BANK_ID)).toEqual([]);
+      expect(
+        await REPOSITORY.findAllByBankId(EntityId.create(BANK_ID)),
+      ).toEqual([]);
     });
   });
 
@@ -82,7 +91,7 @@ describe("IBankAccount", () => {
     it("persists a new bank account", async () => {
       await REPOSITORY.save(BANK_ACCOUNT);
 
-      const FOUND = await REPOSITORY.findById(BANK_ACCOUNT_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(BANK_ACCOUNT_ID));
 
       expect(FOUND?.equals(BANK_ACCOUNT)).toBe(true);
     });
@@ -92,10 +101,10 @@ describe("IBankAccount", () => {
 
       await REPOSITORY.save(UPDATED_BANK_ACCOUNT);
 
-      const FOUND = await REPOSITORY.findById(BANK_ACCOUNT_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(BANK_ACCOUNT_ID));
 
       expect(FOUND?.equals(BANK_ACCOUNT)).toBe(true);
-      expect(FOUND?.accountNumber).toBe("56789-1");
+      expect(FOUND?.accountNumber).toBe("54321-0");
     });
   });
 
@@ -103,9 +112,11 @@ describe("IBankAccount", () => {
     it("removes the persisted bank account", async () => {
       await REPOSITORY.save(BANK_ACCOUNT);
 
-      await REPOSITORY.delete(BANK_ACCOUNT_ID);
+      await REPOSITORY.delete(EntityId.create(BANK_ACCOUNT_ID));
 
-      expect(await REPOSITORY.findById(BANK_ACCOUNT_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(BANK_ACCOUNT_ID)),
+      ).toBeNull();
     });
   });
 });

@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   EXTERNAL_WITHDRAWAL,
@@ -13,6 +13,7 @@ import {
   WITHDRAWAL_SUM_QUOTAS,
 } from "@/__tests__/__helpers__/repositories/_portfolio.test.helper";
 import { POSITION_ID } from "@/__tests__/__seeds__/_position.seed";
+import { seedUserById, USER_ID } from "@/__tests__/__seeds__/_user.seed";
 import {
   WITHDRAWAL,
   WITHDRAWAL_ID,
@@ -21,6 +22,7 @@ import {
   closeDatabase,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("WithdrawalRepository", () => {
   beforeEach(async () => {
@@ -35,14 +37,18 @@ describe("WithdrawalRepository", () => {
     it("returns the persisted withdrawal", async () => {
       await seedWithdrawals();
 
-      const FOUND = await newWithdrawalRepository().findById(WITHDRAWAL_ID);
+      const FOUND = await newWithdrawalRepository().findById(
+        EntityId.create(WITHDRAWAL_ID),
+      );
 
       expect(FOUND?.equals(WITHDRAWAL)).toBe(true);
     });
 
     it("returns null when the withdrawal does not exist", async () => {
       expect(
-        await newWithdrawalRepository().findById(WITHDRAWAL_ID),
+        await newWithdrawalRepository().findById(
+          EntityId.create(WITHDRAWAL_ID),
+        ),
       ).toBeNull();
     });
   });
@@ -51,8 +57,9 @@ describe("WithdrawalRepository", () => {
     it("returns the whole withdrawal series of the position", async () => {
       await seedAllWithdrawals();
 
-      const FOUND =
-        await newWithdrawalRepository().findAllByPositionId(POSITION_ID);
+      const FOUND = await newWithdrawalRepository().findAllByPositionId(
+        EntityId.create(POSITION_ID),
+      );
 
       expect(FOUND).toHaveLength(4);
       expect(FOUND.some((ROW) => ROW.equals(WITHDRAWAL))).toBe(true);
@@ -61,7 +68,9 @@ describe("WithdrawalRepository", () => {
 
     it("returns an empty array when no withdrawals exist", async () => {
       expect(
-        await newWithdrawalRepository().findAllByPositionId(POSITION_ID),
+        await newWithdrawalRepository().findAllByPositionId(
+          EntityId.create(POSITION_ID),
+        ),
       ).toEqual([]);
     });
   });
@@ -71,7 +80,7 @@ describe("WithdrawalRepository", () => {
       await seedAllWithdrawals();
 
       const FOUND = await newWithdrawalRepository().findAllByPositionIdInPeriod(
-        POSITION_ID,
+        EntityId.create(POSITION_ID),
         JANUARY_WINDOW.start,
         JANUARY_WINDOW.end,
       );
@@ -88,7 +97,7 @@ describe("WithdrawalRepository", () => {
 
       const FOUND =
         await newWithdrawalRepository().findAllByPositionIdsInPeriod(
-          [POSITION_ID, OTHER_POSITION_ID],
+          [EntityId.create(POSITION_ID), EntityId.create(OTHER_POSITION_ID)],
           JANUARY_WINDOW.start,
           JANUARY_WINDOW.end,
         );
@@ -114,7 +123,7 @@ describe("WithdrawalRepository", () => {
       await seedAllWithdrawals();
 
       const TOTALS = await newWithdrawalRepository().sumByPositionIdInPeriod(
-        POSITION_ID,
+        EntityId.create(POSITION_ID),
         JANUARY_WINDOW.start,
         JANUARY_WINDOW.end,
       );
@@ -131,7 +140,7 @@ describe("WithdrawalRepository", () => {
       await seedAllWithdrawals();
 
       const TOTALS = await newWithdrawalRepository().sumByPositionIdInPeriod(
-        POSITION_ID,
+        EntityId.create(POSITION_ID),
         new Date("2026-12-01T00:00:00.000Z"),
         new Date("2026-12-31T00:00:00.000Z"),
       );
@@ -152,18 +161,23 @@ describe("WithdrawalRepository", () => {
         FRESH_WITHDRAWAL.amount.value.toString(),
       );
       expect(
-        (await newWithdrawalRepository().findById(SAVED.id as string))?.equals(
-          SAVED,
-        ),
+        (
+          await newWithdrawalRepository().findById(
+            EntityId.create(SAVED.id as string),
+          )
+        )?.equals(SAVED),
       ).toBe(true);
     });
 
     it("updates an existing withdrawal", async () => {
       await seedWithdrawals();
+      await seedUserById(USER_ID);
 
       await newWithdrawalRepository().save(UPDATED_WITHDRAWAL);
 
-      const FOUND = await newWithdrawalRepository().findById(WITHDRAWAL_ID);
+      const FOUND = await newWithdrawalRepository().findById(
+        EntityId.create(WITHDRAWAL_ID),
+      );
 
       expect(FOUND?.amount.value.toString()).toBe(
         UPDATED_WITHDRAWAL.amount.value.toString(),
@@ -179,10 +193,12 @@ describe("WithdrawalRepository", () => {
     it("removes the persisted withdrawal", async () => {
       await seedWithdrawals();
 
-      await newWithdrawalRepository().delete(WITHDRAWAL_ID);
+      await newWithdrawalRepository().delete(EntityId.create(WITHDRAWAL_ID));
 
       expect(
-        await newWithdrawalRepository().findById(WITHDRAWAL_ID),
+        await newWithdrawalRepository().findById(
+          EntityId.create(WITHDRAWAL_ID),
+        ),
       ).toBeNull();
     });
   });

@@ -1,4 +1,5 @@
 import type { Benchmark } from "@/business/entities/benchmark/benchmark.entity";
+import type { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the repository contract for persisting and retrieving
@@ -13,10 +14,6 @@ import type { Benchmark } from "@/business/entities/benchmark/benchmark.entity";
  * `Benchmark` entities and back.
  */
 export interface IBenchmark {
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the benchmark with the provided id.
    *
@@ -24,7 +21,7 @@ export interface IBenchmark {
    * @returns A promise resolving to the `Benchmark` or `null` when
    * not found.
    */
-  findById(id: string): Promise<Benchmark | null>;
+  findById(id: EntityId): Promise<Benchmark | null>;
 
   /**
    * Retrieves the benchmark with the provided acronym.
@@ -34,10 +31,6 @@ export interface IBenchmark {
    * not found.
    */
   findByAcronym(acronym: string): Promise<Benchmark | null>;
-
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
 
   /**
    * Persists the provided benchmark.
@@ -57,5 +50,5 @@ export interface IBenchmark {
    * @param id - The unique identifier of the benchmark.
    * @returns A promise that resolves when the benchmark is removed.
    */
-  delete(id: string): Promise<void>;
+  delete(id: EntityId): Promise<void>;
 }

@@ -1,7 +1,7 @@
 import Decimal from "decimal.js";
 
-import type GrowthFactor from "@/business/value-objects/growth-factor.vo";
-import SignedPercentage from "@/business/value-objects/signed-percentage.vo";
+import type { GrowthFactor } from "@/business/value-objects/growth-factor.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 
 /**
  * Represents the inputs required to calculate
@@ -29,13 +29,13 @@ interface CalculatePortfolioReturnProps {
  * The result is expressed as a percentage, rounded to
  * 2 decimal places, and represented as a {@link SignedPercentage}.
  *
- * @param dailyGrowthFactors - The daily growth factors for the period,
- * in chronological order.
+ * @param dailyGrowthFactors - The daily growth factors for
+ *                             the period, in chronological
+ *                             order.
  *
  * @returns The calculated portfolio return for the period, as a percentage.
  *
- * @equation
- * Rₜᴾ = ( ∏_{k ∈ t} (Vₖᴾ - Δₖᴾ) / Vₖ₋₁ᴾ ) - 1
+ * @equation Rₜᴾ = ( ∏_{k ∈ t} (Vₖᴾ - Δₖᴾ) / Vₖ₋₁ᴾ ) - 1
  *
  * @example
  * ```ts

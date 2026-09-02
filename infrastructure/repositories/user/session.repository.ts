@@ -4,6 +4,7 @@ import { Session } from "@/business/entities/user/session.entity";
 import type { ISession } from "@/business/interfaces/user/session.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { session } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -18,15 +19,7 @@ import type { DbClient } from "../types";
  * hook keeps the timestamp in sync with the mutation.
  */
 export class SessionRepository implements ISession {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates a `SessionRepository` bound to the provided database
@@ -37,10 +30,6 @@ export class SessionRepository implements ISession {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `session` row to a {@link Session} entity.
@@ -102,16 +91,12 @@ export class SessionRepository implements ISession {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the session with the provided id.
    *
    * @see {@link ISession.findById}
    */
-  async findById(id: string): Promise<Session | null> {
+  async findById(id: EntityId): Promise<Session | null> {
     const [row] = await this.db
       .select()
       .from(session)
@@ -141,7 +126,7 @@ export class SessionRepository implements ISession {
    *
    * @see {@link ISession.findAllByUserId}
    */
-  async findAllByUserId(userId: string): Promise<Session[]> {
+  async findAllByUserId(userId: EntityId): Promise<Session[]> {
     const rows = await this.db
       .select()
       .from(session)
@@ -172,10 +157,6 @@ export class SessionRepository implements ISession {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided session.
    *
@@ -190,7 +171,9 @@ export class SessionRepository implements ISession {
         .returning();
 
       if (!row) {
-        throw new Error(`Session with id ${persisted.id} was not found.`);
+        throw new NotFoundError(
+          `Session with id ${persisted.id} was not found.`,
+        );
       }
 
       return this.toEntity(row);
@@ -209,7 +192,7 @@ export class SessionRepository implements ISession {
    *
    * @see {@link ISession.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(session).where(eq(session.id, id));
   }
 }

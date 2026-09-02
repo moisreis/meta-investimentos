@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   CATEGORY,
@@ -8,6 +8,7 @@ import {
 
 import { Category } from "@/business/entities/fund/category.entity";
 import type { ICategory } from "@/business/interfaces/fund/category.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 describe("ICategory", () => {
   let REPOSITORY: ICategory;
@@ -20,13 +21,15 @@ describe("ICategory", () => {
     it("returns the persisted category", async () => {
       await REPOSITORY.save(CATEGORY);
 
-      const FOUND = await REPOSITORY.findById(CATEGORY_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(CATEGORY_ID));
 
       expect(FOUND?.equals(CATEGORY)).toBe(true);
     });
 
     it("returns null when the category does not exist", async () => {
-      expect(await REPOSITORY.findById(CATEGORY_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(CATEGORY_ID)),
+      ).toBeNull();
     });
   });
 
@@ -34,13 +37,13 @@ describe("ICategory", () => {
     it("returns the persisted category matching the name", async () => {
       await REPOSITORY.save(CATEGORY);
 
-      const FOUND = await REPOSITORY.findByName("Ações");
+      const FOUND = await REPOSITORY.findByName("AÃ§Ãµes");
 
       expect(FOUND?.equals(CATEGORY)).toBe(true);
     });
 
     it("returns null when the category does not exist", async () => {
-      expect(await REPOSITORY.findByName("Ações")).toBeNull();
+      expect(await REPOSITORY.findByName("AÃ§Ãµes")).toBeNull();
     });
   });
 
@@ -48,7 +51,7 @@ describe("ICategory", () => {
     it("persists a new category", async () => {
       await REPOSITORY.save(CATEGORY);
 
-      const FOUND = await REPOSITORY.findById(CATEGORY_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(CATEGORY_ID));
 
       expect(FOUND?.equals(CATEGORY)).toBe(true);
     });
@@ -57,15 +60,15 @@ describe("ICategory", () => {
       await REPOSITORY.save(CATEGORY);
 
       const UPDATED_CATEGORY = Category.create(
-        { name: "Ações Brasileiras" },
+        { name: "AÃ§Ãµes Brasileiras" },
         CATEGORY_ID,
       );
 
       await REPOSITORY.save(UPDATED_CATEGORY);
 
-      const FOUND = await REPOSITORY.findById(CATEGORY_ID);
+      const FOUND = await REPOSITORY.findById(EntityId.create(CATEGORY_ID));
 
-      expect(FOUND?.name).toBe("Ações Brasileiras");
+      expect(FOUND?.name).toBe("AÃ§Ãµes Brasileiras");
     });
   });
 
@@ -73,9 +76,11 @@ describe("ICategory", () => {
     it("removes the persisted category", async () => {
       await REPOSITORY.save(CATEGORY);
 
-      await REPOSITORY.delete(CATEGORY_ID);
+      await REPOSITORY.delete(EntityId.create(CATEGORY_ID));
 
-      expect(await REPOSITORY.findById(CATEGORY_ID)).toBeNull();
+      expect(
+        await REPOSITORY.findById(EntityId.create(CATEGORY_ID)),
+      ).toBeNull();
     });
   });
 });

@@ -4,6 +4,7 @@ import { Account } from "@/business/entities/user/account.entity";
 import type { IAccount } from "@/business/interfaces/user/account.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { account } from "@/infrastructure/database/schemas";
+import { NotFoundError } from "@/shared/errors";
 
 import type { DbClient } from "../types";
 
@@ -19,15 +20,7 @@ import type { DbClient } from "../types";
  * hook keeps the timestamp in sync with the mutation.
  */
 export class AccountRepository implements IAccount {
-  // --------------------------------------
-  // FIELDS
-  // --------------------------------------
-
   private readonly db: DbClient;
-
-  // --------------------------------------
-  // CONSTRUCTOR
-  // --------------------------------------
 
   /**
    * Creates an `AccountRepository` bound to the provided database
@@ -38,10 +31,6 @@ export class AccountRepository implements IAccount {
   constructor(db: DbClient) {
     this.db = db;
   }
-
-  // --------------------------------------
-  // MAPPING METHODS
-  // --------------------------------------
 
   /**
    * Maps the provided `account` row to an {@link Account} entity.
@@ -121,16 +110,12 @@ export class AccountRepository implements IAccount {
     };
   }
 
-  // --------------------------------------
-  // QUERY METHODS
-  // --------------------------------------
-
   /**
    * Retrieves the account with the provided id.
    *
    * @see {@link IAccount.findById}
    */
-  async findById(id: string): Promise<Account | null> {
+  async findById(id: EntityId): Promise<Account | null> {
     const [row] = await this.db
       .select()
       .from(account)
@@ -164,7 +149,7 @@ export class AccountRepository implements IAccount {
    *
    * @see {@link IAccount.findAllByUserId}
    */
-  async findAllByUserId(userId: string): Promise<Account[]> {
+  async findAllByUserId(userId: EntityId): Promise<Account[]> {
     const rows = await this.db
       .select()
       .from(account)
@@ -195,10 +180,6 @@ export class AccountRepository implements IAccount {
     return rows.map((row) => this.toEntity(row));
   }
 
-  // --------------------------------------
-  // COMMAND METHODS
-  // --------------------------------------
-
   /**
    * Persists the provided account.
    *
@@ -213,7 +194,9 @@ export class AccountRepository implements IAccount {
         .returning();
 
       if (!row) {
-        throw new Error(`Account with id ${persisted.id} was not found.`);
+        throw new NotFoundError(
+          `Account with id ${persisted.id} was not found.`,
+        );
       }
 
       return this.toEntity(row);
@@ -232,7 +215,7 @@ export class AccountRepository implements IAccount {
    *
    * @see {@link IAccount.delete}
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: EntityId): Promise<void> {
     await this.db.delete(account).where(eq(account.id, id));
   }
 }
