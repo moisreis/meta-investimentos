@@ -1,4 +1,4 @@
-﻿import { afterAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { newAuditLogRepository } from "@/__tests__/__helpers__/repositories/_audit.test.helper";
 import {
@@ -7,8 +7,11 @@ import {
   newApplicationRepository,
   newPositionRepository,
   newWithdrawalRepository,
+  PORTFOLIO,
+  PORTFOLIO_ID,
   POSITION,
   POSITION_ID,
+  seedPortfolioById,
   seedPositionById,
   UPDATED_POSITION,
 } from "@/__tests__/__helpers__/repositories/_portfolio.test.helper";
@@ -19,10 +22,13 @@ import {
   db,
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
+import { DomainEventDispatcher } from "@/business/domain-events";
+import { PortfolioAllocationUpdated } from "@/business/domain-events/events/portfolio-allocation-updated.event";
 import { Application } from "@/business/entities/portfolio/application.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { UnitOfWork } from "@/infrastructure/unit-of-work";
 
 describe("UnitOfWork", () => {
@@ -290,6 +296,54 @@ describe("UnitOfWork", () => {
           await tx.applications.save(REVERSED_APPLICATION);
         }),
       ).rejects.toThrow();
+    });
+  });
+
+  describe("domain events", () => {
+    it("dispatches the events an entity recorded during a transition", async () => {
+      await seedPortfolioById(PORTFOLIO_ID);
+
+      const DISPATCHER = new DomainEventDispatcher();
+      const HANDLER = vi.fn();
+
+      DISPATCHER.subscribe(HANDLER);
+
+      const UPDATED = PORTFOLIO.updateAllocation(
+        SignedPercentage.create("10"),
+        SignedPercentage.create("15"),
+        SignedPercentage.create("25"),
+      );
+
+      const UNIT_OF_WORK = new UnitOfWork(db, DISPATCHER);
+
+      await UNIT_OF_WORK.run(async (tx) => {
+        await tx.portfolios.save(UPDATED);
+      });
+
+      expect(HANDLER).toHaveBeenCalledTimes(1);
+      expect(HANDLER).toHaveBeenCalledWith(
+        expect.any(PortfolioAllocationUpdated),
+      );
+    });
+
+    it("does not dispatch events when no dispatcher is provided", async () => {
+      await seedPortfolioById(PORTFOLIO_ID);
+
+      const UPDATED = PORTFOLIO.updateAllocation(
+        SignedPercentage.create("10"),
+        SignedPercentage.create("15"),
+        SignedPercentage.create("25"),
+      );
+
+      const UNIT_OF_WORK = new UnitOfWork(db);
+
+      await expect(
+        UNIT_OF_WORK.run(async (tx) => {
+          await tx.portfolios.save(UPDATED);
+        }),
+      ).resolves.toBeUndefined();
+
+      expect(UPDATED.pullDomainEvents()).toHaveLength(1);
     });
   });
 });

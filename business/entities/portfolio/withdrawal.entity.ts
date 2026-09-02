@@ -1,4 +1,9 @@
-﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+﻿import {
+  type DomainEvent,
+  DomainEventCollector,
+  WithdrawalReversed,
+} from "@/business/domain-events";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 import type { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 import { ValidationError } from "@/shared/errors";
@@ -49,6 +54,7 @@ interface WithdrawalProps {
 export class Withdrawal {
   private readonly _id?: EntityId;
   private readonly props: Required<WithdrawalProps>;
+  private readonly _domainEventCollector = new DomainEventCollector();
 
   /**
    * Returns the unique identifier of the withdrawal.
@@ -197,7 +203,7 @@ export class Withdrawal {
 
     const NOW = now ?? new Date();
 
-    return new Withdrawal(
+    const REVERSED = new Withdrawal(
       {
         ...this.props,
         reversedAt: NOW,
@@ -206,6 +212,26 @@ export class Withdrawal {
       },
       this._id,
     );
+
+    REVERSED._domainEventCollector.record(
+      new WithdrawalReversed(this._id, userId, NOW),
+    );
+
+    return REVERSED;
+  }
+
+  /**
+   * Returns the recorded domain events and clears the collection.
+   *
+   * A state transition records a domain event, for example
+   * {@link WithdrawalReversed} on {@link Withdrawal.reverse}. The
+   * {@link UnitOfWork} pulls the events after it saves the withdrawal
+   * and dispatches them.
+   *
+   * @returns The recorded domain events in recording order.
+   */
+  public pullDomainEvents(): DomainEvent[] {
+    return this._domainEventCollector.pullAll();
   }
 
   /**

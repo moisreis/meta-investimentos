@@ -1,5 +1,6 @@
 ﻿import { describe, expect, it } from "vitest";
 
+import { PositionInitialBalanceSet } from "@/business/domain-events/events/position-initial-balance-set.event";
 import { Position } from "@/business/entities/portfolio/position.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
@@ -171,5 +172,25 @@ describe("Position.setInitialBalance", () => {
     ).toThrow(
       "Cannot set an initial balance on a position that has not been persisted.",
     );
+  });
+
+  it("records a PositionInitialBalanceSet event on the returned instance", () => {
+    const POSITION = Position.create(VALID_PROPS, ID);
+    const NOW = new Date("2026-01-02T00:00:00.000Z");
+
+    const UPDATED = POSITION.setInitialBalance(
+      PositiveMoney.create("1000.00"),
+      new Date("2026-01-01T00:00:00.000Z"),
+      NOW,
+    );
+
+    const EVENTS = UPDATED.pullDomainEvents();
+
+    expect(EVENTS).toHaveLength(1);
+    expect(EVENTS[0]).toBeInstanceOf(PositionInitialBalanceSet);
+    expect(EVENTS[0]).toMatchObject({
+      positionId: ID,
+      occurredAt: NOW,
+    });
   });
 });

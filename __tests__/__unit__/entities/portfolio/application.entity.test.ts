@@ -1,5 +1,6 @@
 ﻿import { describe, expect, it } from "vitest";
 
+import { ApplicationReversed } from "@/business/domain-events/events/application-reversed.event";
 import { Application } from "@/business/entities/portfolio/application.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
@@ -206,5 +207,30 @@ describe("Application.reverse", () => {
     expect(() =>
       APPLICATION.reverse(EntityId.create(USER_ID), REVERSED_AT),
     ).toThrow("Cannot reverse an application that is already reversed.");
+  });
+
+  it("records an ApplicationReversed event on the returned instance", () => {
+    const APPLICATION = Application.create(VALID_PROPS, ID);
+    const NOW = new Date("2026-02-01T00:00:00.000Z");
+
+    const REVERSED = APPLICATION.reverse(EntityId.create(USER_ID), NOW);
+
+    const EVENTS = REVERSED.pullDomainEvents();
+
+    expect(EVENTS).toHaveLength(1);
+    expect(EVENTS[0]).toBeInstanceOf(ApplicationReversed);
+    expect(EVENTS[0]).toMatchObject({
+      applicationId: ID,
+      reversedByUserId: USER_ID,
+      occurredAt: NOW,
+    });
+  });
+
+  it("does not record an event when the reversal fails", () => {
+    const APPLICATION = Application.create(VALID_PROPS);
+
+    expect(() => APPLICATION.reverse(EntityId.create(USER_ID))).toThrow();
+
+    expect(APPLICATION.pullDomainEvents()).toEqual([]);
   });
 });

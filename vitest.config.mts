@@ -76,6 +76,16 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          name: { label: "DOMAIN EVENTS", color: "cyan" },
+          include: [
+            "**/__unit__/domain-events/**/*.{test,spec}.{ts,tsx,js,jsx}",
+          ],
+          environment: "node",
+        },
+      },
+      {
+        extends: true,
+        test: {
           name: { label: "REPOSITORIES", color: "white" },
           include: [
             "**/__integration__/repositories/**/*.{test,spec}.{ts,tsx,js,jsx}",

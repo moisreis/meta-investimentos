@@ -1,4 +1,10 @@
-﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+﻿import {
+  type DomainEvent,
+  DomainEventCollector,
+  PortfolioAllocationUpdated,
+  PortfolioAnnualInterestRateUpdated,
+} from "@/business/domain-events";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { ValidationError } from "@/shared/errors";
 
@@ -54,6 +60,7 @@ interface PortfolioProps {
 export class Portfolio {
   private readonly _id?: EntityId;
   private readonly props: Required<PortfolioProps>;
+  private readonly _domainEventCollector = new DomainEventCollector();
 
   /**
    * Returns the unique identifier of the portfolio.
@@ -254,7 +261,7 @@ export class Portfolio {
 
     const NOW = now ?? new Date();
 
-    return new Portfolio(
+    const UPDATED = new Portfolio(
       {
         ...this.props,
         minAllocation,
@@ -264,6 +271,12 @@ export class Portfolio {
       },
       this._id,
     );
+
+    UPDATED._domainEventCollector.record(
+      new PortfolioAllocationUpdated(UPDATED._id, NOW),
+    );
+
+    return UPDATED;
   }
 
   /**
@@ -295,7 +308,7 @@ export class Portfolio {
 
     const NOW = now ?? new Date();
 
-    return new Portfolio(
+    const UPDATED = new Portfolio(
       {
         ...this.props,
         annualInterestRate,
@@ -303,6 +316,28 @@ export class Portfolio {
       },
       this._id,
     );
+
+    UPDATED._domainEventCollector.record(
+      new PortfolioAnnualInterestRateUpdated(UPDATED._id, NOW),
+    );
+
+    return UPDATED;
+  }
+
+  /**
+   * Returns the recorded domain events and clears the collection.
+   *
+   * A state transition records a domain event, for example
+   * {@link PortfolioAllocationUpdated} on
+   * {@link Portfolio.updateAllocation} or
+   * {@link PortfolioAnnualInterestRateUpdated} on
+   * {@link Portfolio.updateAnnualInterestRate}. The {@link UnitOfWork}
+   * pulls the events after it saves the portfolio and dispatches them.
+   *
+   * @returns The recorded domain events in recording order.
+   */
+  public pullDomainEvents(): DomainEvent[] {
+    return this._domainEventCollector.pullAll();
   }
 
   /**

@@ -1,3 +1,4 @@
+import type { DomainEventDispatcher } from "@/business/domain-events";
 import { AuditLog } from "@/business/entities/audit/audit-log.entity";
 import type { EntityId } from "@/business/value-objects/entity-id.vo";
 import { AuditLogRepository } from "@/infrastructure/repositories/audit/audit-log.repository";
@@ -185,17 +186,30 @@ export interface UnitOfWorkContext {
  * The application layer builds each unit of work from the environment
  * database client and scopes one business operation inside its
  * callback, so many writes happen atomically.
+ *
+ * A unit of work may publish the domain events that entities record
+ * during state transitions. When constructed with a
+ * {@link DomainEventDispatcher}, it dispatches each saved entity's
+ * recorded events inside the transaction, after the entity is audited.
  */
 export class UnitOfWork {
   private readonly db: DbClient;
+  private readonly domainEventDispatcher?: DomainEventDispatcher;
 
   /**
    * Creates a `UnitOfWork` bound to the provided database client.
    *
+   * When a `domainEventDispatcher` is provided, the unit of work
+   * publishes the domain events that a saved entity recorded during a
+   * state transition.
+   *
    * @param db - The database client that owns the transactions.
+   * @param domainEventDispatcher - The dispatcher that publishes
+   * domain events, or `undefined` to disable event publishing.
    */
-  constructor(db: DbClient) {
+  constructor(db: DbClient, domainEventDispatcher?: DomainEventDispatcher) {
     this.db = db;
+    this.domainEventDispatcher = domainEventDispatcher;
   }
 
   /**
@@ -424,9 +438,48 @@ export class UnitOfWork {
             );
           }
 
+          if (prop === "save") {
+            this.dispatchDomainEvents(args[0], RESULT);
+          }
+
           return RESULT;
         };
       },
     });
+  }
+
+  /**
+   * Publishes the domain events that a saved entity recorded.
+   *
+   * A state transition records domain events on the entity it returns.
+   * The code pulls those events from the entity provided to `save` and,
+   * when a repository reconstructs the entity from the database, from
+   * the saved result, and dispatches them through
+   * {@link UnitOfWork.domainEventDispatcher}.
+   *
+   * @param entity - The entity provided to `save`.
+   * @param saved - The entity returned by the repository after saving.
+   */
+  private dispatchDomainEvents(entity: unknown, saved: unknown): void {
+    if (!this.domainEventDispatcher) {
+      return;
+    }
+
+    const SOURCES = [saved, entity];
+
+    for (const source of SOURCES) {
+      const COLLECTOR = (source as { pullDomainEvents?: () => object[] })
+        .pullDomainEvents;
+
+      if (!COLLECTOR) {
+        continue;
+      }
+
+      for (const event of COLLECTOR.call(source)) {
+        this.domainEventDispatcher.dispatch(
+          event as Parameters<typeof this.domainEventDispatcher.dispatch>[0],
+        );
+      }
+    }
   }
 }

@@ -1,5 +1,7 @@
 ﻿import { describe, expect, it } from "vitest";
 
+import { PortfolioAllocationUpdated } from "@/business/domain-events/events/portfolio-allocation-updated.event";
+import { PortfolioAnnualInterestRateUpdated } from "@/business/domain-events/events/portfolio-annual-interest-rate-updated.event";
 import { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
@@ -272,6 +274,27 @@ describe("Portfolio.updateAllocation", () => {
       "Portfolio target allocation must not exceed maximum allocation.",
     );
   });
+
+  it("records a PortfolioAllocationUpdated event on the returned instance", () => {
+    const PORTFOLIO = Portfolio.create(VALID_PROPS, ID);
+    const NOW = new Date("2026-01-02T00:00:00.000Z");
+
+    const UPDATED = PORTFOLIO.updateAllocation(
+      SignedPercentage.create("10"),
+      SignedPercentage.create("15"),
+      SignedPercentage.create("25"),
+      NOW,
+    );
+
+    const EVENTS = UPDATED.pullDomainEvents();
+
+    expect(EVENTS).toHaveLength(1);
+    expect(EVENTS[0]).toBeInstanceOf(PortfolioAllocationUpdated);
+    expect(EVENTS[0]).toMatchObject({
+      portfolioId: ID,
+      occurredAt: NOW,
+    });
+  });
 });
 
 describe("Portfolio.updateAnnualInterestRate", () => {
@@ -315,5 +338,24 @@ describe("Portfolio.updateAnnualInterestRate", () => {
     expect(() =>
       PORTFOLIO.updateAnnualInterestRate(SignedPercentage.create("-10")),
     ).toThrow("Portfolio annual interest rate must not be negative.");
+  });
+
+  it("records a PortfolioAnnualInterestRateUpdated event on the returned instance", () => {
+    const PORTFOLIO = Portfolio.create(VALID_PROPS, ID);
+    const NOW = new Date("2026-01-02T00:00:00.000Z");
+
+    const UPDATED = PORTFOLIO.updateAnnualInterestRate(
+      SignedPercentage.create("12.5"),
+      NOW,
+    );
+
+    const EVENTS = UPDATED.pullDomainEvents();
+
+    expect(EVENTS).toHaveLength(1);
+    expect(EVENTS[0]).toBeInstanceOf(PortfolioAnnualInterestRateUpdated);
+    expect(EVENTS[0]).toMatchObject({
+      portfolioId: ID,
+      occurredAt: NOW,
+    });
   });
 });

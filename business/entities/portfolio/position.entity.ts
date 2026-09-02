@@ -1,4 +1,9 @@
-﻿import { EntityId } from "@/business/value-objects/entity-id.vo";
+﻿import {
+  type DomainEvent,
+  DomainEventCollector,
+  PositionInitialBalanceSet,
+} from "@/business/domain-events";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 import { ValidationError } from "@/shared/errors";
 
@@ -43,6 +48,7 @@ interface PositionProps {
 export class Position {
   private readonly _id?: EntityId;
   private readonly props: Required<PositionProps>;
+  private readonly _domainEventCollector = new DomainEventCollector();
 
   /**
    * Returns the unique identifier of the position.
@@ -183,7 +189,7 @@ export class Position {
 
     const NOW = now ?? new Date();
 
-    return new Position(
+    const UPDATED = new Position(
       {
         ...this.props,
         initialBalance,
@@ -193,6 +199,26 @@ export class Position {
       },
       this._id,
     );
+
+    UPDATED._domainEventCollector.record(
+      new PositionInitialBalanceSet(this._id, NOW),
+    );
+
+    return UPDATED;
+  }
+
+  /**
+   * Returns the recorded domain events and clears the collection.
+   *
+   * A state transition records a domain event, for example
+   * {@link PositionInitialBalanceSet} on
+   * {@link Position.setInitialBalance}. The {@link UnitOfWork} pulls
+   * the events after it saves the position and dispatches them.
+   *
+   * @returns The recorded domain events in recording order.
+   */
+  public pullDomainEvents(): DomainEvent[] {
+    return this._domainEventCollector.pullAll();
   }
 
   /**

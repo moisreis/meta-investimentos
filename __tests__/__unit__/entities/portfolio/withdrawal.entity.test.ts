@@ -1,5 +1,6 @@
 ﻿import { describe, expect, it } from "vitest";
 
+import { WithdrawalReversed } from "@/business/domain-events/events/withdrawal-reversed.event";
 import { Withdrawal } from "@/business/entities/portfolio/withdrawal.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
@@ -206,5 +207,22 @@ describe("Withdrawal.reverse", () => {
     expect(() =>
       WITHDRAWAL.reverse(EntityId.create(USER_ID), REVERSED_AT),
     ).toThrow("Cannot reverse a withdrawal that is already reversed.");
+  });
+
+  it("records a WithdrawalReversed event on the returned instance", () => {
+    const WITHDRAWAL = Withdrawal.create(VALID_PROPS, ID);
+    const NOW = new Date("2026-02-01T00:00:00.000Z");
+
+    const REVERSED = WITHDRAWAL.reverse(EntityId.create(USER_ID), NOW);
+
+    const EVENTS = REVERSED.pullDomainEvents();
+
+    expect(EVENTS).toHaveLength(1);
+    expect(EVENTS[0]).toBeInstanceOf(WithdrawalReversed);
+    expect(EVENTS[0]).toMatchObject({
+      withdrawalId: ID,
+      reversedByUserId: USER_ID,
+      occurredAt: NOW,
+    });
   });
 });
