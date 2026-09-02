@@ -170,6 +170,45 @@ export class Withdrawal {
   }
 
   /**
+   * Reverses this withdrawal.
+   *
+   * The code returns a new `Withdrawal` instance with the reversal
+   * timestamp and acting user recorded. A reversed withdrawal cannot be
+   * reversed again.
+   *
+   * @param userId - The id of the user reversing the withdrawal.
+   * @param now - The reversal timestamp, defaulting to the current time.
+   *
+   * @returns A new reversed `Withdrawal` instance.
+   *
+   * @throws {ValidationError} If the withdrawal is already reversed.
+   */
+  public reverse(userId: EntityId, now?: Date): Withdrawal {
+    if (this._id === undefined) {
+      throw new ValidationError(
+        "Cannot reverse a withdrawal that has not been persisted.",
+      );
+    }
+    if (this.props.reversedAt !== null) {
+      throw new ValidationError(
+        "Cannot reverse a withdrawal that is already reversed.",
+      );
+    }
+
+    const NOW = now ?? new Date();
+
+    return new Withdrawal(
+      {
+        ...this.props,
+        reversedAt: NOW,
+        reversedByUserId: userId,
+        updatedAt: NOW,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `Withdrawal` represents the same withdrawal
    * as the provided instance, based on referential equality and the
    * unique id.

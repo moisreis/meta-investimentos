@@ -150,6 +150,52 @@ export class Position {
   }
 
   /**
+   * Sets the initial balance of this position.
+   *
+   * The code returns a new `Position` instance with the initial balance
+   * and its effective date recorded. The optimistic-locking version is
+   * incremented, so the next persistence detects concurrent updates.
+   *
+   * @param initialBalance - The new initial balance of the position.
+   * @param date - The effective date of the initial balance.
+   * @param now - The update timestamp, defaulting to the current time.
+   *
+   * @returns A new `Position` instance with the updated initial balance.
+   */
+  public setInitialBalance(
+    initialBalance: PositiveMoney,
+    date: Date,
+    now?: Date,
+  ): Position {
+    if (this._id === undefined) {
+      throw new ValidationError(
+        "Cannot set an initial balance on a position that has not been persisted.",
+      );
+    }
+    if (!initialBalance) {
+      throw new ValidationError("Position initial balance must be defined.");
+    }
+    if (!date) {
+      throw new ValidationError(
+        "Position initial balance date must be defined.",
+      );
+    }
+
+    const NOW = now ?? new Date();
+
+    return new Position(
+      {
+        ...this.props,
+        initialBalance,
+        initialBalanceDate: date,
+        version: this.props.version + 1,
+        updatedAt: NOW,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `Position` represents the same position as
    * the provided instance, based on referential equality and the unique id.
    *

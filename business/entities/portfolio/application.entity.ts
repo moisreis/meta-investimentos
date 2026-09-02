@@ -170,6 +170,45 @@ export class Application {
   }
 
   /**
+   * Reverses this application.
+   *
+   * The code returns a new `Application` instance with the reversal
+   * timestamp and acting user recorded. A reversed application cannot
+   * be reversed again.
+   *
+   * @param userId - The id of the user reversing the application.
+   * @param now - The reversal timestamp, defaulting to the current time.
+   *
+   * @returns A new reversed `Application` instance.
+   *
+   * @throws {ValidationError} If the application is already reversed.
+   */
+  public reverse(userId: EntityId, now?: Date): Application {
+    if (this._id === undefined) {
+      throw new ValidationError(
+        "Cannot reverse an application that has not been persisted.",
+      );
+    }
+    if (this.props.reversedAt !== null) {
+      throw new ValidationError(
+        "Cannot reverse an application that is already reversed.",
+      );
+    }
+
+    const NOW = now ?? new Date();
+
+    return new Application(
+      {
+        ...this.props,
+        reversedAt: NOW,
+        reversedByUserId: userId,
+        updatedAt: NOW,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `Application` represents the same application
    * as the provided instance, based on referential equality and the
    * unique id.

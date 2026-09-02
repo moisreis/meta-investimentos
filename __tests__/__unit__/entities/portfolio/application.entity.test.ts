@@ -150,3 +150,61 @@ describe("Application.equals", () => {
     expect(APPLICATION.equals(undefined)).toBe(false);
   });
 });
+
+describe("Application.reverse", () => {
+  const VALID_PROPS = {
+    positionId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    date: new Date("2026-01-01T00:00:00.000Z"),
+    amount: PositiveMoney.create("100.00"),
+    quotas: QuotaQuantity.create("12.345"),
+  };
+  const ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
+  const USER_ID = "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d";
+
+  it("reverses a persisted application and records the actor and time", () => {
+    const APPLICATION = Application.create(VALID_PROPS, ID);
+    const NOW = new Date("2026-02-01T00:00:00.000Z");
+
+    const REVERSED = APPLICATION.reverse(EntityId.create(USER_ID), NOW);
+
+    expect(REVERSED.id).toBe(ID);
+    expect(REVERSED.reversedAt).toBe(NOW);
+    expect(REVERSED.reversedByUserId).toBe(USER_ID);
+    expect(REVERSED.updatedAt).toBe(NOW);
+    expect(REVERSED.amount.value.toString()).toBe("100");
+    expect(REVERSED.equals(APPLICATION)).toBe(true);
+  });
+
+  it("does not mutate the original application", () => {
+    const APPLICATION = Application.create(VALID_PROPS, ID);
+
+    APPLICATION.reverse(EntityId.create(USER_ID));
+
+    expect(APPLICATION.reversedAt).toBeNull();
+    expect(APPLICATION.reversedByUserId).toBeNull();
+  });
+
+  it("throws when the application has not been persisted", () => {
+    const APPLICATION = Application.create(VALID_PROPS);
+
+    expect(() => APPLICATION.reverse(EntityId.create(USER_ID))).toThrow(
+      "Cannot reverse an application that has not been persisted.",
+    );
+  });
+
+  it("throws when the application is already reversed", () => {
+    const REVERSED_AT = new Date("2026-02-01T00:00:00.000Z");
+    const APPLICATION = Application.create(
+      {
+        ...VALID_PROPS,
+        reversedAt: REVERSED_AT,
+        reversedByUserId: EntityId.create(USER_ID),
+      },
+      ID,
+    );
+
+    expect(() =>
+      APPLICATION.reverse(EntityId.create(USER_ID), REVERSED_AT),
+    ).toThrow("Cannot reverse an application that is already reversed.");
+  });
+});

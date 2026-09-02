@@ -3,8 +3,10 @@
 import { newAuditLogRepository } from "@/__tests__/__helpers__/repositories/_audit.test.helper";
 import {
   FRESH_APPLICATION,
+  FRESH_WITHDRAWAL,
   newApplicationRepository,
   newPositionRepository,
+  newWithdrawalRepository,
   POSITION,
   POSITION_ID,
   seedPositionById,
@@ -91,6 +93,36 @@ describe("UnitOfWork", () => {
       );
 
       expect(POSITION_ROW?.equals(POSITION)).toBe(true);
+    });
+
+    it("persists a withdrawal and its audit row through the expanded context", async () => {
+      await seedPositionById(POSITION_ID);
+
+      const UNIT_OF_WORK = new UnitOfWork(db);
+
+      let savedWithdrawalId: string | undefined;
+
+      const WITHDRAWAL = await UNIT_OF_WORK.run(async (tx) => {
+        const SAVED = await tx.withdrawals.save(FRESH_WITHDRAWAL);
+
+        savedWithdrawalId = SAVED.id;
+
+        return SAVED;
+      });
+
+      const FOUND = await newWithdrawalRepository().findById(
+        EntityId.create(savedWithdrawalId as string),
+      );
+
+      expect(FOUND?.equals(WITHDRAWAL)).toBe(true);
+
+      const LOGS = await newAuditLogRepository().findAllByEntityAndEntityId(
+        "Withdrawal",
+        EntityId.create(savedWithdrawalId as string),
+      );
+
+      expect(LOGS).toHaveLength(1);
+      expect(LOGS[0]?.action).toBe("CREATED");
     });
   });
 

@@ -1,9 +1,28 @@
 import { AuditLog } from "@/business/entities/audit/audit-log.entity";
 import type { EntityId } from "@/business/value-objects/entity-id.vo";
 import { AuditLogRepository } from "@/infrastructure/repositories/audit/audit-log.repository";
+import { BankRepository } from "@/infrastructure/repositories/bank/bank.repository";
+import { BankAccountRepository } from "@/infrastructure/repositories/bank/bank-account.repository";
+import { CheckingAccountRepository } from "@/infrastructure/repositories/bank/checking-account.repository";
+import { BenchmarkRepository } from "@/infrastructure/repositories/benchmark/benchmark.repository";
+import { BenchmarkHistoryRepository } from "@/infrastructure/repositories/benchmark/benchmark-history.repository";
+import { CategoryRepository } from "@/infrastructure/repositories/fund/category.repository";
+import { FundRepository } from "@/infrastructure/repositories/fund/fund.repository";
+import { QuotaRepository } from "@/infrastructure/repositories/fund/quota.repository";
+import { PortfolioPerformanceRepository } from "@/infrastructure/repositories/performance/portfolio-performance.repository";
 import { PositionPerformanceRepository } from "@/infrastructure/repositories/performance/position-performance.repository";
 import { ApplicationRepository } from "@/infrastructure/repositories/portfolio/application.repository";
+import { NormRepository } from "@/infrastructure/repositories/portfolio/norm.repository";
+import { NormsPortfoliosRepository } from "@/infrastructure/repositories/portfolio/norms-portfolios.repository";
+import { PortfolioRepository } from "@/infrastructure/repositories/portfolio/portfolio.repository";
 import { PositionRepository } from "@/infrastructure/repositories/portfolio/position.repository";
+import { TransactionAllocationRepository } from "@/infrastructure/repositories/portfolio/transaction-allocation.repository";
+import { WithdrawalRepository } from "@/infrastructure/repositories/portfolio/withdrawal.repository";
+import { StatementRepository } from "@/infrastructure/repositories/report/statement.repository";
+import { AccountRepository } from "@/infrastructure/repositories/user/account.repository";
+import { SessionRepository } from "@/infrastructure/repositories/user/session.repository";
+import { UserRepository } from "@/infrastructure/repositories/user/user.repository";
+import { VerificationRepository } from "@/infrastructure/repositories/user/verification.repository";
 
 import type { DbClient } from "./repositories/types";
 
@@ -37,15 +56,112 @@ export interface UnitOfWorkContext {
   applications: ApplicationRepository;
 
   /**
+   * Repository bound to the transaction for `withdrawal` rows.
+   */
+  withdrawals: WithdrawalRepository;
+
+  /**
+   * Repository bound to the transaction for `transaction_allocation`
+   * rows.
+   */
+  transactionAllocations: TransactionAllocationRepository;
+
+  /**
    * Repository bound to the transaction for `position` rows.
    */
   positions: PositionRepository;
+
+  /**
+   * Repository bound to the transaction for `portfolio` rows.
+   */
+  portfolios: PortfolioRepository;
+
+  /**
+   * Repository bound to the transaction for `norm` rows.
+   */
+  norms: NormRepository;
+
+  /**
+   * Repository bound to the transaction for `norms_portfolios` rows.
+   */
+  normsPortfolios: NormsPortfoliosRepository;
+
+  /**
+   * Repository bound to the transaction for `bank` rows.
+   */
+  banks: BankRepository;
+
+  /**
+   * Repository bound to the transaction for `bank_account` rows.
+   */
+  bankAccounts: BankAccountRepository;
+
+  /**
+   * Repository bound to the transaction for `checking_account` rows.
+   */
+  checkingAccounts: CheckingAccountRepository;
+
+  /**
+   * Repository bound to the transaction for `fund` rows.
+   */
+  funds: FundRepository;
+
+  /**
+   * Repository bound to the transaction for `quota` rows.
+   */
+  quotas: QuotaRepository;
+
+  /**
+   * Repository bound to the transaction for `category` rows.
+   */
+  categories: CategoryRepository;
+
+  /**
+   * Repository bound to the transaction for `benchmark` rows.
+   */
+  benchmarks: BenchmarkRepository;
+
+  /**
+   * Repository bound to the transaction for `benchmark_history` rows.
+   */
+  benchmarkHistories: BenchmarkHistoryRepository;
+
+  /**
+   * Repository bound to the transaction for `portfolio_performance`
+   * rows.
+   */
+  portfolioPerformances: PortfolioPerformanceRepository;
 
   /**
    * Repository bound to the transaction for `position_performance`
    * rows.
    */
   positionPerformances: PositionPerformanceRepository;
+
+  /**
+   * Repository bound to the transaction for `statement` rows.
+   */
+  statements: StatementRepository;
+
+  /**
+   * Repository bound to the transaction for `user` rows.
+   */
+  users: UserRepository;
+
+  /**
+   * Repository bound to the transaction for `account` rows.
+   */
+  accounts: AccountRepository;
+
+  /**
+   * Repository bound to the transaction for `session` rows.
+   */
+  sessions: SessionRepository;
+
+  /**
+   * Repository bound to the transaction for `verification` rows.
+   */
+  verifications: VerificationRepository;
 
   /**
    * Repository bound to the transaction for `audit_log` rows.
@@ -115,15 +231,129 @@ export class UnitOfWork {
           USER_ID,
           AUDIT_LOGS,
         ),
+        withdrawals: this.audited(
+          new WithdrawalRepository(tx),
+          "Withdrawal",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        transactionAllocations: this.audited(
+          new TransactionAllocationRepository(tx),
+          "TransactionAllocation",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
         positions: this.audited(
           new PositionRepository(tx),
           "Position",
           USER_ID,
           AUDIT_LOGS,
         ),
+        portfolios: this.audited(
+          new PortfolioRepository(tx),
+          "Portfolio",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        norms: this.audited(
+          new NormRepository(tx),
+          "Norm",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        normsPortfolios: this.audited(
+          new NormsPortfoliosRepository(tx),
+          "NormsPortfolios",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        banks: this.audited(
+          new BankRepository(tx),
+          "Bank",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        bankAccounts: this.audited(
+          new BankAccountRepository(tx),
+          "BankAccount",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        checkingAccounts: this.audited(
+          new CheckingAccountRepository(tx),
+          "CheckingAccount",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        funds: this.audited(
+          new FundRepository(tx),
+          "Fund",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        quotas: this.audited(
+          new QuotaRepository(tx),
+          "Quota",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        categories: this.audited(
+          new CategoryRepository(tx),
+          "Category",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        benchmarks: this.audited(
+          new BenchmarkRepository(tx),
+          "Benchmark",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        benchmarkHistories: this.audited(
+          new BenchmarkHistoryRepository(tx),
+          "BenchmarkHistory",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        portfolioPerformances: this.audited(
+          new PortfolioPerformanceRepository(tx),
+          "PortfolioPerformance",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
         positionPerformances: this.audited(
           new PositionPerformanceRepository(tx),
           "PositionPerformance",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        statements: this.audited(
+          new StatementRepository(tx),
+          "Statement",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        users: this.audited(
+          new UserRepository(tx),
+          "User",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        accounts: this.audited(
+          new AccountRepository(tx),
+          "Account",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        sessions: this.audited(
+          new SessionRepository(tx),
+          "Session",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        verifications: this.audited(
+          new VerificationRepository(tx),
+          "Verification",
           USER_ID,
           AUDIT_LOGS,
         ),

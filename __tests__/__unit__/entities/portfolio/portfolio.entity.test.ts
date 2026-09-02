@@ -198,3 +198,122 @@ describe("Portfolio.equals", () => {
     expect(PORTFOLIO.equals(undefined)).toBe(false);
   });
 });
+
+describe("Portfolio.updateAllocation", () => {
+  const VALID_PROPS = {
+    acronym: "FIA",
+    name: "Fundo de Investimento em AÃ§Ãµes",
+    userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    annualInterestRate: SignedPercentage.create("10.5"),
+    minAllocation: SignedPercentage.create("5"),
+    maxAllocation: SignedPercentage.create("20"),
+    targetAllocation: SignedPercentage.create("12"),
+  };
+  const ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
+
+  it("updates the allocation bounds and the update timestamp", () => {
+    const PORTFOLIO = Portfolio.create(VALID_PROPS, ID);
+    const NOW = new Date("2026-01-02T00:00:00.000Z");
+
+    const UPDATED = PORTFOLIO.updateAllocation(
+      SignedPercentage.create("10"),
+      SignedPercentage.create("15"),
+      SignedPercentage.create("25"),
+      NOW,
+    );
+
+    expect(UPDATED.id).toBe(ID);
+    expect(UPDATED.minAllocation.value.toString()).toBe("10");
+    expect(UPDATED.targetAllocation.value.toString()).toBe("15");
+    expect(UPDATED.maxAllocation.value.toString()).toBe("25");
+    expect(UPDATED.updatedAt).toBe(NOW);
+    expect(UPDATED.acronym).toBe("FIA");
+    expect(UPDATED.equals(PORTFOLIO)).toBe(true);
+  });
+
+  it("does not mutate the original portfolio", () => {
+    const PORTFOLIO = Portfolio.create(VALID_PROPS, ID);
+
+    PORTFOLIO.updateAllocation(
+      SignedPercentage.create("10"),
+      SignedPercentage.create("15"),
+      SignedPercentage.create("25"),
+    );
+
+    expect(PORTFOLIO.minAllocation.value.toString()).toBe("5");
+    expect(PORTFOLIO.targetAllocation.value.toString()).toBe("12");
+    expect(PORTFOLIO.maxAllocation.value.toString()).toBe("20");
+  });
+
+  it("throws when the minimum allocation exceeds the target allocation", () => {
+    const PORTFOLIO = Portfolio.create(VALID_PROPS, ID);
+
+    expect(() =>
+      PORTFOLIO.updateAllocation(
+        SignedPercentage.create("20"),
+        SignedPercentage.create("12"),
+        SignedPercentage.create("25"),
+      ),
+    ).toThrow(
+      "Portfolio minimum allocation must not exceed target allocation.",
+    );
+  });
+
+  it("throws when the target allocation exceeds the maximum allocation", () => {
+    const PORTFOLIO = Portfolio.create(VALID_PROPS, ID);
+
+    expect(() =>
+      PORTFOLIO.updateAllocation(
+        SignedPercentage.create("5"),
+        SignedPercentage.create("30"),
+        SignedPercentage.create("20"),
+      ),
+    ).toThrow(
+      "Portfolio target allocation must not exceed maximum allocation.",
+    );
+  });
+});
+
+describe("Portfolio.updateAnnualInterestRate", () => {
+  const VALID_PROPS = {
+    acronym: "FIA",
+    name: "Fundo de Investimento em AÃ§Ãµes",
+    userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+    annualInterestRate: SignedPercentage.create("10.5"),
+    minAllocation: SignedPercentage.create("5"),
+    maxAllocation: SignedPercentage.create("20"),
+    targetAllocation: SignedPercentage.create("12"),
+  };
+  const ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
+
+  it("updates the annual interest rate and the update timestamp", () => {
+    const PORTFOLIO = Portfolio.create(VALID_PROPS, ID);
+    const NOW = new Date("2026-01-02T00:00:00.000Z");
+
+    const UPDATED = PORTFOLIO.updateAnnualInterestRate(
+      SignedPercentage.create("12.5"),
+      NOW,
+    );
+
+    expect(UPDATED.id).toBe(ID);
+    expect(UPDATED.annualInterestRate.value.toString()).toBe("12.5");
+    expect(UPDATED.updatedAt).toBe(NOW);
+    expect(UPDATED.equals(PORTFOLIO)).toBe(true);
+  });
+
+  it("does not mutate the original portfolio", () => {
+    const PORTFOLIO = Portfolio.create(VALID_PROPS, ID);
+
+    PORTFOLIO.updateAnnualInterestRate(SignedPercentage.create("12.5"));
+
+    expect(PORTFOLIO.annualInterestRate.value.toString()).toBe("10.5");
+  });
+
+  it("throws when the annual interest rate is negative", () => {
+    const PORTFOLIO = Portfolio.create(VALID_PROPS, ID);
+
+    expect(() =>
+      PORTFOLIO.updateAnnualInterestRate(SignedPercentage.create("-10")),
+    ).toThrow("Portfolio annual interest rate must not be negative.");
+  });
+});

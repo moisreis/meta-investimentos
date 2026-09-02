@@ -208,6 +208,104 @@ export class Portfolio {
   }
 
   /**
+   * Updates the allocation bounds of this portfolio.
+   *
+   * The code returns a new `Portfolio` instance with the updated
+   * allocation bounds, enforcing `min <= target <= max`.
+   *
+   * @param minAllocation - The new minimum allocation.
+   * @param targetAllocation - The new target allocation.
+   * @param maxAllocation - The new maximum allocation.
+   * @param now - The update timestamp, defaulting to the current time.
+   *
+   * @returns A new `Portfolio` instance with the updated allocation.
+   *
+   * @throws {ValidationError} If `minAllocation` is missing.
+   * @throws {ValidationError} If `targetAllocation` is missing.
+   * @throws {ValidationError} If `maxAllocation` is missing.
+   * @throws {ValidationError} If `minAllocation` exceeds `targetAllocation`.
+   * @throws {ValidationError} If `targetAllocation` exceeds `maxAllocation`.
+   */
+  public updateAllocation(
+    minAllocation: SignedPercentage,
+    targetAllocation: SignedPercentage,
+    maxAllocation: SignedPercentage,
+    now?: Date,
+  ): Portfolio {
+    if (!minAllocation) {
+      throw new ValidationError("Portfolio must have a minimum allocation.");
+    }
+    if (!targetAllocation) {
+      throw new ValidationError("Portfolio must have a target allocation.");
+    }
+    if (!maxAllocation) {
+      throw new ValidationError("Portfolio must have a maximum allocation.");
+    }
+    if (minAllocation.value.gt(targetAllocation.value)) {
+      throw new ValidationError(
+        "Portfolio minimum allocation must not exceed target allocation.",
+      );
+    }
+    if (targetAllocation.value.gt(maxAllocation.value)) {
+      throw new ValidationError(
+        "Portfolio target allocation must not exceed maximum allocation.",
+      );
+    }
+
+    const NOW = now ?? new Date();
+
+    return new Portfolio(
+      {
+        ...this.props,
+        minAllocation,
+        targetAllocation,
+        maxAllocation,
+        updatedAt: NOW,
+      },
+      this._id,
+    );
+  }
+
+  /**
+   * Updates the annual interest rate of this portfolio.
+   *
+   * The code returns a new `Portfolio` instance with the updated annual
+   * interest rate, which must not be negative.
+   *
+   * @param annualInterestRate - The new annual interest rate.
+   * @param now - The update timestamp, defaulting to the current time.
+   *
+   * @returns A new `Portfolio` instance with the updated rate.
+   *
+   * @throws {ValidationError} If `annualInterestRate` is missing.
+   * @throws {ValidationError} If `annualInterestRate` is negative.
+   */
+  public updateAnnualInterestRate(
+    annualInterestRate: SignedPercentage,
+    now?: Date,
+  ): Portfolio {
+    if (!annualInterestRate) {
+      throw new ValidationError("Portfolio must have an annual interest rate.");
+    }
+    if (annualInterestRate.isNegative) {
+      throw new ValidationError(
+        "Portfolio annual interest rate must not be negative.",
+      );
+    }
+
+    const NOW = now ?? new Date();
+
+    return new Portfolio(
+      {
+        ...this.props,
+        annualInterestRate,
+        updatedAt: NOW,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `Portfolio` represents the same portfolio as
    * the provided instance, based on referential equality and the unique id.
    *
