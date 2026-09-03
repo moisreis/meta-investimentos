@@ -9,7 +9,7 @@ import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo"
 describe("Portfolio.create", () => {
   const VALID_PROPS = {
     acronym: "FIA",
-    name: "Fundo de Investimento em AÃ§Ãµes",
+    name: "Fundo de Investimento em Ações",
     userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     annualInterestRate: SignedPercentage.create("10.5"),
     minAllocation: SignedPercentage.create("5"),
@@ -22,7 +22,7 @@ describe("Portfolio.create", () => {
 
     expect(PORTFOLIO.id).toBeUndefined();
     expect(PORTFOLIO.acronym).toBe("FIA");
-    expect(PORTFOLIO.name).toBe("Fundo de Investimento em AÃ§Ãµes");
+    expect(PORTFOLIO.name).toBe("Fundo de Investimento em Ações");
     expect(PORTFOLIO.userId).toBe("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2");
     expect(PORTFOLIO.annualInterestRate.value.toString()).toBe("10.5");
     expect(PORTFOLIO.minAllocation.value.toString()).toBe("5");
@@ -149,7 +149,7 @@ describe("Portfolio.create", () => {
 describe("Portfolio.equals", () => {
   const VALID_PROPS = {
     acronym: "FIA",
-    name: "Fundo de Investimento em AÃ§Ãµes",
+    name: "Fundo de Investimento em Ações",
     userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     annualInterestRate: SignedPercentage.create("10.5"),
     minAllocation: SignedPercentage.create("5"),
@@ -204,7 +204,7 @@ describe("Portfolio.equals", () => {
 describe("Portfolio.updateAllocation", () => {
   const VALID_PROPS = {
     acronym: "FIA",
-    name: "Fundo de Investimento em AÃ§Ãµes",
+    name: "Fundo de Investimento em Ações",
     userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     annualInterestRate: SignedPercentage.create("10.5"),
     minAllocation: SignedPercentage.create("5"),
@@ -300,7 +300,7 @@ describe("Portfolio.updateAllocation", () => {
 describe("Portfolio.updateAnnualInterestRate", () => {
   const VALID_PROPS = {
     acronym: "FIA",
-    name: "Fundo de Investimento em AÃ§Ãµes",
+    name: "Fundo de Investimento em Ações",
     userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     annualInterestRate: SignedPercentage.create("10.5"),
     minAllocation: SignedPercentage.create("5"),

@@ -27,12 +27,12 @@ describe("CPF", () => {
     });
 
     it("throws when the value is undefined", () => {
-      // @ts-expect-error â€” testing runtime validation
+      // @ts-expect-error — testing runtime validation
       expect(() => CPF.create(undefined)).toThrow("`CPF` must be defined.");
     });
 
     it("throws when the value is null", () => {
-      // @ts-expect-error â€” testing runtime validation
+      // @ts-expect-error — testing runtime validation
       expect(() => CPF.create(null)).toThrow("`CPF` must be defined.");
     });
 

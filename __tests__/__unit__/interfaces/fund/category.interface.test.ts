@@ -37,13 +37,13 @@ describe("ICategory", () => {
     it("returns the persisted category matching the name", async () => {
       await REPOSITORY.save(CATEGORY);
 
-      const FOUND = await REPOSITORY.findByName("AÃ§Ãµes");
+      const FOUND = await REPOSITORY.findByName("Ações");
 
       expect(FOUND?.equals(CATEGORY)).toBe(true);
     });
 
     it("returns null when the category does not exist", async () => {
-      expect(await REPOSITORY.findByName("AÃ§Ãµes")).toBeNull();
+      expect(await REPOSITORY.findByName("Ações")).toBeNull();
     });
   });
 
@@ -60,7 +60,7 @@ describe("ICategory", () => {
       await REPOSITORY.save(CATEGORY);
 
       const UPDATED_CATEGORY = Category.create(
-        { name: "AÃ§Ãµes Brasileiras" },
+        { name: "Ações Brasileiras" },
         CATEGORY_ID,
       );
 
@@ -68,7 +68,7 @@ describe("ICategory", () => {
 
       const FOUND = await REPOSITORY.findById(EntityId.create(CATEGORY_ID));
 
-      expect(FOUND?.name).toBe("AÃ§Ãµes Brasileiras");
+      expect(FOUND?.name).toBe("Ações Brasileiras");
     });
   });
 

@@ -130,9 +130,9 @@ export const JANUARY_WINDOW = {
 
 export const USER = User.create(
   {
-    name: "JosÃ© da Silva",
+    name: "José da Silva",
     email: "jose@example.com",
-    firstName: "JosÃ©",
+    firstName: "José",
     lastName: "da Silva",
     cpf: CPF.create("52998224725"),
   },
@@ -160,7 +160,7 @@ export const FRESH_USER = User.create({
 
 export const UPDATED_USER = User.create(
   {
-    name: "JosÃ© da Silva Junior",
+    name: "José da Silva Junior",
     email: USER.email,
     firstName: USER.firstName,
     lastName: "da Silva Junior",
@@ -315,7 +315,7 @@ export const BANK = Bank.create(
 );
 
 export const OTHER_BANK = Bank.create(
-  { code: "002", name: "ItaÃº Unibanco" },
+  { code: "002", name: "Itaú Unibanco" },
   OTHER_BANK_ID,
 );
 
@@ -495,7 +495,7 @@ export const FRESH_BENCHMARK_HISTORY = BenchmarkHistory.create({
   rate: SignedPercentage.create("1.1"),
 });
 
-export const CATEGORY = Category.create({ name: "AÃ§Ãµes" }, CATEGORY_ID);
+export const CATEGORY = Category.create({ name: "Ações" }, CATEGORY_ID);
 
 export const OTHER_CATEGORY = Category.create(
   { name: "Renda Fixa" },
@@ -505,14 +505,14 @@ export const OTHER_CATEGORY = Category.create(
 export const FRESH_CATEGORY = Category.create({ name: "Multimercado" });
 
 export const UPDATED_CATEGORY = Category.create(
-  { name: "AÃ§Ãµes Brasileiras" },
+  { name: "Ações Brasileiras" },
   CATEGORY_ID,
 );
 
 export const FUND = Fund.create(
   {
     cnpj: CNPJ.create("12345678000195"),
-    name: "Fundo AÃ§Ãµes",
+    name: "Fundo Ações",
     bankId: EntityId.create(BANK_ID),
     benchmarkId: EntityId.create(BENCHMARK_ID),
     categoryId: EntityId.create(CATEGORY_ID),
@@ -544,7 +544,7 @@ export const FRESH_FUND = Fund.create({
 export const UPDATED_FUND = Fund.create(
   {
     cnpj: FUND.cnpj,
-    name: "Fundo AÃ§Ãµes Rebrandeado",
+    name: "Fundo Ações Rebrandeado",
     bankId: FUND.bankId,
     benchmarkId: FUND.benchmarkId,
     categoryId: FUND.categoryId,
@@ -608,7 +608,7 @@ export const FRESH_QUOTA = Quota.create({
 export const PORTFOLIO = Portfolio.create(
   {
     acronym: "FIA",
-    name: "Fundo de Investimento em AÃ§Ãµes",
+    name: "Fundo de Investimento em Ações",
     userId: EntityId.create(USER_ID),
     annualInterestRate: SignedPercentage.create("10"),
     minAllocation: SignedPercentage.create("5"),
@@ -670,7 +670,7 @@ export const UPDATED_PORTFOLIO = Portfolio.create(
 export const NORM = Norm.create(
   {
     articleNumber: "Art. 1",
-    name: "PolÃ­tica de Investimento",
+    name: "Política de Investimento",
     categoryId: EntityId.create(CATEGORY_ID),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),
@@ -1268,7 +1268,7 @@ export const AUDIT_LOG = AuditLog.create(
     entity: "user",
     entityId: EntityId.create(USER_ID),
     action: "update",
-    changes: { name: { from: "JosÃ©", to: "JosÃ© da Silva Junior" } },
+    changes: { name: { from: "José", to: "José da Silva Junior" } },
     userId: EntityId.create(USER_ID),
   },
   AUDIT_LOG_ID,

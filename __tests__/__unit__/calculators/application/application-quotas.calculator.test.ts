@@ -6,7 +6,7 @@ import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 describe("calculateApplicationQuotas", () => {
-  it("returns the proved value for the `CAIXA BRASIL IRF-M 1 TÃTULOS PÃšBLICOS FI RENDA FIXA` at 5/5/2026", () => {
+  it("returns the proved value for the `CAIXA BRASIL IRF-M 1 TÍTULOS PÚBLICOS FI RENDA FIXA` at 5/5/2026", () => {
     const RESULT = calculateApplicationQuotas({
       application: PositiveMoney.create(1000000),
       quota: QuotaPrice.create(4.428199),

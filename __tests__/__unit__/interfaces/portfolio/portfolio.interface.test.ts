@@ -53,7 +53,7 @@ describe("IPortfolio", () => {
       const OTHER_PORTFOLIO = Portfolio.create(
         {
           acronym: "FIC",
-          name: "Fundo de CrÃ©dito",
+          name: "Fundo de Crédito",
           userId: EntityId.create(OTHER_USER_ID),
           annualInterestRate: SignedPercentage.create("9"),
           minAllocation: SignedPercentage.create("5"),
@@ -96,7 +96,7 @@ describe("IPortfolio", () => {
       const UPDATED = Portfolio.create(
         {
           acronym: "FIA",
-          name: "Fundo de Investimento em AÃ§Ãµes Revisado",
+          name: "Fundo de Investimento em Ações Revisado",
           userId: EntityId.create(USER_ID),
           annualInterestRate: SignedPercentage.create("11"),
           minAllocation: SignedPercentage.create("5"),

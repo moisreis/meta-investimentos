@@ -27,12 +27,12 @@ describe("CNPJ", () => {
     });
 
     it("throws when the value is undefined", () => {
-      // @ts-expect-error â€” testing runtime validation
+      // @ts-expect-error — testing runtime validation
       expect(() => CNPJ.create(undefined)).toThrow("`CNPJ` must be defined.");
     });
 
     it("throws when the value is null", () => {
-      // @ts-expect-error â€” testing runtime validation
+      // @ts-expect-error — testing runtime validation
       expect(() => CNPJ.create(null)).toThrow("`CNPJ` must be defined.");
     });
 

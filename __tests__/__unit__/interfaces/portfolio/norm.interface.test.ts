@@ -39,7 +39,7 @@ describe("INorm", () => {
       const SECOND_NORM = Norm.create(
         {
           articleNumber: "Art. 15",
-          name: "Limite de ExposiÃ§Ã£o",
+          name: "Limite de Exposição",
           categoryId: EntityId.create(CATEGORY_ID),
           minAllocation: SignedPercentage.create("3"),
           maxAllocation: SignedPercentage.create("30"),
@@ -94,7 +94,7 @@ describe("INorm", () => {
       const UPDATED = Norm.create(
         {
           articleNumber: "Art. 12",
-          name: "Limite de ConcentraÃ§Ã£o Revisado",
+          name: "Limite de Concentração Revisado",
           categoryId: EntityId.create(CATEGORY_ID),
           minAllocation: SignedPercentage.create("5"),
           maxAllocation: SignedPercentage.create("25"),

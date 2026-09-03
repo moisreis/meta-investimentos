@@ -4,7 +4,7 @@ import { calculateEarnings } from "@/business/calculators/position/earnings.calc
 import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 describe("calculateEarnings", () => {
-  it("returns the proved earnings value for the period for `CAIXA BRASIL IRF-M 1 TÃTULOS PÃšBLICOS FI RENDA FIXA`", () => {
+  it("returns the proved earnings value for the period for `CAIXA BRASIL IRF-M 1 TÍTULOS PÚBLICOS FI RENDA FIXA`", () => {
     const RESULT = calculateEarnings({
       currentBalance: SignedMoney.create("1534123.40"),
       initialBalance: SignedMoney.create("1513005.63"),

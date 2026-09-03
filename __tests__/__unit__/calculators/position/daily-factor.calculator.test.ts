@@ -7,7 +7,7 @@ import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 
 describe("calculateDailyFactor", () => {
-  it("returns the daily growth factor based on quota values and quantities from `CAIXA BRASIL IRF-M 1 TÃTULOS PÃšBLICOS FI RENDA FIXA`", () => {
+  it("returns the daily growth factor based on quota values and quantities from `CAIXA BRASIL IRF-M 1 TÍTULOS PÚBLICOS FI RENDA FIXA`", () => {
     const RESULT = calculateDailyFactor({
       currentDayQuotaValue: QuotaPrice.create("4.424818"),
       currentDayQuotaQuantity: QuotaQuantity.create("342021.111191"),

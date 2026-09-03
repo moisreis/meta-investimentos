@@ -7,7 +7,7 @@ import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo"
 describe("Norm.create", () => {
   const VALID_PROPS = {
     articleNumber: "Art. 12",
-    name: "Limite de ConcentraÃ§Ã£o",
+    name: "Limite de Concentração",
     categoryId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),
@@ -19,7 +19,7 @@ describe("Norm.create", () => {
 
     expect(NORM.id).toBeUndefined();
     expect(NORM.articleNumber).toBe("Art. 12");
-    expect(NORM.name).toBe("Limite de ConcentraÃ§Ã£o");
+    expect(NORM.name).toBe("Limite de Concentração");
     expect(NORM.categoryId).toBe("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2");
     expect(NORM.minAllocation.value.toString()).toBe("5");
     expect(NORM.maxAllocation.value.toString()).toBe("20");
@@ -124,7 +124,7 @@ describe("Norm.create", () => {
 describe("Norm.equals", () => {
   const VALID_PROPS = {
     articleNumber: "Art. 12",
-    name: "Limite de ConcentraÃ§Ã£o",
+    name: "Limite de Concentração",
     categoryId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
     minAllocation: SignedPercentage.create("5"),
     maxAllocation: SignedPercentage.create("20"),

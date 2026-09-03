@@ -37,7 +37,7 @@ interface NormProps {
  * ```ts
  * const NORM = Norm.create({
  *   articleNumber: 'Art. 12',
- *   name: 'Limite de ConcentraÃ§Ã£o',
+ *   name: 'Limite de Concentração',
  *   categoryId: 'ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2',
  *   minAllocation: SignedPercentage.create('5'),
  *   maxAllocation: SignedPercentage.create('20'),

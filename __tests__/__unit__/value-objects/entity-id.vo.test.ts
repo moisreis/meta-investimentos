@@ -28,14 +28,14 @@ describe("EntityId", () => {
     });
 
     it("throws when the value is undefined", () => {
-      // @ts-expect-error â€” testing runtime validation
+      // @ts-expect-error — testing runtime validation
       expect(() => EntityId.create(undefined)).toThrow(
         "`EntityId` must be defined.",
       );
     });
 
     it("throws when the value is null", () => {
-      // @ts-expect-error â€” testing runtime validation
+      // @ts-expect-error — testing runtime validation
       expect(() => EntityId.create(null)).toThrow(
         "`EntityId` must be defined.",
       );

@@ -5,9 +5,9 @@ import { CPF } from "@/business/value-objects/cpf.vo";
 
 describe("User.create", () => {
   const VALID_PROPS = {
-    name: "JosÃ© da Silva",
+    name: "José da Silva",
     email: "jose@example.com",
-    firstName: "JosÃ©",
+    firstName: "José",
     lastName: "da Silva",
     cpf: CPF.create("52998224725"),
   };
@@ -16,9 +16,9 @@ describe("User.create", () => {
     const USER = User.create(VALID_PROPS);
 
     expect(USER.id).toBeUndefined();
-    expect(USER.name).toBe("JosÃ© da Silva");
+    expect(USER.name).toBe("José da Silva");
     expect(USER.email).toBe("jose@example.com");
-    expect(USER.firstName).toBe("JosÃ©");
+    expect(USER.firstName).toBe("José");
     expect(USER.lastName).toBe("da Silva");
     expect(USER.cpf.value).toBe("52998224725");
     expect(USER.maskedCpf).toBe("529.***.***-25");
@@ -109,9 +109,9 @@ describe("User.create", () => {
 
 describe("User.equals", () => {
   const VALID_PROPS = {
-    name: "JosÃ© da Silva",
+    name: "José da Silva",
     email: "jose@example.com",
-    firstName: "JosÃ©",
+    firstName: "José",
     lastName: "da Silva",
     cpf: CPF.create("52998224725"),
   };

@@ -6,7 +6,7 @@ import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
 describe("calculateWithdrawalQuotas", () => {
-  it("returns the proved value for the `CAIXA BRASIL IRF-M 1 TÃTULOS PÃšBLICOS FI RENDA FIXA` at 19/5/2026", () => {
+  it("returns the proved value for the `CAIXA BRASIL IRF-M 1 TÍTULOS PÚBLICOS FI RENDA FIXA` at 19/5/2026", () => {
     const RESULT = calculateWithdrawalQuotas({
       withdrawal: PositiveMoney.create(1000000),
       quota: QuotaPrice.create(4.450869),

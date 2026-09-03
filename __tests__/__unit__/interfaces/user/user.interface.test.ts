@@ -74,7 +74,7 @@ describe("IUser", () => {
 
       const UPDATED = User.create(
         {
-          name: "JosÃ© da Silva Junior",
+          name: "José da Silva Junior",
           email: USER.email,
           firstName: USER.firstName,
           lastName: "da Silva Junior",
@@ -87,7 +87,7 @@ describe("IUser", () => {
 
       const FOUND = await REPOSITORY.findById(EntityId.create(USER_ID));
 
-      expect(FOUND?.name).toBe("JosÃ© da Silva Junior");
+      expect(FOUND?.name).toBe("José da Silva Junior");
       expect(FOUND?.equals(UPDATED)).toBe(true);
     });
   });

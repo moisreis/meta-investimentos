@@ -54,9 +54,9 @@ interface UserProps {
  * @example
  * ```ts
  * const USER = User.create({
- *   name: 'JosÃ© da Silva',
+ *   name: 'José da Silva',
  *   email: 'jose@example.com',
- *   firstName: 'JosÃ©',
+ *   firstName: 'José',
  *   lastName: 'da Silva',
  *   cpf: '24301457030',
  * })

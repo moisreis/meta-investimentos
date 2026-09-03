@@ -45,7 +45,7 @@ interface PortfolioProps {
  * ```ts
  * const PORTFOLIO = Portfolio.create({
  *   acronym: 'FIA',
- *   name: 'Fundo de Investimento em AÃ§Ãµes',
+ *   name: 'Fundo de Investimento em Ações',
  *   userId: 'ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2',
  *   annualInterestRate: SignedPercentage.create('10.5'),
  *   minAllocation: SignedPercentage.create('5'),
