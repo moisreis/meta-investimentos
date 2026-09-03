@@ -1,23 +1,97 @@
-﻿import {
-  CATEGORY_ID,
-  FRESH_NORM,
-  NORM,
-  NORM_ID,
-  OTHER_CATEGORY_ID,
-  OTHER_NORM,
-  OTHER_NORM_ID,
-  UPDATED_NORM,
-} from "@/__tests__/__fixtures__";
+﻿import { ID } from "@/__tests__/__fixtures__";
 import { db } from "@/__tests__/__setup__/_database.setup";
-import type { Norm } from "@/business/entities";
+import { Norm } from "@/business/entities/portfolio/norm.entity";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import { norm } from "@/infrastructure/database/schemas";
 import { seedCategoryById } from "./_category.seed";
 
-export { NORM_ID, OTHER_NORM_ID, NORM, OTHER_NORM, UPDATED_NORM, FRESH_NORM };
+/**
+ * Represents the default norm fixture
+ * with an equity allocation profile.
+ */
+const NORM = Norm.create(
+  {
+    articleNumber: "Art. 1",
+    name: "Política de Investimento",
+    categoryId: EntityId.create(ID.CATEGORY.DEFAULT),
+    minAllocation: SignedPercentage.create("5"),
+    maxAllocation: SignedPercentage.create("20"),
+    targetAllocation: SignedPercentage.create("12"),
+  },
+  ID.NORM.DEFAULT,
+);
 
+/**
+ * Represents an alternate norm fixture
+ * with a fixed-income allocation profile.
+ */
+const OTHER_NORM = Norm.create(
+  {
+    articleNumber: "Art. 2",
+    name: "Norma Renda Fixa",
+    categoryId: EntityId.create(ID.CATEGORY.OTHER),
+    minAllocation: SignedPercentage.create("10"),
+    maxAllocation: SignedPercentage.create("30"),
+    targetAllocation: SignedPercentage.create("18"),
+  },
+  ID.NORM.OTHER,
+);
+
+/**
+ * Represents a norm fixture with an
+ * updated target allocation percentage.
+ */
+const UPDATED_NORM = Norm.create(
+  {
+    articleNumber: NORM.articleNumber,
+    name: NORM.name,
+    categoryId: NORM.categoryId,
+    minAllocation: SignedPercentage.create("5"),
+    maxAllocation: SignedPercentage.create("20"),
+    targetAllocation: SignedPercentage.create("14"),
+  },
+  ID.NORM.DEFAULT,
+);
+
+/**
+ * Represents a norm fixture with a
+ * generated ID for insert tests.
+ */
+const FRESH_NORM = Norm.create({
+  articleNumber: "Art. 3",
+  name: "Norma Multimercado",
+  categoryId: EntityId.create(ID.CATEGORY.DEFAULT),
+  minAllocation: SignedPercentage.create("0"),
+  maxAllocation: SignedPercentage.create("25"),
+  targetAllocation: SignedPercentage.create("12"),
+});
+
+export { NORM, OTHER_NORM, UPDATED_NORM, FRESH_NORM };
+
+/**
+ * Represents the default norm identifier for tests.
+ */
+export const NORM_ID = ID.NORM.DEFAULT;
+
+/**
+ * Represents the other norm identifier for tests.
+ */
+export const OTHER_NORM_ID = ID.NORM.OTHER;
+
+/**
+ * Seeds the default and alternate norm
+ * rows into the database.
+ *
+ * The function inserts the parent
+ * categories before inserting the
+ * norm rows.
+ *
+ * @returns The seeded {@link Norm} array.
+ */
 export async function seedNorms(): Promise<Norm[]> {
-  await seedCategoryById(CATEGORY_ID);
-  await seedCategoryById(OTHER_CATEGORY_ID);
+  await seedCategoryById(ID.CATEGORY.DEFAULT);
+  await seedCategoryById(ID.CATEGORY.OTHER);
 
   for (const fixture of [NORM, OTHER_NORM]) {
     await db.insert(norm).values({
@@ -36,7 +110,11 @@ export async function seedNorms(): Promise<Norm[]> {
   return [NORM, OTHER_NORM];
 }
 
+/**
+ * Seeds only the parent category entities
+ * that the norm fixtures depend on.
+ */
 export async function seedNormFixtureParents(): Promise<void> {
-  await seedCategoryById(CATEGORY_ID);
-  await seedCategoryById(OTHER_CATEGORY_ID);
+  await seedCategoryById(ID.CATEGORY.DEFAULT);
+  await seedCategoryById(ID.CATEGORY.OTHER);
 }

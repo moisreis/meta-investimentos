@@ -1,5 +1,16 @@
 ﻿import { INVESTMENT_FUND_IDS } from "@/__tests__/__datasets__/_investment-funds.dataset";
 
+/**
+ * Provides the daily quota price for each investment fund.
+ *
+ * The outer key is a fund ID. The inner map holds one
+ * price per date, using `YYYY-MM-DD` as the key. Each
+ * price is a string with six decimal places.
+ *
+ * Tests use these values to calculate the daily portfolio
+ * and position growth factors over the business day
+ * period.
+ */
 export const QUOTA_VALUES: Record<number, Record<string, string>> = {
   [INVESTMENT_FUND_IDS.CAIXA_BRASIL_IRF_M_1_TITULOS_PUBLICOS_FI_RF]: {
     "2026-04-30": "4.423720",

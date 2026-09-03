@@ -4,10 +4,19 @@ import {
   PositionPerformanceRepository,
 } from "@/infrastructure/repositories";
 
+/**
+ * Re-exports the portfolio ID constants required by
+ * portfolio performance seed setup.
+ */
 export {
   OTHER_PORTFOLIO_ID,
   PORTFOLIO_ID,
 } from "@/__tests__/__seeds__/_portfolio.seed";
+
+/**
+ * Re-exports the portfolio performance seed fixtures and
+ * functions used by portfolio performance repository tests.
+ */
 export {
   EXTERNAL_PORTFOLIO_PERFORMANCE,
   EXTERNAL_PORTFOLIO_PERFORMANCE_ID,
@@ -25,10 +34,20 @@ export {
   seedPortfolioPerformances,
   UPDATED_PORTFOLIO_PERFORMANCE,
 } from "@/__tests__/__seeds__/_portfolio-performance.seed";
+
+/**
+ * Re-exports the position ID constants required by
+ * position performance seed setup.
+ */
 export {
   OTHER_POSITION_ID,
   POSITION_ID,
 } from "@/__tests__/__seeds__/_position.seed";
+
+/**
+ * Re-exports the position performance seed fixtures and
+ * functions used by position performance repository tests.
+ */
 export {
   EXTERNAL_POSITION_PERFORMANCE,
   EXTERNAL_POSITION_PERFORMANCE_ID,
@@ -44,10 +63,22 @@ export {
   UPDATED_POSITION_PERFORMANCE,
 } from "@/__tests__/__seeds__/_position-performance.seed";
 
+/**
+ * Creates a new `PortfolioPerformanceRepository` bound
+ * to the shared test database.
+ *
+ * @returns A new `PortfolioPerformanceRepository` instance.
+ */
 export function newPortfolioPerformanceRepository(): PortfolioPerformanceRepository {
   return new PortfolioPerformanceRepository(db);
 }
 
+/**
+ * Creates a new `PositionPerformanceRepository` bound
+ * to the shared test database.
+ *
+ * @returns A new `PositionPerformanceRepository` instance.
+ */
 export function newPositionPerformanceRepository(): PositionPerformanceRepository {
   return new PositionPerformanceRepository(db);
 }

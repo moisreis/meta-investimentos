@@ -1,5 +1,20 @@
 ﻿import { INVESTMENT_FUND_IDS } from "@/__tests__/__datasets__/_investment-funds.dataset";
 
+/**
+ * Provides the cash flows used in portfolio calculation
+ * tests.
+ *
+ * Each row records one cash flow into or out of a fund.
+ * The row contains the fund ID, the flow date, the number
+ * of quotas, and the monetary value of the flow.
+ *
+ * A positive value represents an application. A negative
+ * value represents a redemption. Tests use these flows to
+ * reproduce the change in a portfolio's quota balance.
+ *
+ * The tuple labels are `fundId`, `date`, `quotas`, and
+ * `value`.
+ */
 export const CASH_FLOWS: [
   fundId: number,
   date: string,

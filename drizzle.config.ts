@@ -21,27 +21,12 @@ if (!connectionString) {
 }
 
 export default defineConfig({
-  // --------------------------------------
-  // OUTPUT DIRECTORY
-  // --------------------------------------
   out: "./infrastructure/database/migrations",
-
-  // --------------------------------------
-  // SCHEMA SOURCES
-  // --------------------------------------
   schema: [
     "./infrastructure/database/schemas/index.ts",
     "./infrastructure/database/relations/**/*.relations.ts",
   ],
-
-  // --------------------------------------
-  // TARGET DIALECT
-  // --------------------------------------
   dialect: "postgresql",
-
-  // --------------------------------------
-  // CONNECTION CREDENTIALS
-  // --------------------------------------
   dbCredentials: {
     url: connectionString,
   },

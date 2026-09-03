@@ -1,5 +1,18 @@
 ﻿import { INVESTMENT_FUND_IDS } from "@/__tests__/__datasets__/_investment-funds.dataset";
 
+/**
+ * Provides the opening quota balances for each investment
+ * fund.
+ *
+ * Each row records one fund's starting balance. The row
+ * contains the fund ID and the number of quotas held at
+ * the start of the test period.
+ *
+ * Tests use these balances as the initial state before the
+ * cash flow dataset changes them over time.
+ *
+ * The tuple labels are `fundId` and `quotas`.
+ */
 export const QUOTA_BALANCES: [fundId: number, quotas: string][] = [
   [
     INVESTMENT_FUND_IDS.CAIXA_BRASIL_IRF_M_1_TITULOS_PUBLICOS_FI_RF,
