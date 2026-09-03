@@ -37,5 +37,30 @@ export const auditLog = pgSchema("audit").table(
      * Speeds up lookups of audit entries by their acting user.
      */
     index("audit_log_user_id_idx").on(table.userId),
+
+    /**
+     * Serves user activity history queries that filter by user and
+     * order the results by the most recent entry first.
+     */
+    index("audit_log_user_id_created_at_idx").on(
+      table.userId,
+      table.createdAt.desc(),
+    ),
+
+    /**
+     * Serves time-range queries over the audit trail, for example
+     * `WHERE created_at BETWEEN ? AND ?`.
+     */
+    index("audit_log_created_at_idx").on(table.createdAt),
+
+    /**
+     * Serves entity-scoped queries that order the results by the most
+     * recent entry first.
+     */
+    index("audit_log_entity_entity_id_created_at_idx").on(
+      table.entity,
+      table.entityId,
+      table.createdAt.desc(),
+    ),
   ],
 );

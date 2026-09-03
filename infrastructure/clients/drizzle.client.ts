@@ -1,4 +1,5 @@
 import { drizzle } from "drizzle-orm/neon-http";
+
 import {
   accountRelations,
   applicationRelations,
@@ -25,6 +26,15 @@ import {
 } from "@/infrastructure/database/relations";
 
 /**
+ * The request timeout, in milliseconds.
+ *
+ * Each HTTP request to the Neon database is aborted after this budget
+ * elapses so that a stalled request fails fast instead of hanging the
+ * calling serverless function.
+ */
+const REQUEST_TIMEOUT_MS = 10_000;
+
+/**
  * Create and export the shared *Drizzle* database client.
  *
  * The client connects to the Neon database using the
@@ -44,7 +54,13 @@ if (!connectionString) {
   throw new Error("DATABASE_URL environment variable is not set");
 }
 
-export const db = drizzle(connectionString, {
+export const db = drizzle({
+  connection: {
+    connectionString,
+    fetchOptions: {
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    },
+  },
   relations: {
     ...userRelations,
     ...accountRelations,
