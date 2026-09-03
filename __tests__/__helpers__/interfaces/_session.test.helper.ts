@@ -1,7 +1,7 @@
 ﻿import { ID } from "@/__tests__/__fixtures__";
 import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
-import type { ISession } from "@/business/interfaces/user/session.interface";
 import { Session } from "@/business/entities/user/session.entity";
+import type { ISession } from "@/business/interfaces/user/session.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**

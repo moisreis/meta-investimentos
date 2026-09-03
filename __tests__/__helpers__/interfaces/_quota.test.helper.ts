@@ -15,16 +15,12 @@ const QUOTA_DATE = new Date("2026-01-05T00:00:00.000Z");
  * Represents a January date that shares the same month as
  * {@link QUOTA_DATE} but a different day.
  */
-const QUOTA_DUPLICATE_DATE = new Date(
-  "2026-01-15T00:00:00.000Z",
-);
+const QUOTA_DUPLICATE_DATE = new Date("2026-01-15T00:00:00.000Z");
 
 /**
  * Represents the February quota date.
  */
-const FEBRUARY_QUOTA_DATE = new Date(
-  "2026-02-05T00:00:00.000Z",
-);
+const FEBRUARY_QUOTA_DATE = new Date("2026-02-05T00:00:00.000Z");
 
 /**
  * Represents a default quota entity with a price of
@@ -153,15 +149,13 @@ export {
  * Represents a fixed identifier for the earlier quota
  * entity.
  */
-const QUOTA_ID_TWO =
-  "c1c2c3c4-c5c6-4c7c-8c9c-0c1c2c3c4c5c";
+const QUOTA_ID_TWO = "c1c2c3c4-c5c6-4c7c-8c9c-0c1c2c3c4c5c";
 
 /**
  * Represents a fixed identifier for the latest quota
  * entity.
  */
-const QUOTA_ID_THREE =
-  "d1d2d3d4-d5d6-4d7d-8d9d-0d1d2d3d4d5d";
+const QUOTA_ID_THREE = "d1d2d3d4-d5d6-4d7d-8d9d-0d1d2d3d4d5d";
 
 /**
  * Represents the default quota identifier for tests.

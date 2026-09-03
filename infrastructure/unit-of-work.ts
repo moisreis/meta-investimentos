@@ -16,6 +16,7 @@ import { ApplicationRepository } from "@/infrastructure/repositories/portfolio/a
 import { NormRepository } from "@/infrastructure/repositories/portfolio/norm.repository";
 import { NormsPortfoliosRepository } from "@/infrastructure/repositories/portfolio/norms-portfolios.repository";
 import { PortfolioRepository } from "@/infrastructure/repositories/portfolio/portfolio.repository";
+import { PortfolioPermissionRepository } from "@/infrastructure/repositories/portfolio/portfolio-permission.repository";
 import { PositionRepository } from "@/infrastructure/repositories/portfolio/position.repository";
 import { TransactionAllocationRepository } from "@/infrastructure/repositories/portfolio/transaction-allocation.repository";
 import { WithdrawalRepository } from "@/infrastructure/repositories/portfolio/withdrawal.repository";
@@ -76,6 +77,12 @@ export interface UnitOfWorkContext {
    * Repository bound to the transaction for `portfolio` rows.
    */
   portfolios: PortfolioRepository;
+
+  /**
+   * Repository bound to the transaction for `portfolio_permission`
+   * rows.
+   */
+  portfolioPermissions: PortfolioPermissionRepository;
 
   /**
    * Repository bound to the transaction for `norm` rows.
@@ -266,6 +273,12 @@ export class UnitOfWork {
         portfolios: this.audited(
           new PortfolioRepository(tx),
           "Portfolio",
+          USER_ID,
+          AUDIT_LOGS,
+        ),
+        portfolioPermissions: this.audited(
+          new PortfolioPermissionRepository(tx),
+          "PortfolioPermission",
           USER_ID,
           AUDIT_LOGS,
         ),

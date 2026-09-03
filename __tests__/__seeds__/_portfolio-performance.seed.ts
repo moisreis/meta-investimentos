@@ -14,23 +14,20 @@ import { seedPortfolioById } from "./_portfolio.seed";
  * Represents the default performance date for test fixtures.
  * Set to 2026-01-05.
  */
-export const PERFORMANCE_DATE =
-  new Date("2026-01-05T00:00:00.000Z");
+export const PERFORMANCE_DATE = new Date("2026-01-05T00:00:00.000Z");
 
 /**
  * Represents a duplicate performance date for test fixtures.
  * Set to 2026-01-15. Used to test unique constraint behavior
  * within the same portfolio.
  */
-export const PERFORMANCE_DUPLICATE_DATE =
-  new Date("2026-01-15T00:00:00.000Z");
+export const PERFORMANCE_DUPLICATE_DATE = new Date("2026-01-15T00:00:00.000Z");
 
 /**
  * Represents a February performance date for test fixtures.
  * Set to 2026-02-05. Used for cross-month comparison tests.
  */
-export const FEBRUARY_PERFORMANCE_DATE =
-  new Date("2026-02-05T00:00:00.000Z");
+export const FEBRUARY_PERFORMANCE_DATE = new Date("2026-02-05T00:00:00.000Z");
 
 /**
  * Represents a default portfolio performance fixture.
@@ -38,29 +35,28 @@ export const FEBRUARY_PERFORMANCE_DATE =
  * `PERFORMANCE_DATE`. It holds `1000` quotas and has a
  * patrimony of `100000.00`.
  */
-export const PORTFOLIO_PERFORMANCE =
-  PortfolioPerformanceEntity.create(
-    {
-      portfolioId: EntityId.create(ID.PORTFOLIO.DEFAULT),
-      date: PERFORMANCE_DATE,
-      quotasHeld: QuotaQuantity.create("1000"),
-      patrimony: PositiveMoney.create("100000.00"),
-      applicationTotal: PositiveMoney.create("50000.00"),
-      redemptionTotal: PositiveMoney.create("20000.00"),
-      cashFlowNet: SignedMoney.create("30000.00"),
-      earnings: SignedMoney.create("5000.00"),
-      returnDaily: SignedPercentage.create("0.5"),
-      returnMonthly: SignedPercentage.create("2.0"),
-      returnYearly: SignedPercentage.create("10.0"),
-      returnLast12m: SignedPercentage.create("8.0"),
-      target: SignedPercentage.create("12.0"),
-      cumulativeTarget: SignedPercentage.create("15.0"),
-      inflationSpread: SignedPercentage.create("3.0"),
-      riskFreeSpread: SignedPercentage.create("1.0"),
-      marketSpread: SignedPercentage.create("2.0"),
-    },
-    ID.PORTFOLIO_PERFORMANCE.DEFAULT,
-  );
+export const PORTFOLIO_PERFORMANCE = PortfolioPerformanceEntity.create(
+  {
+    portfolioId: EntityId.create(ID.PORTFOLIO.DEFAULT),
+    date: PERFORMANCE_DATE,
+    quotasHeld: QuotaQuantity.create("1000"),
+    patrimony: PositiveMoney.create("100000.00"),
+    applicationTotal: PositiveMoney.create("50000.00"),
+    redemptionTotal: PositiveMoney.create("20000.00"),
+    cashFlowNet: SignedMoney.create("30000.00"),
+    earnings: SignedMoney.create("5000.00"),
+    returnDaily: SignedPercentage.create("0.5"),
+    returnMonthly: SignedPercentage.create("2.0"),
+    returnYearly: SignedPercentage.create("10.0"),
+    returnLast12m: SignedPercentage.create("8.0"),
+    target: SignedPercentage.create("12.0"),
+    cumulativeTarget: SignedPercentage.create("15.0"),
+    inflationSpread: SignedPercentage.create("3.0"),
+    riskFreeSpread: SignedPercentage.create("1.0"),
+    marketSpread: SignedPercentage.create("2.0"),
+  },
+  ID.PORTFOLIO_PERFORMANCE.DEFAULT,
+);
 
 /**
  * Represents an alternate portfolio performance fixture.
@@ -68,29 +64,28 @@ export const PORTFOLIO_PERFORMANCE =
  * `FEBRUARY_PERFORMANCE_DATE`. It holds `500` quotas and has
  * a patrimony of `50000.00`.
  */
-export const OTHER_PORTFOLIO_PERFORMANCE =
-  PortfolioPerformanceEntity.create(
-    {
-      portfolioId: EntityId.create(ID.PORTFOLIO.OTHER),
-      date: FEBRUARY_PERFORMANCE_DATE,
-      quotasHeld: QuotaQuantity.create("500"),
-      patrimony: PositiveMoney.create("50000.00"),
-      applicationTotal: PositiveMoney.create("30000.00"),
-      redemptionTotal: PositiveMoney.create("10000.00"),
-      cashFlowNet: SignedMoney.create("20000.00"),
-      earnings: SignedMoney.create("2000.00"),
-      returnDaily: SignedPercentage.create("0.3"),
-      returnMonthly: SignedPercentage.create("1.5"),
-      returnYearly: SignedPercentage.create("6.0"),
-      returnLast12m: SignedPercentage.create("5.0"),
-      target: SignedPercentage.create("10.0"),
-      cumulativeTarget: SignedPercentage.create("12.0"),
-      inflationSpread: SignedPercentage.create("2.0"),
-      riskFreeSpread: SignedPercentage.create("0.5"),
-      marketSpread: SignedPercentage.create("1.5"),
-    },
-    ID.PORTFOLIO_PERFORMANCE.OTHER,
-  );
+export const OTHER_PORTFOLIO_PERFORMANCE = PortfolioPerformanceEntity.create(
+  {
+    portfolioId: EntityId.create(ID.PORTFOLIO.OTHER),
+    date: FEBRUARY_PERFORMANCE_DATE,
+    quotasHeld: QuotaQuantity.create("500"),
+    patrimony: PositiveMoney.create("50000.00"),
+    applicationTotal: PositiveMoney.create("30000.00"),
+    redemptionTotal: PositiveMoney.create("10000.00"),
+    cashFlowNet: SignedMoney.create("20000.00"),
+    earnings: SignedMoney.create("2000.00"),
+    returnDaily: SignedPercentage.create("0.3"),
+    returnMonthly: SignedPercentage.create("1.5"),
+    returnYearly: SignedPercentage.create("6.0"),
+    returnLast12m: SignedPercentage.create("5.0"),
+    target: SignedPercentage.create("10.0"),
+    cumulativeTarget: SignedPercentage.create("12.0"),
+    inflationSpread: SignedPercentage.create("2.0"),
+    riskFreeSpread: SignedPercentage.create("0.5"),
+    marketSpread: SignedPercentage.create("1.5"),
+  },
+  ID.PORTFOLIO_PERFORMANCE.OTHER,
+);
 
 /**
  * Represents an external portfolio performance fixture.
@@ -98,29 +93,28 @@ export const OTHER_PORTFOLIO_PERFORMANCE =
  * `PERFORMANCE_DUPLICATE_DATE`. It holds `1100` quotas and
  * has a patrimony of `110000.00`.
  */
-export const EXTERNAL_PORTFOLIO_PERFORMANCE =
-  PortfolioPerformanceEntity.create(
-    {
-      portfolioId: EntityId.create(ID.PORTFOLIO.DEFAULT),
-      date: PERFORMANCE_DUPLICATE_DATE,
-      quotasHeld: QuotaQuantity.create("1100"),
-      patrimony: PositiveMoney.create("110000.00"),
-      applicationTotal: PositiveMoney.create("55000.00"),
-      redemptionTotal: PositiveMoney.create("20000.00"),
-      cashFlowNet: SignedMoney.create("35000.00"),
-      earnings: SignedMoney.create("6000.00"),
-      returnDaily: SignedPercentage.create("1.0"),
-      returnMonthly: SignedPercentage.create("3.0"),
-      returnYearly: SignedPercentage.create("11.0"),
-      returnLast12m: SignedPercentage.create("9.0"),
-      target: SignedPercentage.create("12.0"),
-      cumulativeTarget: SignedPercentage.create("16.0"),
-      inflationSpread: SignedPercentage.create("3.5"),
-      riskFreeSpread: SignedPercentage.create("1.0"),
-      marketSpread: SignedPercentage.create("2.5"),
-    },
-    ID.PORTFOLIO_PERFORMANCE.EXTERNAL,
-  );
+export const EXTERNAL_PORTFOLIO_PERFORMANCE = PortfolioPerformanceEntity.create(
+  {
+    portfolioId: EntityId.create(ID.PORTFOLIO.DEFAULT),
+    date: PERFORMANCE_DUPLICATE_DATE,
+    quotasHeld: QuotaQuantity.create("1100"),
+    patrimony: PositiveMoney.create("110000.00"),
+    applicationTotal: PositiveMoney.create("55000.00"),
+    redemptionTotal: PositiveMoney.create("20000.00"),
+    cashFlowNet: SignedMoney.create("35000.00"),
+    earnings: SignedMoney.create("6000.00"),
+    returnDaily: SignedPercentage.create("1.0"),
+    returnMonthly: SignedPercentage.create("3.0"),
+    returnYearly: SignedPercentage.create("11.0"),
+    returnLast12m: SignedPercentage.create("9.0"),
+    target: SignedPercentage.create("12.0"),
+    cumulativeTarget: SignedPercentage.create("16.0"),
+    inflationSpread: SignedPercentage.create("3.5"),
+    riskFreeSpread: SignedPercentage.create("1.0"),
+    marketSpread: SignedPercentage.create("2.5"),
+  },
+  ID.PORTFOLIO_PERFORMANCE.EXTERNAL,
+);
 
 /**
  * Represents a portfolio performance fixture that falls
@@ -158,69 +152,65 @@ export const PERIOD_OUTSIDE_PORTFOLIO_PERFORMANCE =
  * increased patrimony of `120000.00` and earnings of
  * `7000.00`.
  */
-export const UPDATED_PORTFOLIO_PERFORMANCE =
-  PortfolioPerformanceEntity.create(
-    {
-      portfolioId: EntityId.create(ID.PORTFOLIO.DEFAULT),
-      date: PERFORMANCE_DATE,
-      quotasHeld: QuotaQuantity.create("1000"),
-      patrimony: PositiveMoney.create("120000.00"),
-      applicationTotal: PositiveMoney.create("50000.00"),
-      redemptionTotal: PositiveMoney.create("20000.00"),
-      cashFlowNet: SignedMoney.create("30000.00"),
-      earnings: SignedMoney.create("7000.00"),
-      returnDaily: SignedPercentage.create("0.5"),
-      returnMonthly: SignedPercentage.create("2.0"),
-      returnYearly: SignedPercentage.create("10.0"),
-      returnLast12m: SignedPercentage.create("8.0"),
-      target: SignedPercentage.create("12.0"),
-      cumulativeTarget: SignedPercentage.create("15.0"),
-      inflationSpread: SignedPercentage.create("3.0"),
-      riskFreeSpread: SignedPercentage.create("1.0"),
-      marketSpread: SignedPercentage.create("2.0"),
-    },
-    ID.PORTFOLIO_PERFORMANCE.DEFAULT,
-  );
+export const UPDATED_PORTFOLIO_PERFORMANCE = PortfolioPerformanceEntity.create(
+  {
+    portfolioId: EntityId.create(ID.PORTFOLIO.DEFAULT),
+    date: PERFORMANCE_DATE,
+    quotasHeld: QuotaQuantity.create("1000"),
+    patrimony: PositiveMoney.create("120000.00"),
+    applicationTotal: PositiveMoney.create("50000.00"),
+    redemptionTotal: PositiveMoney.create("20000.00"),
+    cashFlowNet: SignedMoney.create("30000.00"),
+    earnings: SignedMoney.create("7000.00"),
+    returnDaily: SignedPercentage.create("0.5"),
+    returnMonthly: SignedPercentage.create("2.0"),
+    returnYearly: SignedPercentage.create("10.0"),
+    returnLast12m: SignedPercentage.create("8.0"),
+    target: SignedPercentage.create("12.0"),
+    cumulativeTarget: SignedPercentage.create("15.0"),
+    inflationSpread: SignedPercentage.create("3.0"),
+    riskFreeSpread: SignedPercentage.create("1.0"),
+    marketSpread: SignedPercentage.create("2.0"),
+  },
+  ID.PORTFOLIO_PERFORMANCE.DEFAULT,
+);
 
 /**
  * Represents a fresh portfolio performance fixture.
  * The fixture has no persisted ID. It belongs to the default
  * portfolio at 2026-04-05 with a patrimony of `130000.00`.
  */
-export const FRESH_PORTFOLIO_PERFORMANCE =
-  PortfolioPerformanceEntity.create({
-    portfolioId: EntityId.create(ID.PORTFOLIO.DEFAULT),
-    date: new Date("2026-04-05T00:00:00.000Z"),
-    quotasHeld: QuotaQuantity.create("1300"),
-    patrimony: PositiveMoney.create("130000.00"),
-    applicationTotal: PositiveMoney.create("65000.00"),
-    redemptionTotal: PositiveMoney.create("25000.00"),
-    cashFlowNet: SignedMoney.create("40000.00"),
-    earnings: SignedMoney.create("8000.00"),
-    returnDaily: SignedPercentage.create("0.9"),
-    returnMonthly: SignedPercentage.create("4.5"),
-    returnYearly: SignedPercentage.create("13.0"),
-    returnLast12m: SignedPercentage.create("11.0"),
-    target: SignedPercentage.create("12.0"),
-    cumulativeTarget: SignedPercentage.create("20.0"),
-    inflationSpread: SignedPercentage.create("4.2"),
-    riskFreeSpread: SignedPercentage.create("1.1"),
-    marketSpread: SignedPercentage.create("3.1"),
-  });
+export const FRESH_PORTFOLIO_PERFORMANCE = PortfolioPerformanceEntity.create({
+  portfolioId: EntityId.create(ID.PORTFOLIO.DEFAULT),
+  date: new Date("2026-04-05T00:00:00.000Z"),
+  quotasHeld: QuotaQuantity.create("1300"),
+  patrimony: PositiveMoney.create("130000.00"),
+  applicationTotal: PositiveMoney.create("65000.00"),
+  redemptionTotal: PositiveMoney.create("25000.00"),
+  cashFlowNet: SignedMoney.create("40000.00"),
+  earnings: SignedMoney.create("8000.00"),
+  returnDaily: SignedPercentage.create("0.9"),
+  returnMonthly: SignedPercentage.create("4.5"),
+  returnYearly: SignedPercentage.create("13.0"),
+  returnLast12m: SignedPercentage.create("11.0"),
+  target: SignedPercentage.create("12.0"),
+  cumulativeTarget: SignedPercentage.create("20.0"),
+  inflationSpread: SignedPercentage.create("4.2"),
+  riskFreeSpread: SignedPercentage.create("1.1"),
+  marketSpread: SignedPercentage.create("3.1"),
+});
 
 /**
  * Represents the default portfolio performance identifier
  * for test fixtures.
  */
-export const PORTFOLIO_PERFORMANCE_ID =
-  ID.PORTFOLIO_PERFORMANCE.DEFAULT;
+export const PORTFOLIO_PERFORMANCE_ID = ID.PORTFOLIO_PERFORMANCE.DEFAULT;
 
 /**
  * Represents the alternate portfolio performance identifier
  * for test fixtures.
  */
-export const OTHER_PORTFOLIO_PERFORMANCE_ID =
-  ID.PORTFOLIO_PERFORMANCE.OTHER;
+export const OTHER_PORTFOLIO_PERFORMANCE_ID = ID.PORTFOLIO_PERFORMANCE.OTHER;
 
 /**
  * Represents the external portfolio performance identifier
@@ -251,29 +241,19 @@ function toPortfolioPerformanceRow(
     date: entity.date,
     quotasHeld: entity.quotasHeld.value.toString(),
     patrimony: entity.patrimony.value.toString(),
-    applicationTotal:
-      entity.applicationTotal.value.toString(),
-    redemptionTotal:
-      entity.redemptionTotal.value.toString(),
+    applicationTotal: entity.applicationTotal.value.toString(),
+    redemptionTotal: entity.redemptionTotal.value.toString(),
     cashFlowNet: entity.cashFlowNet.value.toString(),
     earnings: entity.earnings.value.toString(),
     returnDaily: entity.returnDaily.value.toString(),
-    returnMonthly:
-      entity.returnMonthly?.value.toString() ?? null,
-    returnYearly:
-      entity.returnYearly?.value.toString() ?? null,
-    returnLast12m:
-      entity.returnLast12m?.value.toString() ?? null,
-    target:
-      entity.target?.value.toString() ?? null,
-    cumulativeTarget:
-      entity.cumulativeTarget?.value.toString() ?? null,
-    inflationSpread:
-      entity.inflationSpread?.value.toString() ?? null,
-    riskFreeSpread:
-      entity.riskFreeSpread?.value.toString() ?? null,
-    marketSpread:
-      entity.marketSpread?.value.toString() ?? null,
+    returnMonthly: entity.returnMonthly?.value.toString() ?? null,
+    returnYearly: entity.returnYearly?.value.toString() ?? null,
+    returnLast12m: entity.returnLast12m?.value.toString() ?? null,
+    target: entity.target?.value.toString() ?? null,
+    cumulativeTarget: entity.cumulativeTarget?.value.toString() ?? null,
+    inflationSpread: entity.inflationSpread?.value.toString() ?? null,
+    riskFreeSpread: entity.riskFreeSpread?.value.toString() ?? null,
+    marketSpread: entity.marketSpread?.value.toString() ?? null,
     createdAt: entity.createdAt,
   };
 }
@@ -287,12 +267,10 @@ function toPortfolioPerformanceRow(
 async function seedPortfolioPerformanceRow(
   entity: PortfolioPerformance,
 ): Promise<void> {
-  await db
-    .insert(portfolioPerformance)
-    .values({
-      ...toPortfolioPerformanceRow(entity),
-      id: entity.id,
-    });
+  await db.insert(portfolioPerformance).values({
+    ...toPortfolioPerformanceRow(entity),
+    id: entity.id,
+  });
 }
 
 /**
@@ -313,15 +291,10 @@ export async function seedPortfolioPerformances(): Promise<
 
   await Promise.all([
     seedPortfolioPerformanceRow(PORTFOLIO_PERFORMANCE),
-    seedPortfolioPerformanceRow(
-      OTHER_PORTFOLIO_PERFORMANCE,
-    ),
+    seedPortfolioPerformanceRow(OTHER_PORTFOLIO_PERFORMANCE),
   ]);
 
-  return [
-    PORTFOLIO_PERFORMANCE,
-    OTHER_PORTFOLIO_PERFORMANCE,
-  ];
+  return [PORTFOLIO_PERFORMANCE, OTHER_PORTFOLIO_PERFORMANCE];
 }
 
 /**
@@ -342,15 +315,9 @@ export async function seedAllPortfolioPerformances(): Promise<
 
   await Promise.all([
     seedPortfolioPerformanceRow(PORTFOLIO_PERFORMANCE),
-    seedPortfolioPerformanceRow(
-      EXTERNAL_PORTFOLIO_PERFORMANCE,
-    ),
-    seedPortfolioPerformanceRow(
-      PERIOD_OUTSIDE_PORTFOLIO_PERFORMANCE,
-    ),
-    seedPortfolioPerformanceRow(
-      OTHER_PORTFOLIO_PERFORMANCE,
-    ),
+    seedPortfolioPerformanceRow(EXTERNAL_PORTFOLIO_PERFORMANCE),
+    seedPortfolioPerformanceRow(PERIOD_OUTSIDE_PORTFOLIO_PERFORMANCE),
+    seedPortfolioPerformanceRow(OTHER_PORTFOLIO_PERFORMANCE),
   ]);
 
   return [

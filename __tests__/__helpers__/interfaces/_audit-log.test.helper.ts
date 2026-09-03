@@ -1,7 +1,7 @@
 ﻿import { ID } from "@/__tests__/__fixtures__";
 import { AuditLog as AuditLogEntity } from "@/business/entities/audit/audit-log.entity";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { IAuditLog } from "@/business/interfaces/audit/audit-log.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the default audit log fixture for tests.

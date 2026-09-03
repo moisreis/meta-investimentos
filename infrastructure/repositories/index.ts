@@ -13,6 +13,7 @@ export { ApplicationRepository } from "./portfolio/application.repository";
 export { NormRepository } from "./portfolio/norm.repository";
 export { NormsPortfoliosRepository } from "./portfolio/norms-portfolios.repository";
 export { PortfolioRepository } from "./portfolio/portfolio.repository";
+export { PortfolioPermissionRepository } from "./portfolio/portfolio-permission.repository";
 export { PositionRepository } from "./portfolio/position.repository";
 export { TransactionAllocationRepository } from "./portfolio/transaction-allocation.repository";
 export { WithdrawalRepository } from "./portfolio/withdrawal.repository";

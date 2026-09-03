@@ -42,6 +42,15 @@ export interface IUser {
   findByCpf(cpf: string): Promise<User | null>;
 
   /**
+   * Retrieves a paginated collection of users.
+   *
+   * @param options - The pagination bounds.
+   * @returns A promise resolving to the matching `User` entities,
+   * ordered by creation date ascending.
+   */
+  findAll(options?: { limit?: number; offset?: number }): Promise<User[]>;
+
+  /**
    * Persists the provided user.
    *
    * When the user has no id, the implementation inserts a new

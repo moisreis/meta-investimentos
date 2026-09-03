@@ -20,10 +20,7 @@ export const OTHER_CATEGORY_ID = ID.CATEGORY.OTHER;
  *
  * The fixture represents the "Ações" category.
  */
-export const CATEGORY = Category.create(
-  { name: "Ações" },
-  ID.CATEGORY.DEFAULT,
-);
+export const CATEGORY = Category.create({ name: "Ações" }, ID.CATEGORY.DEFAULT);
 
 /**
  * Represents an alternative category fixture for tests.

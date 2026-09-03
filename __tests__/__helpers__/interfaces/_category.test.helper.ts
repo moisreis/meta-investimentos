@@ -17,10 +17,7 @@ export const OTHER_CATEGORY_ID = ID.CATEGORY.OTHER;
  * Represents a default category entity with the name
  * "Ações".
  */
-export const CATEGORY = Category.create(
-  { name: "Ações" },
-  ID.CATEGORY.DEFAULT,
-);
+export const CATEGORY = Category.create({ name: "Ações" }, ID.CATEGORY.DEFAULT);
 
 /**
  * Represents a secondary category entity with the name

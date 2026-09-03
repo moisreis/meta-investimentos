@@ -13,6 +13,7 @@ export * from "./portfolio/application.relations";
 export * from "./portfolio/norm.relations";
 export * from "./portfolio/norms-portfolios.relations";
 export * from "./portfolio/portfolio.relations";
+export * from "./portfolio/portfolio-permission.relations";
 export * from "./portfolio/position.relations";
 export * from "./portfolio/transaction-allocation.relations";
 export * from "./portfolio/withdrawal.relations";

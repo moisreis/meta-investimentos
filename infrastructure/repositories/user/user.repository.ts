@@ -1,4 +1,4 @@
-﻿import { eq, inArray } from "drizzle-orm";
+﻿import { asc, eq, inArray } from "drizzle-orm";
 
 import { User } from "@/business/entities/user/user.entity";
 import type { IUser } from "@/business/interfaces/user/user.interface";
@@ -167,6 +167,25 @@ export class UserRepository implements IUser {
     }
 
     const rows = await this.db.select().from(user).where(inArray(user.id, ids));
+
+    return rows.map((row) => this.toEntity(row));
+  }
+
+  /**
+   * Retrieves a paginated collection of users.
+   *
+   * @see {@link IUser.findAll}
+   */
+  async findAll(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<User[]> {
+    const rows = await this.db
+      .select()
+      .from(user)
+      .orderBy(asc(user.createdAt))
+      .limit(options?.limit ?? 100)
+      .offset(options?.offset ?? 0);
 
     return rows.map((row) => this.toEntity(row));
   }

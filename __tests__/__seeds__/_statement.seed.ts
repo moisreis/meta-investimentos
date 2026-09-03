@@ -17,8 +17,7 @@ export const STATEMENT = StatementEntity.create(
     portfolioId: EntityId.create(ID.PORTFOLIO.DEFAULT),
     periodStart: new Date("2026-01-01T00:00:00.000Z"),
     periodEnd: new Date("2026-01-31T00:00:00.000Z"),
-    fileUrl:
-      "https://example.com/statements/fia-january.pdf",
+    fileUrl: "https://example.com/statements/fia-january.pdf",
     generatedByUserId: EntityId.create(ID.USER.DEFAULT),
   },
   ID.STATEMENT.DEFAULT,
@@ -34,8 +33,7 @@ export const OTHER_STATEMENT = StatementEntity.create(
     portfolioId: EntityId.create(ID.PORTFOLIO.OTHER),
     periodStart: new Date("2026-02-01T00:00:00.000Z"),
     periodEnd: new Date("2026-02-28T00:00:00.000Z"),
-    fileUrl:
-      "https://example.com/statements/rf-february.pdf",
+    fileUrl: "https://example.com/statements/rf-february.pdf",
     generatedByUserId: EntityId.create(ID.USER.DEFAULT),
   },
   ID.STATEMENT.OTHER,
@@ -51,8 +49,7 @@ export const THIRD_STATEMENT = StatementEntity.create(
     portfolioId: EntityId.create(ID.PORTFOLIO.DEFAULT),
     periodStart: new Date("2026-03-01T00:00:00.000Z"),
     periodEnd: new Date("2026-03-31T00:00:00.000Z"),
-    fileUrl:
-      "https://example.com/statements/fia-march.pdf",
+    fileUrl: "https://example.com/statements/fia-march.pdf",
     generatedByUserId: EntityId.create(ID.USER.OTHER),
   },
   ID.STATEMENT.THIRD,
@@ -68,8 +65,7 @@ export const UPDATED_STATEMENT = StatementEntity.create(
     portfolioId: EntityId.create(ID.PORTFOLIO.DEFAULT),
     periodStart: STATEMENT.periodStart,
     periodEnd: STATEMENT.periodEnd,
-    fileUrl:
-      "https://example.com/statements/fia-january-v2.pdf",
+    fileUrl: "https://example.com/statements/fia-january-v2.pdf",
     generatedByUserId: EntityId.create(ID.USER.DEFAULT),
   },
   ID.STATEMENT.DEFAULT,
@@ -84,8 +80,7 @@ export const FRESH_STATEMENT = StatementEntity.create({
   portfolioId: EntityId.create(ID.PORTFOLIO.DEFAULT),
   periodStart: new Date("2026-04-01T00:00:00.000Z"),
   periodEnd: new Date("2026-04-30T00:00:00.000Z"),
-  fileUrl:
-    "https://example.com/statements/fia-april.pdf",
+  fileUrl: "https://example.com/statements/fia-april.pdf",
   generatedByUserId: EntityId.create(ID.USER.DEFAULT),
 });
 
@@ -118,11 +113,7 @@ export const THIRD_STATEMENT_ID = ID.STATEMENT.THIRD;
 export async function seedStatements(): Promise<Statement[]> {
   await seedStatementParents();
 
-  for (const fixture of [
-    STATEMENT,
-    OTHER_STATEMENT,
-    THIRD_STATEMENT,
-  ]) {
+  for (const fixture of [STATEMENT, OTHER_STATEMENT, THIRD_STATEMENT]) {
     await db.insert(statement).values({
       id: fixture.id,
       portfolioId: fixture.portfolioId,

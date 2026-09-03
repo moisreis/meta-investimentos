@@ -1,10 +1,10 @@
 ﻿import { ID } from "@/__tests__/__fixtures__";
 import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import { Fund } from "@/business/entities/fund/fund.entity";
+import type { IFund } from "@/business/interfaces/fund/fund.interface";
 import { CNPJ } from "@/business/value-objects/cnpj.vo";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
-import type { IFund } from "@/business/interfaces/fund/fund.interface";
 
 /**
  * Represents the default fund identifier for tests.

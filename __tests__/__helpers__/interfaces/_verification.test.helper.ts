@@ -1,7 +1,7 @@
 ﻿import { ID } from "@/__tests__/__fixtures__";
 import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
-import type { IVerification } from "@/business/interfaces/user/verification.interface";
 import { Verification } from "@/business/entities/user/verification.entity";
+import type { IVerification } from "@/business/interfaces/user/verification.interface";
 
 /**
  * Represents the shared expiration date for verification fixtures.

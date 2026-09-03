@@ -93,5 +93,8 @@ export async function seedBankById(id: string): Promise<Bank> {
  *          `OTHER_BANK` instances.
  */
 export async function seedBanks(): Promise<Bank[]> {
-  return [await seedBankById(ID.BANK.DEFAULT), await seedBankById(ID.BANK.OTHER)];
+  return [
+    await seedBankById(ID.BANK.DEFAULT),
+    await seedBankById(ID.BANK.OTHER),
+  ];
 }

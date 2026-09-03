@@ -236,6 +236,60 @@ export class User {
   }
 
   /**
+   * Updates the profile fields of this user.
+   *
+   * Only the provided fields are replaced; the remaining profile
+   * attributes stay unchanged. The `updatedAt` timestamp is refreshed.
+   *
+   * @param props - The profile fields to update.
+   * @param now - The update timestamp, defaulting to the current time.
+   *
+   * @returns A new `User` instance with the updated profile.
+   *
+   * @throws {ValidationError} If a provided `name` is blank.
+   * @throws {ValidationError} If a provided `firstName` is blank.
+   * @throws {ValidationError} If a provided `lastName` is blank.
+   */
+  public updateProfile(
+    props: {
+      name?: string;
+      firstName?: string;
+      lastName?: string;
+      image?: string | null;
+    },
+    now?: Date,
+  ): User {
+    const name = props.name ?? this.props.name;
+    const firstName = props.firstName ?? this.props.firstName;
+    const lastName = props.lastName ?? this.props.lastName;
+    const image = props.image === undefined ? this.props.image : props.image;
+
+    if (name.trim() === "") {
+      throw new ValidationError("User must have a name.");
+    }
+    if (firstName.trim() === "") {
+      throw new ValidationError("User must have a first name.");
+    }
+    if (lastName.trim() === "") {
+      throw new ValidationError("User must have a last name.");
+    }
+
+    const NOW = now ?? new Date();
+
+    return new User(
+      {
+        ...this.props,
+        name,
+        firstName,
+        lastName,
+        image,
+        updatedAt: NOW,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `User` represents the same user as the
    * provided instance, based on referential equality and the unique id.
    *

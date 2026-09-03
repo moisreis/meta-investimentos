@@ -1,7 +1,7 @@
-﻿import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
-import { ID } from "@/__tests__/__fixtures__/_ids";
-import type { IPosition } from "@/business/interfaces/portfolio/position.interface";
+﻿import { ID } from "@/__tests__/__fixtures__/_ids";
+import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import { Position as PositionEntity } from "@/business/entities/portfolio/position.entity";
+import type { IPosition } from "@/business/interfaces/portfolio/position.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 
@@ -95,9 +95,7 @@ export const UPDATED_POSITION = PositionEntity.create(
     portfolioId: POSITION.portfolioId,
     fundId: POSITION.fundId,
     initialBalance: PositiveMoney.create("5000.00"),
-    initialBalanceDate: new Date(
-      "2026-01-10T00:00:00.000Z",
-    ),
+    initialBalanceDate: new Date("2026-01-10T00:00:00.000Z"),
   },
   ID.POSITION.DEFAULT,
 );
@@ -123,15 +121,11 @@ export function createInMemoryPositionRepository(): IPosition {
       return BASE.match((p) => p.portfolioId === portfolioId);
     },
     async findAllByPortfolioIds(portfolioIds) {
-      return BASE.match((p) =>
-        portfolioIds.includes(p.portfolioId),
-      );
+      return BASE.match((p) => portfolioIds.includes(p.portfolioId));
     },
     async findByPortfolioIdAndFundId(portfolioId, fundId) {
       return BASE.findOne(
-        (p) =>
-          p.portfolioId === portfolioId &&
-          p.fundId === fundId,
+        (p) => p.portfolioId === portfolioId && p.fundId === fundId,
       );
     },
     save: (position) => BASE.save(position),

@@ -1,7 +1,7 @@
-﻿import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
-import { ID } from "@/__tests__/__fixtures__/_ids";
-import type { IApplication } from "@/business/interfaces/portfolio/application.interface";
+﻿import { ID } from "@/__tests__/__fixtures__/_ids";
+import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import { Application as ApplicationEntity } from "@/business/entities/portfolio/application.entity";
+import type { IApplication } from "@/business/interfaces/portfolio/application.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";

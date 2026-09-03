@@ -1,10 +1,10 @@
-﻿import { db } from "@/__tests__/__setup__/_database.setup";
+﻿import { ID } from "@/__tests__/__fixtures__/_ids";
+import { db } from "@/__tests__/__setup__/_database.setup";
 import type { Withdrawal } from "@/business/entities";
 import { Withdrawal as WithdrawalEntity } from "@/business/entities/portfolio/withdrawal.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
-import { ID } from "@/__tests__/__fixtures__/_ids";
 import { withdrawal } from "@/infrastructure/database/schemas";
 import { WithdrawalRepository } from "@/infrastructure/repositories";
 import { seedPositionById } from "./_position.seed";
@@ -28,22 +28,19 @@ export const EXTERNAL_WITHDRAWAL_ID = ID.WITHDRAWAL.EXTERNAL;
 /**
  * Represents a withdrawal identifier that falls outside the test period.
  */
-export const PERIOD_OUTSIDE_WITHDRAWAL_ID =
-  ID.WITHDRAWAL.PERIOD_OUTSIDE;
+export const PERIOD_OUTSIDE_WITHDRAWAL_ID = ID.WITHDRAWAL.PERIOD_OUTSIDE;
 
 /**
  * Represents the default test withdrawal date.
  * Set to 2026-01-20.
  */
-export const WITHDRAWAL_DATE =
-  new Date("2026-01-20T00:00:00.000Z");
+export const WITHDRAWAL_DATE = new Date("2026-01-20T00:00:00.000Z");
 
 /**
  * Represents the alternate test withdrawal date.
  * Set to 2026-02-20.
  */
-export const OTHER_WITHDRAWAL_DATE =
-  new Date("2026-02-20T00:00:00.000Z");
+export const OTHER_WITHDRAWAL_DATE = new Date("2026-02-20T00:00:00.000Z");
 
 /**
  * Represents a default withdrawal fixture.
@@ -98,16 +95,15 @@ export const EXTERNAL_WITHDRAWAL = WithdrawalEntity.create(
  * default test period. The withdrawal has a date of
  * 2026-03-10, an amount of `150.00`, and quotas of `1.8`.
  */
-export const PERIOD_OUTSIDE_WITHDRAWAL =
-  WithdrawalEntity.create(
-    {
-      positionId: EntityId.create(ID.POSITION.DEFAULT),
-      date: new Date("2026-03-10T00:00:00.000Z"),
-      amount: PositiveMoney.create("150.00"),
-      quotas: QuotaQuantity.create("1.8"),
-    },
-    ID.WITHDRAWAL.PERIOD_OUTSIDE,
-  );
+export const PERIOD_OUTSIDE_WITHDRAWAL = WithdrawalEntity.create(
+  {
+    positionId: EntityId.create(ID.POSITION.DEFAULT),
+    date: new Date("2026-03-10T00:00:00.000Z"),
+    amount: PositiveMoney.create("150.00"),
+    quotas: QuotaQuantity.create("1.8"),
+  },
+  ID.WITHDRAWAL.PERIOD_OUTSIDE,
+);
 
 /**
  * Represents an updated withdrawal fixture.
@@ -154,15 +150,13 @@ export const WITHDRAWALS = [
  * Represents the sum of amounts across the default and
  * alternate withdrawals. Equals `600.00`.
  */
-export const WITHDRAWAL_SUM_AMOUNT =
-  PositiveMoney.create("600.00");
+export const WITHDRAWAL_SUM_AMOUNT = PositiveMoney.create("600.00");
 
 /**
  * Represents the sum of quota quantities across the default
  * and alternate withdrawals. Equals `7.323`.
  */
-export const WITHDRAWAL_SUM_QUOTAS =
-  QuotaQuantity.create("7.323");
+export const WITHDRAWAL_SUM_QUOTAS = QuotaQuantity.create("7.323");
 
 /**
  * Seeds a withdrawal by its identifier into the database.
@@ -175,17 +169,12 @@ export const WITHDRAWAL_SUM_QUOTAS =
  * @param id - The withdrawal identifier to seed.
  * @returns The seeded or existing {@link Withdrawal}.
  */
-export async function seedWithdrawalById(
-  id: string,
-): Promise<Withdrawal> {
+export async function seedWithdrawalById(id: string): Promise<Withdrawal> {
   const REPOSITORY = new WithdrawalRepository(db);
-  const EXISTING = await REPOSITORY.findById(
-    EntityId.create(id),
-  );
+  const EXISTING = await REPOSITORY.findById(EntityId.create(id));
   if (EXISTING) return EXISTING;
 
-  const FIXTURE =
-    id === WITHDRAWAL_ID ? WITHDRAWAL : OTHER_WITHDRAWAL;
+  const FIXTURE = id === WITHDRAWAL_ID ? WITHDRAWAL : OTHER_WITHDRAWAL;
 
   await seedPositionById(FIXTURE.positionId);
 
@@ -229,15 +218,10 @@ export async function seedWithdrawals(): Promise<Withdrawal[]> {
  *
  * @returns The full array of {@link Withdrawal} fixtures.
  */
-export async function seedAllWithdrawals(): Promise<
-  Withdrawal[]
-> {
+export async function seedAllWithdrawals(): Promise<Withdrawal[]> {
   await seedTransactionContext();
 
-  for (const fixture of [
-    EXTERNAL_WITHDRAWAL,
-    PERIOD_OUTSIDE_WITHDRAWAL,
-  ]) {
+  for (const fixture of [EXTERNAL_WITHDRAWAL, PERIOD_OUTSIDE_WITHDRAWAL]) {
     await db.insert(withdrawal).values({
       id: fixture.id,
       positionId: fixture.positionId,

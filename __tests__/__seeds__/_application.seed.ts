@@ -1,10 +1,10 @@
-﻿import { db } from "@/__tests__/__setup__/_database.setup";
+﻿import { ID } from "@/__tests__/__fixtures__/_ids";
+import { db } from "@/__tests__/__setup__/_database.setup";
 import type { Application } from "@/business/entities";
 import { Application as ApplicationEntity } from "@/business/entities/portfolio/application.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
-import { ID } from "@/__tests__/__fixtures__/_ids";
 import { application } from "@/infrastructure/database/schemas";
 import { ApplicationRepository } from "@/infrastructure/repositories";
 import { seedPositionById } from "./_position.seed";

@@ -1,8 +1,8 @@
 ﻿import { ID } from "@/__tests__/__fixtures__";
 import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import { Statement as StatementEntity } from "@/business/entities/report/statement.entity";
-import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { IStatement } from "@/business/interfaces/report/statement.interface";
+import { EntityId } from "@/business/value-objects/entity-id.vo";
 
 /**
  * Represents the default statement fixture.

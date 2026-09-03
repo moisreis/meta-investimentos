@@ -1,9 +1,9 @@
-﻿import { db } from "@/__tests__/__setup__/_database.setup";
+﻿import { ID } from "@/__tests__/__fixtures__/_ids";
+import { db } from "@/__tests__/__setup__/_database.setup";
 import type { Position } from "@/business/entities";
 import { Position as PositionEntity } from "@/business/entities/portfolio/position.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
-import { ID } from "@/__tests__/__fixtures__/_ids";
 import { position } from "@/infrastructure/database/schemas";
 import { PositionRepository } from "@/infrastructure/repositories";
 import { seedFundById } from "./_fund.seed";

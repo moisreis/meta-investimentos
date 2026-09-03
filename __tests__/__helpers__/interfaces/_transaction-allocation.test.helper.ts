@@ -1,7 +1,7 @@
 ﻿import { ID } from "@/__tests__/__fixtures__/_ids";
 import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
-import type { ITransactionAllocation } from "@/business/interfaces/portfolio/transaction-allocation.interface";
 import { TransactionAllocation as TransactionAllocationEntity } from "@/business/entities/portfolio/transaction-allocation.entity";
+import type { ITransactionAllocation } from "@/business/interfaces/portfolio/transaction-allocation.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 
@@ -9,8 +9,7 @@ import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 export const TRANSACTION_ALLOCATION_ID = ID.TRANSACTION_ALLOCATION.DEFAULT;
 
 /** Represents the secondary transaction allocation identifier. */
-export const OTHER_TRANSACTION_ALLOCATION_ID =
-  ID.TRANSACTION_ALLOCATION.OTHER;
+export const OTHER_TRANSACTION_ALLOCATION_ID = ID.TRANSACTION_ALLOCATION.OTHER;
 
 /** Represents a second allocation identifier for the same application. */
 export const SECOND_ALLOCATION_ID = ID.TRANSACTION_ALLOCATION.SECOND;
@@ -90,14 +89,15 @@ export const FRESH_ALLOCATION = TransactionAllocationEntity.create({
  * The fixture has a higher `quotasConsumed` value of `3.5`
  * to simulate a mutation of the original allocation.
  */
-export const UPDATED_TRANSACTION_ALLOCATION = TransactionAllocationEntity.create(
-  {
-    applicationId: EntityId.create(ID.APPLICATION.DEFAULT),
-    withdrawId: EntityId.create(ID.WITHDRAWAL.DEFAULT),
-    quotasConsumed: QuotaQuantity.create("3.5"),
-  },
-  ID.TRANSACTION_ALLOCATION.DEFAULT,
-);
+export const UPDATED_TRANSACTION_ALLOCATION =
+  TransactionAllocationEntity.create(
+    {
+      applicationId: EntityId.create(ID.APPLICATION.DEFAULT),
+      withdrawId: EntityId.create(ID.WITHDRAWAL.DEFAULT),
+      quotasConsumed: QuotaQuantity.create("3.5"),
+    },
+    ID.TRANSACTION_ALLOCATION.DEFAULT,
+  );
 
 /**
  * Represents the expected sum of consumed quota quantities

@@ -13,6 +13,7 @@ export type { IApplication } from "./portfolio/application.interface";
 export type { INorm } from "./portfolio/norm.interface";
 export type { INormsPortfolios } from "./portfolio/norms-portfolios.interface";
 export type { IPortfolio } from "./portfolio/portfolio.interface";
+export type { IPortfolioPermission } from "./portfolio/portfolio-permission.interface";
 export type { IPosition } from "./portfolio/position.interface";
 export type { ITransactionAllocation } from "./portfolio/transaction-allocation.interface";
 export type { IWithdrawal } from "./portfolio/withdrawal.interface";

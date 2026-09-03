@@ -1,12 +1,12 @@
 ﻿import { ID } from "@/__tests__/__fixtures__";
 import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import { PortfolioPerformance as PortfolioPerformanceEntity } from "@/business/entities/performance/portfolio-performance.entity";
+import type { IPortfolioPerformance } from "@/business/interfaces/performance/portfolio-performance.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 import { SignedMoney } from "@/business/value-objects/signed-money.vo";
 import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
-import type { IPortfolioPerformance } from "@/business/interfaces/performance/portfolio-performance.interface";
 
 /**
  * Represents the primary performance date.
@@ -23,9 +23,7 @@ export const PERFORMANCE_DATE = new Date("2026-01-05T00:00:00.000Z");
  * {@link PERFORMANCE_DATE}. Use it in tests that need a
  * second record within the same period.
  */
-export const PERFORMANCE_DUPLICATE_DATE = new Date(
-  "2026-01-15T00:00:00.000Z",
-);
+export const PERFORMANCE_DUPLICATE_DATE = new Date("2026-01-15T00:00:00.000Z");
 
 /**
  * Represents a February performance date.
@@ -33,9 +31,7 @@ export const PERFORMANCE_DUPLICATE_DATE = new Date(
  * The date `2026-02-05` belongs to a different month than
  * {@link PERFORMANCE_DATE}. Use it for cross-month tests.
  */
-export const FEBRUARY_PERFORMANCE_DATE = new Date(
-  "2026-02-05T00:00:00.000Z",
-);
+export const FEBRUARY_PERFORMANCE_DATE = new Date("2026-02-05T00:00:00.000Z");
 
 /**
  * Represents the default portfolio performance fixture.
@@ -215,12 +211,10 @@ export const FRESH_PORTFOLIO_PERFORMANCE = PortfolioPerformanceEntity.create({
 });
 
 /** Represents the default portfolio performance identifier. */
-export const PORTFOLIO_PERFORMANCE_ID =
-  ID.PORTFOLIO_PERFORMANCE.DEFAULT;
+export const PORTFOLIO_PERFORMANCE_ID = ID.PORTFOLIO_PERFORMANCE.DEFAULT;
 
 /** Represents the other portfolio performance identifier. */
-export const OTHER_PORTFOLIO_PERFORMANCE_ID =
-  ID.PORTFOLIO_PERFORMANCE.OTHER;
+export const OTHER_PORTFOLIO_PERFORMANCE_ID = ID.PORTFOLIO_PERFORMANCE.OTHER;
 
 /** Represents the external portfolio performance identifier. */
 export const EXTERNAL_PORTFOLIO_PERFORMANCE_ID =

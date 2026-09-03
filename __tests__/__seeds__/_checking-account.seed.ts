@@ -124,8 +124,7 @@ export const OTHER_CHECKING_ACCOUNT_ID = ID.CHECKING_ACCOUNT.OTHER;
 /**
  * Represents the external checking account identifier for tests.
  */
-export const EXTERNAL_CHECKING_ACCOUNT_ID =
-  ID.CHECKING_ACCOUNT.EXTERNAL;
+export const EXTERNAL_CHECKING_ACCOUNT_ID = ID.CHECKING_ACCOUNT.EXTERNAL;
 
 /**
  * Represents the ID for the period outside checking account.

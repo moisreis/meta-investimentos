@@ -13,6 +13,8 @@ export { Application } from "./portfolio/application.entity";
 export { Norm } from "./portfolio/norm.entity";
 export { NormsPortfolios } from "./portfolio/norms-portfolios.entity";
 export { Portfolio } from "./portfolio/portfolio.entity";
+export type { PortfolioPermissionRole } from "./portfolio/portfolio-permission.entity";
+export { PortfolioPermission } from "./portfolio/portfolio-permission.entity";
 export { Position } from "./portfolio/position.entity";
 export { TransactionAllocation } from "./portfolio/transaction-allocation.entity";
 export { Withdrawal } from "./portfolio/withdrawal.entity";

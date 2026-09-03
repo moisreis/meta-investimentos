@@ -76,6 +76,14 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          name: { label: "USE CASES", color: "magenta" },
+          include: ["**/__unit__/use-cases/**/*.{test,spec}.{ts,tsx,js,jsx}"],
+          environment: "node",
+        },
+      },
+      {
+        extends: true,
+        test: {
           name: { label: "ERRORS", color: "magenta" },
           include: ["**/__unit__/errors/**/*.{test,spec}.{ts,tsx,js,jsx}"],
           environment: "node",

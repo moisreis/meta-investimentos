@@ -13,6 +13,7 @@ export * from "./portfolio/application.schema";
 export * from "./portfolio/norm.schema";
 export * from "./portfolio/norms-portfolios.schema";
 export * from "./portfolio/portfolio.schema";
+export * from "./portfolio/portfolio-permission.schema";
 export * from "./portfolio/position.schema";
 export * from "./portfolio/transaction-allocation.schema";
 export * from "./portfolio/withdrawal.schema";

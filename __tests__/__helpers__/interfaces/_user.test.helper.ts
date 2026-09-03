@@ -1,7 +1,7 @@
 ﻿import { ID } from "@/__tests__/__fixtures__";
 import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
-import type { IUser } from "@/business/interfaces/user/user.interface";
 import { User } from "@/business/entities/user/user.entity";
+import type { IUser } from "@/business/interfaces/user/user.interface";
 import { CPF } from "@/business/value-objects/cpf.vo";
 
 /**
@@ -80,14 +80,7 @@ const USER_ID = ID.USER.DEFAULT;
  */
 const OTHER_USER_ID = ID.USER.OTHER;
 
-export {
-  FRESH_USER,
-  OTHER_USER,
-  OTHER_USER_ID,
-  UPDATED_USER,
-  USER,
-  USER_ID,
-};
+export { FRESH_USER, OTHER_USER, OTHER_USER_ID, UPDATED_USER, USER, USER_ID };
 
 /**
  * Creates an in-memory implementation of the {@link IUser}
@@ -112,6 +105,15 @@ export function createInMemoryUserRepository(): IUser {
     },
     async findByCpf(cpf) {
       return BASE.findOne((u) => u.cpf.value === cpf);
+    },
+    async findAll(options) {
+      const ALL = [...BASE.rows()].sort(
+        (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+      );
+      const OFFSET = options?.offset ?? 0;
+      const LIMIT = options?.limit ?? ALL.length;
+
+      return ALL.slice(OFFSET, OFFSET + LIMIT);
     },
     save: (user) => BASE.save(user),
     delete: (id) => BASE.delete(id),
