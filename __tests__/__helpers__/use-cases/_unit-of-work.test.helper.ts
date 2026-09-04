@@ -1,8 +1,17 @@
 import type { Bank } from "@/business/entities/bank/bank.entity";
+import type { BankAccount } from "@/business/entities/bank/bank-account.entity";
+import { BankAccount as BankAccountEntity } from "@/business/entities/bank/bank-account.entity";
+import { CheckingAccount as CheckingAccountEntity } from "@/business/entities/bank/checking-account.entity";
 import type { Benchmark } from "@/business/entities/benchmark/benchmark.entity";
+import type { BenchmarkHistory } from "@/business/entities/benchmark/benchmark-history.entity";
+import { BenchmarkHistory as BenchmarkHistoryEntity } from "@/business/entities/benchmark/benchmark-history.entity";
 import type { Category } from "@/business/entities/fund/category.entity";
 import type { Fund } from "@/business/entities/fund/fund.entity";
 import type { Quota } from "@/business/entities/fund/quota.entity";
+import type { PortfolioPerformance } from "@/business/entities/performance/portfolio-performance.entity";
+import { PortfolioPerformance as PortfolioPerformanceEntity } from "@/business/entities/performance/portfolio-performance.entity";
+import type { PositionPerformance } from "@/business/entities/performance/position-performance.entity";
+import { PositionPerformance as PositionPerformanceEntity } from "@/business/entities/performance/position-performance.entity";
 import type { Application } from "@/business/entities/portfolio/application.entity";
 import { Application as ApplicationEntity } from "@/business/entities/portfolio/application.entity";
 import type { Norm } from "@/business/entities/portfolio/norm.entity";
@@ -18,10 +27,15 @@ import { Withdrawal as WithdrawalEntity } from "@/business/entities/portfolio/wi
 import type { Statement } from "@/business/entities/report/statement.entity";
 import type { User } from "@/business/entities/user/user.entity";
 import type { IBank } from "@/business/interfaces/bank/bank.interface";
+import type { IBankAccount } from "@/business/interfaces/bank/bank-account.interface";
+import type { ICheckingAccount } from "@/business/interfaces/bank/checking-account.interface";
 import type { IBenchmark } from "@/business/interfaces/benchmark/benchmark.interface";
+import type { IBenchmarkHistory } from "@/business/interfaces/benchmark/benchmark-history.interface";
 import type { ICategory } from "@/business/interfaces/fund/category.interface";
 import type { IFund } from "@/business/interfaces/fund/fund.interface";
 import type { IQuota } from "@/business/interfaces/fund/quota.interface";
+import type { IPortfolioPerformance } from "@/business/interfaces/performance/portfolio-performance.interface";
+import type { IPositionPerformance } from "@/business/interfaces/performance/position-performance.interface";
 import type { IApplication } from "@/business/interfaces/portfolio/application.interface";
 import type { INorm } from "@/business/interfaces/portfolio/norm.interface";
 import type { INormsPortfolios } from "@/business/interfaces/portfolio/norms-portfolios.interface";
@@ -112,7 +126,6 @@ class InMemoryStore<T extends { id?: EntityId }> {
 type FakeUserRepository = IUser & {
   findAllByIds(ids: EntityId[]): Promise<User[]>;
 };
-
 /**
  * A lightweight in-memory replacement for the {@link UnitOfWork} used in
  * use-case tests.
@@ -190,7 +203,91 @@ export class FakeUnitOfWork {
   private readonly categoryStore = new InMemoryStore<Category>();
   private readonly fundStore = new InMemoryStore<Fund>();
   private readonly bankStore = new InMemoryStore<Bank>();
+  private readonly bankAccountStore = new InMemoryStore<BankAccount>((ba, id) =>
+    BankAccountEntity.create(
+      {
+        portfolioId: ba.portfolioId,
+        bankId: ba.bankId,
+        agency: ba.agency,
+        accountNumber: ba.accountNumber,
+        createdAt: ba.createdAt,
+        updatedAt: ba.updatedAt,
+      },
+      id,
+    ),
+  );
+  private readonly checkingAccountStore =
+    new InMemoryStore<CheckingAccountEntity>((ca, id) =>
+      CheckingAccountEntity.create(
+        {
+          bankAccountId: ca.bankAccountId,
+          date: ca.date,
+          value: ca.value,
+        },
+        id,
+      ),
+    );
   private readonly benchmarkStore = new InMemoryStore<Benchmark>();
+  private readonly benchmarkHistoryStore = new InMemoryStore<BenchmarkHistory>(
+    (bh, id) =>
+      BenchmarkHistoryEntity.create(
+        {
+          benchmarkId: bh.benchmarkId,
+          date: bh.date,
+          rate: bh.rate,
+          createdAt: bh.createdAt,
+        },
+        id,
+      ),
+  );
+  private readonly positionPerformanceStore =
+    new InMemoryStore<PositionPerformance>((pp, id) =>
+      PositionPerformanceEntity.create(
+        {
+          positionId: pp.positionId,
+          date: pp.date,
+          quotasHeld: pp.quotasHeld,
+          patrimony: pp.patrimony,
+          applicationTotal: pp.applicationTotal,
+          redemptionTotal: pp.redemptionTotal,
+          cashFlowNet: pp.cashFlowNet,
+          earnings: pp.earnings,
+          returnDaily: pp.returnDaily,
+          returnMonthly: pp.returnMonthly,
+          returnYearly: pp.returnYearly,
+          returnLast12m: pp.returnLast12m,
+          allocation: pp.allocation,
+          createdAt: pp.createdAt,
+        },
+        id,
+      ),
+    );
+  private readonly portfolioPerformanceStore =
+    new InMemoryStore<PortfolioPerformance>((pp, id) =>
+      PortfolioPerformanceEntity.create(
+        {
+          portfolioId: pp.portfolioId,
+          date: pp.date,
+          quotasHeld: pp.quotasHeld,
+          patrimony: pp.patrimony,
+          applicationTotal: pp.applicationTotal,
+          redemptionTotal: pp.redemptionTotal,
+          cashFlowNet: pp.cashFlowNet,
+          earnings: pp.earnings,
+          returnDaily: pp.returnDaily,
+          returnMonthly: pp.returnMonthly,
+          returnYearly: pp.returnYearly,
+          returnLast12m: pp.returnLast12m,
+          target: pp.target,
+          cumulativeTarget: pp.cumulativeTarget,
+          inflationSpread: pp.inflationSpread,
+          riskFreeSpread: pp.riskFreeSpread,
+          marketSpread: pp.marketSpread,
+          createdAt: pp.createdAt,
+        },
+        id,
+      ),
+    );
   private readonly normStore = new InMemoryStore<Norm>();
   private readonly normsPortfoliosStore = new InMemoryStore<NormsPortfolios>();
   private readonly statementStore = new InMemoryStore<Statement>();
@@ -207,7 +304,12 @@ export class FakeUnitOfWork {
     this.categoryStore,
     this.fundStore,
     this.bankStore,
+    this.bankAccountStore,
+    this.checkingAccountStore,
     this.benchmarkStore,
+    this.benchmarkHistoryStore,
+    this.positionPerformanceStore,
+    this.portfolioPerformanceStore,
     this.normStore,
     this.normsPortfoliosStore,
     this.statementStore,
@@ -280,10 +382,16 @@ export class FakeUnitOfWork {
   };
 
   /** The `portfolios` repository. */
-  readonly portfolios: IPortfolio = {
+  readonly portfolios: IPortfolio & {
+    findAllByIds(ids: EntityId[]): Promise<Portfolio[]>;
+  } = {
     findById: (id) => this.portfolioStore.findById(id),
     findAllByUserId: (userId) =>
       this.portfolioStore.findMany((p) => p.userId === userId),
+    findAllByIds: (ids) =>
+      this.portfolioStore.findMany(
+        (p) => p.id !== undefined && ids.includes(p.id),
+      ),
     save: (entity) => this.portfolioStore.save(entity),
     delete: (id) => this.portfolioStore.delete(id),
   };
@@ -377,6 +485,102 @@ export class FakeUnitOfWork {
     delete: (id) => this.benchmarkStore.delete(id),
   };
 
+  /** The `bankAccounts` repository. */
+  readonly bankAccounts: IBankAccount = {
+    findById: (id) => this.bankAccountStore.findById(id),
+    findAllByPortfolioId: (portfolioId) =>
+      this.bankAccountStore.findMany((ba) => ba.portfolioId === portfolioId),
+    findAllByBankId: (bankId) =>
+      this.bankAccountStore.findMany((ba) => ba.bankId === bankId),
+    save: (entity) => this.bankAccountStore.save(entity),
+    delete: (id) => this.bankAccountStore.delete(id),
+  };
+
+  /** The `checkingAccounts` repository. */
+  readonly checkingAccounts: ICheckingAccount = {
+    findById: (id) => this.checkingAccountStore.findById(id),
+    findAllByBankAccountId: (bankAccountId) =>
+      this.checkingAccountStore.findMany(
+        (ca) => ca.bankAccountId === bankAccountId,
+      ),
+    findByBankAccountIdAndDate: (bankAccountId, date) =>
+      this.checkingAccountStore.findFirst(
+        (ca) =>
+          ca.bankAccountId === bankAccountId &&
+          ca.date.getTime() === date.getTime(),
+      ),
+    save: (entity) => this.checkingAccountStore.save(entity),
+    delete: (id) => this.checkingAccountStore.delete(id),
+  };
+
+  /** The `benchmarkHistories` repository. */
+  readonly benchmarkHistories: IBenchmarkHistory = {
+    findById: (id) => this.benchmarkHistoryStore.findById(id),
+    findAllByBenchmarkId: (benchmarkId) =>
+      this.benchmarkHistoryStore.findMany(
+        (bh) => bh.benchmarkId === benchmarkId,
+      ),
+    findByBenchmarkIdAndDate: (benchmarkId, date) =>
+      this.benchmarkHistoryStore.findFirst(
+        (bh) =>
+          bh.benchmarkId === benchmarkId &&
+          bh.date.getTime() === date.getTime(),
+      ),
+    save: (entity) => this.benchmarkHistoryStore.save(entity),
+    delete: (id) => this.benchmarkHistoryStore.delete(id),
+  };
+
+  /** The `positionPerformances` repository. */
+  readonly positionPerformances: IPositionPerformance = {
+    findById: (id) => this.positionPerformanceStore.findById(id),
+    findAllByPositionId: (positionId) =>
+      this.positionPerformanceStore.findMany(
+        (pp) => pp.positionId === positionId,
+      ),
+    findByPositionIdAndDate: (positionId, date) =>
+      this.positionPerformanceStore.findFirst(
+        (pp) =>
+          pp.positionId === positionId && pp.date.getTime() === date.getTime(),
+      ),
+    findLatestByPositionId: async (positionId) => {
+      const FOUND = this.positionPerformanceStore.match(
+        (pp) => pp.positionId === positionId,
+      );
+      if (FOUND.length === 0) return null;
+      return FOUND.reduce((latest, current) =>
+        current.date.getTime() > latest.date.getTime() ? current : latest,
+      );
+    },
+    save: (entity) => this.positionPerformanceStore.save(entity),
+    delete: (id) => this.positionPerformanceStore.delete(id),
+  };
+
+  /** The `portfolioPerformances` repository. */
+  readonly portfolioPerformances: IPortfolioPerformance = {
+    findById: (id) => this.portfolioPerformanceStore.findById(id),
+    findAllByPortfolioId: (portfolioId) =>
+      this.portfolioPerformanceStore.findMany(
+        (pp) => pp.portfolioId === portfolioId,
+      ),
+    findByPortfolioIdAndDate: (portfolioId, date) =>
+      this.portfolioPerformanceStore.findFirst(
+        (pp) =>
+          pp.portfolioId === portfolioId &&
+          pp.date.getTime() === date.getTime(),
+      ),
+    findLatestByPortfolioId: async (portfolioId) => {
+      const FOUND = this.portfolioPerformanceStore.match(
+        (pp) => pp.portfolioId === portfolioId,
+      );
+      if (FOUND.length === 0) return null;
+      return FOUND.reduce((latest, current) =>
+        current.date.getTime() > latest.date.getTime() ? current : latest,
+      );
+    },
+    save: (entity) => this.portfolioPerformanceStore.save(entity),
+    delete: (id) => this.portfolioPerformanceStore.delete(id),
+  };
+
   /** The `norms` repository. */
   readonly norms: INorm = {
     findById: (id) => this.normStore.findById(id),
@@ -457,7 +661,12 @@ export class FakeUnitOfWork {
     categories?: Category[];
     funds?: Fund[];
     banks?: Bank[];
+    bankAccounts?: BankAccount[];
+    checkingAccounts?: CheckingAccountEntity[];
     benchmarks?: Benchmark[];
+    benchmarkHistories?: BenchmarkHistory[];
+    positionPerformances?: PositionPerformance[];
+    portfolioPerformances?: PortfolioPerformance[];
     norms?: Norm[];
     normsPortfolios?: NormsPortfolios[];
     statements?: Statement[];
@@ -495,8 +704,23 @@ export class FakeUnitOfWork {
     for (const entity of entities.banks ?? []) {
       void this.bankStore.save(entity);
     }
+    for (const entity of entities.bankAccounts ?? []) {
+      void this.bankAccountStore.save(entity);
+    }
+    for (const entity of entities.checkingAccounts ?? []) {
+      void this.checkingAccountStore.save(entity);
+    }
     for (const entity of entities.benchmarks ?? []) {
       void this.benchmarkStore.save(entity);
+    }
+    for (const entity of entities.benchmarkHistories ?? []) {
+      void this.benchmarkHistoryStore.save(entity);
+    }
+    for (const entity of entities.positionPerformances ?? []) {
+      void this.positionPerformanceStore.save(entity);
+    }
+    for (const entity of entities.portfolioPerformances ?? []) {
+      void this.portfolioPerformanceStore.save(entity);
     }
     for (const entity of entities.norms ?? []) {
       void this.normStore.save(entity);
