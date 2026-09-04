@@ -9,6 +9,7 @@ import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError, ValidationError } from "@/shared/errors";
+import { recalculatePerformanceForPortfolios } from "../performance/recalculate-performance-triggers";
 import { allocateWithdrawalQuotasFifo } from "./fifo-allocation.helper";
 import { computeRemainingApplicationQuotas } from "./remaining-applications.helper";
 import type { WithdrawalDto } from "./withdrawal.dtos";
@@ -69,7 +70,7 @@ export async function createWithdrawal(
   unitOfWork: UnitOfWork,
   input: CreateWithdrawalInput,
 ): Promise<WithdrawalDto> {
-  return unitOfWork.run(
+  const { dto, portfolioId } = await unitOfWork.run(
     async (tx) => {
       const position = await tx.positions.findById(
         EntityId.create(input.positionId),
@@ -165,8 +166,20 @@ export async function createWithdrawal(
         await tx.transactionAllocations.save(allocation);
       }
 
-      return toWithdrawalDto(saved);
+      return {
+        dto: toWithdrawalDto(saved),
+        portfolioId: position.portfolioId as string,
+      };
     },
     { userId: EntityId.create(input.actorId) },
   );
+
+  await recalculatePerformanceForPortfolios(unitOfWork, {
+    portfolioIds: [portfolioId],
+    startDate: input.date,
+    endDate: new Date(),
+    actorId: input.actorId,
+  });
+
+  return dto;
 }

@@ -4,8 +4,9 @@ import {
 } from "@/business/use-cases/shared/portfolio-access";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
-import { NotFoundError } from "@/shared/errors";
+import { NotFoundError, ValidationError } from "@/shared/errors";
 
+import { recalculatePerformanceForPortfolios } from "../performance/recalculate-performance-triggers";
 import type { ApplicationDto } from "./application.dtos";
 import { toApplicationDto } from "./application.dtos";
 
@@ -33,19 +34,29 @@ export interface ReverseApplicationInput {
  * consumed quotas from this application are removed, and the updated
  * application is saved, all within one `UnitOfWork` transaction.
  *
+ * Reversal is blocked while a later, non-reversed withdrawal still
+ * consumes quotas from this application: silently deleting those
+ * allocations would unlink the withdrawal's quota consumption without
+ * reverting it. The consuming withdrawal must be reversed first.
+ *
+ * Once the write transaction commits, the affected portfolio's
+ * performance is recalculated from the application date forward, so
+ * reversing an application propagates to the historical snapshots.
+ *
  * @param unitOfWork - The transaction coordinator.
  * @param input - The actor and the application id.
  * @returns The reversed {@link ApplicationDto}.
  *
  * @throws {NotFoundError} When the application or its portfolio is not
  *   accessible.
- * @throws {ValidationError} When the application is already reversed.
+ * @throws {ValidationError} When the application is already reversed, or
+ *   when a later, non-reversed withdrawal still consumes its quotas.
  */
 export async function reverseApplication(
   unitOfWork: UnitOfWork,
   input: ReverseApplicationInput,
 ): Promise<ApplicationDto> {
-  return unitOfWork.run(
+  const { dto, date, portfolioId } = await unitOfWork.run(
     async (tx) => {
       const application = await tx.applications.findById(
         EntityId.create(input.applicationId),
@@ -82,6 +93,25 @@ export async function reverseApplication(
           EntityId.create(input.applicationId),
         );
 
+      const consumingWithdrawalIds: string[] = [];
+      for (const allocation of allocations) {
+        if (allocation.withdrawId === undefined) {
+          continue;
+        }
+
+        const withdrawal = await tx.withdrawals.findById(allocation.withdrawId);
+
+        if (withdrawal === null || withdrawal.reversedAt === null) {
+          consumingWithdrawalIds.push(allocation.withdrawId as string);
+        }
+      }
+
+      if (consumingWithdrawalIds.length > 0) {
+        throw new ValidationError(
+          `Application with id ${input.applicationId} cannot be reversed because its quotas are still consumed by withdrawal(s) [${consumingWithdrawalIds.join(", ")}]. Reverse the withdrawal(s) first.`,
+        );
+      }
+
       for (const allocation of allocations) {
         if (allocation.id === undefined) {
           continue;
@@ -92,8 +122,21 @@ export async function reverseApplication(
       const reversed = application.reverse(EntityId.create(input.actorId));
       const saved = await tx.applications.save(reversed);
 
-      return toApplicationDto(saved);
+      return {
+        dto: toApplicationDto(saved),
+        date: application.date,
+        portfolioId: position.portfolioId as string,
+      };
     },
     { userId: EntityId.create(input.actorId) },
   );
+
+  await recalculatePerformanceForPortfolios(unitOfWork, {
+    portfolioIds: [portfolioId],
+    startDate: date,
+    endDate: new Date(),
+    actorId: input.actorId,
+  });
+
+  return dto;
 }

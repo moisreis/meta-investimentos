@@ -9,6 +9,7 @@ import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError, ValidationError } from "@/shared/errors";
 
+import { recalculatePerformanceForPortfolios } from "../performance/recalculate-performance-triggers";
 import type { ApplicationDto } from "./application.dtos";
 import { toApplicationDto } from "./application.dtos";
 
@@ -58,7 +59,7 @@ export async function createApplication(
   unitOfWork: UnitOfWork,
   input: CreateApplicationInput,
 ): Promise<ApplicationDto> {
-  return unitOfWork.run(
+  const { dto, portfolioId } = await unitOfWork.run(
     async (tx) => {
       const position = await tx.positions.findById(
         EntityId.create(input.positionId),
@@ -108,8 +109,20 @@ export async function createApplication(
 
       const saved = await tx.applications.save(application);
 
-      return toApplicationDto(saved);
+      return {
+        dto: toApplicationDto(saved),
+        portfolioId: position.portfolioId as string,
+      };
     },
     { userId: EntityId.create(input.actorId) },
   );
+
+  await recalculatePerformanceForPortfolios(unitOfWork, {
+    portfolioIds: [portfolioId],
+    startDate: input.date,
+    endDate: new Date(),
+    actorId: input.actorId,
+  });
+
+  return dto;
 }

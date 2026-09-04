@@ -6,6 +6,7 @@ import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError } from "@/shared/errors";
 
+import { recalculatePerformanceForPortfolios } from "../performance/recalculate-performance-triggers";
 import type { WithdrawalDto } from "./withdrawal.dtos";
 import { toWithdrawalDto } from "./withdrawal.dtos";
 
@@ -30,8 +31,13 @@ export interface ReverseWithdrawalInput {
  * The action loads the withdrawal and its position, resolves the
  * portfolio access, and transitions the withdrawal to a reversed state
  * via {@link Withdrawal.reverse}. The transaction allocations that
- * consumed quotas for this withdrawal are removed, and the updated
- * withdrawal is saved, all within one `UnitOfWork` transaction.
+ * consumed quotas for this withdrawal are removed — reverting the FIFO
+ * allocation atomically — and the updated withdrawal is saved, all
+ * within one `UnitOfWork` transaction.
+ *
+ * Once the write transaction commits, the affected portfolio's
+ * performance is recalculated from the withdrawal date forward, so
+ * reversing a withdrawal propagates to the historical snapshots.
  *
  * @param unitOfWork - The transaction coordinator.
  * @param input - The actor and the withdrawal id.
@@ -45,7 +51,7 @@ export async function reverseWithdrawal(
   unitOfWork: UnitOfWork,
   input: ReverseWithdrawalInput,
 ): Promise<WithdrawalDto> {
-  return unitOfWork.run(
+  const { dto, date, portfolioId } = await unitOfWork.run(
     async (tx) => {
       const withdrawal = await tx.withdrawals.findById(
         EntityId.create(input.withdrawalId),
@@ -92,8 +98,21 @@ export async function reverseWithdrawal(
 
       const saved = await tx.withdrawals.save(reversed);
 
-      return toWithdrawalDto(saved);
+      return {
+        dto: toWithdrawalDto(saved),
+        date: withdrawal.date,
+        portfolioId: position.portfolioId as string,
+      };
     },
     { userId: EntityId.create(input.actorId) },
   );
+
+  await recalculatePerformanceForPortfolios(unitOfWork, {
+    portfolioIds: [portfolioId],
+    startDate: date,
+    endDate: new Date(),
+    actorId: input.actorId,
+  });
+
+  return dto;
 }

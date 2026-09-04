@@ -2,7 +2,7 @@ import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError } from "@/shared/errors";
-
+import { recalculatePerformanceForFunds } from "../performance/recalculate-performance-triggers";
 import { requireManager } from "../shared/require-manager";
 import type { QuotaDto } from "./fund.dtos";
 import { toQuotaDto } from "./fund.dtos";
@@ -45,7 +45,7 @@ export async function updateQuota(
   unitOfWork: UnitOfWork,
   input: UpdateQuotaInput,
 ): Promise<QuotaDto> {
-  return unitOfWork.run(
+  const { dto, fundId, date } = await unitOfWork.run(
     async (tx) => {
       await requireManager(tx, input.actorId);
 
@@ -64,8 +64,21 @@ export async function updateQuota(
 
       const saved = await tx.quotas.save(updated);
 
-      return toQuotaDto(saved);
+      return {
+        dto: toQuotaDto(saved),
+        fundId: existing.fundId as string,
+        date: existing.date,
+      };
     },
     { userId: EntityId.create(input.actorId) },
   );
+
+  await recalculatePerformanceForFunds(unitOfWork, {
+    fundIds: [fundId],
+    startDate: date,
+    endDate: new Date(),
+    actorId: input.actorId,
+  });
+
+  return dto;
 }

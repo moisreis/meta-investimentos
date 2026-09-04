@@ -80,6 +80,19 @@ describe("updatePortfolioAllocation", () => {
       expect(saved?.minAllocation.value.toString()).toBe("8");
       expect(unitOfWork.lastActor?.userId).toBe(EntityId.create(ACTOR_ID));
     });
+
+    it("triggers a portfolio recalculation attributed to the actor", async () => {
+      unitOfWork.seed({ portfolios: [PORTFOLIO] });
+
+      await updatePortfolioAllocation(unitOfWork as never, {
+        actorId: ACTOR_ID,
+        portfolioId: ID.PORTFOLIO.DEFAULT,
+        ...INPUT,
+      });
+
+      expect(unitOfWork.ranAsActors).toHaveLength(2);
+      expect(unitOfWork.lastActor?.userId).toBe(EntityId.create(ACTOR_ID));
+    });
   });
 
   describe("errors", () => {

@@ -4,6 +4,7 @@ import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo"
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError, ValidationError } from "@/shared/errors";
 
+import { recalculatePerformanceForAllPortfolios } from "../performance/recalculate-performance-triggers";
 import type { BenchmarkHistoryDto } from "./benchmark.dtos";
 import { toBenchmarkHistoryDto } from "./benchmark.dtos";
 
@@ -50,7 +51,7 @@ export async function createBenchmarkHistory(
   unitOfWork: UnitOfWork,
   input: CreateBenchmarkHistoryInput,
 ): Promise<BenchmarkHistoryDto> {
-  return unitOfWork.run(
+  const dto = await unitOfWork.run(
     async (tx) => {
       const benchmarkId = EntityId.create(input.benchmarkId);
 
@@ -85,4 +86,12 @@ export async function createBenchmarkHistory(
     },
     { userId: EntityId.create(input.actorId) },
   );
+
+  await recalculatePerformanceForAllPortfolios(unitOfWork, {
+    startDate: input.date,
+    endDate: new Date(),
+    actorId: input.actorId,
+  });
+
+  return dto;
 }

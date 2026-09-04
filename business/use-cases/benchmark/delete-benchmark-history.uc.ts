@@ -1,7 +1,7 @@
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError } from "@/shared/errors";
-
+import { recalculatePerformanceForAllPortfolios } from "../performance/recalculate-performance-triggers";
 import { requireManager } from "../shared/require-manager";
 
 /**
@@ -36,7 +36,7 @@ export async function deleteBenchmarkHistory(
   unitOfWork: UnitOfWork,
   input: DeleteBenchmarkHistoryInput,
 ): Promise<void> {
-  await unitOfWork.run(
+  const date = await unitOfWork.run(
     async (tx) => {
       await requireManager(tx, input.actorId);
 
@@ -53,7 +53,15 @@ export async function deleteBenchmarkHistory(
       await tx.benchmarkHistories.delete(
         EntityId.create(input.benchmarkHistoryId),
       );
+
+      return existing.date;
     },
     { userId: EntityId.create(input.actorId) },
   );
+
+  await recalculatePerformanceForAllPortfolios(unitOfWork, {
+    startDate: date,
+    endDate: new Date(),
+    actorId: input.actorId,
+  });
 }

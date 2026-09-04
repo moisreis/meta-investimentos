@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { ID } from "@/__tests__/__fixtures__";
-import { QUOTA } from "@/__tests__/__helpers__/interfaces/_quota.test.helper";
+import { PORTFOLIO } from "@/__tests__/__helpers__/interfaces/_portfolio.test.helper";
+import { POSITION } from "@/__tests__/__helpers__/interfaces/_position.test.helper";
+import {
+  QUOTA,
+  QUOTA_DATE,
+} from "@/__tests__/__helpers__/interfaces/_quota.test.helper";
 import { FakeUnitOfWork } from "@/__tests__/__helpers__/use-cases/_unit-of-work.test.helper";
 import { User } from "@/business/entities/user/user.entity";
 import { deleteQuota } from "@/business/use-cases/fund/delete-quota.uc";
@@ -51,6 +56,32 @@ describe("deleteQuota", () => {
         actorId: MANAGER_ID,
         quotaId: ID.QUOTA.DEFAULT,
       });
+
+      expect(unitOfWork.lastActor?.userId).toBe(EntityId.create(MANAGER_ID));
+    });
+
+    it("recalculates the affected portfolio after the quota is removed", async () => {
+      unitOfWork.seed({
+        users: [MANAGER],
+        quotas: [QUOTA],
+        portfolios: [PORTFOLIO],
+        positions: [POSITION],
+      });
+
+      await deleteQuota(unitOfWork as never, {
+        actorId: MANAGER_ID,
+        quotaId: ID.QUOTA.DEFAULT,
+      });
+
+      const rows = await unitOfWork.portfolioPerformances.findAllByPortfolioId(
+        EntityId.create(ID.PORTFOLIO.DEFAULT),
+      );
+
+      expect(
+        rows.some(
+          (performance) => performance.date.getTime() === QUOTA_DATE.getTime(),
+        ),
+      ).toBe(false);
 
       expect(unitOfWork.lastActor?.userId).toBe(EntityId.create(MANAGER_ID));
     });

@@ -1,7 +1,7 @@
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError } from "@/shared/errors";
-
+import { recalculatePerformanceForFunds } from "../performance/recalculate-performance-triggers";
 import { requireManager } from "../shared/require-manager";
 
 /**
@@ -36,7 +36,7 @@ export async function deleteQuota(
   unitOfWork: UnitOfWork,
   input: DeleteQuotaInput,
 ): Promise<void> {
-  await unitOfWork.run(
+  const { fundId, date } = await unitOfWork.run(
     async (tx) => {
       await requireManager(tx, input.actorId);
 
@@ -49,7 +49,19 @@ export async function deleteQuota(
       }
 
       await tx.quotas.delete(EntityId.create(input.quotaId));
+
+      return {
+        fundId: existing.fundId as string,
+        date: existing.date,
+      };
     },
     { userId: EntityId.create(input.actorId) },
   );
+
+  await recalculatePerformanceForFunds(unitOfWork, {
+    fundIds: [fundId],
+    startDate: date,
+    endDate: new Date(),
+    actorId: input.actorId,
+  });
 }

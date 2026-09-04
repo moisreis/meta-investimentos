@@ -9,8 +9,10 @@ import {
   WITHDRAWAL,
 } from "@/__tests__/__helpers__/interfaces/_withdrawal.test.helper";
 import { FakeUnitOfWork } from "@/__tests__/__helpers__/use-cases/_unit-of-work.test.helper";
+import { Quota } from "@/business/entities/fund/quota.entity";
 import { reverseWithdrawal } from "@/business/use-cases/withdrawal/reverse-withdrawal.uc";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 import { NotFoundError, ValidationError } from "@/shared/errors";
 
 const ACTOR_ID = ID.USER.DEFAULT;
@@ -46,6 +48,37 @@ describe("reverseWithdrawal", () => {
           EntityId.create(ID.WITHDRAWAL.DEFAULT),
         );
       expect(allocations).toHaveLength(0);
+    });
+    it("recalculates the affected portfolio from the withdrawal date forward", async () => {
+      const QUOTA = Quota.create({
+        fundId: POSITION.fundId,
+        date: WITHDRAWAL.date,
+        price: QuotaPrice.create("100"),
+      });
+
+      unitOfWork.seed({
+        portfolios: [PORTFOLIO],
+        positions: [POSITION],
+        withdrawals: [WITHDRAWAL],
+        transactionAllocations: [TRANSACTION_ALLOCATION],
+        quotas: [QUOTA],
+      });
+
+      await reverseWithdrawal(unitOfWork as never, {
+        actorId: ACTOR_ID,
+        withdrawalId: ID.WITHDRAWAL.DEFAULT,
+      });
+
+      const rows = await unitOfWork.portfolioPerformances.findAllByPortfolioId(
+        EntityId.create(ID.PORTFOLIO.DEFAULT),
+      );
+
+      expect(
+        rows.some(
+          (performance) =>
+            performance.date.getTime() === WITHDRAWAL.date.getTime(),
+        ),
+      ).toBe(true);
     });
   });
 

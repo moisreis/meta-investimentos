@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import { ID } from "@/__tests__/__fixtures__";
 import { FUND } from "@/__tests__/__helpers__/interfaces/_fund.test.helper";
+import { PORTFOLIO } from "@/__tests__/__helpers__/interfaces/_portfolio.test.helper";
+import { POSITION } from "@/__tests__/__helpers__/interfaces/_position.test.helper";
 import {
   QUOTA,
   QUOTA_DATE,
@@ -53,6 +55,34 @@ describe("createQuota", () => {
         date: QUOTA_DATE_APRIL,
         price: "1030.00",
       });
+
+      expect(unitOfWork.lastActor?.userId).toBe(EntityId.create(ACTOR_ID));
+    });
+
+    it("recalculates the performance of the portfolios holding the fund", async () => {
+      unitOfWork.seed({
+        funds: [FUND],
+        portfolios: [PORTFOLIO],
+        positions: [POSITION],
+      });
+
+      await createQuota(unitOfWork as never, {
+        actorId: ACTOR_ID,
+        fundId: ID.FUND.DEFAULT,
+        date: QUOTA_DATE_APRIL,
+        price: "1030.00",
+      });
+
+      const rows = await unitOfWork.portfolioPerformances.findAllByPortfolioId(
+        EntityId.create(ID.PORTFOLIO.DEFAULT),
+      );
+
+      expect(
+        rows.some(
+          (performance) =>
+            performance.date.getTime() === QUOTA_DATE_APRIL.getTime(),
+        ),
+      ).toBe(true);
 
       expect(unitOfWork.lastActor?.userId).toBe(EntityId.create(ACTOR_ID));
     });

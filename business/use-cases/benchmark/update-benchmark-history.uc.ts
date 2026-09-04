@@ -2,7 +2,7 @@ import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo";
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError } from "@/shared/errors";
-
+import { recalculatePerformanceForAllPortfolios } from "../performance/recalculate-performance-triggers";
 import { requireManager } from "../shared/require-manager";
 import type { BenchmarkHistoryDto } from "./benchmark.dtos";
 import { toBenchmarkHistoryDto } from "./benchmark.dtos";
@@ -45,7 +45,7 @@ export async function updateBenchmarkHistory(
   unitOfWork: UnitOfWork,
   input: UpdateBenchmarkHistoryInput,
 ): Promise<BenchmarkHistoryDto> {
-  return unitOfWork.run(
+  const { dto, date } = await unitOfWork.run(
     async (tx) => {
       await requireManager(tx, input.actorId);
 
@@ -66,8 +66,16 @@ export async function updateBenchmarkHistory(
 
       const saved = await tx.benchmarkHistories.save(updated);
 
-      return toBenchmarkHistoryDto(saved);
+      return { dto: toBenchmarkHistoryDto(saved), date: existing.date };
     },
     { userId: EntityId.create(input.actorId) },
   );
+
+  await recalculatePerformanceForAllPortfolios(unitOfWork, {
+    startDate: date,
+    endDate: new Date(),
+    actorId: input.actorId,
+  });
+
+  return dto;
 }

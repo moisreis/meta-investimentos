@@ -7,6 +7,7 @@ import { SignedPercentage } from "@/business/value-objects/signed-percentage.vo"
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError } from "@/shared/errors";
 
+import { recalculatePerformanceForPortfolios } from "../performance/recalculate-performance-triggers";
 import type { PortfolioDto } from "./portfolio.dtos";
 import { toPortfolioDto } from "./portfolio.dtos";
 
@@ -57,7 +58,7 @@ export async function updatePortfolioAllocation(
   unitOfWork: UnitOfWork,
   input: UpdatePortfolioAllocationInput,
 ): Promise<PortfolioDto> {
-  return unitOfWork.run(
+  const dto = await unitOfWork.run(
     async (tx) => {
       const { portfolio, role } = await resolvePortfolioAccess(
         tx,
@@ -83,4 +84,13 @@ export async function updatePortfolioAllocation(
     },
     { userId: EntityId.create(input.actorId) },
   );
+
+  await recalculatePerformanceForPortfolios(unitOfWork, {
+    portfolioIds: [input.portfolioId],
+    startDate: new Date(),
+    endDate: new Date(),
+    actorId: input.actorId,
+  });
+
+  return dto;
 }

@@ -6,9 +6,13 @@ import {
   BENCHMARK_HISTORY,
   HISTORY_DATE,
 } from "@/__tests__/__helpers__/interfaces/_benchmark-history.test.helper";
+import { PORTFOLIO } from "@/__tests__/__helpers__/interfaces/_portfolio.test.helper";
+import { POSITION } from "@/__tests__/__helpers__/interfaces/_position.test.helper";
 import { FakeUnitOfWork } from "@/__tests__/__helpers__/use-cases/_unit-of-work.test.helper";
+import { Quota } from "@/business/entities/fund/quota.entity";
 import { createBenchmarkHistory } from "@/business/use-cases/benchmark/create-benchmark-history.uc";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 import { NotFoundError, ValidationError } from "@/shared/errors";
 
 const ACTOR_ID = ID.USER.DEFAULT;
@@ -52,6 +56,41 @@ describe("createBenchmarkHistory", () => {
         date: HISTORY_DATE,
         rate: "1.25",
       });
+
+      expect(unitOfWork.lastActor?.userId).toBe(EntityId.create(ACTOR_ID));
+    });
+
+    it("recalculates the performance of every portfolio from the history date forward", async () => {
+      const QUOTA = Quota.create({
+        fundId: POSITION.fundId,
+        date: HISTORY_DATE,
+        price: QuotaPrice.create("100"),
+      });
+
+      unitOfWork.seed({
+        benchmarks: [BENCHMARK],
+        portfolios: [PORTFOLIO],
+        positions: [POSITION],
+        quotas: [QUOTA],
+      });
+
+      await createBenchmarkHistory(unitOfWork as never, {
+        actorId: ACTOR_ID,
+        benchmarkId: BENCHMARK_ID,
+        date: HISTORY_DATE,
+        rate: "1.25",
+      });
+
+      const rows = await unitOfWork.portfolioPerformances.findAllByPortfolioId(
+        EntityId.create(ID.PORTFOLIO.DEFAULT),
+      );
+
+      expect(
+        rows.some(
+          (performance) =>
+            performance.date.getTime() === HISTORY_DATE.getTime(),
+        ),
+      ).toBe(true);
 
       expect(unitOfWork.lastActor?.userId).toBe(EntityId.create(ACTOR_ID));
     });
