@@ -148,6 +148,52 @@ export class BankAccount {
   }
 
   /**
+   * Updates the mutable fields of this bank account.
+   *
+   * Only the provided fields are changed; `undefined` leaves the existing
+   * value untouched. The code returns a new `BankAccount` instance,
+   * leaving the original instance unchanged.
+   *
+   * @param options - The fields to update.
+   * @param options.agency - The new agency, if changed.
+   * @param options.accountNumber - The new account number, if changed.
+   * @param now - The update timestamp, defaulting to the current time.
+   *
+   * @returns A new `BankAccount` instance with the updated fields.
+   *
+   * @throws {ValidationError} If a provided field is blank.
+   */
+  public update(
+    options: {
+      agency?: string;
+      accountNumber?: string;
+    },
+    now?: Date,
+  ): BankAccount {
+    const AGENCY = options.agency ?? this.props.agency;
+    const ACCOUNT_NUMBER = options.accountNumber ?? this.props.accountNumber;
+
+    if (!AGENCY || AGENCY.trim() === "") {
+      throw new ValidationError("BankAccount must have an agency.");
+    }
+    if (!ACCOUNT_NUMBER || ACCOUNT_NUMBER.trim() === "") {
+      throw new ValidationError("BankAccount must have an account number.");
+    }
+
+    const NOW = now ?? new Date();
+
+    return new BankAccount(
+      {
+        ...this.props,
+        agency: AGENCY,
+        accountNumber: ACCOUNT_NUMBER,
+        updatedAt: NOW,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `BankAccount` represents the same bank
    * account as the provided instance, based on referential equality
    * and the unique id.

@@ -1,4 +1,4 @@
-﻿import { eq, inArray } from "drizzle-orm";
+﻿import { asc, eq, inArray } from "drizzle-orm";
 
 import { Fund } from "@/business/entities/fund/fund.entity";
 import type { IFund } from "@/business/interfaces/fund/fund.interface";
@@ -153,6 +153,25 @@ export class FundRepository implements IFund {
       .limit(1);
 
     return row ? this.toEntity(row) : null;
+  }
+
+  /**
+   * Retrieves all funds, optionally paginated.
+   *
+   * @see {@link IFund.findAll}
+   */
+  async findAll(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<Fund[]> {
+    const rows = await this.db
+      .select()
+      .from(fund)
+      .orderBy(asc(fund.name))
+      .limit(options?.limit ?? 100)
+      .offset(options?.offset ?? 0);
+
+    return rows.map((row) => this.toEntity(row));
   }
 
   /**

@@ -109,6 +109,58 @@ export class Benchmark {
   }
 
   /**
+   * Renames this benchmark.
+   *
+   * The code returns a new `Benchmark` instance with the updated name,
+   * leaving the original instance unchanged.
+   *
+   * @param name - The new name of the benchmark.
+   *
+   * @returns A new `Benchmark` instance with the updated name.
+   *
+   * @throws {ValidationError} If `name` is blank.
+   */
+  public rename(name: string): Benchmark {
+    if (!name || name.trim() === "") {
+      throw new ValidationError("Benchmark must have a name.");
+    }
+
+    return new Benchmark(
+      {
+        ...this.props,
+        name,
+      },
+      this._id,
+    );
+  }
+
+  /**
+   * Changes the acronym of this benchmark.
+   *
+   * The code returns a new `Benchmark` instance with the updated acronym,
+   * leaving the original instance unchanged.
+   *
+   * @param acronym - The new acronym of the benchmark.
+   *
+   * @returns A new `Benchmark` instance with the updated acronym.
+   *
+   * @throws {ValidationError} If `acronym` is blank.
+   */
+  public changeAcronym(acronym: string): Benchmark {
+    if (!acronym || acronym.trim() === "") {
+      throw new ValidationError("Benchmark must have an acronym.");
+    }
+
+    return new Benchmark(
+      {
+        ...this.props,
+        acronym,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `Benchmark` represents the same benchmark
    * as the provided instance, based on referential equality and the
    * unique id.

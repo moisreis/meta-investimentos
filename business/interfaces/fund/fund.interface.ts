@@ -33,6 +33,17 @@ export interface IFund {
   findByCnpj(cnpj: string): Promise<Fund | null>;
 
   /**
+   * Retrieves all funds, optionally paginated.
+   *
+   * @param options - The pagination options.
+   * @param options.limit - The maximum number of funds to return.
+   * @param options.offset - The offset from which to start returning
+   * funds.
+   * @returns A promise resolving to the collection of `Fund` entities.
+   */
+  findAll(options?: { limit?: number; offset?: number }): Promise<Fund[]>;
+
+  /**
    * Persists the provided fund.
    *
    * When the fund has no id, the implementation inserts a new record

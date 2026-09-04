@@ -1,3 +1,4 @@
+import type { AuditLog } from "@/business/entities/audit/audit-log.entity";
 import type { Bank } from "@/business/entities/bank/bank.entity";
 import type { BankAccount } from "@/business/entities/bank/bank-account.entity";
 import { BankAccount as BankAccountEntity } from "@/business/entities/bank/bank-account.entity";
@@ -26,6 +27,7 @@ import type { Withdrawal } from "@/business/entities/portfolio/withdrawal.entity
 import { Withdrawal as WithdrawalEntity } from "@/business/entities/portfolio/withdrawal.entity";
 import type { Statement } from "@/business/entities/report/statement.entity";
 import type { User } from "@/business/entities/user/user.entity";
+import type { IAuditLog } from "@/business/interfaces/audit/audit-log.interface";
 import type { IBank } from "@/business/interfaces/bank/bank.interface";
 import type { IBankAccount } from "@/business/interfaces/bank/bank-account.interface";
 import type { ICheckingAccount } from "@/business/interfaces/bank/checking-account.interface";
@@ -291,6 +293,7 @@ export class FakeUnitOfWork {
   private readonly normStore = new InMemoryStore<Norm>();
   private readonly normsPortfoliosStore = new InMemoryStore<NormsPortfolios>();
   private readonly statementStore = new InMemoryStore<Statement>();
+  private readonly auditLogStore = new InMemoryStore<AuditLog>();
 
   private readonly stores = [
     this.applicationStore,
@@ -313,6 +316,7 @@ export class FakeUnitOfWork {
     this.normStore,
     this.normsPortfoliosStore,
     this.statementStore,
+    this.auditLogStore,
   ] as unknown as { rows: Map<EntityId, unknown> }[];
 
   private readonly lastActors: (UnitOfWorkActor | undefined)[] = [];
@@ -455,6 +459,7 @@ export class FakeUnitOfWork {
   readonly categories: ICategory = {
     findById: (id) => this.categoryStore.findById(id),
     findByName: (name) => this.categoryStore.findFirst((c) => c.name === name),
+    findAll: () => this.categoryStore.findMany(() => true),
     save: (entity) => this.categoryStore.save(entity),
     delete: (id) => this.categoryStore.delete(id),
   };
@@ -464,6 +469,7 @@ export class FakeUnitOfWork {
     findById: (id) => this.fundStore.findById(id),
     findByCnpj: (cnpj) =>
       this.fundStore.findFirst((f) => f.cnpj.value === cnpj),
+    findAll: () => this.fundStore.findMany(() => true),
     save: (entity) => this.fundStore.save(entity),
     delete: (id) => this.fundStore.delete(id),
   };
@@ -472,6 +478,7 @@ export class FakeUnitOfWork {
   readonly banks: IBank = {
     findById: (id) => this.bankStore.findById(id),
     findByCode: (code) => this.bankStore.findFirst((b) => b.code === code),
+    findAll: () => this.bankStore.findMany(() => true),
     save: (entity) => this.bankStore.save(entity),
     delete: (id) => this.bankStore.delete(id),
   };
@@ -481,6 +488,7 @@ export class FakeUnitOfWork {
     findById: (id) => this.benchmarkStore.findById(id),
     findByAcronym: (acronym) =>
       this.benchmarkStore.findFirst((b) => b.acronym === acronym),
+    findAll: () => this.benchmarkStore.findMany(() => true),
     save: (entity) => this.benchmarkStore.save(entity),
     delete: (id) => this.benchmarkStore.delete(id),
   };
@@ -622,6 +630,23 @@ export class FakeUnitOfWork {
     delete: (id) => this.statementStore.delete(id),
   };
 
+  /** The `auditLogs` repository. */
+  readonly auditLogs: IAuditLog & {
+    findAll(): Promise<AuditLog[]>;
+  } = {
+    findById: (id) => this.auditLogStore.findById(id),
+    findAllByEntity: (entity) =>
+      this.auditLogStore.findMany((l) => l.entity === entity),
+    findAllByEntityAndEntityId: (entity, entityId) =>
+      this.auditLogStore.findMany(
+        (l) => l.entity === entity && l.entityId === entityId,
+      ),
+    findAllByUserId: (userId) =>
+      this.auditLogStore.findMany((l) => l.userId === userId),
+    findAll: () => this.auditLogStore.findMany(() => true),
+    save: (entity) => this.auditLogStore.save(entity),
+  };
+
   /**
    * The list of actors passed to every {@link run} invocation, in order.
    */
@@ -670,6 +695,7 @@ export class FakeUnitOfWork {
     norms?: Norm[];
     normsPortfolios?: NormsPortfolios[];
     statements?: Statement[];
+    auditLogs?: AuditLog[];
   }): void {
     for (const entity of entities.applications ?? []) {
       void this.applicationStore.save(entity);
@@ -730,6 +756,9 @@ export class FakeUnitOfWork {
     }
     for (const entity of entities.statements ?? []) {
       void this.statementStore.save(entity);
+    }
+    for (const entity of entities.auditLogs ?? []) {
+      void this.auditLogStore.save(entity);
     }
   }
 

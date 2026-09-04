@@ -31,6 +31,17 @@ export interface IBank {
   findByCode(code: string): Promise<Bank | null>;
 
   /**
+   * Retrieves all banks, optionally paginated.
+   *
+   * @param options - The pagination options.
+   * @param options.limit - The maximum number of banks to return.
+   * @param options.offset - The offset from which to start returning
+   * banks.
+   * @returns A promise resolving to the collection of `Bank` entities.
+   */
+  findAll(options?: { limit?: number; offset?: number }): Promise<Bank[]>;
+
+  /**
    * Persists the provided bank.
    *
    * When the bank has no id, the implementation inserts a new record

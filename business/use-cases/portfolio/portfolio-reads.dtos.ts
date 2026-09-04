@@ -63,3 +63,48 @@ export interface PortfolioDashboardDto {
   recentApplications: number;
   recentWithdrawals: number;
 }
+
+/**
+ * A single application or withdrawal in a portfolio's transaction
+ * history.
+ */
+export interface PortfolioTransactionDto {
+  id: EntityId;
+  positionId: EntityId;
+  fundId: EntityId;
+  kind: "application" | "withdrawal";
+  date: Date;
+  amount: string;
+  quotas: string;
+  reversedAt: Date | null;
+}
+
+/**
+ * The transaction history of a portfolio.
+ */
+export interface PortfolioTransactionHistoryDto {
+  portfolioId: EntityId;
+  transactions: PortfolioTransactionDto[];
+}
+
+/**
+ * A single position's valuation in a portfolio market value snapshot.
+ */
+export interface PortfolioMarketValuePositionDto {
+  positionId: EntityId;
+  fundId: EntityId;
+  quotasHeld: string;
+  quotaPrice: string | null;
+  marketValue: string;
+}
+
+/**
+ * The total market value of a portfolio on a reference date.
+ */
+export interface PortfolioMarketValueDto {
+  portfolioId: EntityId;
+  referenceDate: Date;
+  totalMarketValue: string;
+  positionCount: number;
+  positions: PortfolioMarketValuePositionDto[];
+}

@@ -1,4 +1,4 @@
-import { desc, eq, inArray } from "drizzle-orm";
+import { asc, desc, eq, inArray } from "drizzle-orm";
 
 import { Benchmark } from "@/business/entities/benchmark/benchmark.entity";
 import type { IBenchmark } from "@/business/interfaces/benchmark/benchmark.interface";
@@ -91,6 +91,25 @@ export class BenchmarkRepository implements IBenchmark {
       .limit(1);
 
     return row ? this.toEntity(row) : null;
+  }
+
+  /**
+   * Retrieves all benchmarks, optionally paginated.
+   *
+   * @see {@link IBenchmark.findAll}
+   */
+  async findAll(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<Benchmark[]> {
+    const rows = await this.db
+      .select()
+      .from(benchmark)
+      .orderBy(asc(benchmark.name))
+      .limit(options?.limit ?? 100)
+      .offset(options?.offset ?? 0);
+
+    return rows.map((row) => this.toEntity(row));
   }
 
   /**

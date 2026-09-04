@@ -68,6 +68,7 @@ export function createInMemoryBenchmarkRepository(): IBenchmark {
     async findByAcronym(acronym) {
       return BASE.findOne((b) => b.acronym === acronym);
     },
+    findAll: () => BASE.findAll(),
     save: (benchmark) => BASE.save(benchmark),
     delete: (id) => BASE.delete(id),
   };

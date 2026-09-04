@@ -119,6 +119,66 @@ export class Bank {
   }
 
   /**
+   * Renames this bank.
+   *
+   * The code returns a new `Bank` instance with the updated name, leaving
+   * the original instance unchanged.
+   *
+   * @param name - The new name of the bank.
+   * @param now - The update timestamp, defaulting to the current time.
+   *
+   * @returns A new `Bank` instance with the updated name.
+   *
+   * @throws {ValidationError} If `name` is blank.
+   */
+  public rename(name: string, now?: Date): Bank {
+    if (!name || name.trim() === "") {
+      throw new ValidationError("Bank must have a name.");
+    }
+
+    const NOW = now ?? new Date();
+
+    return new Bank(
+      {
+        ...this.props,
+        name,
+        updatedAt: NOW,
+      },
+      this._id,
+    );
+  }
+
+  /**
+   * Changes the code of this bank.
+   *
+   * The code returns a new `Bank` instance with the updated code, leaving
+   * the original instance unchanged.
+   *
+   * @param code - The new code of the bank.
+   * @param now - The update timestamp, defaulting to the current time.
+   *
+   * @returns A new `Bank` instance with the updated code.
+   *
+   * @throws {ValidationError} If `code` is blank.
+   */
+  public changeCode(code: string, now?: Date): Bank {
+    if (!code || code.trim() === "") {
+      throw new ValidationError("Bank must have a code.");
+    }
+
+    const NOW = now ?? new Date();
+
+    return new Bank(
+      {
+        ...this.props,
+        code,
+        updatedAt: NOW,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `Bank` represents the same bank as the
    * provided instance, based on referential equality and the unique id.
    *

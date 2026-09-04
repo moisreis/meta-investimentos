@@ -163,6 +163,74 @@ export class Fund {
   }
 
   /**
+   * Updates the mutable profile fields of this fund.
+   *
+   * Only the provided fields are changed; `undefined` leaves the existing
+   * value untouched, while `null` clears nullable fields such as the
+   * administration/performance fees and the benchmark/category relations.
+   *
+   * The code returns a new `Fund` instance with the updated fields,
+   * leaving the original instance unchanged.
+   *
+   * @param options - The fields to update.
+   * @param options.name - The new name of the fund, if changed.
+   * @param options.administrationFee - The new administration fee, or
+   * `null` to clear it.
+   * @param options.performanceFee - The new performance fee, or `null`
+   * to clear it.
+   * @param options.benchmarkId - The new benchmark id, or `null` to
+   * clear it.
+   * @param options.categoryId - The new category id, or `null` to clear
+   * it.
+   * @param now - The update timestamp, defaulting to the current time.
+   *
+   * @returns A new `Fund` instance with the updated fields.
+   *
+   * @throws {ValidationError} If `name` is blank when provided.
+   */
+  public update(
+    options: {
+      name?: string;
+      administrationFee?: SignedPercentage | null;
+      performanceFee?: SignedPercentage | null;
+      benchmarkId?: EntityId | null;
+      categoryId?: EntityId | null;
+    },
+    now?: Date,
+  ): Fund {
+    if (options.name !== undefined && options.name.trim() === "") {
+      throw new ValidationError("Fund must have a name.");
+    }
+
+    const NOW = now ?? new Date();
+
+    return new Fund(
+      {
+        ...this.props,
+        name: options.name ?? this.props.name,
+        administrationFee:
+          options.administrationFee === undefined
+            ? this.props.administrationFee
+            : options.administrationFee,
+        performanceFee:
+          options.performanceFee === undefined
+            ? this.props.performanceFee
+            : options.performanceFee,
+        benchmarkId:
+          options.benchmarkId === undefined
+            ? this.props.benchmarkId
+            : options.benchmarkId,
+        categoryId:
+          options.categoryId === undefined
+            ? this.props.categoryId
+            : options.categoryId,
+        updatedAt: NOW,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `Fund` represents the same fund as the
    * provided instance, based on referential equality and the unique id.
    *

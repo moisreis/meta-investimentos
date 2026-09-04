@@ -33,6 +33,18 @@ export interface IBenchmark {
   findByAcronym(acronym: string): Promise<Benchmark | null>;
 
   /**
+   * Retrieves all benchmarks, optionally paginated.
+   *
+   * @param options - The pagination options.
+   * @param options.limit - The maximum number of benchmarks to return.
+   * @param options.offset - The offset from which to start returning
+   * benchmarks.
+   * @returns A promise resolving to the collection of `Benchmark`
+   * entities.
+   */
+  findAll(options?: { limit?: number; offset?: number }): Promise<Benchmark[]>;
+
+  /**
    * Persists the provided benchmark.
    *
    * When the benchmark has no id, the implementation inserts a new

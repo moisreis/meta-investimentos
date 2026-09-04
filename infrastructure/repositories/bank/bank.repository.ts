@@ -1,4 +1,4 @@
-import { eq, inArray } from "drizzle-orm";
+import { asc, eq, inArray } from "drizzle-orm";
 
 import { Bank } from "@/business/entities/bank/bank.entity";
 import type { IBank } from "@/business/interfaces/bank/bank.interface";
@@ -108,6 +108,25 @@ export class BankRepository implements IBank {
       .limit(1);
 
     return row ? this.toEntity(row) : null;
+  }
+
+  /**
+   * Retrieves all banks, optionally paginated.
+   *
+   * @see {@link IBank.findAll}
+   */
+  async findAll(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<Bank[]> {
+    const rows = await this.db
+      .select()
+      .from(bank)
+      .orderBy(asc(bank.code))
+      .limit(options?.limit ?? 100)
+      .offset(options?.offset ?? 0);
+
+    return rows.map((row) => this.toEntity(row));
   }
 
   /**

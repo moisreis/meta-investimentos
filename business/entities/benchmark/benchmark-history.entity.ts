@@ -130,6 +130,32 @@ export class BenchmarkHistory {
   }
 
   /**
+   * Updates the rate of this benchmark history.
+   *
+   * The code returns a new `BenchmarkHistory` instance with the updated
+   * rate, leaving the original instance unchanged.
+   *
+   * @param rate - The new rate of the benchmark history.
+   *
+   * @returns A new `BenchmarkHistory` instance with the updated rate.
+   *
+   * @throws {ValidationError} If `rate` is missing.
+   */
+  public updateRate(rate: SignedPercentage): BenchmarkHistory {
+    if (!rate) {
+      throw new ValidationError("BenchmarkHistory must have a rate.");
+    }
+
+    return new BenchmarkHistory(
+      {
+        ...this.props,
+        rate,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `BenchmarkHistory` represents the same
    * benchmark history as the provided instance, based on referential
    * equality and the unique id.

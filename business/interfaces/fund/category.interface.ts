@@ -33,6 +33,18 @@ export interface ICategory {
   findByName(name: string): Promise<Category | null>;
 
   /**
+   * Retrieves all categories, optionally paginated.
+   *
+   * @param options - The pagination options.
+   * @param options.limit - The maximum number of categories to return.
+   * @param options.offset - The offset from which to start returning
+   * categories.
+   * @returns A promise resolving to the collection of `Category`
+   * entities.
+   */
+  findAll(options?: { limit?: number; offset?: number }): Promise<Category[]>;
+
+  /**
    * Persists the provided category.
    *
    * When the category has no id, the implementation inserts a new

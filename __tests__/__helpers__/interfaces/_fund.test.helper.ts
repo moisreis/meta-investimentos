@@ -96,6 +96,7 @@ export function createInMemoryFundRepository(): IFund {
     async findByCnpj(cnpj) {
       return BASE.findOne((f) => f.cnpj.value === cnpj);
     },
+    findAll: () => BASE.findAll(),
     save: (fund) => BASE.save(fund),
     delete: (id) => BASE.delete(id),
   };

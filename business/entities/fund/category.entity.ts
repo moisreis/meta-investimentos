@@ -96,6 +96,36 @@ export class Category {
   }
 
   /**
+   * Renames this category.
+   *
+   * The code returns a new `Category` instance with the updated name,
+   * leaving the original instance unchanged.
+   *
+   * @param name - The new name of the category.
+   * @param now - The update timestamp, defaulting to the current time.
+   *
+   * @returns A new `Category` instance with the updated name.
+   *
+   * @throws {ValidationError} If `name` is blank.
+   */
+  public rename(name: string, now?: Date): Category {
+    if (!name || name.trim() === "") {
+      throw new ValidationError("Category must have a name.");
+    }
+
+    const NOW = now ?? new Date();
+
+    return new Category(
+      {
+        ...this.props,
+        name,
+        updatedAt: NOW,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `Category` represents the same category
    * as the provided instance, based on referential equality and the
    * unique id.

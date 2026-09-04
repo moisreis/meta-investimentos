@@ -28,6 +28,10 @@ export function createInMemoryRepository<T extends object>(options: {
       return null;
     },
 
+    async findAll(): Promise<T[]> {
+      return [...ROWS.values()];
+    },
+
     async findById(id: EntityId): Promise<T | null> {
       return ROWS.get(id) ?? null;
     },

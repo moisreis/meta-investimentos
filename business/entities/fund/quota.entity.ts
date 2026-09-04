@@ -115,6 +115,32 @@ export class Quota {
   }
 
   /**
+   * Updates the price of this quota.
+   *
+   * The code returns a new `Quota` instance with the updated price,
+   * leaving the original instance unchanged.
+   *
+   * @param price - The new price of the quota.
+   *
+   * @returns A new `Quota` instance with the updated price.
+   *
+   * @throws {ValidationError} If `price` is missing.
+   */
+  public updatePrice(price: QuotaPrice): Quota {
+    if (!price) {
+      throw new ValidationError("Quota must have a price.");
+    }
+
+    return new Quota(
+      {
+        ...this.props,
+        price,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `Quota` represents the same quota as the
    * provided instance, based on referential equality and the unique id.
    *

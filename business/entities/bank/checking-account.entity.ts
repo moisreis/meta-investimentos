@@ -116,6 +116,32 @@ export class CheckingAccount {
   }
 
   /**
+   * Updates the value of this checking account transaction.
+   *
+   * The code returns a new `CheckingAccount` instance with the updated
+   * value, leaving the original instance unchanged.
+   *
+   * @param value - The new value of the checking account transaction.
+   *
+   * @returns A new `CheckingAccount` instance with the updated value.
+   *
+   * @throws {ValidationError} If `value` is missing.
+   */
+  public updateValue(value: SignedMoney): CheckingAccount {
+    if (!value) {
+      throw new ValidationError("CheckingAccount must have a value.");
+    }
+
+    return new CheckingAccount(
+      {
+        ...this.props,
+        value,
+      },
+      this._id,
+    );
+  }
+
+  /**
    * Determines whether this `CheckingAccount` represents the same
    * checking account as the provided instance, based on referential
    * equality and the unique id.

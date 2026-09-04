@@ -1,4 +1,4 @@
-import { eq, inArray } from "drizzle-orm";
+import { asc, eq, inArray } from "drizzle-orm";
 
 import { Category } from "@/business/entities/fund/category.entity";
 import type { ICategory } from "@/business/interfaces/fund/category.interface";
@@ -107,6 +107,25 @@ export class CategoryRepository implements ICategory {
       .limit(1);
 
     return row ? this.toEntity(row) : null;
+  }
+
+  /**
+   * Retrieves all categories, optionally paginated.
+   *
+   * @see {@link ICategory.findAll}
+   */
+  async findAll(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<Category[]> {
+    const rows = await this.db
+      .select()
+      .from(category)
+      .orderBy(asc(category.name))
+      .limit(options?.limit ?? 100)
+      .offset(options?.offset ?? 0);
+
+    return rows.map((row) => this.toEntity(row));
   }
 
   /**

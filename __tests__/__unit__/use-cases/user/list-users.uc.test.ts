@@ -54,16 +54,56 @@ describe("listUsers", () => {
     });
   });
 
+  describe("read audit", () => {
+    it("records a READ audit entry for every listed user", async () => {
+      unitOfWork.seed({ users: [MANAGER, USER, OTHER_USER] });
+
+      await listUsers(unitOfWork as never, { actorId: MANAGER_ID });
+
+      const AUDITS = await unitOfWork.auditLogs.findAll();
+      expect(AUDITS).toHaveLength(3);
+      for (const audit of AUDITS) {
+        expect(audit.entity).toBe("User");
+        expect(audit.action).toBe("READ");
+        expect(audit.userId).toBe(MANAGER_ID);
+      }
+
+      const TARGETS = AUDITS.map((audit) => audit.entityId).sort();
+      expect(TARGETS).toEqual([MANAGER_ID, USER.id, OTHER_USER.id].sort());
+    });
+
+    it("records a READ audit for the manager's own record when alone in the list", async () => {
+      unitOfWork.seed({ users: [MANAGER] });
+
+      await listUsers(unitOfWork as never, { actorId: MANAGER_ID });
+
+      const AUDITS = await unitOfWork.auditLogs.findAll();
+      expect(AUDITS).toHaveLength(1);
+      expect(AUDITS[0].entityId).toBe(MANAGER_ID);
+      expect(AUDITS[0].action).toBe("READ");
+    });
+
+    it("attributes the READ audit to the acting manager through the actor", async () => {
+      unitOfWork.seed({ users: [MANAGER, USER] });
+
+      await listUsers(unitOfWork as never, { actorId: MANAGER_ID });
+
+      expect(unitOfWork.lastActor?.userId).toBe(MANAGER_ID);
+    });
+  });
+
   describe("error", () => {
-    it("throws NotFoundError when the actor does not exist", async () => {
+    it("throws NotFoundError and writes no audit when the actor does not exist", async () => {
       await expect(
         listUsers(unitOfWork as never, {
           actorId: "00000000-0000-4000-8000-000000000000",
         }),
       ).rejects.toBeInstanceOf(NotFoundError);
+
+      expect(await unitOfWork.auditLogs.findAll()).toHaveLength(0);
     });
 
-    it("throws NotFoundError when the actor is not a manager", async () => {
+    it("throws NotFoundError and writes no audit when the actor is not a manager", async () => {
       unitOfWork.seed({ users: [USER, OTHER_USER] });
 
       await expect(
@@ -71,6 +111,8 @@ describe("listUsers", () => {
           actorId: ID.USER.DEFAULT,
         }),
       ).rejects.toBeInstanceOf(NotFoundError);
+
+      expect(await unitOfWork.auditLogs.findAll()).toHaveLength(0);
     });
   });
 });

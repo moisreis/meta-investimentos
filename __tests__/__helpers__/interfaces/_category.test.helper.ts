@@ -64,6 +64,7 @@ export function createInMemoryCategoryRepository(): ICategory {
     async findByName(name) {
       return BASE.findOne((c) => c.name === name);
     },
+    findAll: () => BASE.findAll(),
     save: (category) => BASE.save(category),
     delete: (id) => BASE.delete(id),
   };

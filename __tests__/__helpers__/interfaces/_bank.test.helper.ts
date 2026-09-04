@@ -70,6 +70,7 @@ export function createInMemoryBankRepository(): IBank {
     async findByCode(code) {
       return BASE.findOne((b) => b.code === code);
     },
+    findAll: () => BASE.findAll(),
     save: (bank) => BASE.save(bank),
     delete: (id) => BASE.delete(id),
   };

@@ -1,5 +1,6 @@
+import { AuditLog } from "@/business/entities/audit/audit-log.entity";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
-import type { UnitOfWorkContext } from "@/infrastructure/unit-of-work";
+import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError } from "@/shared/errors";
 
 import type { UserDto } from "./user.dtos";
@@ -31,30 +32,55 @@ export interface ListUsersInput {
  * Only users with the `MANAGER` role may list users. The lookup reads
  * through the transaction-scoped user repository.
  *
- * @param ctx - The transaction-scoped repositories.
+ * Because listing exposes other users' personal information, the read
+ * is audited: every listed user's record produces a `READ` audit entry
+ * attributed to the acting manager, written atomically with the read
+ * inside one `UnitOfWork` transaction.
+ *
+ * @param unitOfWork - The transaction coordinator.
  * @param input - The actor and optional pagination parameters.
  * @returns The collection of {@link UserDto}.
  *
  * @throws {NotFoundError} When the actor is not a manager.
  */
 export async function listUsers(
-  ctx: Pick<UnitOfWorkContext, "users">,
+  unitOfWork: UnitOfWork,
   input: ListUsersInput,
 ): Promise<UserDto[]> {
-  const actor = await ctx.users.findById(EntityId.create(input.actorId));
+  const ACTOR_ID = EntityId.create(input.actorId);
 
-  if (actor === null) {
-    throw new NotFoundError(`User with id ${input.actorId} was not found.`);
-  }
+  return unitOfWork.run(
+    async (tx) => {
+      const actor = await tx.users.findById(ACTOR_ID);
 
-  if (actor.role !== "MANAGER") {
-    throw new NotFoundError(`User with id ${input.actorId} was not found.`);
-  }
+      if (actor === null) {
+        throw new NotFoundError(`User with id ${input.actorId} was not found.`);
+      }
 
-  const users = await ctx.users.findAll({
-    limit: input.limit,
-    offset: input.offset,
-  });
+      if (actor.role !== "MANAGER") {
+        throw new NotFoundError(`User with id ${input.actorId} was not found.`);
+      }
 
-  return users.map((user) => toUserDto(user));
+      const users = await tx.users.findAll({
+        limit: input.limit,
+        offset: input.offset,
+      });
+
+      for (const user of users) {
+        if (user.id !== undefined) {
+          await tx.auditLogs.save(
+            AuditLog.create({
+              entity: "User",
+              entityId: user.id,
+              action: "READ",
+              userId: ACTOR_ID,
+            }),
+          );
+        }
+      }
+
+      return users.map((user) => toUserDto(user));
+    },
+    { userId: ACTOR_ID },
+  );
 }
