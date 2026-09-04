@@ -41,6 +41,7 @@ const TABLES = [
   '"portfolio"."withdrawal"',
   '"portfolio"."norms_portfolios"',
   '"portfolio"."position"',
+  '"portfolio"."portfolio_permission"',
   '"portfolio"."norm"',
   '"portfolio"."portfolio"',
   '"report"."statement"',

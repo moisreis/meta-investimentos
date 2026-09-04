@@ -1,3 +1,7 @@
+import {
+  canManagePortfolio,
+  resolvePortfolioAccess,
+} from "@/business/use-cases/shared/portfolio-access";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError } from "@/shared/errors";
@@ -40,11 +44,13 @@ export async function revokePortfolioAccess(
 ): Promise<void> {
   await unitOfWork.run(
     async (tx) => {
-      const portfolio = await tx.portfolios.findById(
+      const { role } = await resolvePortfolioAccess(
+        tx,
         EntityId.create(input.portfolioId),
+        EntityId.create(input.actorId),
       );
 
-      if (portfolio === null || portfolio.userId !== input.actorId) {
+      if (!canManagePortfolio(role)) {
         throw new NotFoundError(
           `Portfolio with id ${input.portfolioId} was not found.`,
         );

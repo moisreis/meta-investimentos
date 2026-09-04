@@ -12,6 +12,7 @@ import {
   resetDatabase,
 } from "@/__tests__/__setup__/_database.setup";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { PositiveMoney } from "@/business/value-objects/positive-money.vo";
 import { ConcurrencyError, NotFoundError } from "@/shared/errors";
 
 describe("OptimisticLocking", () => {
@@ -62,6 +63,34 @@ describe("OptimisticLocking", () => {
       await expect(
         newPositionRepository().save(UPDATED_POSITION),
       ).rejects.toBeInstanceOf(NotFoundError);
+    });
+  });
+
+  describe("setInitialBalance full path", () => {
+    it("persists an initial balance through findById, transition, and save", async () => {
+      await seedPositionById(POSITION_ID);
+
+      const LOADED = await newPositionRepository().findById(
+        EntityId.create(POSITION_ID),
+      );
+      expect(LOADED).not.toBeNull();
+      expect(LOADED?.version).toBe(0);
+
+      const UPDATED = LOADED?.setInitialBalance(
+        PositiveMoney.create("1000.00"),
+        new Date("2026-02-01T00:00:00.000Z"),
+      );
+
+      const SAVED = await newPositionRepository().save(UPDATED as never);
+
+      expect(SAVED.version).toBe(1);
+      expect(SAVED.initialBalance?.value.toString()).toBe("1000");
+
+      const FOUND = await newPositionRepository().findById(
+        EntityId.create(POSITION_ID),
+      );
+      expect(FOUND?.version).toBe(1);
+      expect(FOUND?.initialBalance?.value.toString()).toBe("1000");
     });
   });
 });

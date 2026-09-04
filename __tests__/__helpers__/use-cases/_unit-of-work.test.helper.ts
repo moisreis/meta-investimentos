@@ -16,6 +16,7 @@ import { TransactionAllocation as TransactionAllocationEntity } from "@/business
 import type { Withdrawal } from "@/business/entities/portfolio/withdrawal.entity";
 import { Withdrawal as WithdrawalEntity } from "@/business/entities/portfolio/withdrawal.entity";
 import type { Statement } from "@/business/entities/report/statement.entity";
+import type { User } from "@/business/entities/user/user.entity";
 import type { IBank } from "@/business/interfaces/bank/bank.interface";
 import type { IBenchmark } from "@/business/interfaces/benchmark/benchmark.interface";
 import type { ICategory } from "@/business/interfaces/fund/category.interface";
@@ -30,6 +31,7 @@ import type { IPosition } from "@/business/interfaces/portfolio/position.interfa
 import type { ITransactionAllocation } from "@/business/interfaces/portfolio/transaction-allocation.interface";
 import type { IWithdrawal } from "@/business/interfaces/portfolio/withdrawal.interface";
 import type { IStatement } from "@/business/interfaces/report/statement.interface";
+import type { IUser } from "@/business/interfaces/user/user.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { UnitOfWorkActor } from "@/infrastructure/unit-of-work";
 
@@ -103,6 +105,15 @@ class InMemoryStore<T extends { id?: EntityId }> {
 }
 
 /**
+ * The repository surface for `users` required by the access-management
+ * use cases. Extends the user contract with a batch lookup so list access
+ * can resolve granted user profiles.
+ */
+type FakeUserRepository = IUser & {
+  findAllByIds(ids: EntityId[]): Promise<User[]>;
+};
+
+/**
  * A lightweight in-memory replacement for the {@link UnitOfWork} used in
  * use-case tests.
  *
@@ -174,6 +185,7 @@ export class FakeUnitOfWork {
     ),
   );
   private readonly permissionStore = new InMemoryStore<PortfolioPermission>();
+  private readonly userStore = new InMemoryStore<User>();
   private readonly quotaStore = new InMemoryStore<Quota>();
   private readonly categoryStore = new InMemoryStore<Category>();
   private readonly fundStore = new InMemoryStore<Fund>();
@@ -190,6 +202,7 @@ export class FakeUnitOfWork {
     this.positionStore,
     this.portfolioStore,
     this.permissionStore,
+    this.userStore,
     this.quotaStore,
     this.categoryStore,
     this.fundStore,
@@ -205,15 +218,21 @@ export class FakeUnitOfWork {
   /** The `applications` repository. */
   readonly applications: IApplication = {
     findById: (id) => this.applicationStore.findById(id),
-    findAllByPositionId: (positionId) =>
-      this.applicationStore.findMany((a) => a.positionId === positionId),
-    findAllByPositionIdInPeriod: (positionId, startDate, endDate) =>
-      this.applicationStore.findMany(
+    findAllByPositionId: async (positionId) => {
+      const rows = await this.applicationStore.findMany(
+        (a) => a.positionId === positionId,
+      );
+      return rows.sort((a, b) => a.date.getTime() - b.date.getTime());
+    },
+    findAllByPositionIdInPeriod: async (positionId, startDate, endDate) => {
+      const rows = await this.applicationStore.findMany(
         (a) =>
           a.positionId === positionId &&
           a.date.getTime() >= startDate.getTime() &&
           a.date.getTime() <= endDate.getTime(),
-      ),
+      );
+      return rows.sort((a, b) => a.date.getTime() - b.date.getTime());
+    },
     save: (entity) => this.applicationStore.save(entity),
     delete: (id) => this.applicationStore.delete(id),
   };
@@ -290,6 +309,18 @@ export class FakeUnitOfWork {
         await this.permissionStore.delete(FOUND.id);
       }
     },
+  };
+
+  /** The `users` repository. */
+  readonly users: FakeUserRepository = {
+    findById: (id) => this.userStore.findById(id),
+    findByEmail: (email) => this.userStore.findFirst((u) => u.email === email),
+    findByCpf: (cpf) => this.userStore.findFirst((u) => u.cpf.value === cpf),
+    findAll: () => this.userStore.findMany(() => true),
+    findAllByIds: (ids) =>
+      this.userStore.findMany((u) => u.id !== undefined && ids.includes(u.id)),
+    save: (entity) => this.userStore.save(entity),
+    delete: (id) => this.userStore.delete(id),
   };
 
   /** The `quotas` repository. */
@@ -421,6 +452,7 @@ export class FakeUnitOfWork {
     positions?: Position[];
     portfolios?: Portfolio[];
     portfolioPermissions?: PortfolioPermission[];
+    users?: User[];
     quotas?: Quota[];
     categories?: Category[];
     funds?: Fund[];
@@ -447,6 +479,9 @@ export class FakeUnitOfWork {
     }
     for (const entity of entities.portfolioPermissions ?? []) {
       void this.permissionStore.save(entity);
+    }
+    for (const entity of entities.users ?? []) {
+      void this.userStore.save(entity);
     }
     for (const entity of entities.quotas ?? []) {
       void this.quotaStore.save(entity);

@@ -1,4 +1,4 @@
-﻿import { and, eq, gte, inArray, lte, sql } from "drizzle-orm";
+﻿import { and, asc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 
 import { Application } from "@/business/entities/portfolio/application.entity";
 import type { IApplication } from "@/business/interfaces/portfolio/application.interface";
@@ -143,7 +143,8 @@ export class ApplicationRepository implements IApplication {
   }
 
   /**
-   * Retrieves all applications belonging to the provided position id.
+   * Retrieves all applications belonging to the provided position id,
+   * ordered oldest-first by date so FIFO consumption is deterministic.
    *
    * @see {@link IApplication.findAllByPositionId}
    */
@@ -151,14 +152,16 @@ export class ApplicationRepository implements IApplication {
     const rows = await this.db
       .select()
       .from(application)
-      .where(eq(application.positionId, positionId));
+      .where(eq(application.positionId, positionId))
+      .orderBy(asc(application.date), asc(application.createdAt));
 
     return rows.map((row) => this.toEntity(row));
   }
 
   /**
    * Retrieves all applications of the provided position whose date
-   * falls within the provided period, inclusive.
+   * falls within the provided period, inclusive, ordered oldest-first
+   * by date so FIFO consumption is deterministic.
    *
    * @see {@link IApplication.findAllByPositionIdInPeriod}
    */
@@ -176,7 +179,8 @@ export class ApplicationRepository implements IApplication {
           gte(application.date, startDate),
           lte(application.date, endDate),
         ),
-      );
+      )
+      .orderBy(asc(application.date), asc(application.createdAt));
 
     return rows.map((row) => this.toEntity(row));
   }

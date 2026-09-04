@@ -1,4 +1,11 @@
-import { index, pgSchema, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  index,
+  pgSchema,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { user } from "../user/user.schema";
 import { portfolio } from "./portfolio.schema";
 
@@ -33,5 +40,9 @@ export const portfolioPermission = pgSchema("portfolio").table(
   (table) => [
     index("portfolio_permission_user_id_idx").on(table.userId),
     index("portfolio_permission_portfolio_id_idx").on(table.portfolioId),
+    uniqueIndex("portfolio_permission_user_portfolio_uidx").on(
+      table.userId,
+      table.portfolioId,
+    ),
   ],
 );

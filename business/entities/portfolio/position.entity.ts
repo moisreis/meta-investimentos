@@ -160,7 +160,9 @@ export class Position {
    *
    * The code returns a new `Position` instance with the initial balance
    * and its effective date recorded. The optimistic-locking version is
-   * incremented, so the next persistence detects concurrent updates.
+   * left unchanged here and is bumped by the repository on persistence,
+   * which compares the version this position was loaded with against the
+   * stored row to detect concurrent updates.
    *
    * @param initialBalance - The new initial balance of the position.
    * @param date - The effective date of the initial balance.
@@ -194,7 +196,6 @@ export class Position {
         ...this.props,
         initialBalance,
         initialBalanceDate: date,
-        version: this.props.version + 1,
         updatedAt: NOW,
       },
       this._id,

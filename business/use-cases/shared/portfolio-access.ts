@@ -78,3 +78,17 @@ export async function resolvePortfolioAccess(
 export function canMutatePortfolio(role: PortfolioAccessRole): boolean {
   return role === "OWNER" || role === "EDITOR";
 }
+
+/**
+ * Determines whether an access role may manage the portfolio itself.
+ *
+ * Only the owner may rename or delete the portfolio and grant, revoke,
+ * or update access to it. Editors may mutate positions, applications,
+ * and withdrawals but cannot manage the portfolio record or its access.
+ *
+ * @param role - The resolved access role.
+ * @returns `true` when the role is the portfolio owner.
+ */
+export function canManagePortfolio(role: PortfolioAccessRole): boolean {
+  return role === "OWNER";
+}

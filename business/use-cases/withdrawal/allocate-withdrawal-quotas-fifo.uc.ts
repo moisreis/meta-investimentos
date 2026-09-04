@@ -43,6 +43,13 @@ export interface AllocateWithdrawalQuotasFifoInput {
  *   is not accessible.
  * @throws {ValidationError} When the position does not hold enough
  *   poolable quotas or the withdrawal is already reversed/allocated.
+ *
+ * @remarks
+ * The available-quota check and the allocations are computed inside a
+ * single transaction but do not lock the position row. Under concurrent
+ * withdrawals, two transactions may over-allocate the same poolable
+ * quotas; serializing the withdrawals (e.g. a row lock on the position)
+ * is a known follow-up and intentionally out of scope here.
  */
 export async function allocateWithdrawalQuotasFifoOperation(
   unitOfWork: UnitOfWork,
@@ -94,8 +101,10 @@ export async function allocateWithdrawalQuotasFifoOperation(
         throw new ValidationError("Withdrawal quotas are already allocated.");
       }
 
-      const applications = await tx.applications.findAllByPositionId(
+      const applications = await tx.applications.findAllByPositionIdInPeriod(
         withdrawal.positionId,
+        new Date(0),
+        withdrawal.date,
       );
 
       const allAllocations: Awaited<

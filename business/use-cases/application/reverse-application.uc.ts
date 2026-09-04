@@ -29,9 +29,9 @@ export interface ReverseApplicationInput {
  *
  * The action loads the application and its position, resolves the
  * portfolio access, and transitions the application to a reversed state
- * via {@link Application.reverse}. The reversal writes the updated
- * application and any affected transaction allocations inside one
- * `UnitOfWork` transaction.
+ * via {@link Application.reverse}. The transaction allocations that
+ * consumed quotas from this application are removed, and the updated
+ * application is saved, all within one `UnitOfWork` transaction.
  *
  * @param unitOfWork - The transaction coordinator.
  * @param input - The actor and the application id.
@@ -75,6 +75,18 @@ export async function reverseApplication(
         throw new NotFoundError(
           `Portfolio with id ${position.portfolioId} was not found.`,
         );
+      }
+
+      const allocations =
+        await tx.transactionAllocations.findAllByApplicationId(
+          EntityId.create(input.applicationId),
+        );
+
+      for (const allocation of allocations) {
+        if (allocation.id === undefined) {
+          continue;
+        }
+        await tx.transactionAllocations.delete(allocation.id);
       }
 
       const reversed = application.reverse(EntityId.create(input.actorId));

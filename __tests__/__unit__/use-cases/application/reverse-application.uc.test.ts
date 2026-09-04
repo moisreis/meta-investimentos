@@ -8,8 +8,10 @@ import {
 import { PORTFOLIO } from "@/__tests__/__helpers__/interfaces/_portfolio.test.helper";
 import { POSITION } from "@/__tests__/__helpers__/interfaces/_position.test.helper";
 import { FakeUnitOfWork } from "@/__tests__/__helpers__/use-cases/_unit-of-work.test.helper";
+import { TransactionAllocation } from "@/business/entities/portfolio/transaction-allocation.entity";
 import { reverseApplication } from "@/business/use-cases/application/reverse-application.uc";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { QuotaQuantity } from "@/business/value-objects/quota-quantity.vo";
 import { NotFoundError, ValidationError } from "@/shared/errors";
 
 const ACTOR_ID = ID.USER.DEFAULT;
@@ -44,6 +46,35 @@ describe("reverseApplication", () => {
       );
       expect(saved?.reversedAt).not.toBeNull();
       expect(saved?.reversedByUserId).toBe(EntityId.create(ACTOR_ID));
+    });
+
+    it("removes the transaction allocations that consumed the application", async () => {
+      const ALLOCATION = TransactionAllocation.create(
+        {
+          applicationId: EntityId.create(ID.APPLICATION.DEFAULT),
+          withdrawId: EntityId.create(ID.WITHDRAWAL.DEFAULT),
+          quotasConsumed: QuotaQuantity.create("2"),
+        },
+        ID.TRANSACTION_ALLOCATION.DEFAULT,
+      );
+
+      unitOfWork.seed({
+        portfolios: [PORTFOLIO],
+        positions: [POSITION],
+        applications: [APPLICATION],
+        transactionAllocations: [ALLOCATION],
+      });
+
+      await reverseApplication(unitOfWork as never, {
+        actorId: ACTOR_ID,
+        applicationId: ID.APPLICATION.DEFAULT,
+      });
+
+      const remaining =
+        await unitOfWork.transactionAllocations.findAllByApplicationId(
+          EntityId.create(ID.APPLICATION.DEFAULT),
+        );
+      expect(remaining).toHaveLength(0);
     });
   });
 

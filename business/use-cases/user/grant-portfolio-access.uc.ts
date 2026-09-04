@@ -1,5 +1,9 @@
 import type { PortfolioPermissionRole } from "@/business/entities/portfolio/portfolio-permission.entity";
 import { PortfolioPermission } from "@/business/entities/portfolio/portfolio-permission.entity";
+import {
+  canManagePortfolio,
+  resolvePortfolioAccess,
+} from "@/business/use-cases/shared/portfolio-access";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError, ValidationError } from "@/shared/errors";
@@ -54,11 +58,13 @@ export async function grantPortfolioAccess(
 ): Promise<PortfolioPermissionDto> {
   return unitOfWork.run(
     async (tx) => {
-      const portfolio = await tx.portfolios.findById(
+      const { portfolio, role } = await resolvePortfolioAccess(
+        tx,
         EntityId.create(input.portfolioId),
+        EntityId.create(input.actorId),
       );
 
-      if (portfolio === null || portfolio.userId !== input.actorId) {
+      if (!canManagePortfolio(role)) {
         throw new NotFoundError(
           `Portfolio with id ${input.portfolioId} was not found.`,
         );

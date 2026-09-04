@@ -1,5 +1,8 @@
 import { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
-import { resolvePortfolioAccess } from "@/business/use-cases/shared/portfolio-access";
+import {
+  canManagePortfolio,
+  resolvePortfolioAccess,
+} from "@/business/use-cases/shared/portfolio-access";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import type { UnitOfWork } from "@/infrastructure/unit-of-work";
 import { NotFoundError } from "@/shared/errors";
@@ -52,7 +55,7 @@ export async function updatePortfolio(
         EntityId.create(input.actorId),
       );
 
-      if (role !== "OWNER") {
+      if (!canManagePortfolio(role)) {
         throw new NotFoundError(
           `Portfolio with id ${input.portfolioId} was not found.`,
         );

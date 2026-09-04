@@ -95,6 +95,109 @@ describe("createWithdrawal", () => {
     });
   });
 
+  describe("FIFO allocation", () => {
+    it("consumes the oldest application first across partial allocations", async () => {
+      const FIRST_APP = Application.create(
+        {
+          positionId: EntityId.create(ID.POSITION.DEFAULT),
+          date: new Date("2026-01-02T00:00:00.000Z"),
+          amount: PositiveMoney.create("5000.00"),
+          quotas: QuotaQuantity.create("5"),
+        },
+        ID.APPLICATION.DEFAULT,
+      );
+      const SECOND_APP = Application.create(
+        {
+          positionId: EntityId.create(ID.POSITION.DEFAULT),
+          date: new Date("2026-01-04T00:00:00.000Z"),
+          amount: PositiveMoney.create("3000.00"),
+          quotas: QuotaQuantity.create("3"),
+        },
+        ID.APPLICATION.OTHER,
+      );
+
+      unitOfWork.seed({
+        portfolios: [PORTFOLIO],
+        positions: [POSITION],
+        applications: [FIRST_APP, SECOND_APP],
+        quotas: [QUOTA_ON_DATE],
+      });
+
+      const RESULT = await createWithdrawal(unitOfWork as never, {
+        actorId: ACTOR_ID,
+        positionId: ID.POSITION.DEFAULT,
+        date: WITHDRAWAL_DATE,
+        amount: "6000.00",
+      });
+
+      expect(RESULT.quotas).toBe("6");
+
+      const allocations =
+        await unitOfWork.transactionAllocations.findAllByWithdrawalId(
+          EntityId.create(RESULT.id),
+        );
+      expect(allocations).toHaveLength(2);
+
+      const byApplication = new Map(
+        allocations.map((allocation) => [
+          allocation.applicationId,
+          allocation.quotasConsumed.value.toString(),
+        ]),
+      );
+      expect(byApplication.get(EntityId.create(ID.APPLICATION.DEFAULT))).toBe(
+        "5",
+      );
+      expect(byApplication.get(EntityId.create(ID.APPLICATION.OTHER))).toBe(
+        "1",
+      );
+    });
+
+    it("does not pool quotas from a reversed application", async () => {
+      const REVERSED_APP = Application.create(
+        {
+          positionId: EntityId.create(ID.POSITION.DEFAULT),
+          date: new Date("2026-01-02T00:00:00.000Z"),
+          amount: PositiveMoney.create("5000.00"),
+          quotas: QuotaQuantity.create("5"),
+          reversedAt: new Date("2026-01-03T00:00:00.000Z"),
+          reversedByUserId: EntityId.create(ACTOR_ID),
+        },
+        ID.APPLICATION.DEFAULT,
+      );
+      const FRESH_APP = Application.create(
+        {
+          positionId: EntityId.create(ID.POSITION.DEFAULT),
+          date: new Date("2026-01-04T00:00:00.000Z"),
+          amount: PositiveMoney.create("2000.00"),
+          quotas: QuotaQuantity.create("2"),
+        },
+        ID.APPLICATION.OTHER,
+      );
+
+      unitOfWork.seed({
+        portfolios: [PORTFOLIO],
+        positions: [POSITION],
+        applications: [REVERSED_APP, FRESH_APP],
+        quotas: [QUOTA_ON_DATE],
+      });
+
+      const RESULT = await createWithdrawal(unitOfWork as never, {
+        actorId: ACTOR_ID,
+        positionId: ID.POSITION.DEFAULT,
+        date: WITHDRAWAL_DATE,
+        amount: "2000.00",
+      });
+
+      const allocations =
+        await unitOfWork.transactionAllocations.findAllByWithdrawalId(
+          EntityId.create(RESULT.id),
+        );
+      expect(allocations).toHaveLength(1);
+      expect(allocations[0].applicationId).toBe(ID.APPLICATION.OTHER);
+      expect(allocations[0].quotasConsumed.value.toString()).toBe("2");
+    });
+  });
+
   describe("authorization", () => {
     it("throws NotFoundError when the actor has no access to the portfolio", async () => {
       unitOfWork.seed({

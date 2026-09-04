@@ -132,7 +132,7 @@ describe("Position.setInitialBalance", () => {
   };
   const ID = "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2";
 
-  it("sets the initial balance, its date, and increments the version", () => {
+  it("sets the initial balance and its date, keeping the version unchanged", () => {
     const POSITION = Position.create(VALID_PROPS, ID);
     const INITIAL_BALANCE = PositiveMoney.create("1000.00");
     const DATE = new Date("2026-01-01T00:00:00.000Z");
@@ -143,7 +143,7 @@ describe("Position.setInitialBalance", () => {
     expect(UPDATED.id).toBe(ID);
     expect(UPDATED.initialBalance?.value.toString()).toBe("1000");
     expect(UPDATED.initialBalanceDate).toBe(DATE);
-    expect(UPDATED.version).toBe(1);
+    expect(UPDATED.version).toBe(0);
     expect(UPDATED.updatedAt).toBe(NOW);
     expect(UPDATED.equals(POSITION)).toBe(true);
   });
