@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { ID } from "@/__tests__/__fixtures__";
 import { FakeUnitOfWork } from "@/__tests__/__helpers__/use-cases/_unit-of-work.test.helper";
+import { Benchmark } from "@/business/entities/benchmark/benchmark.entity";
+import { BenchmarkHistory } from "@/business/entities/benchmark/benchmark-history.entity";
 import { Quota } from "@/business/entities/fund/quota.entity";
 import { Application } from "@/business/entities/portfolio/application.entity";
 import { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
@@ -58,6 +60,42 @@ const QUOTA_JAN_04 = Quota.create({
   date: new Date("2026-01-04T00:00:00.000Z"),
   price: QuotaPrice.create("121"),
 });
+
+const BENCHMARK_IPCA = Benchmark.create(
+  {
+    acronym: "IPCA",
+    name: "IPCA",
+  },
+  ID.BENCHMARK.DEFAULT,
+);
+
+const BENCHMARK_CDI = Benchmark.create(
+  {
+    acronym: "CDI",
+    name: "CDI",
+  },
+  ID.BENCHMARK.OTHER,
+);
+
+const BENCHMARK_IBOV = Benchmark.create(
+  {
+    acronym: "IBOV",
+    name: "Ibovespa",
+  },
+  "6a7b8c9d-0e1f-4a2b-9c3d-4e5f6a7b8c9f",
+);
+
+function monthlyHistory(
+  benchmark: Benchmark,
+  month: string,
+  rate: string,
+): BenchmarkHistory {
+  return BenchmarkHistory.create({
+    benchmarkId: benchmark.id as EntityId,
+    date: new Date(`${month}-05T00:00:00.000Z`),
+    rate: SignedPercentage.create(rate),
+  });
+}
 
 function buildUnitOfWork(): FakeUnitOfWork {
   const UNIT = new FakeUnitOfWork();
@@ -161,5 +199,34 @@ describe("recalculatePortfolioPerformance", () => {
       PORTFOLIO.id as EntityId,
     );
     expect(portfolioRows).toHaveLength(0);
+  });
+
+  it("wires the benchmark spreads (IPCA/CDI/IBOV) into portfolio rows", async () => {
+    const UNIT = buildUnitOfWork();
+    UNIT.seed({
+      benchmarks: [BENCHMARK_IPCA, BENCHMARK_CDI, BENCHMARK_IBOV],
+      benchmarkHistories: [
+        monthlyHistory(BENCHMARK_IPCA, "2026-01", "1.25"),
+        monthlyHistory(BENCHMARK_CDI, "2026-01", "0.9"),
+        monthlyHistory(BENCHMARK_IBOV, "2026-01", "2.5"),
+      ],
+    });
+
+    await recalculatePortfolioPerformance(UNIT as never, {
+      portfolioIds: [ID.PORTFOLIO.DEFAULT],
+      startDate: START,
+      endDate: END,
+    });
+
+    const portfolioRows = await UNIT.portfolioPerformances.findAllByPortfolioId(
+      PORTFOLIO.id as EntityId,
+    );
+    const LAST = portfolioRows[portfolioRows.length - 1];
+
+    expect(LAST.inflationSpread?.value.toString()).toBe("8.75");
+    expect(LAST.riskFreeSpread?.value.toString()).toBe("9.1");
+    expect(LAST.marketSpread?.value.toString()).toBe("7.5");
+    expect(LAST.target?.value.toString()).toBe("2.06");
+    expect(LAST.cumulativeTarget?.value.toString()).toBe("2.06");
   });
 });

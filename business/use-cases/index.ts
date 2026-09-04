@@ -91,6 +91,10 @@ export type {
   PortfolioPerformanceDto,
   PositionPerformanceDto,
 } from "./performance/performance.dtos";
+export type { RecalculatePerformanceForPeriodInput } from "./performance/recalculate-performance-for-period.uc";
+export { recalculatePerformanceForPeriod } from "./performance/recalculate-performance-for-period.uc";
+export type { RecalculatePortfolioPerformanceInput } from "./performance/recalculate-portfolio-performance.uc";
+export { recalculatePortfolioPerformance } from "./performance/recalculate-portfolio-performance.uc";
 // Portfolio
 export { createPortfolio } from "./portfolio/create-portfolio.uc";
 export { deletePortfolio } from "./portfolio/delete-portfolio.uc";

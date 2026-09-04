@@ -14,6 +14,9 @@ type RecalculateAffectedPortfoliosContext = Pick<
   | "quotas"
   | "positionPerformances"
   | "portfolioPerformances"
+  | "transactionAllocations"
+  | "benchmarks"
+  | "benchmarkHistories"
 >;
 
 /**

@@ -84,6 +84,14 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          name: { label: "DATE POLICY", color: "cyan" },
+          include: ["**/__unit__/date-policy/**/*.{test,spec}.{ts,tsx,js,jsx}"],
+          environment: "node",
+        },
+      },
+      {
+        extends: true,
+        test: {
           name: { label: "ERRORS", color: "magenta" },
           include: ["**/__unit__/errors/**/*.{test,spec}.{ts,tsx,js,jsx}"],
           environment: "node",
