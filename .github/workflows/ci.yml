@@ -1,0 +1,126 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lint & format (biome)
+        run: npx biome check
+      - name: Typecheck (tsc)
+        run: npx tsc --noEmit
+
+  unit-tests:
+    name: Unit tests & coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run unit tests with coverage thresholds
+        # Exclude the integration (REPOSITORIES) project — it requires a live
+        # database and is exercised by the dedicated integration-tests job.
+        # The coverage `include` is business/**/*.ts, so excluding integration
+        # tests leaves the coverage gate unaffected.
+        run: npx vitest run --coverage --exclude "**/__integration__/**"
+
+  migrations-checks:
+    name: Migration drift
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: meta_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/meta_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify migrations match schema (drizzle-kit check)
+        run: npx drizzle-kit check
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+
+  integration-tests:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: meta_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/meta_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Apply migrations to test database
+        run: npx drizzle-kit migrate
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+      - name: Run integration tests
+        run: npx vitest run --project "REPOSITORIES"
+        env:
+          TEST_DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+
+  build:
+    name: Production build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build (next build)
+        run: npm run build
+        env:
+          DATABASE_URL: placeholder-connection-string
+          BETTER_AUTH_SECRET: placeholder-secret
+          BETTER_AUTH_URL: http://localhost:3000
