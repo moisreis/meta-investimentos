@@ -96,6 +96,37 @@ describe("PositionRepository", () => {
     });
   });
 
+  describe("findAllByFundIds", () => {
+    it("returns every position holding any of the provided funds", async () => {
+      await seedPositions();
+
+      const FOUND = await newPositionRepository().findAllByFundIds([
+        FUND_ID,
+        OTHER_FUND_ID,
+      ]);
+
+      expect(FOUND).toHaveLength(3);
+      expect(FOUND.some((ROW) => ROW.equals(POSITION))).toBe(true);
+      expect(FOUND.some((ROW) => ROW.equals(OTHER_POSITION))).toBe(true);
+      expect(FOUND.some((ROW) => ROW.equals(THIRD_POSITION))).toBe(true);
+    });
+
+    it("returns an empty array when no ids are provided", async () => {
+      await seedPositions();
+
+      expect(await newPositionRepository().findAllByFundIds([])).toEqual([]);
+    });
+
+    it("returns only the positions holding the matching funds", async () => {
+      await seedPositions();
+
+      const FOUND = await newPositionRepository().findAllByFundIds([FUND_ID]);
+
+      expect(FOUND).toHaveLength(1);
+      expect(FOUND.some((ROW) => ROW.equals(POSITION))).toBe(true);
+    });
+  });
+
   describe("findByPortfolioIdAndFundId", () => {
     it("returns the position holding the fund within the portfolio", async () => {
       await seedPositions();

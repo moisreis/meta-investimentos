@@ -4,6 +4,12 @@ export type { IBankAccount } from "./bank/bank-account.interface";
 export type { ICheckingAccount } from "./bank/checking-account.interface";
 export type { IBenchmark } from "./benchmark/benchmark.interface";
 export type { IBenchmarkHistory } from "./benchmark/benchmark-history.interface";
+export type { ICvmClient } from "./cvm/cvm-client.interface";
+export type { ICvmImport } from "./cvm/cvm-import.interface";
+export type {
+  IQuotaImport,
+  QuotaImportDraft,
+} from "./cvm/quota-import.interface";
 export type { ICategory } from "./fund/category.interface";
 export type { IFund } from "./fund/fund.interface";
 export type { IQuota } from "./fund/quota.interface";

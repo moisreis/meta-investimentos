@@ -5,6 +5,7 @@ export * from "./bank/checking-account.relations";
 export * from "./benchmark/benchmark.relations";
 export * from "./benchmark/benchmark-history.relations";
 export * from "./fund/category.relations";
+export * from "./fund/cvm-import.relations";
 export * from "./fund/fund.relations";
 export * from "./fund/quota.relations";
 export * from "./performance/portfolio-performance.relations";

@@ -41,6 +41,17 @@ export { listBenchmarkHistories } from "./benchmark/list-benchmark-histories.uc"
 export { listBenchmarks } from "./benchmark/list-benchmarks.uc";
 export { updateBenchmark } from "./benchmark/update-benchmark.uc";
 export { updateBenchmarkHistory } from "./benchmark/update-benchmark-history.uc";
+export { getFailedImports, getLatestImport } from "./cvm/get-import-status.uc";
+export type { FundStaleness } from "./cvm/list-fund-staleness.uc";
+export { listFundStaleness } from "./cvm/list-fund-staleness.uc";
+export type { QuotaGap } from "./cvm/list-quota-gaps.uc";
+export { listQuotaGaps } from "./cvm/list-quota-gaps.uc";
+export type {
+  RunCvmImportDeps,
+  RunCvmImportInput,
+} from "./cvm/run-cvm-import.uc";
+// CVM
+export { runCvmImport } from "./cvm/run-cvm-import.uc";
 // Fund
 export { createCategory } from "./fund/create-category.uc";
 export { createFund } from "./fund/create-fund.uc";

@@ -156,6 +156,24 @@ export class PositionRepository implements IPosition {
   }
 
   /**
+   * Retrieves all positions holding any of the provided funds.
+   *
+   * @see {@link IPosition.findAllByFundIds}
+   */
+  async findAllByFundIds(fundIds: string[]): Promise<Position[]> {
+    if (fundIds.length === 0) {
+      return [];
+    }
+
+    const rows = await this.db
+      .select()
+      .from(position)
+      .where(inArray(position.fundId, fundIds));
+
+    return rows.map((row) => this.toEntity(row));
+  }
+
+  /**
    * Retrieves the position holding the provided fund within the
    * provided portfolio.
    *

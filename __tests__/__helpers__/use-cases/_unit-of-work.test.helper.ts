@@ -6,9 +6,11 @@ import { CheckingAccount as CheckingAccountEntity } from "@/business/entities/ba
 import type { Benchmark } from "@/business/entities/benchmark/benchmark.entity";
 import type { BenchmarkHistory } from "@/business/entities/benchmark/benchmark-history.entity";
 import { BenchmarkHistory as BenchmarkHistoryEntity } from "@/business/entities/benchmark/benchmark-history.entity";
+import { CvmImport } from "@/business/entities/cvm/cvm-import.entity";
+import type { QuotaImport } from "@/business/entities/cvm/quota-import.entity";
 import type { Category } from "@/business/entities/fund/category.entity";
 import type { Fund } from "@/business/entities/fund/fund.entity";
-import type { Quota } from "@/business/entities/fund/quota.entity";
+import { Quota } from "@/business/entities/fund/quota.entity";
 import type { PortfolioPerformance } from "@/business/entities/performance/portfolio-performance.entity";
 import { PortfolioPerformance as PortfolioPerformanceEntity } from "@/business/entities/performance/portfolio-performance.entity";
 import type { PositionPerformance } from "@/business/entities/performance/position-performance.entity";
@@ -33,9 +35,15 @@ import type { IBankAccount } from "@/business/interfaces/bank/bank-account.inter
 import type { ICheckingAccount } from "@/business/interfaces/bank/checking-account.interface";
 import type { IBenchmark } from "@/business/interfaces/benchmark/benchmark.interface";
 import type { IBenchmarkHistory } from "@/business/interfaces/benchmark/benchmark-history.interface";
+import type { ICvmImport } from "@/business/interfaces/cvm/cvm-import.interface";
+import type { IQuotaImport } from "@/business/interfaces/cvm/quota-import.interface";
 import type { ICategory } from "@/business/interfaces/fund/category.interface";
 import type { IFund } from "@/business/interfaces/fund/fund.interface";
-import type { IQuota } from "@/business/interfaces/fund/quota.interface";
+import type {
+  IQuota,
+  UpsertQuota,
+  UpsertQuotaResult,
+} from "@/business/interfaces/fund/quota.interface";
 import type { IPortfolioPerformance } from "@/business/interfaces/performance/portfolio-performance.interface";
 import type { IPositionPerformance } from "@/business/interfaces/performance/position-performance.interface";
 import type { IApplication } from "@/business/interfaces/portfolio/application.interface";
@@ -49,6 +57,7 @@ import type { IWithdrawal } from "@/business/interfaces/portfolio/withdrawal.int
 import type { IStatement } from "@/business/interfaces/report/statement.interface";
 import type { IUser } from "@/business/interfaces/user/user.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
+import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 import type { UnitOfWorkActor } from "@/infrastructure/unit-of-work";
 
 let sequence = 0;
@@ -294,6 +303,31 @@ export class FakeUnitOfWork {
   private readonly normsPortfoliosStore = new InMemoryStore<NormsPortfolios>();
   private readonly statementStore = new InMemoryStore<Statement>();
   private readonly auditLogStore = new InMemoryStore<AuditLog>();
+  private readonly cvmImportStore = new InMemoryStore<CvmImport>((i, id) =>
+    CvmImport.create(
+      {
+        source: i.source,
+        status: i.status,
+        requestedStart: i.requestedStart,
+        requestedEnd: i.requestedEnd,
+        requestedFundCnpjs: i.requestedFundCnpjs,
+        monthsBack: i.monthsBack,
+        filesFound: i.filesFound,
+        filesDownloaded: i.filesDownloaded,
+        filesUnavailable: i.filesUnavailable,
+        recordsMatched: i.recordsMatched,
+        recordsImported: i.recordsImported,
+        recordsUpserted: i.recordsUpserted,
+        recordsSkipped: i.recordsSkipped,
+        error: i.error,
+        startedAt: i.startedAt,
+        finishedAt: i.finishedAt,
+        createdAt: i.createdAt,
+      },
+      id,
+    ),
+  );
+  private readonly quotaImportStore = new InMemoryStore<QuotaImport>();
 
   private readonly stores = [
     this.applicationStore,
@@ -317,6 +351,8 @@ export class FakeUnitOfWork {
     this.normsPortfoliosStore,
     this.statementStore,
     this.auditLogStore,
+    this.cvmImportStore,
+    this.quotaImportStore,
   ] as unknown as { rows: Map<EntityId, unknown> }[];
 
   private readonly lastActors: (UnitOfWorkActor | undefined)[] = [];
@@ -377,6 +413,8 @@ export class FakeUnitOfWork {
       this.positionStore.findMany((p) => p.portfolioId === portfolioId),
     findAllByPortfolioIds: (portfolioIds) =>
       this.positionStore.findMany((p) => portfolioIds.includes(p.portfolioId)),
+    findAllByFundIds: (fundIds) =>
+      this.positionStore.findMany((p) => fundIds.includes(p.fundId)),
     findByPortfolioIdAndFundId: (portfolioId, fundId) =>
       this.positionStore.findFirst(
         (p) => p.portfolioId === portfolioId && p.fundId === fundId,
@@ -450,6 +488,56 @@ export class FakeUnitOfWork {
       return FOUND.reduce((latest, current) =>
         current.date.getTime() > latest.date.getTime() ? current : latest,
       );
+    },
+    findAllByFundIds: async (fundIds) => {
+      return this.quotaStore.findMany((q) => fundIds.includes(q.fundId));
+    },
+    findLatestByFundIds: async (fundIds) => {
+      const BY_FUND = new Map<string, Quota>();
+      for (const Q of this.quotaStore.match((q) =>
+        fundIds.includes(q.fundId),
+      )) {
+        const EXISTING = BY_FUND.get(Q.fundId);
+        if (!EXISTING || Q.date.getTime() > EXISTING.date.getTime()) {
+          BY_FUND.set(Q.fundId, Q);
+        }
+      }
+      return [...BY_FUND.values()];
+    },
+    findAllByFundIdsInPeriod: async (fundIds, startDate, endDate) => {
+      return this.quotaStore.findMany(
+        (q) =>
+          fundIds.includes(q.fundId) &&
+          q.date.getTime() >= startDate.getTime() &&
+          q.date.getTime() <= endDate.getTime(),
+      );
+    },
+    upsertMany: async (
+      records: UpsertQuota[],
+    ): Promise<UpsertQuotaResult[]> => {
+      const RESULTS: UpsertQuotaResult[] = [];
+      for (const RECORD of records) {
+        const FOUND = this.quotaStore.findOne(
+          (q) =>
+            q.fundId === EntityId.create(RECORD.fundId) &&
+            q.date.getTime() === RECORD.date.getTime(),
+        );
+        if (FOUND) {
+          const UPDATED = FOUND.updatePrice(QuotaPrice.create(RECORD.price));
+          await this.quotaStore.save(UPDATED);
+          RESULTS.push({ ...RECORD, action: "UPDATE" });
+        } else {
+          await this.quotaStore.save(
+            Quota.create({
+              fundId: EntityId.create(RECORD.fundId),
+              date: RECORD.date,
+              price: QuotaPrice.create(RECORD.price),
+            }),
+          );
+          RESULTS.push({ ...RECORD, action: "INSERT" });
+        }
+      }
+      return RESULTS;
     },
     save: (entity) => this.quotaStore.save(entity),
     delete: (id) => this.quotaStore.delete(id),
@@ -630,6 +718,41 @@ export class FakeUnitOfWork {
     delete: (id) => this.statementStore.delete(id),
   };
 
+  /** The `cvmImports` repository. */
+  readonly cvmImports: ICvmImport = {
+    save: (entity) => this.cvmImportStore.save(entity),
+    findById: (id) => this.cvmImportStore.findById(id),
+    findLatest: async () => {
+      const ALL = this.cvmImportStore.match(() => true);
+      if (ALL.length === 0) return null;
+      return ALL.reduce((latest, current) =>
+        (current.startedAt?.getTime() ?? 0) > (latest.startedAt?.getTime() ?? 0)
+          ? current
+          : latest,
+      );
+    },
+    findFailed: async (limit = 10) => {
+      return this.cvmImportStore
+        .match((i) => i.status === "FAILED")
+        .slice(0, limit);
+    },
+  };
+
+  /** The `quotaImports` repository. */
+  readonly quotaImports: IQuotaImport = {
+    saveMany: async (records: QuotaImport[]) => {
+      for (const record of records) {
+        await this.quotaImportStore.save(record);
+      }
+    },
+    findFundIdsByImportId: async (importId) => {
+      const RECORDS = this.quotaImportStore.match(
+        (r) => r.importId === importId,
+      );
+      return [...new Set(RECORDS.map((r) => r.fundId))];
+    },
+  };
+
   /** The `auditLogs` repository. */
   readonly auditLogs: IAuditLog & {
     findAll(): Promise<AuditLog[]>;
@@ -696,6 +819,8 @@ export class FakeUnitOfWork {
     normsPortfolios?: NormsPortfolios[];
     statements?: Statement[];
     auditLogs?: AuditLog[];
+    cvmImports?: CvmImport[];
+    quotaImports?: QuotaImport[];
   }): void {
     for (const entity of entities.applications ?? []) {
       void this.applicationStore.save(entity);
@@ -759,6 +884,12 @@ export class FakeUnitOfWork {
     }
     for (const entity of entities.auditLogs ?? []) {
       void this.auditLogStore.save(entity);
+    }
+    for (const entity of entities.cvmImports ?? []) {
+      void this.cvmImportStore.save(entity);
+    }
+    for (const entity of entities.quotaImports ?? []) {
+      void this.quotaImportStore.save(entity);
     }
   }
 

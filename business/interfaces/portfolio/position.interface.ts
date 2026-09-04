@@ -43,6 +43,15 @@ export interface IPosition {
   findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<Position[]>;
 
   /**
+   * Retrieves all positions holding any of the provided funds.
+   *
+   * @param fundIds - The unique identifiers of the funds.
+   * @returns A promise resolving to the matching `Position` entries or an
+   * empty array when there are no matches.
+   */
+  findAllByFundIds(fundIds: string[]): Promise<Position[]>;
+
+  /**
    * Retrieves the position of the provided fund within the provided
    * portfolio.
    *

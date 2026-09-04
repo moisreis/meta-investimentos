@@ -1,7 +1,11 @@
-﻿import { and, desc, eq, gte, inArray, lte } from "drizzle-orm";
+﻿import { and, desc, eq, gte, inArray, lte, or, sql } from "drizzle-orm";
 
 import { Quota } from "@/business/entities/fund/quota.entity";
-import type { IQuota } from "@/business/interfaces/fund/quota.interface";
+import type {
+  IQuota,
+  UpsertQuota,
+  UpsertQuotaResult,
+} from "@/business/interfaces/fund/quota.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 import { quota } from "@/infrastructure/database/schemas";
@@ -232,6 +236,58 @@ export class QuotaRepository implements IQuota {
       .orderBy(quota.fundId, desc(quota.date));
 
     return rows.map((row) => this.toEntity(row));
+  }
+
+  /**
+   * Upserts a batch of quota rows in bulk.
+   *
+   * The implementation first queries existing `(fundId, date)` pairs to
+   * determine which records will be inserted and which will be updated.
+   * It then issues a single `INSERT ... ON CONFLICT DO UPDATE` statement
+   * and returns the action taken for each record.
+   *
+   * @see {@link IQuota.upsertMany}
+   */
+  async upsertMany(records: UpsertQuota[]): Promise<UpsertQuotaResult[]> {
+    if (records.length === 0) {
+      return [];
+    }
+
+    const CONDITIONS = records.map((r) =>
+      and(eq(quota.fundId, r.fundId), eq(quota.date, r.date)),
+    );
+
+    const EXISTING = await this.db
+      .select({ fundId: quota.fundId, date: quota.date })
+      .from(quota)
+      .where(or(...CONDITIONS));
+
+    const EXISTING_SET = new Set(
+      EXISTING.map((e) => `${e.fundId}:${e.date.getTime()}`),
+    );
+
+    await this.db
+      .insert(quota)
+      .values(
+        records.map((r) => ({
+          fundId: r.fundId,
+          date: r.date,
+          price: r.price,
+        })),
+      )
+      .onConflictDoUpdate({
+        target: [quota.fundId, quota.date],
+        set: { price: sql`excluded.price` },
+      });
+
+    return records.map((r) => ({
+      fundId: r.fundId,
+      date: r.date,
+      price: r.price,
+      action: EXISTING_SET.has(`${r.fundId}:${r.date.getTime()}`)
+        ? "UPDATE"
+        : "INSERT",
+    }));
   }
 
   /**

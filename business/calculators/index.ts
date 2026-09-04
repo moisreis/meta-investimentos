@@ -3,6 +3,13 @@ export { calculatePortfolioCumulativeBenchmark } from "./benchmark/cumulative-be
 export { calculatePortfolioInflationSpread } from "./benchmark/inflation-spread.calculator";
 export { calculatePortfolioMarketSpread } from "./benchmark/market-spread.calculator";
 export { calculatePortfolioRiskFreeSpread } from "./benchmark/risk-free-spread.calculator";
+export type { PortfolioPerformanceInput } from "./performance/portfolio-performance.calculator";
+export { calculatePortfolioPerformance } from "./performance/portfolio-performance.calculator";
+export type {
+  PositionFlowTotals,
+  PositionPerformanceInput,
+} from "./performance/position-performance.calculator";
+export { calculatePositionPerformance } from "./performance/position-performance.calculator";
 export { calculatePortfolioApplicationQuotasSum } from "./portfolio/application-quotas-sum.calculator";
 export { calculatePortfolioApplicationSum } from "./portfolio/application-sum.calculator";
 export { calculatePortfolioCashFlowNet } from "./portfolio/cash-flow-net.calculator";

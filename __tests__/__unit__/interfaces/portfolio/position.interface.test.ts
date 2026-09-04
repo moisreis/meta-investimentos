@@ -74,6 +74,32 @@ describe("IPosition", () => {
     });
   });
 
+  describe("findAllByFundIds", () => {
+    it("returns all persisted positions holding any of the funds", async () => {
+      const OTHER_POSITION = Position.create(
+        {
+          portfolioId: EntityId.create(OTHER_PORTFOLIO_ID),
+          fundId: EntityId.create(OTHER_FUND_ID),
+        },
+        "d5a3e7f1-6b90-4c12-8d47-2e8f0a1c3b64",
+      );
+
+      await REPOSITORY.save(POSITION);
+      await REPOSITORY.save(OTHER_POSITION);
+
+      const FOUND = await REPOSITORY.findAllByFundIds([FUND_ID, OTHER_FUND_ID]);
+
+      expect(FOUND.length).toBe(2);
+      expect(FOUND[0]?.equals(POSITION)).toBe(true);
+      expect(FOUND[1]?.equals(OTHER_POSITION)).toBe(true);
+    });
+
+    it("returns an empty array when there are no matches", async () => {
+      expect(await REPOSITORY.findAllByFundIds([])).toEqual([]);
+      expect(await REPOSITORY.findAllByFundIds([OTHER_FUND_ID])).toEqual([]);
+    });
+  });
+
   describe("findByPortfolioIdAndFundId", () => {
     it("returns the persisted position", async () => {
       await REPOSITORY.save(POSITION);

@@ -1,7 +1,11 @@
 ﻿import { ID } from "@/__tests__/__fixtures__";
 import { createInMemoryRepository } from "@/__tests__/__fixtures__/_in-memory-repository";
 import { Quota } from "@/business/entities/fund/quota.entity";
-import type { IQuota } from "@/business/interfaces/fund/quota.interface";
+import type {
+  IQuota,
+  UpsertQuota,
+  UpsertQuotaResult,
+} from "@/business/interfaces/fund/quota.interface";
 import { EntityId } from "@/business/value-objects/entity-id.vo";
 import { QuotaPrice } from "@/business/value-objects/quota-price.vo";
 
@@ -227,7 +231,61 @@ export function createInMemoryQuotaRepository(): IQuota {
         current.date.getTime() > latest.date.getTime() ? current : latest,
       );
     },
+    async findAllByFundIds(fundIds) {
+      return BASE.match((q) => fundIds.includes(q.fundId));
+    },
+    async findLatestByFundIds(fundIds) {
+      const BY_FUND = new Map<string, Quota>();
+      for (const Q of BASE.match((q) => fundIds.includes(q.fundId))) {
+        const EXISTING = BY_FUND.get(Q.fundId);
+        if (!EXISTING || Q.date.getTime() > EXISTING.date.getTime()) {
+          BY_FUND.set(Q.fundId, Q);
+        }
+      }
+      return [...BY_FUND.values()];
+    },
+    async findAllByFundIdsInPeriod(fundIds, startDate, endDate) {
+      return BASE.match(
+        (q) =>
+          fundIds.includes(q.fundId) &&
+          q.date.getTime() >= startDate.getTime() &&
+          q.date.getTime() <= endDate.getTime(),
+      );
+    },
     save: (quota) => BASE.save(quota),
+    async upsertMany(records: UpsertQuota[]): Promise<UpsertQuotaResult[]> {
+      const RESULTS: UpsertQuotaResult[] = [];
+
+      for (const RECORD of records) {
+        const FOUND = await this.findByFundIdAndDate(
+          EntityId.create(RECORD.fundId),
+          RECORD.date,
+        );
+
+        if (FOUND) {
+          const UPDATED = FOUND.updatePrice(QuotaPrice.create(RECORD.price));
+          await BASE.save(UPDATED);
+          RESULTS.push({
+            ...RECORD,
+            action: "UPDATE",
+          });
+        } else {
+          await BASE.save(
+            Quota.create({
+              fundId: EntityId.create(RECORD.fundId),
+              date: RECORD.date,
+              price: QuotaPrice.create(RECORD.price),
+            }),
+          );
+          RESULTS.push({
+            ...RECORD,
+            action: "INSERT",
+          });
+        }
+      }
+
+      return RESULTS;
+    },
     delete: (id) => BASE.delete(id),
   };
 }

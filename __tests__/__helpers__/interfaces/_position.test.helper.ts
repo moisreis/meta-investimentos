@@ -123,6 +123,9 @@ export function createInMemoryPositionRepository(): IPosition {
     async findAllByPortfolioIds(portfolioIds) {
       return BASE.match((p) => portfolioIds.includes(p.portfolioId));
     },
+    async findAllByFundIds(fundIds) {
+      return BASE.match((p) => fundIds.includes(p.fundId));
+    },
     async findByPortfolioIdAndFundId(portfolioId, fundId) {
       return BASE.findOne(
         (p) => p.portfolioId === portfolioId && p.fundId === fundId,

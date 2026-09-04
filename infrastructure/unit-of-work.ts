@@ -8,8 +8,10 @@ import { CheckingAccountRepository } from "@/infrastructure/repositories/bank/ch
 import { BenchmarkRepository } from "@/infrastructure/repositories/benchmark/benchmark.repository";
 import { BenchmarkHistoryRepository } from "@/infrastructure/repositories/benchmark/benchmark-history.repository";
 import { CategoryRepository } from "@/infrastructure/repositories/fund/category.repository";
+import { CvmImportRepository } from "@/infrastructure/repositories/fund/cvm-import.repository";
 import { FundRepository } from "@/infrastructure/repositories/fund/fund.repository";
 import { QuotaRepository } from "@/infrastructure/repositories/fund/quota.repository";
+import { QuotaImportRepository } from "@/infrastructure/repositories/fund/quota-import.repository";
 import { PortfolioPerformanceRepository } from "@/infrastructure/repositories/performance/portfolio-performance.repository";
 import { PositionPerformanceRepository } from "@/infrastructure/repositories/performance/position-performance.repository";
 import { ApplicationRepository } from "@/infrastructure/repositories/portfolio/application.repository";
@@ -118,6 +120,16 @@ export interface UnitOfWorkContext {
    * Repository bound to the transaction for `quota` rows.
    */
   quotas: QuotaRepository;
+
+  /**
+   * Repository bound to the transaction for `cvm_import` rows.
+   */
+  cvmImports: CvmImportRepository;
+
+  /**
+   * Repository bound to the transaction for `quota_import` rows.
+   */
+  quotaImports: QuotaImportRepository;
 
   /**
    * Repository bound to the transaction for `category` rows.
@@ -324,6 +336,8 @@ export class UnitOfWork {
           USER_ID,
           AUDIT_LOGS,
         ),
+        cvmImports: new CvmImportRepository(tx),
+        quotaImports: new QuotaImportRepository(tx),
         categories: this.audited(
           new CategoryRepository(tx),
           "Category",
