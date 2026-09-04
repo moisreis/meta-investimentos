@@ -152,6 +152,9 @@ export function createInMemoryPortfolioRepository(): IPortfolio {
     async findAllByUserId(userId) {
       return BASE.match((p) => p.userId === userId);
     },
+    async findAll() {
+      return BASE.match(() => true);
+    },
     save: (portfolio) => BASE.save(portfolio),
     delete: (id) => BASE.delete(id),
   };

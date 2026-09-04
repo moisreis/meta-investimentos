@@ -33,6 +33,18 @@ export interface IPortfolio {
   findAllByUserId(userId: EntityId): Promise<Portfolio[]>;
 
   /**
+   * Retrieves all portfolios, optionally paginated.
+   *
+   * @param options - The pagination options.
+   * @param options.limit - The maximum number of portfolios to return.
+   * @param options.offset - The offset from which to start returning
+   * portfolios.
+   * @returns A promise resolving to the collection of `Portfolio`
+   * entities.
+   */
+  findAll(options?: { limit?: number; offset?: number }): Promise<Portfolio[]>;
+
+  /**
    * Persists the provided portfolio.
    *
    * When the portfolio has no id, the implementation inserts a new

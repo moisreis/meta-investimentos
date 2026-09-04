@@ -1,4 +1,4 @@
-﻿import { eq, inArray } from "drizzle-orm";
+﻿import { asc, eq, inArray } from "drizzle-orm";
 
 import { Portfolio } from "@/business/entities/portfolio/portfolio.entity";
 import type { IPortfolio } from "@/business/interfaces/portfolio/portfolio.interface";
@@ -127,6 +127,25 @@ export class PortfolioRepository implements IPortfolio {
       .select()
       .from(portfolio)
       .where(eq(portfolio.userId, userId));
+
+    return rows.map((row) => this.toEntity(row));
+  }
+
+  /**
+   * Retrieves all portfolios, optionally paginated.
+   *
+   * @see {@link IPortfolio.findAll}
+   */
+  async findAll(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<Portfolio[]> {
+    const rows = await this.db
+      .select()
+      .from(portfolio)
+      .orderBy(asc(portfolio.createdAt))
+      .limit(options?.limit ?? 100)
+      .offset(options?.offset ?? 0);
 
     return rows.map((row) => this.toEntity(row));
   }

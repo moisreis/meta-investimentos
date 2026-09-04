@@ -9,6 +9,7 @@ export * from "./fund/cvm-import.schema";
 export * from "./fund/fund.schema";
 export * from "./fund/quota.schema";
 export * from "./fund/quota-import.schema";
+export * from "./inngest/job-run.schema";
 export * from "./performance/portfolio-performance.schema";
 export * from "./performance/position-performance.schema";
 export * from "./portfolio/application.schema";

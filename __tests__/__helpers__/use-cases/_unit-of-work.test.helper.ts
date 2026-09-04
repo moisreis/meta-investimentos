@@ -430,6 +430,7 @@ export class FakeUnitOfWork {
     findById: (id) => this.portfolioStore.findById(id),
     findAllByUserId: (userId) =>
       this.portfolioStore.findMany((p) => p.userId === userId),
+    findAll: () => this.portfolioStore.findMany(() => true),
     findAllByIds: (ids) =>
       this.portfolioStore.findMany(
         (p) => p.id !== undefined && ids.includes(p.id),
