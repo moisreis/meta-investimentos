@@ -1,7 +1,7 @@
 import { eventType } from "inngest";
 
 import { inngest } from "@/infrastructure/inngest/client";
-import type { FundQuoteRefreshPayload } from "@/infrastructure/inngest/events";
+import { assertFundQuoteRefresh } from "@/infrastructure/inngest/contracts";
 import { fundQuoteRefreshIdempotencyKey } from "@/infrastructure/inngest/idempotency";
 import { getJobRunLedger } from "@/infrastructure/inngest/job-run.ledger.instance";
 import { RETRY_ATTEMPTS } from "@/infrastructure/inngest/retry";
@@ -26,7 +26,7 @@ export const quoteRefreshJob = inngest.createFunction(
   },
   async ({ event, step }) => {
     const ledger = await getJobRunLedger();
-    const payload = event.data as FundQuoteRefreshPayload;
+    const payload = assertFundQuoteRefresh(event.data);
 
     const run = await step.run("job-run.start", () =>
       ledger.start({

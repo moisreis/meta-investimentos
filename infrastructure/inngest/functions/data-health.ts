@@ -1,7 +1,7 @@
 import { eventType } from "inngest";
 
 import { inngest } from "@/infrastructure/inngest/client";
-import type { JobHealthCheckPayload } from "@/infrastructure/inngest/events";
+import { assertJobHealthCheck } from "@/infrastructure/inngest/contracts";
 import { dataHealthCheckIdempotencyKey } from "@/infrastructure/inngest/idempotency";
 import { getJobRunLedger } from "@/infrastructure/inngest/job-run.ledger.instance";
 import { RETRY_ATTEMPTS } from "@/infrastructure/inngest/retry";
@@ -35,7 +35,7 @@ export const dataHealthJob = inngest.createFunction(
   },
   async ({ event, step }) => {
     const ledger = await getJobRunLedger();
-    const payload = event.data as JobHealthCheckPayload;
+    const payload = assertJobHealthCheck(event.data);
 
     const run = await step.run("job-run.start", () =>
       ledger.start({

@@ -1,7 +1,7 @@
 import { eventType } from "inngest";
 
 import { inngest } from "@/infrastructure/inngest/client";
-import type { BenchmarkRefreshPayload } from "@/infrastructure/inngest/events";
+import { assertBenchmarkRefresh } from "@/infrastructure/inngest/contracts";
 import { benchmarkRefreshIdempotencyKey } from "@/infrastructure/inngest/idempotency";
 import { getJobRunLedger } from "@/infrastructure/inngest/job-run.ledger.instance";
 import { RETRY_ATTEMPTS } from "@/infrastructure/inngest/retry";
@@ -42,7 +42,7 @@ export const benchmarkRefreshJob = inngest.createFunction(
   },
   async ({ event, step }) => {
     const ledger = await getJobRunLedger();
-    const payload = event.data as BenchmarkRefreshPayload;
+    const payload = assertBenchmarkRefresh(event.data);
 
     const run = await step.run("job-run.start", () =>
       ledger.start({

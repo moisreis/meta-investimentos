@@ -1,10 +1,10 @@
 import { eventType } from "inngest";
 
 import { inngest } from "@/infrastructure/inngest/client";
-import type {
-  PerformanceCalculateDailyPayload,
-  PerformanceCalculateRequestedPayload,
-} from "@/infrastructure/inngest/events";
+import {
+  assertPerformanceCalculateDaily,
+  assertPerformanceCalculateRequested,
+} from "@/infrastructure/inngest/contracts";
 import {
   dailyCalculationIdempotencyKey,
   performanceCalculateIdempotencyKey,
@@ -39,7 +39,7 @@ export const performanceCalculationJob = inngest.createFunction(
   },
   async ({ event, step }) => {
     const ledger = await getJobRunLedger();
-    const payload = event.data as PerformanceCalculateRequestedPayload;
+    const payload = assertPerformanceCalculateRequested(event.data);
 
     const run = await step.run("job-run.start", () =>
       ledger.start({
@@ -108,7 +108,7 @@ export const dailyPerformanceCalculationJob = inngest.createFunction(
   },
   async ({ event, step }) => {
     const ledger = await getJobRunLedger();
-    const payload = event.data as PerformanceCalculateDailyPayload;
+    const payload = assertPerformanceCalculateDaily(event.data);
 
     const run = await step.run("job-run.start", () =>
       ledger.start({

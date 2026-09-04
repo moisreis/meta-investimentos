@@ -2,7 +2,7 @@ import type { SendEventPayload } from "inngest";
 import { eventType } from "inngest";
 
 import { inngest } from "@/infrastructure/inngest/client";
-import type { RetryFailedJobsPayload } from "@/infrastructure/inngest/events";
+import { assertRetryFailedJobs } from "@/infrastructure/inngest/contracts";
 import {
   newRequestId,
   retryFailedJobsIdempotencyKey,
@@ -28,7 +28,7 @@ export const retryFailedJobsJob = inngest.createFunction(
   },
   async ({ event, step }) => {
     const ledger = await getJobRunLedger();
-    const payload = event.data as RetryFailedJobsPayload;
+    const payload = assertRetryFailedJobs(event.data);
 
     const run = await step.run("job-run.start", () =>
       ledger.start({

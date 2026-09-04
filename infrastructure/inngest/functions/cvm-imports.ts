@@ -1,10 +1,10 @@
 import { eventType } from "inngest";
 
 import { inngest } from "@/infrastructure/inngest/client";
-import type {
-  CvmImportFundRequestedPayload,
-  CvmImportRequestedPayload,
-} from "@/infrastructure/inngest/events";
+import {
+  assertCvmImportFundRequested,
+  assertCvmImportRequested,
+} from "@/infrastructure/inngest/contracts";
 import {
   cvmImportFundIdempotencyKey,
   cvmImportIdempotencyKey,
@@ -33,7 +33,7 @@ export const cvmImportJob = inngest.createFunction(
   },
   async ({ event, step }) => {
     const ledger = await getJobRunLedger();
-    const payload = event.data as CvmImportRequestedPayload;
+    const payload = assertCvmImportRequested(event.data);
 
     const run = await step.run("job-run.start", () =>
       ledger.start({
@@ -93,7 +93,7 @@ export const cvmImportFundJob = inngest.createFunction(
   },
   async ({ event, step }) => {
     const ledger = await getJobRunLedger();
-    const payload = event.data as CvmImportFundRequestedPayload;
+    const payload = assertCvmImportFundRequested(event.data);
 
     const run = await step.run("job-run.start", () =>
       ledger.start({

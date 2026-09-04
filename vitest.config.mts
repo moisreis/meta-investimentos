@@ -110,6 +110,14 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          name: { label: "INNGEST", color: "red" },
+          include: ["**/__unit__/inngest/**/*.{test,spec}.{ts,tsx,js,jsx}"],
+          environment: "node",
+        },
+      },
+      {
+        extends: true,
+        test: {
           name: { label: "REPOSITORIES", color: "white" },
           include: [
             "**/__integration__/repositories/**/*.{test,spec}.{ts,tsx,js,jsx}",
