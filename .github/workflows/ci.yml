@@ -36,10 +36,6 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Run unit tests with coverage thresholds
-        # Exclude the integration (REPOSITORIES) project — it requires a live
-        # database and is exercised by the dedicated integration-tests job.
-        # The coverage `include` is business/**/*.ts, so excluding integration
-        # tests leaves the coverage gate unaffected.
         run: npx vitest run --coverage --exclude "**/__integration__/**"
 
   migrations-checks:

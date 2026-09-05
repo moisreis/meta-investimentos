@@ -12,6 +12,7 @@ import { CvmImportRepository } from "@/infrastructure/repositories/fund/cvm-impo
 import { FundRepository } from "@/infrastructure/repositories/fund/fund.repository";
 import { QuotaRepository } from "@/infrastructure/repositories/fund/quota.repository";
 import { QuotaImportRepository } from "@/infrastructure/repositories/fund/quota-import.repository";
+import { JobRunRepository } from "@/infrastructure/repositories/inngest/job-run.repository";
 import { PortfolioPerformanceRepository } from "@/infrastructure/repositories/performance/portfolio-performance.repository";
 import { PositionPerformanceRepository } from "@/infrastructure/repositories/performance/position-performance.repository";
 import { ApplicationRepository } from "@/infrastructure/repositories/portfolio/application.repository";
@@ -130,6 +131,11 @@ export interface UnitOfWorkContext {
    * Repository bound to the transaction for `quota_import` rows.
    */
   quotaImports: QuotaImportRepository;
+
+  /**
+   * Repository bound to the transaction for `job_run` ledger rows.
+   */
+  jobRuns: JobRunRepository;
 
   /**
    * Repository bound to the transaction for `category` rows.
@@ -338,6 +344,7 @@ export class UnitOfWork {
         ),
         cvmImports: new CvmImportRepository(tx),
         quotaImports: new QuotaImportRepository(tx),
+        jobRuns: new JobRunRepository(tx),
         categories: this.audited(
           new CategoryRepository(tx),
           "Category",

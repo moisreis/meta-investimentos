@@ -128,6 +128,17 @@ export default defineConfig({
           fileParallelism: false,
         },
       },
+      {
+        extends: true,
+        test: {
+          name: { label: "API", color: "green" },
+          include: ["**/__integration__/api/**/*.{test,spec}.{ts,tsx,js,jsx}"],
+          environment: "node",
+          testTimeout: 30_000,
+          hookTimeout: 30_000,
+          fileParallelism: false,
+        },
+      },
     ],
   },
 });
