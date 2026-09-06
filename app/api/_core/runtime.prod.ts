@@ -1,7 +1,7 @@
 import { resolveActorFromSession } from "@/business/use-cases/shared/actor-resolution";
 import { auth } from "@/infrastructure/clients/better-auth.client";
 import { db } from "@/infrastructure/clients/drizzle.client";
-import { inngest } from "@/infrastructure/inngest/client";
+import { inngest } from "@/infrastructure/inngest/inngest.provider";
 import { UnitOfWork } from "@/infrastructure/unit-of-work";
 
 import type { ApiRuntime } from "./runtime";

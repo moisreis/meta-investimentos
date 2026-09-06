@@ -24,7 +24,7 @@ export const statement = pgSchema("report").table(
     periodStart: date("period_start").notNull(),
     periodEnd: date("period_end").notNull(),
     fileUrl: text("file_url").notNull(),
-    generatedByUserId: uuid("generated_by_user_id").references(() => user.id),
+    generatedByUserId: text("generated_by_user_id").references(() => user.id),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

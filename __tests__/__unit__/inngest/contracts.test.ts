@@ -10,7 +10,7 @@ import {
   assertPerformanceCalculateRequested,
   assertRetryFailedJobs,
   isIsoDateString,
-} from "@/infrastructure/inngest/contracts";
+} from "@/infrastructure/inngest/payloads.contracts";
 
 describe("isIsoDateString", () => {
   it.each([

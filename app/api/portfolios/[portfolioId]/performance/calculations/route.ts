@@ -8,7 +8,7 @@ import {
   referencePeriodSchema,
 } from "@/app/api/_core/schemas";
 import { getPortfolio } from "@/business/use-cases/portfolio/get-portfolio.uc";
-import { buildPerformanceCalculationRequest } from "@/infrastructure/inngest/requests";
+import { buildPerformanceCalculationRequest } from "@/infrastructure/inngest/requests.utils";
 
 /**
  * The JSON body accepted when requesting a performance calculation.

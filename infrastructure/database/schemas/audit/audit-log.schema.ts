@@ -22,7 +22,7 @@ export const auditLog = pgSchema("audit").table(
     entityId: text("entity_id").notNull(),
     action: text("action").notNull(),
     changes: jsonb("changes"),
-    userId: uuid("user_id").references(() => user.id),
+    userId: text("user_id").references(() => user.id),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

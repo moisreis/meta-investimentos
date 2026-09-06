@@ -1,4 +1,5 @@
-import { index, pgSchema, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { index, pgSchema, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./user.schema";
 
 /**
@@ -11,7 +12,7 @@ import { user } from "./user.schema";
 export const session = pgSchema("user").table(
   "session",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    id: text("id").primaryKey().default(sql`gen_random_uuid()::text`),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     token: text("token").notNull().unique(),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -22,7 +23,7 @@ export const session = pgSchema("user").table(
       .notNull(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
-    userId: uuid("user_id")
+    userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
   },

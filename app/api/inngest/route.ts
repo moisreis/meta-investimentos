@@ -1,7 +1,6 @@
 import { serve } from "inngest/next";
-
-import { inngest } from "@/infrastructure/inngest/client";
 import { functions } from "@/infrastructure/inngest/functions";
+import { inngest } from "@/infrastructure/inngest/inngest.provider";
 
 /**
  * Mount the *Inngest* HTTP endpoints.

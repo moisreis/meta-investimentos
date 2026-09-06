@@ -1,19 +1,19 @@
-import { benchmarkRefreshJob } from "./benchmark-refresh";
+import { benchmarkRefreshJob } from "./benchmark-refresh.jobs";
 import {
   dailyPerformanceCalculationJob,
   performanceCalculationJob,
-} from "./calculations";
-import { cvmImportFundJob, cvmImportJob } from "./cvm-imports";
-import { dataHealthJob } from "./data-health";
-import { quoteRefreshJob } from "./quote-refresh";
-import { retryFailedJobsJob } from "./retry-jobs";
+} from "./calculations.jobs";
+import { cvmImportFundJob, cvmImportJob } from "./cvm-imports.jobs";
+import { dataHealthJob } from "./data-health.jobs";
+import { quoteRefreshJob } from "./quote-refresh.jobs";
+import { retryFailedJobsJob } from "./retry-jobs.jobs";
 import {
   scheduleBenchmarkRefresh,
   scheduleDailyCalculations,
   scheduleDataHealth,
   scheduleQuoteRefresh,
   scheduleRetryJobs,
-} from "./schedules";
+} from "./schedules.jobs";
 
 /**
  * Every *Inngest* function served by the application.

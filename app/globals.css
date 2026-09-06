@@ -127,3 +127,44 @@
     @apply font-sans;
     }
 }
+@layer utilities {
+@keyframes auth-background {
+  /* Background 1 - initial pause */
+  0%,
+  20% {
+    transform: translateX(0);
+    animation-timing-function: ease-in;
+  }
+
+  /* Slide to background 2 */
+  25%,
+  45% {
+    transform: translateX(-25%);
+    animation-timing-function: ease-in;
+  }
+
+  /* Slide to background 3 */
+  50%,
+  70% {
+    transform: translateX(-50%);
+    animation-timing-function: ease-in;
+  }
+
+  /* Slide to duplicated background 1 */
+  75%,
+  95% {
+    transform: translateX(-75%);
+    animation-timing-function: ease-in;
+  }
+
+  /* Return to start */
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-auth-background {
+  animation: auth-background 10s ease-in infinite;
+  will-change: transform;
+}
+}

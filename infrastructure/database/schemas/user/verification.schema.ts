@@ -1,4 +1,5 @@
-import { index, pgSchema, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { index, pgSchema, text, timestamp } from "drizzle-orm/pg-core";
 
 /**
  * Defines the `verification` table within the `user` database schema.
@@ -9,7 +10,7 @@ import { index, pgSchema, text, timestamp, uuid } from "drizzle-orm/pg-core";
 export const verification = pgSchema("user").table(
   "verification",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    id: text("id").primaryKey().default(sql`gen_random_uuid()::text`),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),

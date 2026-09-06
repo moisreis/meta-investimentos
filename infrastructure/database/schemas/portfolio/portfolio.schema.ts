@@ -23,7 +23,7 @@ export const portfolio = pgSchema("portfolio").table(
     id: uuid("id").primaryKey().defaultRandom(),
     acronym: text("acronym").notNull(),
     name: text("name").notNull(),
-    userId: uuid("user_id")
+    userId: text("user_id")
       .notNull()
       .references(() => user.id),
     annualInterestRate: numeric("annual_interest_rate", {

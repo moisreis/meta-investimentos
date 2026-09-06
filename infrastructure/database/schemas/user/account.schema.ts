@@ -1,10 +1,10 @@
+import { sql } from "drizzle-orm";
 import {
   index,
   pgSchema,
   text,
   timestamp,
   uniqueIndex,
-  uuid,
 } from "drizzle-orm/pg-core";
 import { user } from "./user.schema";
 
@@ -18,11 +18,11 @@ import { user } from "./user.schema";
 export const account = pgSchema("user").table(
   "account",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    id: text("id").primaryKey().default(sql`gen_random_uuid()::text`),
     issuer: text("issuer").notNull(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
-    userId: uuid("user_id")
+    userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     accessToken: text("access_token"),

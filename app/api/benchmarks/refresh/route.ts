@@ -3,7 +3,7 @@ import { z } from "zod";
 import { accepted } from "@/app/api/_core/envelope";
 import { apiHandler } from "@/app/api/_core/handler";
 import { dateStringSchema } from "@/app/api/_core/schemas";
-import { buildBenchmarkRefresh } from "@/infrastructure/inngest/requests";
+import { buildBenchmarkRefresh } from "@/infrastructure/inngest/requests.utils";
 
 /**
  * The JSON body accepted when requesting a benchmark refresh.

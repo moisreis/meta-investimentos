@@ -1,11 +1,13 @@
-import './globals.css';
+import "./globals.css";
 import type { Metadata } from "next";
-import { Inter, Geist } from "next/font/google";
+import { Geist, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/presentation/components/ui/toast";
+import { TooltipProvider } from "@/presentation/components/ui/tooltip";
 
-const geistHeading = Geist({subsets:['latin'],variable:'--font-heading'});
+const geistHeading = Geist({ subsets: ["latin"], variable: "--font-heading" });
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "Meta Investimentos",
@@ -14,8 +16,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={cn("font-sans", inter.variable, geistHeading.variable)}>
-      <body>{children}</body>
+    <html
+      lang="pt-BR"
+      className={cn("font-sans", inter.variable, geistHeading.variable)}
+    >
+      <body className="">
+        <TooltipProvider>{children}</TooltipProvider>
+        <Toaster />
+      </body>
     </html>
   );
 }

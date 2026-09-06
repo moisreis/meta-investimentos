@@ -3,7 +3,7 @@ import { z } from "zod";
 import { accepted } from "@/app/api/_core/envelope";
 import { apiHandler } from "@/app/api/_core/handler";
 import { cnpjSchema, dateStringSchema } from "@/app/api/_core/schemas";
-import { buildFundQuoteRefresh } from "@/infrastructure/inngest/requests";
+import { buildFundQuoteRefresh } from "@/infrastructure/inngest/requests.utils";
 
 /**
  * The JSON body accepted when requesting a fund quote refresh.

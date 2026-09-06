@@ -20,14 +20,14 @@ export const portfolioPermission = pgSchema("portfolio").table(
   "portfolio_permission",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id")
+    userId: text("user_id")
       .notNull()
       .references(() => user.id),
     portfolioId: uuid("portfolio_id")
       .notNull()
       .references(() => portfolio.id, { onDelete: "cascade" }),
     role: text("role", { enum: ["VIEWER", "EDITOR"] }).notNull(),
-    grantedByUserId: uuid("granted_by_user_id")
+    grantedByUserId: text("granted_by_user_id")
       .notNull()
       .references(() => user.id),
     createdAt: timestamp("created_at", { withTimezone: true })

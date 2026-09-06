@@ -5,7 +5,7 @@ import {
   buildCvmImportRequest,
   buildFundQuoteRefresh,
   buildPerformanceCalculationRequest,
-} from "@/infrastructure/inngest/requests";
+} from "@/infrastructure/inngest/requests.utils";
 
 describe("buildCvmImportRequest", () => {
   it("builds a sendable import request with a fresh id", () => {

@@ -7,7 +7,7 @@ export type { ResolvedActor } from "@/business/use-cases/shared/actor-resolution
  * An event the API layer can hand to the job scheduler.
  *
  * The payload shape mirrors the validated request events produced by the
- * {@link "@/infrastructure/inngest/requests"} builders, so routes send
+ * {@link "@/infrastructure/inngest/requests.utils"} builders, so routes send
  * builders' output through {@link ApiRuntime.send}.
  */
 export interface SendableEvent {
