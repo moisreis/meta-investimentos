@@ -15,9 +15,12 @@ export interface SessionUser {
   id: string;
 
   /**
-   * The platform role of the user, when the session carries it.
+   * The platform role of the user as carried by the session, when known.
+   *
+   * The role arrives as a raw session value from the authentication
+   * framework and is validated into a {@link UserRole} by the resolver.
    */
-  role?: UserRole;
+  role?: string;
 }
 
 /**
@@ -67,7 +70,7 @@ export function resolveActorFromSession(
 
   return {
     actorId: EntityId.create(user.id),
-    role: user.role ?? "USER",
+    role: user.role === "MANAGER" ? "MANAGER" : "USER",
   };
 }
 

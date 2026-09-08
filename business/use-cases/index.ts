@@ -6,6 +6,9 @@ export { createApplication } from "./application/create-application.uc";
 export { getApplication } from "./application/get-application.uc";
 export { listPositionApplications } from "./application/list-position-applications.uc";
 export { reverseApplication } from "./application/reverse-application.uc";
+// Audit
+export type { NotificationDto } from "./audit/audit.dtos";
+export { listNotifications } from "./audit/list-notifications.uc";
 export type {
   BankAccountDto,
   BankDto,
@@ -145,6 +148,14 @@ export { getStatement } from "./statement/get-statement.uc";
 export { listPortfolioStatements } from "./statement/list-portfolio-statements.uc";
 export { listUserStatements } from "./statement/list-user-statements.uc";
 export type { StatementDto } from "./statement/statement.dtos";
+export type {
+  SystemHealthCheck,
+  SystemHealthDto,
+  SystemHealthStatus,
+} from "./system/system-health.dtos";
+// System
+export type { SystemHealthDeps } from "./system/system-health.uc";
+export { getSystemHealth } from "./system/system-health.uc";
 export { deleteUser } from "./user/delete-user.uc";
 export { getCurrentActor } from "./user/get-current-actor.uc";
 export { getUser } from "./user/get-user.uc";

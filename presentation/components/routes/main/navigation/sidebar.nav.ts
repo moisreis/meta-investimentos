@@ -4,7 +4,6 @@ import {
   ArrowDownLeft01Icon,
   ArrowUpRight01Icon,
   BankIcon,
-  BanknoteIcon,
   Calendar01Icon,
   ChartHistogramIcon,
   ChartLineIcon,
@@ -13,18 +12,11 @@ import {
   DatabaseIcon,
   DatabaseImportIcon,
   FileDownloadIcon,
-  FileManagementIcon,
   FileTextIcon,
-  GavelIcon,
   LayerIcon,
-  LayoutDashboardIcon,
-  Legal01Icon,
-  ListChecksIcon,
   LogsIcon,
   NewOfficeIcon,
   PiggyBankIcon,
-  Settings02Icon,
-  ShieldCheckIcon,
   TrendingDownIcon,
   UndoIcon,
   UserMultipleIcon,
@@ -48,6 +40,7 @@ export type SidebarMenuGroup = {
 
 export type SidebarNavTab = {
   value: string;
+  label: string;
   managerOnly?: boolean;
   groups: SidebarMenuGroup[];
 };
@@ -60,8 +53,10 @@ export type SidebarNavTab = {
  * step); items and groups marked `managerOnly` are only shown to `MANAGER`s.
  */
 export const SIDEBAR_NAV: SidebarNavTab[] = [
+  // Portfolio
   {
     value: "portfolio",
+    label: "Carteiras",
     groups: [
       {
         label: "Inventários",
@@ -71,164 +66,13 @@ export const SIDEBAR_NAV: SidebarNavTab[] = [
             href: "/main/portfolios",
             icon: WalletCardsIcon,
           },
-          { label: "Posições", href: "/main/positions", icon: LayerIcon },
-          {
-            label: "Movimentações",
-            href: "/main/transactions",
-            icon: BanknoteIcon,
-          },
-          {
-            label: "Conformidade",
-            href: "/main/compliance",
-            icon: ShieldCheckIcon,
-          },
-          {
-            label: "Relatórios",
-            href: "/main/statements",
-            icon: FileDownloadIcon,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: "performance",
-    groups: [
-      {
-        label: "Desempenho",
-        items: [
-          {
-            label: "Visão geral",
-            href: "/main/performance/overview",
-            icon: LayoutDashboardIcon,
-          },
-          {
-            label: "Carteira",
-            href: "/main/performance/portfolio",
-            icon: ChartLineIcon,
-          },
           {
             label: "Posições",
-            href: "/main/performance/positions",
-            icon: ChartHistogramIcon,
-          },
-          {
-            label: "Histórico",
-            href: "/main/performance/history",
-            icon: Calendar01Icon,
-          },
-          {
-            label: "Recálculo",
-            href: "/main/performance/recalculate",
-            icon: Settings02Icon,
+            href: "/main/positions",
+            icon: LayerIcon,
           },
         ],
       },
-    ],
-  },
-  {
-    value: "bank",
-    groups: [
-      {
-        label: "Dados bancários",
-        items: [
-          { label: "Bancos", href: "/main/bank/institutions", icon: BankIcon },
-          {
-            label: "Contas correntes",
-            href: "/main/bank/accounts",
-            icon: PiggyBankIcon,
-          },
-          {
-            label: "Extratos",
-            href: "/main/bank/statements",
-            icon: FileTextIcon,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: "benchmarks",
-    managerOnly: true,
-    groups: [
-      {
-        label: "Índices de referência",
-        items: [
-          {
-            label: "Índices",
-            href: "/main/benchmarks/index",
-            icon: TrendingDownIcon,
-          },
-          {
-            label: "Histórico",
-            href: "/main/benchmarks/history",
-            icon: ChartLineIcon,
-          },
-          {
-            label: "Atualizar",
-            href: "/main/benchmarks/refresh",
-            icon: CloudDownloadIcon,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: "quotas",
-    managerOnly: true,
-    groups: [
-      {
-        label: "Cotas",
-        items: [
-          {
-            label: "Cotação dos fundos",
-            href: "/main/quotas/prices",
-            icon: AppleStocksIcon,
-          },
-          {
-            label: "Importação CVM",
-            href: "/main/quotas/import",
-            icon: DatabaseImportIcon,
-          },
-          {
-            label: "Lacunas de dados",
-            href: "/main/quotas/gaps",
-            icon: Clock01Icon,
-          },
-          {
-            label: "Fundos desatualizados",
-            href: "/main/quotas/staleness",
-            icon: DatabaseIcon,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: "fund",
-    managerOnly: true,
-    groups: [
-      {
-        label: "Fundos",
-        items: [
-          { label: "Fundos", href: "/main/funds/catalog", icon: NewOfficeIcon },
-          {
-            label: "Categorias",
-            href: "/main/funds/categories",
-            icon: ListChecksIcon,
-          },
-          {
-            label: "Credenciamentos",
-            href: "/main/funds/accreditations",
-            icon: FileManagementIcon,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: "cash-flow",
-    groups: [
       {
         label: "Movimentações",
         items: [
@@ -249,17 +93,148 @@ export const SIDEBAR_NAV: SidebarNavTab[] = [
           },
         ],
       },
+      {
+        label: "Desempenho",
+        items: [
+          {
+            label: "Carteiras",
+            href: "/main/performance/portfolio",
+            icon: ChartLineIcon,
+          },
+          {
+            label: "Posições",
+            href: "/main/performance/positions",
+            icon: ChartHistogramIcon,
+          },
+          {
+            label: "Histórico",
+            href: "/main/performance/history",
+            icon: Calendar01Icon,
+          },
+        ],
+      },
+      {
+        label: "Índices de referência",
+        items: [
+          {
+            label: "Índices",
+            href: "/main/benchmarks/index",
+            icon: TrendingDownIcon,
+          },
+          {
+            label: "Histórico",
+            href: "/main/benchmarks/history",
+            icon: ChartLineIcon,
+          },
+          {
+            label: "Atualizar",
+            href: "/main/benchmarks/refresh",
+            icon: CloudDownloadIcon,
+          },
+        ],
+      },
+      {
+        label: "Dados de referência",
+        items: [
+          {
+            label: "Relatórios",
+            href: "/main/statements",
+            icon: FileDownloadIcon,
+          },
+        ],
+      },
+    ],
+  },
+  // References
+  {
+    value: "Referências",
+    label: "Referências",
+    groups: [
+      {
+        label: "Dados bancários",
+        items: [
+          {
+            label: "Bancos",
+            href: "/main/bank/institutions",
+            icon: BankIcon,
+          },
+          {
+            label: "Contas bancárias",
+            href: "/main/bank/statements",
+            icon: FileTextIcon,
+          },
+          {
+            label: "Contas correntes",
+            href: "/main/bank/accounts",
+            icon: PiggyBankIcon,
+          },
+        ],
+      },
+      {
+        label: "Normas regulatórias",
+        items: [
+          {
+            label: "Categorias",
+            href: "/main/benchmarks/index",
+            icon: TrendingDownIcon,
+          },
+          {
+            label: "Artigos normativos",
+            href: "/main/benchmarks/history",
+            icon: ChartLineIcon,
+          },
+        ],
+      },
+    ],
+  },
+  // Management
+  {
+    value: "quotas",
+    label: "Fundos e cotas",
+    managerOnly: true,
+    groups: [
+      {
+        label: "Fundos",
+        items: [
+          {
+            label: "Fundos de investimento",
+            href: "/main/funds/catalog",
+            icon: NewOfficeIcon,
+          },
+        ],
+      },
+      {
+        label: "Cotas",
+        items: [
+          {
+            label: "Cotação dos fundos",
+            href: "/main/quotas/prices",
+            icon: AppleStocksIcon,
+          },
+          {
+            label: "Lacunas de dados",
+            href: "/main/quotas/gaps",
+            icon: Clock01Icon,
+          },
+          {
+            label: "Fundos desatualizados",
+            href: "/main/quotas/staleness",
+            icon: DatabaseIcon,
+          },
+        ],
+      },
     ],
   },
   {
-    value: "users",
+    value: "system",
+    label: "Sistema",
     managerOnly: true,
     groups: [
       {
         label: "Usuários",
         items: [
           {
-            label: "Todos os usuários",
+            label: "Usuários",
             href: "/main/users/all",
             icon: UsersIcon,
           },
@@ -269,17 +244,12 @@ export const SIDEBAR_NAV: SidebarNavTab[] = [
             icon: UserShield01Icon,
           },
           {
-            label: "Acessos a carteiras",
+            label: "Acessos á carteiras",
             href: "/main/users/access",
             icon: UserMultipleIcon,
           },
         ],
       },
-    ],
-  },
-  {
-    value: "logs",
-    groups: [
       {
         label: "Atividade",
         items: [
@@ -287,34 +257,11 @@ export const SIDEBAR_NAV: SidebarNavTab[] = [
           { label: "Eventos", href: "/main/logs/events", icon: Activity02Icon },
         ],
       },
-    ],
-  },
-  {
-    value: "normas",
-    managerOnly: true,
-    groups: [
-      {
-        label: "Normas",
-        items: [
-          { label: "Normas", href: "/main/norms/registry", icon: Legal01Icon },
-          {
-            label: "Aplicação por carteira",
-            href: "/main/norms/portfolios",
-            icon: GavelIcon,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: "dados",
-    managerOnly: true,
-    groups: [
       {
         label: "Manutenção",
         items: [
           {
-            label: "Importações CVM",
+            label: "Importações de dados",
             href: "/main/data/imports",
             icon: DatabaseImportIcon,
           },

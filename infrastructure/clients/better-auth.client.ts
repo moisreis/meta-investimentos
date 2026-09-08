@@ -24,6 +24,10 @@ import { verification } from "@/infrastructure/database/schemas/user/verificatio
  * table (`first_name`, `last_name`, `cpf`). Those fields are accepted from
  * the client on sign-up so the insert always satisfies the constraints.
  *
+ * `role` is *not* client-writable (`input: false`): it defaults to `USER`
+ * server-side and is promoted to `MANAGER` by the application, so it is
+ * exposed read-only in the session to let the UI gate manager-only areas.
+ *
  * @remarks
  * This module is the single source of truth for the `auth` instance.
  * Any route handler or server component that needs authentication should
@@ -60,6 +64,11 @@ export const auth = betterAuth({
         type: "string",
         required: true,
         input: true,
+      },
+      role: {
+        type: "string",
+        defaultValue: "USER",
+        input: false,
       },
     },
   },
