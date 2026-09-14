@@ -243,13 +243,13 @@ export class Session {
    */
   public static create(props: SessionProps, id?: string): Session {
     if (!props.userId || props.userId.trim() === "") {
-      throw new ValidationError("Session must have a user id.");
+      throw new ValidationError("`Session` must have a user id.");
     }
     if (!props.token || props.token.trim() === "") {
-      throw new ValidationError("Session must have a token.");
+      throw new ValidationError("`Session` must have a token.");
     }
     if (!props.expiresAt) {
-      throw new ValidationError("Session must have an expiration date.");
+      throw new ValidationError("`Session` must have an expiration date.");
     }
 
     const NOW = new Date();

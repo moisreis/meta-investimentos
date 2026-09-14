@@ -361,26 +361,26 @@ export class User {
    */
   public static create(props: UserProps, id?: string): User {
     if (!props.name || props.name.trim() === "") {
-      throw new ValidationError("User must have a name.");
+      throw new ValidationError("`User` must have a name.");
     }
     if (!props.email || !EMAIL_PATTERN.test(props.email)) {
-      throw new ValidationError("User must have a valid email.");
+      throw new ValidationError("`User` must have a valid email.");
     }
     if (!props.firstName || props.firstName.trim() === "") {
-      throw new ValidationError("User must have a first name.");
+      throw new ValidationError("`User` must have a first name.");
     }
     if (!props.lastName || props.lastName.trim() === "") {
-      throw new ValidationError("User must have a last name.");
+      throw new ValidationError("`User` must have a last name.");
     }
     if (!props.cpf) {
-      throw new ValidationError("User must have a valid cpf.");
+      throw new ValidationError("`User` must have a valid cpf.");
     }
     if (
       props.role !== undefined &&
       props.role !== "USER" &&
       props.role !== "MANAGER"
     ) {
-      throw new ValidationError("User must have a valid role.");
+      throw new ValidationError("`User` must have a valid role.");
     }
 
     const NOW = new Date();
@@ -438,13 +438,13 @@ export class User {
     const image = props.image === undefined ? this.props.image : props.image;
 
     if (name.trim() === "") {
-      throw new ValidationError("User must have a name.");
+      throw new ValidationError("`User` must have a name.");
     }
     if (firstName.trim() === "") {
-      throw new ValidationError("User must have a first name.");
+      throw new ValidationError("`User` must have a first name.");
     }
     if (lastName.trim() === "") {
-      throw new ValidationError("User must have a last name.");
+      throw new ValidationError("`User` must have a last name.");
     }
 
     const NOW = now ?? new Date();

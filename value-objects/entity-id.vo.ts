@@ -62,7 +62,7 @@ export const EntityId = {
    */
   create(value: string): EntityId {
     if (value === undefined || value === null) {
-      throw new ValidationError("EntityId must be defined.")
+      throw new ValidationError("`EntityId` must be defined.")
     }
 
     if (value.trim() === "") {

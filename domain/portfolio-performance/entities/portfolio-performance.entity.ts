@@ -490,39 +490,39 @@ export class PortfolioPerformance {
   ): PortfolioPerformance {
     if (!props.portfolioId || props.portfolioId.trim() === "") {
       throw new ValidationError(
-        "PortfolioPerformance must have a portfolio id.",
+        "`PortfolioPerformance` must have a portfolio id.",
       );
     }
     if (!props.date) {
-      throw new ValidationError("PortfolioPerformance must have a date.");
+      throw new ValidationError("`PortfolioPerformance` must have a date.");
     }
     if (!props.quotasHeld) {
-      throw new ValidationError("PortfolioPerformance must have quotas held.");
+      throw new ValidationError("`PortfolioPerformance` must have quotas held.");
     }
     if (!props.patrimony) {
-      throw new ValidationError("PortfolioPerformance must have patrimony.");
+      throw new ValidationError("`PortfolioPerformance` must have patrimony.");
     }
     if (!props.applicationTotal) {
       throw new ValidationError(
-        "PortfolioPerformance must have an application total.",
+        "`PortfolioPerformance` must have an application total.",
       );
     }
     if (!props.redemptionTotal) {
       throw new ValidationError(
-        "PortfolioPerformance must have a redemption total.",
+        "`PortfolioPerformance` must have a redemption total.",
       );
     }
     if (!props.cashFlowNet) {
       throw new ValidationError(
-        "PortfolioPerformance must have cash flow net.",
+        "`PortfolioPerformance` must have cash flow net.",
       );
     }
     if (!props.earnings) {
-      throw new ValidationError("PortfolioPerformance must have earnings.");
+      throw new ValidationError("`PortfolioPerformance` must have earnings.");
     }
     if (!props.returnDaily) {
       throw new ValidationError(
-        "PortfolioPerformance must have a daily return.",
+        "`PortfolioPerformance` must have a daily return.",
       );
     }
 

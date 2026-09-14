@@ -222,16 +222,16 @@ export class BankAccount {
    */
   public static create(props: BankAccountProps, id?: string): BankAccount {
     if (!props.portfolioId || props.portfolioId.trim() === "") {
-      throw new ValidationError("BankAccount must have a portfolio id.");
+      throw new ValidationError("`BankAccount` must have a portfolio id.");
     }
     if (!props.bankId || props.bankId.trim() === "") {
-      throw new ValidationError("BankAccount must have a bank id.");
+      throw new ValidationError("`BankAccount` must have a bank id.");
     }
     if (!props.agency || props.agency.trim() === "") {
-      throw new ValidationError("BankAccount must have an agency.");
+      throw new ValidationError("`BankAccount` must have an agency.");
     }
     if (!props.accountNumber || props.accountNumber.trim() === "") {
-      throw new ValidationError("BankAccount must have an account number.");
+      throw new ValidationError("`BankAccount` must have an account number.");
     }
 
     const NOW = new Date();
@@ -282,10 +282,10 @@ export class BankAccount {
     const ACCOUNT_NUMBER = options.accountNumber ?? this.props.accountNumber;
 
     if (!AGENCY || AGENCY.trim() === "") {
-      throw new ValidationError("BankAccount must have an agency.");
+      throw new ValidationError("`BankAccount` must have an agency.");
     }
     if (!ACCOUNT_NUMBER || ACCOUNT_NUMBER.trim() === "") {
-      throw new ValidationError("BankAccount must have an account number.");
+      throw new ValidationError("`BankAccount` must have an account number.");
     }
 
     const NOW = now ?? new Date();

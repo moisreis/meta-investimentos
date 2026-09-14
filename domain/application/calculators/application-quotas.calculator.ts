@@ -43,7 +43,7 @@ export function calculateApplicationQuotas({
 }: CalculateApplicationQuotasProps): QuotaQuantity {
   if (quota.value.isZero()) {
     throw new ValidationError(
-      "Application quotas cannot be calculated with a zero quota price.",
+      "`Application` quotas cannot be calculated with a zero quota price.",
     );
   }
 

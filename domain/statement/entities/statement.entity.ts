@@ -222,17 +222,17 @@ export class Statement {
    */
   public static create(props: StatementProps, id?: string): Statement {
     if (!props.periodStart) {
-      throw new ValidationError("Statement must have a period start.");
+      throw new ValidationError("`Statement` must have a period start.");
     }
     if (!props.periodEnd) {
-      throw new ValidationError("Statement must have a period end.");
+      throw new ValidationError("`Statement` must have a period end.");
     }
     if (!props.fileUrl || props.fileUrl.trim() === "") {
-      throw new ValidationError("Statement must have a file url.");
+      throw new ValidationError("`Statement` must have a file url.");
     }
     if (props.periodStart.getTime() > props.periodEnd.getTime()) {
       throw new ValidationError(
-        "Statement period start must not be after period end.",
+        "`Statement` period start must not be after period end.",
       );
     }
 

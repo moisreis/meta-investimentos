@@ -160,13 +160,13 @@ export class CheckingAccount {
     id?: string,
   ): CheckingAccount {
     if (!props.bankAccountId || props.bankAccountId.trim() === "") {
-      throw new ValidationError("CheckingAccount must have a bank account id.");
+      throw new ValidationError("`CheckingAccount` must have a bank account id.");
     }
     if (!props.date) {
-      throw new ValidationError("CheckingAccount must have a date.");
+      throw new ValidationError("`CheckingAccount` must have a date.");
     }
     if (!props.value) {
-      throw new ValidationError("CheckingAccount must have a value.");
+      throw new ValidationError("`CheckingAccount` must have a value.");
     }
 
     const NORMALIZED_PROPS: Required<CheckingAccountProps> = {
@@ -200,7 +200,7 @@ export class CheckingAccount {
    */
   public updateValue(value: SignedMoney): CheckingAccount {
     if (!value) {
-      throw new ValidationError("CheckingAccount must have a value.");
+      throw new ValidationError("`CheckingAccount` must have a value.");
     }
 
     return new CheckingAccount(

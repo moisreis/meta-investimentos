@@ -177,10 +177,10 @@ export class Bank {
    */
   public static create(props: BankProps, id?: string): Bank {
     if (!props.code || props.code.trim() === "") {
-      throw new ValidationError("Bank must have a code.");
+      throw new ValidationError("`Bank` must have a code.");
     }
     if (!props.name || props.name.trim() === "") {
-      throw new ValidationError("Bank must have a name.");
+      throw new ValidationError("`Bank` must have a name.");
     }
 
     const NOW = new Date();
@@ -219,7 +219,7 @@ export class Bank {
    */
   public rename(name: string, now?: Date): Bank {
     if (!name || name.trim() === "") {
-      throw new ValidationError("Bank must have a name.");
+      throw new ValidationError("`Bank` must have a name.");
     }
 
     const NOW = now ?? new Date();
@@ -259,7 +259,7 @@ export class Bank {
    */
   public changeCode(code: string, now?: Date): Bank {
     if (!code || code.trim() === "") {
-      throw new ValidationError("Bank must have a code.");
+      throw new ValidationError("`Bank` must have a code.");
     }
 
     const NOW = now ?? new Date();

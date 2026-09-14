@@ -45,7 +45,7 @@ export function calculatePortfolioTarget({
 
   if (MONTHLY_PORTFOLIO_BASE.lessThan(0)) {
     throw new ValidationError(
-      "Portfolio target cannot be calculated with an annual interest rate below -100%.",
+      "`Portfolio` target cannot be calculated with an annual interest rate below -100%.",
     );
   }
 

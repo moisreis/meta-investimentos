@@ -269,16 +269,16 @@ export class Application {
    */
   public static create(props: ApplicationProps, id?: string): Application {
     if (!props.positionId || props.positionId.trim() === "") {
-      throw new ValidationError("Application must have a position id.");
+      throw new ValidationError("`Application` must have a position id.");
     }
     if (!props.date) {
-      throw new ValidationError("Application must have a date.");
+      throw new ValidationError("`Application` must have a date.");
     }
     if (!props.amount) {
-      throw new ValidationError("Application must have an amount.")
+      throw new ValidationError("`Application` must have an amount.")
     }
     if (!props.quotas) {
-      throw new ValidationError("Application must have quotas.")
+      throw new ValidationError("`Application` must have quotas.")
     }
 
     const NOW = new Date()
@@ -321,12 +321,12 @@ export class Application {
   public reverse(userId: EntityId, now?: Date): Application {
     if (this._id === undefined) {
       throw new ValidationError(
-        "Cannot reverse an application that has not been persisted.",
+        "Cannot reverse an `Application` that has not been persisted.",
       )
     }
     if (this.props.reversedAt !== null) {
       throw new ValidationError(
-        "Cannot reverse an application that is already reversed.",
+        "Cannot reverse an `Application` that is already reversed.",
       )
     }
 

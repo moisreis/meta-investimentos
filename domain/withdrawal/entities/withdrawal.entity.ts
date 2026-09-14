@@ -269,16 +269,16 @@ export class Withdrawal {
    */
   public static create(props: WithdrawalProps, id?: string): Withdrawal {
     if (!props.positionId || props.positionId.trim() === "") {
-      throw new ValidationError("Withdrawal must have a position id.");
+      throw new ValidationError("`Withdrawal` must have a position id.");
     }
     if (!props.date) {
-      throw new ValidationError("Withdrawal must have a date.");
+      throw new ValidationError("`Withdrawal` must have a date.");
     }
     if (!props.amount) {
-      throw new ValidationError("Withdrawal must have an amount.");
+      throw new ValidationError("`Withdrawal` must have an amount.");
     }
     if (!props.quotas) {
-      throw new ValidationError("Withdrawal must have quotas.");
+      throw new ValidationError("`Withdrawal` must have quotas.");
     }
 
     const NOW = new Date();
@@ -321,12 +321,12 @@ export class Withdrawal {
   public reverse(userId: EntityId, now?: Date): Withdrawal {
     if (this._id === undefined) {
       throw new ValidationError(
-        "Cannot reverse a withdrawal that has not been persisted.",
+        "Cannot reverse a `Withdrawal` that has not been persisted.",
       );
     }
     if (this.props.reversedAt !== null) {
       throw new ValidationError(
-        "Cannot reverse a withdrawal that is already reversed.",
+        "Cannot reverse a `Withdrawal` that is already reversed.",
       );
     }
 

@@ -227,34 +227,34 @@ export class NormsPortfolios {
     id?: string,
   ): NormsPortfolios {
     if (!props.normId || props.normId.trim() === "") {
-      throw new ValidationError("NormsPortfolios must have a norm id.");
+      throw new ValidationError("`NormsPortfolios` must have a norm id.");
     }
     if (!props.portfolioId || props.portfolioId.trim() === "") {
-      throw new ValidationError("NormsPortfolios must have a portfolio id.");
+      throw new ValidationError("`NormsPortfolios` must have a portfolio id.");
     }
     if (!props.minAllocation) {
       throw new ValidationError(
-        "NormsPortfolios must have a minimum allocation.",
+        "`NormsPortfolios` must have a minimum allocation.",
       );
     }
     if (!props.maxAllocation) {
       throw new ValidationError(
-        "NormsPortfolios must have a maximum allocation.",
+        "`NormsPortfolios` must have a maximum allocation.",
       );
     }
     if (!props.targetAllocation) {
       throw new ValidationError(
-        "NormsPortfolios must have a target allocation.",
+        "`NormsPortfolios` must have a target allocation.",
       );
     }
     if (props.minAllocation.value.gt(props.targetAllocation.value)) {
       throw new ValidationError(
-        "NormsPortfolios minimum allocation must not exceed target allocation.",
+        "`NormsPortfolios` minimum allocation must not exceed target allocation.",
       );
     }
     if (props.targetAllocation.value.gt(props.maxAllocation.value)) {
       throw new ValidationError(
-        "NormsPortfolios target allocation must not exceed maximum allocation.",
+        "`NormsPortfolios` target allocation must not exceed maximum allocation.",
       );
     }
 

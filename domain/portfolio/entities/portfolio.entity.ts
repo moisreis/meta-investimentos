@@ -289,39 +289,39 @@ export class Portfolio {
    */
   public static create(props: PortfolioProps, id?: string): Portfolio {
     if (!props.acronym || props.acronym.trim() === "") {
-      throw new ValidationError("Portfolio must have an acronym.");
+      throw new ValidationError("`Portfolio` must have an acronym.");
     }
     if (!props.name || props.name.trim() === "") {
-      throw new ValidationError("Portfolio must have a name.");
+      throw new ValidationError("`Portfolio` must have a name.");
     }
     if (!props.userId || props.userId.trim() === "") {
-      throw new ValidationError("Portfolio must have a user id.");
+      throw new ValidationError("`Portfolio` must have a user id.");
     }
     if (!props.annualInterestRate) {
-      throw new ValidationError("Portfolio must have an annual interest rate.");
+      throw new ValidationError("`Portfolio` must have an annual interest rate.");
     }
     if (!props.minAllocation) {
-      throw new ValidationError("Portfolio must have a minimum allocation.");
+      throw new ValidationError("`Portfolio` must have a minimum allocation.");
     }
     if (!props.maxAllocation) {
-      throw new ValidationError("Portfolio must have a maximum allocation.");
+      throw new ValidationError("`Portfolio` must have a maximum allocation.");
     }
     if (!props.targetAllocation) {
-      throw new ValidationError("Portfolio must have a target allocation.");
+      throw new ValidationError("`Portfolio` must have a target allocation.");
     }
     if (props.annualInterestRate.isNegative) {
       throw new ValidationError(
-        "Portfolio annual interest rate must not be negative.",
+        "`Portfolio` annual interest rate must not be negative.",
       );
     }
     if (props.minAllocation.value.gt(props.targetAllocation.value)) {
       throw new ValidationError(
-        "Portfolio minimum allocation must not exceed target allocation.",
+        "`Portfolio` minimum allocation must not exceed target allocation.",
       );
     }
     if (props.targetAllocation.value.gt(props.maxAllocation.value)) {
       throw new ValidationError(
-        "Portfolio target allocation must not exceed maximum allocation.",
+        "`Portfolio` target allocation must not exceed maximum allocation.",
       );
     }
 
@@ -373,22 +373,22 @@ export class Portfolio {
     now?: Date,
   ): Portfolio {
     if (!minAllocation) {
-      throw new ValidationError("Portfolio must have a minimum allocation.");
+      throw new ValidationError("`Portfolio` must have a minimum allocation.");
     }
     if (!targetAllocation) {
-      throw new ValidationError("Portfolio must have a target allocation.");
+      throw new ValidationError("`Portfolio` must have a target allocation.");
     }
     if (!maxAllocation) {
-      throw new ValidationError("Portfolio must have a maximum allocation.");
+      throw new ValidationError("`Portfolio` must have a maximum allocation.");
     }
     if (minAllocation.value.gt(targetAllocation.value)) {
       throw new ValidationError(
-        "Portfolio minimum allocation must not exceed target allocation.",
+        "`Portfolio` minimum allocation must not exceed target allocation.",
       );
     }
     if (targetAllocation.value.gt(maxAllocation.value)) {
       throw new ValidationError(
-        "Portfolio target allocation must not exceed maximum allocation.",
+        "`Portfolio` target allocation must not exceed maximum allocation.",
       );
     }
 
@@ -437,11 +437,11 @@ export class Portfolio {
     now?: Date,
   ): Portfolio {
     if (!annualInterestRate) {
-      throw new ValidationError("Portfolio must have an annual interest rate.");
+      throw new ValidationError("`Portfolio` must have an annual interest rate.");
     }
     if (annualInterestRate.isNegative) {
       throw new ValidationError(
-        "Portfolio annual interest rate must not be negative.",
+        "`Portfolio` annual interest rate must not be negative.",
       );
     }
 

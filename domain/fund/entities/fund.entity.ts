@@ -288,13 +288,13 @@ export class Fund {
    */
   public static create(props: FundProps, id?: string): Fund {
     if (!props.cnpj) {
-      throw new ValidationError("Fund must have a cnpj.");
+      throw new ValidationError("`Fund` must have a cnpj.");
     }
     if (!props.name || props.name.trim() === "") {
-      throw new ValidationError("Fund must have a name.");
+      throw new ValidationError("`Fund` must have a name.");
     }
     if (!props.bankId || props.bankId.trim() === "") {
-      throw new ValidationError("Fund must have a bank id.");
+      throw new ValidationError("`Fund` must have a bank id.");
     }
 
     const NOW = new Date();
@@ -350,7 +350,7 @@ export class Fund {
     now?: Date,
   ): Fund {
     if (options.name !== undefined && options.name.trim() === "") {
-      throw new ValidationError("Fund must have a name.");
+      throw new ValidationError("`Fund` must have a name.");
     }
 
     const NOW = now ?? new Date();

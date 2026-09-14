@@ -78,7 +78,7 @@ export class CNPJ {
    */
   public static create(value: string): CNPJ {
     if (value === undefined || value === null) {
-      throw new ValidationError("CNPJ must be defined.")
+      throw new ValidationError("`CNPJ` must be defined.")
     }
 
     if (value.trim() === "") {

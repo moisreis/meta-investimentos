@@ -370,16 +370,16 @@ export class Account {
    */
   public static create(props: AccountProps, id?: string): Account {
     if (!props.issuer || props.issuer.trim() === "") {
-      throw new ValidationError("Account must have an issuer.");
+      throw new ValidationError("`Account` must have an issuer.");
     }
     if (!props.providerId || props.providerId.trim() === "") {
-      throw new ValidationError("Account must have a provider id.");
+      throw new ValidationError("`Account` must have a provider id.");
     }
     if (!props.accountId || props.accountId.trim() === "") {
-      throw new ValidationError("Account must have an account id.");
+      throw new ValidationError("`Account` must have an account id.");
     }
     if (!props.userId || props.userId.trim() === "") {
-      throw new ValidationError("Account must have a user id.");
+      throw new ValidationError("`Account` must have a user id.");
     }
 
     const NOW = new Date();

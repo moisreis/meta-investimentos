@@ -178,13 +178,13 @@ export class Quota {
    */
   public static create(props: QuotaProps, id?: string): Quota {
     if (!props.fundId || props.fundId.trim() === "") {
-      throw new ValidationError("Quota must have a fund id.");
+      throw new ValidationError("`Quota` must have a fund id.");
     }
     if (!props.date) {
-      throw new ValidationError("Quota must have a date.");
+      throw new ValidationError("`Quota` must have a date.");
     }
     if (!props.price) {
-      throw new ValidationError("Quota must have a price.");
+      throw new ValidationError("`Quota` must have a price.");
     }
 
     const NOW = new Date();
@@ -221,7 +221,7 @@ export class Quota {
    */
   public updatePrice(price: QuotaPrice): Quota {
     if (!price) {
-      throw new ValidationError("Quota must have a price.");
+      throw new ValidationError("`Quota` must have a price.");
     }
 
     return new Quota(

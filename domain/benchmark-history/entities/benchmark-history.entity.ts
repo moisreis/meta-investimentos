@@ -181,13 +181,13 @@ export class BenchmarkHistory {
     id?: string,
   ): BenchmarkHistory {
     if (!props.benchmarkId || props.benchmarkId.trim() === "") {
-      throw new ValidationError("BenchmarkHistory must have a benchmark id.");
+      throw new ValidationError("`BenchmarkHistory` must have a benchmark id.");
     }
     if (!props.date) {
-      throw new ValidationError("BenchmarkHistory must have a date.");
+      throw new ValidationError("`BenchmarkHistory` must have a date.");
     }
     if (!props.rate) {
-      throw new ValidationError("BenchmarkHistory must have a rate.");
+      throw new ValidationError("`BenchmarkHistory` must have a rate.");
     }
 
     const NOW = new Date();
@@ -224,7 +224,7 @@ export class BenchmarkHistory {
    */
   public updateRate(rate: SignedPercentage): BenchmarkHistory {
     if (!rate) {
-      throw new ValidationError("BenchmarkHistory must have a rate.");
+      throw new ValidationError("`BenchmarkHistory` must have a rate.");
     }
 
     return new BenchmarkHistory(

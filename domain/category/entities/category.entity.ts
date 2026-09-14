@@ -155,7 +155,7 @@ export class Category {
    */
   public static create(props: CategoryProps, id?: string): Category {
     if (!props.name || props.name.trim() === "") {
-      throw new ValidationError("Category must have a name.");
+      throw new ValidationError("`Category` must have a name.");
     }
 
     const NOW = new Date();
@@ -194,7 +194,7 @@ export class Category {
    */
   public rename(name: string, now?: Date): Category {
     if (!name || name.trim() === "") {
-      throw new ValidationError("Category must have a name.");
+      throw new ValidationError("`Category` must have a name.");
     }
 
     const NOW = now ?? new Date();

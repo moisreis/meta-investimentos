@@ -221,13 +221,13 @@ export class AuditLog {
    */
   public static create(props: AuditLogProps, id?: string): AuditLog {
     if (!props.entity || props.entity.trim() === "") {
-      throw new ValidationError("AuditLog must have an entity.");
+      throw new ValidationError("`AuditLog` must have an entity.");
     }
     if (!props.entityId || props.entityId.trim() === "") {
-      throw new ValidationError("AuditLog must have an entity id.");
+      throw new ValidationError("`AuditLog` must have an entity id.");
     }
     if (!props.action || props.action.trim() === "") {
-      throw new ValidationError("AuditLog must have an action.");
+      throw new ValidationError("`AuditLog` must have an action.");
     }
 
     const NOW = new Date();

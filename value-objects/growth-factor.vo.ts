@@ -85,7 +85,7 @@ export class GrowthFactor {
   ): GrowthFactor {
     if (value === undefined || value === null) {
       throw new ValidationError(
-        "GrowthFactor must be defined.",
+        "`GrowthFactor` must be defined.",
       );
     }
 

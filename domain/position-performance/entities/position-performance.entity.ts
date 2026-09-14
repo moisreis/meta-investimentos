@@ -406,40 +406,40 @@ export class PositionPerformance {
     id?: string,
   ): PositionPerformance {
     if (!props.positionId || props.positionId.trim() === "") {
-      throw new ValidationError("PositionPerformance must have a position id.");
+      throw new ValidationError("`PositionPerformance` must have a position id.");
     }
     if (!props.date) {
-      throw new ValidationError("PositionPerformance must have a date.");
+      throw new ValidationError("`PositionPerformance` must have a date.");
     }
     if (!props.quotasHeld) {
-      throw new ValidationError("PositionPerformance must have quotas held.");
+      throw new ValidationError("`PositionPerformance` must have quotas held.");
     }
     if (!props.patrimony) {
-      throw new ValidationError("PositionPerformance must have patrimony.");
+      throw new ValidationError("`PositionPerformance` must have patrimony.");
     }
     if (!props.applicationTotal) {
       throw new ValidationError(
-        "PositionPerformance must have an application total.",
+        "`PositionPerformance` must have an application total.",
       );
     }
     if (!props.redemptionTotal) {
       throw new ValidationError(
-        "PositionPerformance must have a redemption total.",
+        "`PositionPerformance` must have a redemption total.",
       );
     }
     if (!props.cashFlowNet) {
-      throw new ValidationError("PositionPerformance must have cash flow net.");
+      throw new ValidationError("`PositionPerformance` must have cash flow net.");
     }
     if (!props.earnings) {
-      throw new ValidationError("PositionPerformance must have earnings.");
+      throw new ValidationError("`PositionPerformance` must have earnings.");
     }
     if (!props.returnDaily) {
       throw new ValidationError(
-        "PositionPerformance must have a daily return.",
+        "`PositionPerformance` must have a daily return.",
       );
     }
     if (!props.allocation) {
-      throw new ValidationError("PositionPerformance must have an allocation.");
+      throw new ValidationError("`PositionPerformance` must have an allocation.");
     }
 
     const NOW = new Date();

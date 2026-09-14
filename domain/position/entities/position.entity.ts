@@ -243,10 +243,10 @@ export class Position {
    */
   public static create(props: PositionProps, id?: string): Position {
     if (!props.portfolioId || props.portfolioId.trim() === "") {
-      throw new ValidationError("Position must have a portfolio id.");
+      throw new ValidationError("`Position` must have a portfolio id.");
     }
     if (!props.fundId || props.fundId.trim() === "") {
-      throw new ValidationError("Position must have a fund id.");
+      throw new ValidationError("`Position` must have a fund id.");
     }
 
     const NOW = new Date();
@@ -298,15 +298,15 @@ export class Position {
   ): Position {
     if (this._id === undefined) {
       throw new ValidationError(
-        "Cannot set an initial balance on a position that has not been persisted.",
+        "Cannot set an initial balance on a `Position` that has not been persisted.",
       );
     }
     if (!initialBalance) {
-      throw new ValidationError("Position initial balance must be defined.");
+      throw new ValidationError("`Position` initial balance must be defined.");
     }
     if (!date) {
       throw new ValidationError(
-        "Position initial balance date must be defined.",
+        "`Position` initial balance date must be defined.",
       );
     }
 

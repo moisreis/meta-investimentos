@@ -187,17 +187,17 @@ export class TransactionAllocation {
   ): TransactionAllocation {
     if (!props.applicationId || props.applicationId.trim() === "") {
       throw new ValidationError(
-        "TransactionAllocation must have an application id.",
+        "`TransactionAllocation` must have an application id.",
       );
     }
     if (!props.withdrawId || props.withdrawId.trim() === "") {
       throw new ValidationError(
-        "TransactionAllocation must have a withdrawal id.",
+        "`TransactionAllocation` must have a withdrawal id.",
       );
     }
     if (!props.quotasConsumed) {
       throw new ValidationError(
-        "TransactionAllocation must have consumed quotas.",
+        "`TransactionAllocation` must have consumed quotas.",
       );
     }
 

@@ -43,7 +43,7 @@ export function calculateWithdrawalQuotas({
 }: CalculateWithdrawalQuotasProps): QuotaQuantity {
   if (quota.value.isZero()) {
     throw new ValidationError(
-      "Withdrawal quotas cannot be calculated with a zero quota price.",
+      "`Withdrawal` quotas cannot be calculated with a zero quota price.",
     );
   }
 

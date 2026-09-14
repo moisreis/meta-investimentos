@@ -202,13 +202,13 @@ export class Verification {
    */
   public static create(props: VerificationProps, id?: string): Verification {
     if (!props.identifier || props.identifier.trim() === "") {
-      throw new ValidationError("Verification must have an identifier.");
+      throw new ValidationError("`Verification` must have an identifier.");
     }
     if (!props.value || props.value.trim() === "") {
-      throw new ValidationError("Verification must have a value.");
+      throw new ValidationError("`Verification` must have a value.");
     }
     if (!props.expiresAt) {
-      throw new ValidationError("Verification must have an expiration date.");
+      throw new ValidationError("`Verification` must have an expiration date.");
     }
 
     const NOW = new Date();

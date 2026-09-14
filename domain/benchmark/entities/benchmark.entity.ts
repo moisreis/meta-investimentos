@@ -157,10 +157,10 @@ export class Benchmark {
    */
   public static create(props: BenchmarkProps, id?: string): Benchmark {
     if (!props.acronym || props.acronym.trim() === "") {
-      throw new ValidationError("Benchmark must have an acronym.");
+      throw new ValidationError("`Benchmark` must have an acronym.");
     }
     if (!props.name || props.name.trim() === "") {
-      throw new ValidationError("Benchmark must have a name.");
+      throw new ValidationError("`Benchmark` must have a name.");
     }
 
     const NOW = new Date();
@@ -197,7 +197,7 @@ export class Benchmark {
    */
   public rename(name: string): Benchmark {
     if (!name || name.trim() === "") {
-      throw new ValidationError("Benchmark must have a name.");
+      throw new ValidationError("`Benchmark` must have a name.");
     }
 
     return new Benchmark(
@@ -233,7 +233,7 @@ export class Benchmark {
    */
   public changeAcronym(acronym: string): Benchmark {
     if (!acronym || acronym.trim() === "") {
-      throw new ValidationError("Benchmark must have an acronym.");
+      throw new ValidationError("`Benchmark` must have an acronym.");
     }
 
     return new Benchmark(

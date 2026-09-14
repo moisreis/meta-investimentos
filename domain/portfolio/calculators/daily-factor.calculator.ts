@@ -43,7 +43,7 @@ export function calculatePortfolioDailyFactor({
 }: CalculatePortfolioDailyFactorProps): GrowthFactor {
   if (previousDayPortfolioValue.value.isZero()) {
     throw new ValidationError(
-      "Portfolio daily factor cannot be calculated with a zero previous day value.",
+      "`Portfolio` daily factor cannot be calculated with a zero previous day value.",
     );
   }
 
