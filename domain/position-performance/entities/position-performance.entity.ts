@@ -1,0 +1,494 @@
+﻿import {
+  EntityId,
+  type PositiveMoney,
+  type QuotaQuantity,
+  type SignedMoney,
+  type SignedPercentage,
+} from "@/value-objects";
+import { ValidationError } from "@/errors";
+
+interface PositionPerformanceProps {
+  positionId: EntityId;
+  date: Date;
+  quotasHeld: QuotaQuantity;
+  patrimony: PositiveMoney;
+  applicationTotal: PositiveMoney;
+  redemptionTotal: PositiveMoney;
+  cashFlowNet: SignedMoney;
+  earnings: SignedMoney;
+  returnDaily: SignedPercentage;
+  returnMonthly?: SignedPercentage | null;
+  returnYearly?: SignedPercentage | null;
+  returnLast12m?: SignedPercentage | null;
+  allocation: SignedPercentage;
+  createdAt?: Date;
+}
+
+/**
+ * @summary
+ * Represents the performance of a position on a given date.
+ *
+ * @remarks
+ * Must have positionId, date, quotasHeld, patrimony, totals, cashFlowNet,
+ * earnings, returnDaily, allocation. Instances immutable after creation.
+ *
+ * @explanation
+ * Stores daily performance snapshot for a position.
+ * Includes returns at multiple time horizons.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-13
+ */
+export class PositionPerformance {
+  private readonly _id?: EntityId;
+  private readonly props: Required<PositionPerformanceProps>;
+
+  /**
+   * @summary
+   * Returns the unique identifier of the position performance.
+   *
+   * @remarks
+   * Undefined if not yet persisted.
+   *
+   * @explanation
+   * Use for persistence and equality checks.
+   *
+   * @returns EntityId or undefined.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get id(): EntityId | undefined {
+    return this._id;
+  }
+
+  /**
+   * @summary
+   * Returns the position ID of the performance.
+   *
+   * @remarks
+   * Valid EntityId.
+   *
+   * @explanation
+   * Use to associate performance with position.
+   *
+   * @returns EntityId.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get positionId(): EntityId {
+    return this.props.positionId;
+  }
+
+  /**
+   * @summary
+   * Returns the date of the performance.
+   *
+   * @remarks
+   * Required Date.
+   *
+   * @explanation
+   * Use for time-series queries.
+   *
+   * @returns Performance Date.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get date(): Date {
+    return this.props.date;
+  }
+
+  /**
+   * @summary
+   * Returns the total quotas held by the position.
+   *
+   * @remarks
+   * QuotaQuantity value.
+   *
+   * @explanation
+   * Use for position sizing.
+   *
+   * @returns QuotaQuantity.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get quotasHeld(): QuotaQuantity {
+    return this.props.quotasHeld;
+  }
+
+  /**
+   * @summary
+   * Returns the patrimony of the position.
+   *
+   * @remarks
+   * PositiveMoney value.
+   *
+   * @explanation
+   * Use for valuation.
+   *
+   * @returns PositiveMoney.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get patrimony(): PositiveMoney {
+    return this.props.patrimony;
+  }
+
+  /**
+   * @summary
+   * Returns the application total of the position.
+   *
+   * @remarks
+   * PositiveMoney value.
+   *
+   * @explanation
+   * Use for cash flow tracking.
+   *
+   * @returns PositiveMoney.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get applicationTotal(): PositiveMoney {
+    return this.props.applicationTotal;
+  }
+
+  /**
+   * @summary
+   * Returns the redemption total of the position.
+   *
+   * @remarks
+   * PositiveMoney value.
+   *
+   * @explanation
+   * Use for cash flow tracking.
+   *
+   * @returns PositiveMoney.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get redemptionTotal(): PositiveMoney {
+    return this.props.redemptionTotal;
+  }
+
+  /**
+   * @summary
+   * Returns the net cash flow of the position.
+   *
+   * @remarks
+   * SignedMoney value.
+   *
+   * @explanation
+   * Use for net flow analysis.
+   *
+   * @returns SignedMoney.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get cashFlowNet(): SignedMoney {
+    return this.props.cashFlowNet;
+  }
+
+  /**
+   * @summary
+   * Returns the earnings of the position.
+   *
+   * @remarks
+   * SignedMoney value.
+   *
+   * @explanation
+   * Use for profit/loss analysis.
+   *
+   * @returns SignedMoney.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get earnings(): SignedMoney {
+    return this.props.earnings;
+  }
+
+  /**
+   * @summary
+   * Returns the daily return of the position.
+   *
+   * @remarks
+   * SignedPercentage value.
+   *
+   * @explanation
+   * Use for daily performance tracking.
+   *
+   * @returns SignedPercentage.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get returnDaily(): SignedPercentage {
+    return this.props.returnDaily;
+  }
+
+  /**
+   * @summary
+   * Returns the monthly return of the position.
+   *
+   * @remarks
+   * Nullable SignedPercentage.
+   *
+   * @explanation
+   * Use for monthly performance reporting.
+   *
+   * @returns SignedPercentage or null.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get returnMonthly(): SignedPercentage | null {
+    return this.props.returnMonthly;
+  }
+
+  /**
+   * @summary
+   * Returns the yearly return of the position.
+   *
+   * @remarks
+   * Nullable SignedPercentage.
+   *
+   * @explanation
+   * Use for yearly performance reporting.
+   *
+   * @returns SignedPercentage or null.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get returnYearly(): SignedPercentage | null {
+    return this.props.returnYearly;
+  }
+
+  /**
+   * @summary
+   * Returns the return of the position over the last 12 months.
+   *
+   * @remarks
+   * Nullable SignedPercentage.
+   *
+   * @explanation
+   * Use for trailing 12-month performance.
+   *
+   * @returns SignedPercentage or null.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get returnLast12m(): SignedPercentage | null {
+    return this.props.returnLast12m;
+  }
+
+  /**
+   * @summary
+   * Returns the allocation of the position.
+   *
+   * @remarks
+   * SignedPercentage value.
+   *
+   * @explanation
+   * Use for portfolio weight analysis.
+   *
+   * @returns SignedPercentage.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get allocation(): SignedPercentage {
+    return this.props.allocation;
+  }
+
+  /**
+   * @summary
+   * Returns the creation timestamp of the position performance.
+   *
+   * @remarks
+   * Defaults to current time.
+   *
+   * @explanation
+   * Use for audit and ordering.
+   *
+   * @returns Creation Date.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  /**
+   * @summary
+   * Creates a PositionPerformance instance.
+   *
+   * @remarks
+   * Private constructor enforces factory method usage.
+   *
+   * @explanation
+   * Internal use only. Use PositionPerformance.create instead.
+   *
+   * @param props - Required performance properties.
+   * @param id - Optional unique identifier string.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  private constructor(props: Required<PositionPerformanceProps>, id?: string) {
+    this._id = id ? EntityId.create(id) : undefined;
+    this.props = Object.freeze(props);
+  }
+
+  /**
+   * @summary
+   * Creates a valid PositionPerformance from the provided properties.
+   *
+   * @remarks
+   * Validates all required fields. Optional returns default to null.
+   * createdAt defaults to current time.
+   *
+   * @explanation
+   * Factory method to construct a valid PositionPerformance.
+   * Throws ValidationError if validation fails.
+   *
+   * @param props - Properties required to create the performance.
+   * @param id - Optional unique identifier.
+   *
+   * @returns Valid PositionPerformance instance.
+   *
+   * @example
+   * const PERF = PositionPerformance.create({
+   *   positionId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   date: new Date("2026-01-01"),
+   *   quotasHeld: QuotaQuantity.create("1000"),
+   *   patrimony: PositiveMoney.create("50000"),
+   *   applicationTotal: PositiveMoney.create("10000"),
+   *   redemptionTotal: PositiveMoney.create("5000"),
+   *   cashFlowNet: SignedMoney.create("5000"),
+   *   earnings: SignedMoney.create("1000"),
+   *   returnDaily: SignedPercentage.create("0.5"),
+   *   allocation: SignedPercentage.create("10"),
+   * });
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  public static create(
+    props: PositionPerformanceProps,
+    id?: string,
+  ): PositionPerformance {
+    if (!props.positionId || props.positionId.trim() === "") {
+      throw new ValidationError("PositionPerformance must have a position id.");
+    }
+    if (!props.date) {
+      throw new ValidationError("PositionPerformance must have a date.");
+    }
+    if (!props.quotasHeld) {
+      throw new ValidationError("PositionPerformance must have quotas held.");
+    }
+    if (!props.patrimony) {
+      throw new ValidationError("PositionPerformance must have patrimony.");
+    }
+    if (!props.applicationTotal) {
+      throw new ValidationError(
+        "PositionPerformance must have an application total.",
+      );
+    }
+    if (!props.redemptionTotal) {
+      throw new ValidationError(
+        "PositionPerformance must have a redemption total.",
+      );
+    }
+    if (!props.cashFlowNet) {
+      throw new ValidationError("PositionPerformance must have cash flow net.");
+    }
+    if (!props.earnings) {
+      throw new ValidationError("PositionPerformance must have earnings.");
+    }
+    if (!props.returnDaily) {
+      throw new ValidationError(
+        "PositionPerformance must have a daily return.",
+      );
+    }
+    if (!props.allocation) {
+      throw new ValidationError("PositionPerformance must have an allocation.");
+    }
+
+    const NOW = new Date();
+
+    const NORMALIZED_PROPS: Required<PositionPerformanceProps> = {
+      ...props,
+      returnMonthly: props.returnMonthly ?? null,
+      returnYearly: props.returnYearly ?? null,
+      returnLast12m: props.returnLast12m ?? null,
+      createdAt: props.createdAt ?? NOW,
+    };
+
+    return new PositionPerformance(NORMALIZED_PROPS, id);
+  }
+
+  /**
+   * @summary
+   * Compares this PositionPerformance with another for equality.
+   *
+   * @remarks
+   * Based on referential equality and unique ID.
+   *
+   * @explanation
+   * Use to check if two instances represent same entity.
+   *
+   * @param object - The PositionPerformance to compare against.
+   *
+   * @returns True if both share the same ID.
+   *
+   * @example
+   * const A = PositionPerformance.create(PROPS, ID);
+   * const B = PositionPerformance.create(PROPS, ID);
+   * A.equals(B); // true
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-13
+   */
+  public equals(object?: PositionPerformance | null): boolean {
+    if (object == null || object === undefined) {
+      return false;
+    }
+    if (this === object) {
+      return true;
+    }
+    if (!this._id || !object._id) {
+      return false;
+    }
+
+    return this._id === object._id;
+  }
+}

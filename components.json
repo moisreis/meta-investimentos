@@ -8,16 +8,16 @@
     "css": "app/globals.css",
     "baseColor": "olive",
     "cssVariables": true,
-    "prefix": ""
+    "prefix": "meta-"
   },
   "iconLibrary": "tabler",
   "rtl": false,
   "aliases": {
-    "components": "@/components",
+    "components": "@/presentation/components",
     "utils": "@/lib/utils",
-    "ui": "@/components/ui",
+    "ui": "@/presentation/ui",
     "lib": "@/lib",
-    "hooks": "@/hooks"
+    "hooks": "@/presentation/hooks"
   },
   "menuColor": "default-translucent",
   "menuAccent": "subtle",
