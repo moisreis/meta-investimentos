@@ -137,5 +137,5 @@ export interface IBank {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;0
+  delete(id: EntityId): Promise<void>;
 }

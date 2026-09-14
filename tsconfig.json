@@ -22,7 +22,13 @@
       "@/*": ["./*"],
       "@errors/*": ["./errors/*"],
       "@constants/*": ["./constants/*"],
-      "@domain/*": ["./domain/*"]
+      "@domain/*": ["./domain/*"],
+      "@clients/*": ["./clients/*"],
+      "@database/*": ["./database/*"],
+      "@db-schemas": ["./database/schemas/index.ts"],
+      "@db-schemas/*": ["./database/schemas/*"],
+      "@db-relations": ["./database/relations/index.ts"],
+      "@db-relations/*": ["./database/relations/*"],
     }
   },
   "include": [
