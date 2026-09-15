@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 // Stores the application configuration.
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig = {
+  devIndicators: false
+};
 
 /**
  * @summary

@@ -1,44 +1,33 @@
 /**
  * @summary
- * Renders the layout for the `(auth)` route group.
+ * Renders the pass-through layout for the `(auth)` route group.
  *
  * @remarks
- * The layout centers the children inside the auth area.
- * It also shows the application brand above the content.
+ * The layout renders the children without a shared frame.
+ * Each auth route provides its own authentication layout.
  *
  * @explanation
- * This layout wraps the authentication pages in a shared frame.
- * It keeps the sign-in and sign-up routes visually consistent.
- * Use it for screens related to authentication flows.
+ * This layout keeps the `(auth)` route group structure while
+ * letting each route render **AuthLayout** with its own labels.
+ * Use it to keep the group wrapper separate from route frames.
  *
- * @param props - Props of the authentication layout.
+ * @param props - Props of the authentication group layout.
  * @param props.children - Content rendered by the layout.
- * @returns The authentication layout frame.
+ * @returns The children rendered without a wrapper.
  *
  * @example
- * <AuthLayout>
+ * <AuthRouteLayout>
  *   <SignInPage />
- * </AuthLayout>
+ * </AuthRouteLayout>
  *
  * @author Moisés Reis
  *
  * @date 2026-09-14
  */
-export default function AuthLayout({
+export default function AuthRouteLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
-  return (
-    <main className="flex min-h-dvh items-center justify-center px-4">
-      <div className="w-full max-w-sm space-y-6">
-        <header className="text-center">
-          <h1 className="font-heading text-2xl font-semibold tracking-tight">
-            Meta Investimentos
-          </h1>
-        </header>
-        {children}
-      </div>
-    </main>
-  );
+  return children
 }

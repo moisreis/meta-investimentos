@@ -1,25 +1,35 @@
-import { Geist, Geist_Mono, Roboto_Slab } from "next/font/google";
-import "./globals.css";
-import { ThemeProvider } from "@/presentation/components/theme-provider";
-import { cn } from "@/lib/utils";
+import { Metadata } from "next"
+import { Geist, Geist_Mono, Roboto_Slab } from "next/font/google"
+import "./globals.css"
+import { ThemeProvider } from "@/presentation/components/theme-provider"
+import { TooltipProvider } from "@/presentation/ui/tooltip"
+import { cn } from "@/lib/utils"
+import BRAND from "@/presentation/constants/brand.constants"
 
 // Stores the **Roboto Slab** heading font configuration.
 const ROBOTO_SLAB_HEADING = Roboto_Slab({
   subsets: ["latin"],
   variable: "--font-heading",
-});
+})
 
 // Stores the **Geist** sans-serif font configuration.
-const GEIST = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+const GEIST = Geist({ subsets: ["latin"], variable: "--font-sans" })
 
 // Stores the **Geist Mono** font configuration.
 const FONT_MONO = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-});
+})
+
+// Defines default application metadata for **Next.js**.
+// Configures document titles and short brand names.
+export const metadata: Metadata = {
+  title: {
+    template: `%s | ${BRAND.BRAND_SHORT_NAME}`,
+    default: BRAND.BRAND_SHORT_NAME,
+  },
+  description: BRAND.BRAND_LEGAL_NAME,
+}
 
 /**
  * @summary
@@ -50,7 +60,7 @@ const FONT_MONO = Geist_Mono({
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html
@@ -61,12 +71,14 @@ export default function RootLayout({
         FONT_MONO.variable,
         "font-sans",
         GEIST.variable,
-        ROBOTO_SLAB_HEADING.variable,
+        ROBOTO_SLAB_HEADING.variable
       )}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }

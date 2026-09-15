@@ -1,13 +1,13 @@
 import type { Quota } from "@domain/quota/entities/quota.entity";
 import type { EntityId } from "@/value-objects";
 
-interface UpsertQuota {
+export interface UpsertQuota {
   fundId: string;
   date: Date;
   price: string;
 }
 
-interface UpsertQuotaResult {
+export interface UpsertQuotaResult {
   fundId: string;
   date: Date;
   price: string;

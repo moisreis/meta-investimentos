@@ -23,5 +23,5 @@
  * @date 2026-09-13
  */
 export default function RootPage() {
-  return null;
+  return null
 }

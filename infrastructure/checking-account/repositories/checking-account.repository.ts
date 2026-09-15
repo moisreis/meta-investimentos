@@ -1,0 +1,421 @@
+﻿import { and, eq, gte, inArray, lte } from "drizzle-orm"
+import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+
+import { CheckingAccount } from "@domain/checking-account/entities/checking-account.entity"
+import type { ICheckingAccount } from "@domain/checking-account/interfaces/checking-account.interface"
+import { EntityId, SignedMoney } from "@/value-objects"
+import { checkingAccount } from "@db-schemas/checking-account.schema"
+import { NotFoundError } from "@errors/not-found.error"
+
+export type DbClient = PgAsyncDatabase<PgQueryResultHKT>
+
+/**
+ * @summary
+ * Implements the checking account persistence contract.
+ *
+ * @remarks
+ * Maps `checking_account` rows to `CheckingAccount`
+ * entities and back. Lookups rely on the primary key and
+ * the `(bank_account_id, date)` unique pair.
+ *
+ * @explanation
+ * Use this repository for all checking account data access
+ * in the infrastructure layer. It translates rows into
+ * domain entities and persists entity changes.
+ *
+ * @example
+ * const REPO = new CheckingAccountRepository(DB_CLIENT);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-15
+ */
+export class CheckingAccountRepository implements ICheckingAccount {
+  private readonly db: DbClient
+
+  /**
+   * @summary
+   * Binds the repository to a database client.
+   *
+   * @remarks
+   * The client runs every query issued by the repository.
+   *
+   * @explanation
+   * Use this constructor to provide the **PostgreSQL**
+   * client used by all repository operations.
+   *
+   * @param db - The **Drizzle** database client.
+   *
+   * @example
+   * const REPO = new CheckingAccountRepository(DB_CLIENT);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  constructor(db: DbClient) {
+    this.db = db
+  }
+
+  /**
+   * @summary
+   * Maps a database row to a domain entity.
+   *
+   * @remarks
+   * Hydrates value objects through their `create` method.
+   *
+   * @explanation
+   * Converts persisted columns into the domain shape so
+   * services work with entities, not raw rows.
+   *
+   * @param row - The row returned by the query.
+   * @returns The hydrated entity.
+   *
+   * @example
+   * const ENTITY = toEntity(ROW);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  private toEntity(row: typeof checkingAccount.$inferSelect): CheckingAccount {
+    return CheckingAccount.create(
+      {
+        bankAccountId: EntityId.create(row.bankAccountId),
+        date: row.date,
+        value: SignedMoney.create(row.value),
+      },
+      row.id
+    )
+  }
+
+  /**
+   * @summary
+   * Maps a domain entity to insert values.
+   *
+   * @remarks
+   * Serializes value objects to their database
+   * representation.
+   *
+   * @explanation
+   * Converts an entity into the shape expected by
+   * **Drizzle** insert operations.
+   *
+   * @param entity - The entity to serialize.
+   * @returns The insert values.
+   *
+   * @example
+   * const VALUES = toInsert(ENTITY);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  private toInsert(
+    entity: CheckingAccount
+  ): typeof checkingAccount.$inferInsert {
+    return {
+      bankAccountId: entity.bankAccountId,
+      date: entity.date,
+      value: entity.value.value.toString(),
+    }
+  }
+
+  /**
+   * @summary
+   * Maps a domain entity to update values.
+   *
+   * @remarks
+   * Omits `createdAt` which never changes.
+   *
+   * @explanation
+   * Converts an entity into the shape expected by
+   * **Drizzle** update operations.
+   *
+   * @param entity - The entity to serialize.
+   * @returns The update values.
+   *
+   * @example
+   * const VALUES = toUpdate(ENTITY);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  private toUpdate(
+    entity: CheckingAccount
+  ): Partial<typeof checkingAccount.$inferInsert> {
+    return {
+      bankAccountId: entity.bankAccountId,
+      date: entity.date,
+      value: entity.value.value.toString(),
+    }
+  }
+
+  /**
+   * @summary
+   * Retrieves the checking account balance with the provided id.
+   *
+   * @remarks
+   * Returns `null` when no row matches the id.
+   *
+   * @explanation
+   * Use this method to load a checking account balance by its
+   * primary key. Callers must handle the null result.
+   *
+   * @param id - The unique identifier of the balance.
+   * @returns The entity or `null`.
+   *
+   * @example
+   * const BALANCE = await CHECKING_REPO.findById(ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async findById(id: EntityId): Promise<CheckingAccount | null> {
+    const [row] = await this.db
+      .select()
+      .from(checkingAccount)
+      .where(eq(checkingAccount.id, id))
+      .limit(1)
+
+    return row ? this.toEntity(row) : null
+  }
+
+  /**
+   * @summary
+   * Retrieves all balances of a bank account.
+   *
+   * @remarks
+   * Returns an empty array when no balances exist for the
+   * bank account.
+   *
+   * @explanation
+   * Use this method to load the full balance series of a
+   * single bank account.
+   *
+   * @param bankAccountId - The id of the bank account.
+   * @returns The matching balances.
+   *
+   * @example
+   * const BALANCES = await CHECKING_REPO
+   *   .findAllByBankAccountId(BANK_ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async findAllByBankAccountId(
+    bankAccountId: EntityId
+  ): Promise<CheckingAccount[]> {
+    const rows = await this.db
+      .select()
+      .from(checkingAccount)
+      .where(eq(checkingAccount.bankAccountId, bankAccountId))
+
+    return rows.map((row) => this.toEntity(row))
+  }
+
+  /**
+   * @summary
+   * Retrieves all balances with any of the provided bank
+   * account ids.
+   *
+   * @remarks
+   * Batched lookup avoids an N+1 query pattern. Returns
+   * an empty array when no ids match.
+   *
+   * @explanation
+   * Use this method to hydrate the balance series of many
+   * bank accounts in one query instead of one per account.
+   *
+   * @param bankAccountIds - The ids of the bank accounts.
+   * @returns The matching balances.
+   *
+   * @example
+   * const BALANCES = await CHECKING_REPO
+   *   .findAllByBankAccountIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async findAllByBankAccountIds(
+    bankAccountIds: string[]
+  ): Promise<CheckingAccount[]> {
+    if (bankAccountIds.length === 0) {
+      return []
+    }
+
+    const rows = await this.db
+      .select()
+      .from(checkingAccount)
+      .where(inArray(checkingAccount.bankAccountId, bankAccountIds))
+
+    return rows.map((row) => this.toEntity(row))
+  }
+
+  /**
+   * @summary
+   * Retrieves balances of multiple bank accounts in a period.
+   *
+   * @remarks
+   * The period is inclusive of both dates. Batched lookup
+   * avoids an N+1 query pattern. Returns an empty array
+   * when no ids match.
+   *
+   * @explanation
+   * Use this method to hydrate the balance series of many
+   * bank accounts inside a date range for processing or
+   * reporting.
+   *
+   * @param bankAccountIds - The ids of the bank accounts.
+   * @param startDate - The start of the period, inclusive.
+   * @param endDate - The end of the period, inclusive.
+   * @returns The matching balances.
+   *
+   * @example
+   * const BALANCES = await CHECKING_REPO
+   *   .findAllByBankAccountIdsInPeriod(IDS, START, END);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async findAllByBankAccountIdsInPeriod(
+    bankAccountIds: string[],
+    startDate: Date,
+    endDate: Date
+  ): Promise<CheckingAccount[]> {
+    if (bankAccountIds.length === 0) {
+      return []
+    }
+
+    const rows = await this.db
+      .select()
+      .from(checkingAccount)
+      .where(
+        and(
+          inArray(checkingAccount.bankAccountId, bankAccountIds),
+          gte(checkingAccount.date, startDate),
+          lte(checkingAccount.date, endDate)
+        )
+      )
+
+    return rows.map((row) => this.toEntity(row))
+  }
+
+  /**
+   * @summary
+   * Retrieves the balance for a bank account and date.
+   *
+   * @remarks
+   * Returns `null` when no row matches the pair.
+   *
+   * @explanation
+   * Use this method to load a single balance by its bank
+   * account id and date. Callers must handle the null
+   * result.
+   *
+   * @param bankAccountId - The id of the bank account.
+   * @param date - The date of the balance.
+   * @returns The entity or `null`.
+   *
+   * @example
+   * const BALANCE = await CHECKING_REPO
+   *   .findByBankAccountIdAndDate(BANK_ID, DATE);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async findByBankAccountIdAndDate(
+    bankAccountId: EntityId,
+    date: Date
+  ): Promise<CheckingAccount | null> {
+    const [row] = await this.db
+      .select()
+      .from(checkingAccount)
+      .where(
+        and(
+          eq(checkingAccount.bankAccountId, bankAccountId),
+          eq(checkingAccount.date, date)
+        )
+      )
+      .limit(1)
+
+    return row ? this.toEntity(row) : null
+  }
+
+  /**
+   * @summary
+   * Persists the provided checking account balance.
+   *
+   * @remarks
+   * Inserts a new row when the entity has no id. Updates
+   * the existing row otherwise.
+   *
+   * @explanation
+   * Use this method to create or update a checking account
+   * balance. Returns the persisted entity with its id.
+   *
+   * @param persisted - The balance to persist.
+   * @returns The persisted entity.
+   *
+   * @example
+   * const SAVED = await CHECKING_REPO.save(BALANCE);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async save(persisted: CheckingAccount): Promise<CheckingAccount> {
+    if (persisted.id) {
+      const [row] = await this.db
+        .update(checkingAccount)
+        .set(this.toUpdate(persisted))
+        .where(eq(checkingAccount.id, persisted.id))
+        .returning()
+
+      if (!row) {
+        throw new NotFoundError(
+          `CheckingAccount with id ${persisted.id} was not found.`
+        )
+      }
+
+      return this.toEntity(row)
+    }
+
+    const [row] = await this.db
+      .insert(checkingAccount)
+      .values(this.toInsert(persisted))
+      .returning()
+
+    return this.toEntity(row)
+  }
+
+  /**
+   * @summary
+   * Removes the checking account balance with the provided id.
+   *
+   * @remarks
+   * Resolves when the row is removed.
+   *
+   * @explanation
+   * Use this method to delete a checking account balance by
+   * its primary key.
+   *
+   * @param id - The unique identifier of the balance.
+   *
+   * @example
+   * await CHECKING_REPO.delete(ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async delete(id: EntityId): Promise<void> {
+    await this.db.delete(checkingAccount).where(eq(checkingAccount.id, id))
+  }
+}

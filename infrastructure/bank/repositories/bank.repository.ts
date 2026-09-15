@@ -1,0 +1,352 @@
+import { asc, eq, inArray } from "drizzle-orm"
+import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+
+import { Bank } from "@domain/bank/entities/bank.entity"
+import type { IBank } from "@domain/bank/interfaces/bank.interface"
+import type { EntityId } from "@/value-objects"
+import { bank } from "@db-schemas/bank.schema"
+import { NotFoundError } from "@errors/not-found.error"
+
+export type DbClient = PgAsyncDatabase<PgQueryResultHKT>
+
+/**
+ * @summary
+ * Implements the bank persistence contract.
+ *
+ * @remarks
+ * Maps `bank` rows to `Bank` entities and back. Lookups
+ * rely on the primary key and the code unique constraint.
+ *
+ * @explanation
+ * Use this repository for all bank data access in the
+ * infrastructure layer. It translates rows into domain
+ * entities and persists entity changes.
+ *
+ * @example
+ * const REPO = new BankRepository(DB_CLIENT);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-15
+ */
+export class BankRepository implements IBank {
+  private readonly db: DbClient
+
+  /**
+   * @summary
+   * Binds the repository to a database client.
+   *
+   * @remarks
+   * The client runs every query issued by the repository.
+   *
+   * @explanation
+   * Use this constructor to provide the **PostgreSQL**
+   * client used by all repository operations.
+   *
+   * @param db - The **Drizzle** database client.
+   *
+   * @example
+   * const REPO = new BankRepository(DB_CLIENT);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  constructor(db: DbClient) {
+    this.db = db
+  }
+
+  /**
+   * @summary
+   * Maps a database row to a domain entity.
+   *
+   * @remarks
+   * Hydrates value objects through their `create` method.
+   *
+   * @explanation
+   * Converts persisted columns into the domain shape so
+   * services work with entities, not raw rows.
+   *
+   * @param row - The row returned by the query.
+   * @returns The hydrated entity.
+   *
+   * @example
+   * const ENTITY = TO_ENTITY(ROW);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  private toEntity(row: typeof bank.$inferSelect): Bank {
+    return Bank.create(
+      {
+        code: row.code,
+        name: row.name,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+      },
+      row.id
+    )
+  }
+
+  /**
+   * @summary
+   * Maps an entity to its insert values.
+   *
+   * @remarks
+   * Returns the columns required by the `bank` insert
+   * statement.
+   *
+   * @explanation
+   * Translates domain properties into the column shape
+   * expected by the **Drizzle** insert call.
+   *
+   * @param entity - The bank to persist.
+   * @returns The insert values.
+   *
+   * @example
+   * const VALUES = TO_INSERT(BANK);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  private toInsert(entity: Bank): typeof bank.$inferInsert {
+    return {
+      code: entity.code,
+      name: entity.name,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    }
+  }
+
+  /**
+   * @summary
+   * Maps an entity to its update values.
+   *
+   * @remarks
+   * Omits `createdAt` and `updatedAt`. The column
+   * `updatedAt` is refreshed by the `$onUpdate` hook.
+   *
+   * @explanation
+   * Translates domain properties into the column shape
+   * expected by the **Drizzle** update call.
+   *
+   * @param entity - The bank to persist.
+   * @returns The update values.
+   *
+   * @example
+   * const VALUES = TO_UPDATE(BANK);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  private toUpdate(entity: Bank): Partial<typeof bank.$inferInsert> {
+    return {
+      code: entity.code,
+      name: entity.name,
+    }
+  }
+
+  /**
+   * @summary
+   * Retrieves the bank with the provided id.
+   *
+   * @remarks
+   * Returns null when no row matches the id.
+   *
+   * @explanation
+   * Use this method to load a bank by its primary key.
+   * Callers must handle the null result.
+   *
+   * @param id - The unique identifier of the bank.
+   * @returns The entity or `null`.
+   *
+   * @example
+   * const BANK = await BANK_REPO.findById(ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async findById(id: EntityId): Promise<Bank | null> {
+    const [row] = await this.db
+      .select()
+      .from(bank)
+      .where(eq(bank.id, id))
+      .limit(1)
+
+    return row ? this.toEntity(row) : null
+  }
+
+  /**
+   * @summary
+   * Retrieves the bank with the provided code.
+   *
+   * @remarks
+   * Returns null when no row matches the code.
+   *
+   * @explanation
+   * Use this method to load a bank by its unique code.
+   * Callers must handle the null result.
+   *
+   * @param code - The unique code of the bank.
+   * @returns The entity or `null`.
+   *
+   * @example
+   * const BANK = await BANK_REPO.findByCode("001");
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async findByCode(code: string): Promise<Bank | null> {
+    const [row] = await this.db
+      .select()
+      .from(bank)
+      .where(eq(bank.code, code))
+      .limit(1)
+
+    return row ? this.toEntity(row) : null
+  }
+
+  /**
+   * @summary
+   * Retrieves all banks, optionally paginated.
+   *
+   * @remarks
+   * Results are sorted by `code` ascending. Defaults to
+   * a limit of 100 rows.
+   *
+   * @explanation
+   * Use this method to list all banks. Pass pagination
+   * options to control the window of results.
+   *
+   * @param options - Optional pagination parameters.
+   * @returns The matching entities.
+   *
+   * @example
+   * const BANKS = await BANK_REPO.findAll({
+   *   limit: 10,
+   *   offset: 0,
+   * });
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async findAll(options?: {
+    limit?: number
+    offset?: number
+  }): Promise<Bank[]> {
+    const rows = await this.db
+      .select()
+      .from(bank)
+      .orderBy(asc(bank.code))
+      .limit(options?.limit ?? 100)
+      .offset(options?.offset ?? 0)
+
+    return rows.map((row) => this.toEntity(row))
+  }
+
+  /**
+   * @summary
+   * Retrieves all banks with any of the provided ids.
+   *
+   * @remarks
+   * Batched lookup avoids an N+1 query pattern. Returns
+   * an empty array when no ids match.
+   *
+   * @explanation
+   * Use this method to hydrate many banks in one query
+   * instead of one query per id.
+   *
+   * @param ids - The ids of the banks to retrieve.
+   * @returns The matching banks.
+   *
+   * @example
+   * const BANKS = await BANK_REPO.findAllByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async findAllByIds(ids: string[]): Promise<Bank[]> {
+    if (ids.length === 0) {
+      return []
+    }
+
+    const rows = await this.db.select().from(bank).where(inArray(bank.id, ids))
+
+    return rows.map((row) => this.toEntity(row))
+  }
+
+  /**
+   * @summary
+   * Persists the provided bank.
+   *
+   * @remarks
+   * Inserts a new row when the entity has no id. Updates
+   * the existing row otherwise.
+   *
+   * @explanation
+   * Use this method to create or update a bank. Returns
+   * the persisted entity with its id.
+   *
+   * @param persisted - The bank to persist.
+   * @returns The persisted entity.
+   *
+   * @example
+   * const SAVED = await BANK_REPO.save(BANK);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async save(persisted: Bank): Promise<Bank> {
+    if (persisted.id) {
+      const [row] = await this.db
+        .update(bank)
+        .set(this.toUpdate(persisted))
+        .where(eq(bank.id, persisted.id))
+        .returning()
+
+      if (!row) {
+        throw new NotFoundError(`Bank with id ${persisted.id} was not found.`)
+      }
+
+      return this.toEntity(row)
+    }
+
+    const [row] = await this.db
+      .insert(bank)
+      .values(this.toInsert(persisted))
+      .returning()
+
+    return this.toEntity(row)
+  }
+
+  /**
+   * @summary
+   * Removes the bank with the provided id.
+   *
+   * @remarks
+   * Resolves when the row is removed.
+   *
+   * @explanation
+   * Use this method to delete a bank by its primary key.
+   *
+   * @param id - The unique identifier of the bank.
+   *
+   * @example
+   * await BANK_REPO.delete(ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  async delete(id: EntityId): Promise<void> {
+    await this.db.delete(bank).where(eq(bank.id, id))
+  }
+}
