@@ -1,27 +1,29 @@
-import type { ReactNode } from "react";
-import { SidebarProvider } from "@/presentation/ui/sidebar";
-import { MainSidebar } from "./sidebar";
-import { MainHeader } from "./header";
+import type { ReactNode } from "react"
+import { SidebarProvider } from "@/presentation/ui/sidebar"
+import { MainSidebar } from "./sidebar"
+import { MainHeader } from "./header"
 
 interface MainLayoutProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 function MainLayout({ children }: MainLayoutProps) {
   return (
-    <SidebarProvider style={
+    <SidebarProvider
+      style={
         {
           "--sidebar-width": "13rem",
           "--sidebar-width-mobile": "18rem",
         } as React.CSSProperties
-      }>
+      }
+    >
       <MainSidebar />
-      <main className="w-full flex flex-col">
+      <main className="flex w-full flex-col">
         <MainHeader />
         {children}
       </main>
     </SidebarProvider>
-  );
+  )
 }
 
-export { MainLayout };
+export { MainLayout }

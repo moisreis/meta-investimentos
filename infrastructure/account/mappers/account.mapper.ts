@@ -16,7 +16,6 @@ import { account } from "@db-schemas/account.schema"
 export function toDomain(row: typeof account.$inferSelect): Account {
   return Account.create(
     {
-      issuer: row.issuer,
       providerId: row.providerId,
       accountId: row.accountId,
       userId: EntityId.create(row.userId),
@@ -47,7 +46,6 @@ export function toDomain(row: typeof account.$inferSelect): Account {
  */
 export function toInsert(entity: Account): typeof account.$inferInsert {
   return {
-    issuer: entity.issuer,
     providerId: entity.providerId,
     accountId: entity.accountId,
     userId: entity.userId,
@@ -79,13 +77,13 @@ export function toInsert(entity: Account): typeof account.$inferInsert {
  * @returns Update values for the row.
  *
  * @author Moisés Reis
- * @date 2026-09-15
+ *
+ * @date 2026-09-17
  */
 export function toUpdate(
   entity: Account
 ): Partial<typeof account.$inferInsert> {
   return {
-    issuer: entity.issuer,
     providerId: entity.providerId,
     accountId: entity.accountId,
     userId: entity.userId,

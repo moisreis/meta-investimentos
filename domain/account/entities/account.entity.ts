@@ -2,7 +2,6 @@
 import { ValidationError } from "@/errors"
 
 interface AccountProps {
-  issuer: string
   providerId: string
   accountId: string
   userId: EntityId
@@ -15,6 +14,7 @@ interface AccountProps {
   password?: string | null
   createdAt?: Date
   updatedAt?: Date
+  issuer?: string
 }
 
 /**
@@ -74,7 +74,7 @@ export class Account {
    * @date 2026-09-13
    */
   get issuer(): string {
-    return this.props.issuer
+    return this.props.issuer ?? "better-auth"
   }
 
   /**
@@ -383,9 +383,6 @@ export class Account {
    * @date 2026-09-13
    */
   public static create(props: AccountProps, id?: string): Account {
-    if (!props.issuer || props.issuer.trim() === "") {
-      throw new ValidationError("`Account` must have an issuer.")
-    }
     if (!props.providerId || props.providerId.trim() === "") {
       throw new ValidationError("`Account` must have a provider id.")
     }
@@ -400,6 +397,7 @@ export class Account {
 
     const NORMALIZED_PROPS: Required<AccountProps> = {
       ...props,
+      issuer: props.issuer ?? "better-auth",
       accessToken: props.accessToken ?? null,
       refreshToken: props.refreshToken ?? null,
       idToken: props.idToken ?? null,

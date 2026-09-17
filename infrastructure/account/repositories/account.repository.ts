@@ -91,36 +91,41 @@ export class AccountRepository implements IAccount {
 
   /**
    * @summary
-   * Retrieves the account linked to an issuer and account id.
+   * Retrieves the account linked to a provider and account id.
    *
    * @remarks
    * Returns `null` when no row matches the pair.
    *
    * @explanation
    * Use this method to load an account by its unique
-   * issuer/account id pair. Callers must handle the
+   * provider/account id pair. Callers must handle the
    * null result.
    *
-   * @param issuer - The issuer of the account.
+   * @param providerId - The provider of the account.
    * @param accountId - The external account identifier.
    * @returns The entity or `null`.
    *
    * @example
    * const ACCOUNT = await ACCOUNT_REPO
-   *   .findByIssuerAndAccountId(ISSUER, ACCOUNT_ID);
+   *   .findByProviderAndAccountId(PROVIDER_ID, ACCOUNT_ID);
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-15
+   * @date 2026-09-17
    */
-  async findByIssuerAndAccountId(
-    issuer: string,
+  async findByProviderAndAccountId(
+    providerId: string,
     accountId: string
   ): Promise<Account | null> {
     const [row] = await this.db
       .select()
       .from(account)
-      .where(and(eq(account.issuer, issuer), eq(account.accountId, accountId)))
+      .where(
+        and(
+          eq(account.providerId, providerId),
+          eq(account.accountId, accountId)
+        )
+      )
       .limit(1)
 
     return row ? toDomain(row) : null

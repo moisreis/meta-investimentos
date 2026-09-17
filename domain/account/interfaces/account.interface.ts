@@ -46,29 +46,29 @@ export interface IAccount {
 
   /**
    * @summary
-   * Retrieves the account for the issuer and account id.
+   * Retrieves the account for the provider and account id.
    *
    * @remarks
    * Returns null when no account matches.
    *
    * @explanation
    * Use this method to find a linked external account.
-   * The issuer and account id identify one unique account.
+   * The provider and account id identify one unique account.
    *
-   * @param issuer - The issuer of the account.
-   * @param accountId - The account id from the issuer.
+   * @param providerId - The provider of the account.
+   * @param accountId - The account id from the provider.
    * @returns The entry or `null`.
    *
    * @example
    * const ACC = await ACCOUNT_REPO
-   *   .findByIssuerAndAccountId(ISSUER, ACCOUNT_ID);
+   *   .findByProviderAndAccountId(PROVIDER_ID, ACCOUNT_ID);
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-17
    */
-  findByIssuerAndAccountId(
-    issuer: string,
+  findByProviderAndAccountId(
+    providerId: string,
     accountId: string
   ): Promise<Account | null>
 

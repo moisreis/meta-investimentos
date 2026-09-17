@@ -1,25 +1,31 @@
+"use client"
+
 import { Button } from "@/presentation/ui/button"
 import {
   Field,
   FieldContent,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
+import { IconLoader } from "@tabler/icons-react"
+import { useSignIn } from "@/presentation/routes/auth/hooks/use-sign-in.hook"
+import { SignInToast } from "@/presentation/routes/auth/others/sign-in-toast"
 import { SIGN_IN } from "@/presentation/routes/auth/settings/form-labels.settings"
 
 /**
  * @summary
- * Renders the barebones sign-in form markup.
+ * Renders the sign-in form with validation and better-auth integration.
  *
  * @remarks
- * The form uses the email and password input fields.
- * Submitting it is not wired to any authentication flow.
+ * Validates fields with Zod and shows human-readable error messages.
+ * Submits credentials to better-auth email/password endpoint.
+ * Shows loading state while submitting.
  *
  * @explanation
- * This form serves as a placeholder for the sign-in flow.
- * It renders the credencial fields using the shared field
- * primitives so the page can be loaded and iterated on.
+ * Use as the sign-in component inside AuthLayout.
+ * On success, redirects to the dashboard (/).
  *
  * @returns The sign-in form.
  *
@@ -28,13 +34,25 @@ import { SIGN_IN } from "@/presentation/routes/auth/settings/form-labels.setting
  *
  * @author Moisés Reis
  *
- * @date 2026-09-14
+ * @date 2026-09-17
  */
 function SignInForm() {
+  const {
+    email,
+    updateEmail,
+    password,
+    updatePassword,
+    error,
+    pending,
+    status,
+    fieldErrors,
+    handleSubmit,
+  } = useSignIn()
+
   return (
-    <form className="space-y-4">
+    <form className="space-y-4" noValidate onSubmit={handleSubmit}>
       <FieldGroup>
-        <Field>
+        <Field data-invalid={fieldErrors.email ? "true" : undefined}>
           <FieldLabel>E-mail</FieldLabel>
           <FieldContent>
             <Input
@@ -43,10 +61,15 @@ function SignInForm() {
               autoComplete="email"
               placeholder="seu@email.com"
               required
+              value={email}
+              onChange={(e) => updateEmail(e.target.value)}
+              disabled={pending}
+              aria-invalid={fieldErrors.email ? "true" : undefined}
             />
+            <FieldError>{fieldErrors.email}</FieldError>
           </FieldContent>
         </Field>
-        <Field>
+        <Field data-invalid={fieldErrors.password ? "true" : undefined}>
           <FieldLabel>Senha</FieldLabel>
           <FieldContent>
             <Input
@@ -54,14 +77,29 @@ function SignInForm() {
               name="password"
               autoComplete="current-password"
               required
+              value={password}
+              onChange={(e) => updatePassword(e.target.value)}
+              disabled={pending}
+              aria-invalid={fieldErrors.password ? "true" : undefined}
             />
+            <FieldError>{fieldErrors.password}</FieldError>
           </FieldContent>
         </Field>
       </FieldGroup>
 
-      <Button type="submit" className="w-full">
-        {SIGN_IN.SIGN_IN_BUTTON}
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={pending}
+        aria-label={pending ? "Entrando" : undefined}
+      >
+        {pending ? (
+          <IconLoader className="animate-spin" aria-hidden="true" />
+        ) : (
+          SIGN_IN.SIGN_IN_BUTTON
+        )}
       </Button>
+      <SignInToast status={status} errorMessage={error} />
     </form>
   )
 }

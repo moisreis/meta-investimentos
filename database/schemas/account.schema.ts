@@ -14,7 +14,6 @@ export const account = pgSchema("user").table(
   "account",
   {
     id: text("id").primaryKey().default(sql`gen_random_uuid()::text`),
-    issuer: text("issuer").notNull(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
     userId: text("user_id")
@@ -41,8 +40,8 @@ export const account = pgSchema("user").table(
   (table) => [
     // Enforces that each user may link a given provider account
     // at most once.
-    uniqueIndex("account_issuer_accountId_uidx").on(
-      table.issuer,
+    uniqueIndex("account_providerId_accountId_uidx").on(
+      table.providerId,
       table.accountId,
     ),
 

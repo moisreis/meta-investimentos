@@ -1,9 +1,12 @@
+"use client"
+
 import { SidebarTrigger } from "@/presentation/ui/sidebar"
 import { ModeToggle } from "../others/mode-toggle"
 import { NotificationsToggle } from "../others/notifications-toggle"
 import { MainBreadcrumb } from "../others/breadcrumb"
 import { SystemHealthToggle } from "../others/system-health-toggle"
 import { CommandTrigger } from "../others/command-trigger"
+import { ComposedAvatar } from "../others/composed-avatar"
 
 function MainHeader() {
   return (
@@ -17,6 +20,7 @@ function MainHeader() {
         <SystemHealthToggle />
         <NotificationsToggle />
         <ModeToggle />
+        <ComposedAvatar />
       </div>
     </header>
   )

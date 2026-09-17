@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Roboto_Slab } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/presentation/components/theme-provider"
 import { TooltipProvider } from "@/presentation/ui/tooltip"
+import { Toaster } from "@/presentation/ui/toast"
 import { cn } from "@/lib/utils"
 import BRAND from "@/presentation/constants/brand.constants"
 
@@ -77,6 +78,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <TooltipProvider>{children}</TooltipProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
