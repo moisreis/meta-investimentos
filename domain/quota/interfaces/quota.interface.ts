@@ -1,17 +1,17 @@
-import type { Quota } from "@domain/quota/entities/quota.entity";
-import type { EntityId } from "@/value-objects";
+import type { Quota } from "@domain/quota/entities/quota.entity"
+import type { EntityId } from "@/value-objects"
 
 export interface UpsertQuota {
-  fundId: string;
-  date: Date;
-  price: string;
+  fundId: string
+  date: Date
+  price: string
 }
 
 export interface UpsertQuotaResult {
-  fundId: string;
-  date: Date;
-  price: string;
-  action: "INSERT" | "UPDATE";
+  fundId: string
+  date: Date
+  price: string
+  action: "INSERT" | "UPDATE"
 }
 
 /**
@@ -57,7 +57,7 @@ export interface IQuota {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<Quota | null>;
+  findById(id: EntityId): Promise<Quota | null>
 
   /**
    * @summary
@@ -80,7 +80,7 @@ export interface IQuota {
    *
    * @date 2026-09-13
    */
-  findAllByFundId(fundId: EntityId): Promise<Quota[]>;
+  findAllByFundId(fundId: EntityId): Promise<Quota[]>
 
   /**
    * @summary
@@ -105,7 +105,7 @@ export interface IQuota {
    *
    * @date 2026-09-13
    */
-  findByFundIdAndDate(fundId: EntityId, date: Date): Promise<Quota | null>;
+  findByFundIdAndDate(fundId: EntityId, date: Date): Promise<Quota | null>
 
   /**
    * @summary
@@ -129,15 +129,14 @@ export interface IQuota {
    *
    * @date 2026-09-13
    */
-  findLatestByFundId(fundId: EntityId): Promise<Quota | null>;
+  findLatestByFundId(fundId: EntityId): Promise<Quota | null>
 
   /**
    * @summary
    * Retrieves all quotas of the provided funds.
    *
    * @remarks
-   * Fund ids are stored as strings. Returns an empty
-   * array when no quotas match.
+   * Returns an empty array when no quotas match.
    *
    * @explanation
    * Use this method to list quotas for several funds.
@@ -153,15 +152,14 @@ export interface IQuota {
    *
    * @date 2026-09-13
    */
-  findAllByFundIds(fundIds: string[]): Promise<Quota[]>;
+  findAllByFundIds(fundIds: EntityId[]): Promise<Quota[]>
 
   /**
    * @summary
    * Retrieves the latest quota of each provided fund.
    *
    * @remarks
-   * Fund ids are stored as strings. Returns an empty
-   * array when no quotas match.
+   * Returns an empty array when no quotas match.
    *
    * @explanation
    * Use this method to get the most recent quota of every
@@ -178,7 +176,7 @@ export interface IQuota {
    *
    * @date 2026-09-13
    */
-  findLatestByFundIds(fundIds: string[]): Promise<Quota[]>;
+  findLatestByFundIds(fundIds: EntityId[]): Promise<Quota[]>
 
   /**
    * @summary
@@ -206,10 +204,10 @@ export interface IQuota {
    * @date 2026-09-13
    */
   findAllByFundIdsInPeriod(
-    fundIds: string[],
+    fundIds: EntityId[],
     startDate: Date,
-    endDate: Date,
-  ): Promise<Quota[]>;
+    endDate: Date
+  ): Promise<Quota[]>
 
   /**
    * @summary
@@ -233,7 +231,7 @@ export interface IQuota {
    *
    * @date 2026-09-13
    */
-  save(quota: Quota): Promise<Quota>;
+  save(quota: Quota): Promise<Quota>
 
   /**
    * @summary
@@ -257,7 +255,7 @@ export interface IQuota {
    *
    * @date 2026-09-13
    */
-  upsertMany(records: UpsertQuota[]): Promise<UpsertQuotaResult[]>;
+  upsertMany(records: UpsertQuota[]): Promise<UpsertQuotaResult[]>
 
   /**
    * @summary
@@ -280,5 +278,5 @@ export interface IQuota {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

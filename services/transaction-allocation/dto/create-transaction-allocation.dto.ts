@@ -1,11 +1,10 @@
-import type { EntityId, QuotaQuantity } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for creating a `TransactionAllocation`.
  *
  * @remarks
- * Consumed quotas must be a positive value.
+ * Consumed quotas are a decimal string. Value objects
+ * are built in the service mapper.
  *
  * @explanation
  * Use this DTO to allocate consumed quotas through the
@@ -13,9 +12,9 @@ import type { EntityId, QuotaQuantity } from "@/value-objects"
  *
  * @example
  * const DTO: CreateTransactionAllocationDTO = {
- *   applicationId: EntityId.create("application-1"),
- *   withdrawId: EntityId.create("withdrawal-1"),
- *   quotasConsumed: QuotaQuantity.create("250"),
+ *   applicationId: "application-1",
+ *   withdrawId: "withdrawal-1",
+ *   quotasConsumed: "250",
  * };
  *
  * @author Moisés Reis
@@ -23,7 +22,7 @@ import type { EntityId, QuotaQuantity } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface CreateTransactionAllocationDTO {
-  applicationId: EntityId
-  withdrawId: EntityId
-  quotasConsumed: QuotaQuantity
+  applicationId: string
+  withdrawId: string
+  quotasConsumed: string
 }

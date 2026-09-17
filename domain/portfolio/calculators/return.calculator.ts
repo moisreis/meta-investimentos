@@ -1,12 +1,9 @@
-import Decimal from "decimal.js";
+import Decimal from "decimal.js"
 
-import {
-  type GrowthFactor,
-  SignedPercentage,
-} from "@/value-objects";
+import { type GrowthFactor, SignedPercentage } from "@/value-objects"
 
 interface CalculatePortfolioReturnProps {
-  dailyGrowthFactors: { value: GrowthFactor }[];
+  dailyGrowthFactors: { value: GrowthFactor }[]
 }
 
 /**
@@ -43,10 +40,10 @@ export function calculatePortfolioReturn({
 }: CalculatePortfolioReturnProps): SignedPercentage {
   const CUMULATIVE_FACTOR = dailyGrowthFactors.reduce(
     (acc, dailyGrowthFactor) => acc.times(dailyGrowthFactor.value.value),
-    new Decimal(1),
-  );
+    new Decimal(1)
+  )
 
-  const RETURN_RATE_PERCENTAGE = CUMULATIVE_FACTOR.minus(1).times(100);
+  const RETURN_RATE_PERCENTAGE = CUMULATIVE_FACTOR.minus(1).times(100)
 
-  return SignedPercentage.create(RETURN_RATE_PERCENTAGE);
+  return SignedPercentage.create(RETURN_RATE_PERCENTAGE)
 }

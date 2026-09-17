@@ -1,10 +1,16 @@
-﻿import { eq, inArray, sql } from "drizzle-orm"
+﻿import { and, eq, inArray, sql } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { TransactionAllocation } from "@domain/transaction-allocation/entities/transaction-allocation.entity"
 import type { ITransactionAllocation } from "@domain/transaction-allocation/interfaces/transaction-allocation.interface"
 import { EntityId, QuotaQuantity } from "@/value-objects"
+import {
+  toDomain,
+  toInsert,
+  toUpdate,
+} from "../mappers/transaction-allocation.mapper"
 import { transactionAllocation } from "@db-schemas/transaction-allocation.schema"
+import { ConcurrencyError } from "@errors/concurrency.error"
 import { NotFoundError } from "@errors/not-found.error"
 
 export type DbClient = PgAsyncDatabase<PgQueryResultHKT>
@@ -61,106 +67,6 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates consumed quotas through `QuotaQuantity.create`.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(
-    row: typeof transactionAllocation.$inferSelect
-  ): TransactionAllocation {
-    return TransactionAllocation.create(
-      {
-        applicationId: EntityId.create(row.applicationId),
-        withdrawId: EntityId.create(row.withdrawId),
-        quotasConsumed: QuotaQuantity.create(row.quotasConsumed),
-        createdAt: row.createdAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to insert values.
-   *
-   * @remarks
-   * Serializes consumed quotas with `.value.toString()`.
-   *
-   * @explanation
-   * Use this mapper to build the row inserted when the
-   * entity has no id.
-   *
-   * @param entity - The allocation to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(
-    entity: TransactionAllocation
-  ): typeof transactionAllocation.$inferInsert {
-    return {
-      applicationId: entity.applicationId,
-      withdrawId: entity.withdrawId,
-      quotasConsumed: entity.quotasConsumed.value.toString(),
-      createdAt: entity.createdAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to update values.
-   *
-   * @remarks
-   * `createdAt` never changes and is left out of the
-   * update. Consumed quotas serialize with
-   * `.value.toString()`.
-   *
-   * @explanation
-   * Use this mapper to build the row updated when the
-   * entity already has an id.
-   *
-   * @param entity - The allocation to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(
-    entity: TransactionAllocation
-  ): Partial<typeof transactionAllocation.$inferInsert> {
-    return {
-      applicationId: entity.applicationId,
-      withdrawId: entity.withdrawId,
-      quotasConsumed: entity.quotasConsumed.value.toString(),
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the allocation with the provided id.
    *
    * @remarks
@@ -187,7 +93,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
       .where(eq(transactionAllocation.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -220,7 +126,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
       .from(transactionAllocation)
       .where(eq(transactionAllocation.applicationId, applicationId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -247,7 +153,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    * @date 2026-09-15
    */
   async findAllByApplicationIds(
-    applicationIds: string[]
+    applicationIds: EntityId[]
   ): Promise<TransactionAllocation[]> {
     if (applicationIds.length === 0) {
       return []
@@ -258,7 +164,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
       .from(transactionAllocation)
       .where(inArray(transactionAllocation.applicationId, applicationIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -291,7 +197,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
       .from(transactionAllocation)
       .where(eq(transactionAllocation.withdrawId, withdrawId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -318,7 +224,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    * @date 2026-09-15
    */
   async findAllByWithdrawIds(
-    withdrawIds: string[]
+    withdrawIds: EntityId[]
   ): Promise<TransactionAllocation[]> {
     if (withdrawIds.length === 0) {
       return []
@@ -329,7 +235,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
       .from(transactionAllocation)
       .where(inArray(transactionAllocation.withdrawId, withdrawIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -357,7 +263,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    * @date 2026-09-15
    */
   async sumQuotasConsumedByApplicationId(
-    applicationId: string
+    applicationId: EntityId
   ): Promise<QuotaQuantity | null> {
     const [row] = await this.db
       .select({
@@ -375,11 +281,14 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    *
    * @remarks
    * Inserts a new row when the entity has no id. Updates
-   * the existing row or throws `NotFoundError` when missing.
+   * the existing row only when the persisted version
+   * matches the stored version, and bumps the version.
+   * Throws `ConcurrencyError` on version mismatch and
+   * `NotFoundError` when the target row is missing.
    *
    * @explanation
-   * Use this method to create or update an allocation.
-   * Returns the persisted entity with its id.
+   * Use this method to create or update an allocation
+   * with optimistic locking. Returns the persisted entity.
    *
    * @param persisted - The allocation to persist.
    * @returns The persisted entity.
@@ -395,25 +304,42 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
     if (persisted.id) {
       const [row] = await this.db
         .update(transactionAllocation)
-        .set(this.toUpdate(persisted))
-        .where(eq(transactionAllocation.id, persisted.id))
+        .set({ ...toUpdate(persisted), version: persisted.version + 1 })
+        .where(
+          and(
+            eq(transactionAllocation.id, persisted.id),
+            eq(transactionAllocation.version, persisted.version)
+          )
+        )
         .returning()
 
-      if (!row) {
+      if (row) {
+        return toDomain(row)
+      }
+
+      const [existing] = await this.db
+        .select({ id: transactionAllocation.id })
+        .from(transactionAllocation)
+        .where(eq(transactionAllocation.id, persisted.id))
+        .limit(1)
+
+      if (!existing) {
         throw new NotFoundError(
           `TransactionAllocation with id ${persisted.id} was not found.`
         )
       }
 
-      return this.toEntity(row)
+      throw new ConcurrencyError(
+        `TransactionAllocation with id ${persisted.id} has a stale version.`
+      )
     }
 
     const [row] = await this.db
       .insert(transactionAllocation)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

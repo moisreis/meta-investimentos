@@ -1,5 +1,3 @@
-import type { EntityId, SignedPercentage } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for creating a `Portfolio`.
@@ -7,6 +5,7 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
  * @remarks
  * Allocations obey min <= target <= max.
  * The annual interest rate must not be negative.
+ * Percentages are decimal strings.
  *
  * @explanation
  * Use this DTO to create a portfolio through the service
@@ -16,11 +15,11 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
  * const DTO: CreatePortfolioDTO = {
  *   acronym: "MASTER",
  *   name: "Master Portfolio",
- *   userId: EntityId.create("user-1"),
- *   annualInterestRate: SignedPercentage.create("0"),
- *   minAllocation: SignedPercentage.create("5"),
- *   maxAllocation: SignedPercentage.create("20"),
- *   targetAllocation: SignedPercentage.create("12"),
+ *   userId: "user-1",
+ *   annualInterestRate: "0",
+ *   minAllocation: "5",
+ *   maxAllocation: "20",
+ *   targetAllocation: "12",
  * };
  *
  * @author Moisés Reis
@@ -30,9 +29,9 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
 export interface CreatePortfolioDTO {
   acronym: string
   name: string
-  userId: EntityId
-  annualInterestRate: SignedPercentage
-  minAllocation: SignedPercentage
-  maxAllocation: SignedPercentage
-  targetAllocation: SignedPercentage
+  userId: string
+  annualInterestRate: string
+  minAllocation: string
+  maxAllocation: string
+  targetAllocation: string
 }

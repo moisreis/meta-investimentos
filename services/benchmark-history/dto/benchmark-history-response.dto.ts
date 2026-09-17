@@ -1,12 +1,11 @@
-import type { EntityId, SignedPercentage } from "@/value-objects"
-
 /**
  * @summary
  * Represents the shape of the benchmark history response.
  *
  * @remarks
  * This DTO is the format of the response for benchmark
- * history queries and mutations.
+ * history queries and mutations. Ids are strings, dates
+ * are ISO 8601, and the rate is a decimal string.
  *
  * @explanation
  * Use this DTO when exposing a benchmark rate entry to
@@ -20,9 +19,9 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface BenchmarkHistoryResponseDTO {
-  id: EntityId
-  benchmarkId: EntityId
-  date: Date
-  rate: SignedPercentage
-  createdAt: Date
+  id: string
+  benchmarkId: string
+  date: string
+  rate: string
+  createdAt: string
 }

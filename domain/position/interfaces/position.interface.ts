@@ -1,5 +1,5 @@
-import type { Position } from "@domain/position/entities/position.entity";
-import type { EntityId } from "@/value-objects";
+import type { Position } from "@domain/position/entities/position.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -42,7 +42,7 @@ export interface IPosition {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<Position | null>;
+  findById(id: EntityId): Promise<Position | null>
 
   /**
    * @summary
@@ -65,7 +65,7 @@ export interface IPosition {
    *
    * @date 2026-09-13
    */
-  findAllByPortfolioId(portfolioId: EntityId): Promise<Position[]>;
+  findAllByPortfolioId(portfolioId: EntityId): Promise<Position[]>
 
   /**
    * @summary
@@ -89,15 +89,14 @@ export interface IPosition {
    *
    * @date 2026-09-13
    */
-  findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<Position[]>;
+  findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<Position[]>
 
   /**
    * @summary
    * Retrieves all positions holding the provided funds.
    *
    * @remarks
-   * Fund ids are stored as strings. Returns an empty
-   * array when no positions match.
+   * Returns an empty array when no positions match.
    *
    * @explanation
    * Use this method to list positions holding any of the
@@ -114,7 +113,7 @@ export interface IPosition {
    *
    * @date 2026-09-13
    */
-  findAllByFundIds(fundIds: string[]): Promise<Position[]>;
+  findAllByFundIds(fundIds: EntityId[]): Promise<Position[]>
 
   /**
    * @summary
@@ -141,8 +140,8 @@ export interface IPosition {
    */
   findByPortfolioIdAndFundId(
     portfolioId: EntityId,
-    fundId: EntityId,
-  ): Promise<Position | null>;
+    fundId: EntityId
+  ): Promise<Position | null>
 
   /**
    * @summary
@@ -169,7 +168,7 @@ export interface IPosition {
    *
    * @date 2026-09-13
    */
-  save(position: Position): Promise<Position>;
+  save(position: Position): Promise<Position>
 
   /**
    * @summary
@@ -192,5 +191,5 @@ export interface IPosition {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

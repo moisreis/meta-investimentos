@@ -2,18 +2,19 @@
   EntityId,
   type PositiveMoney,
   type QuotaQuantity,
-} from "@/value-objects";
-import { ValidationError } from "@/errors";
+} from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface ApplicationProps {
-  positionId: EntityId;
-  date: Date;
-  amount: PositiveMoney;
-  quotas: QuotaQuantity;
-  reversedAt?: Date | null;
-  reversedByUserId?: EntityId | null;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface ApplicationProps {
+  positionId: EntityId
+  date: Date
+  amount: PositiveMoney
+  quotas: QuotaQuantity
+  reversedAt?: Date | null
+  reversedByUserId?: EntityId | null
+  version?: number
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 /**
@@ -33,8 +34,8 @@ interface ApplicationProps {
  * @date 2026-09-13
  */
 export class Application {
-  private readonly _id?: EntityId;
-  private readonly props: Required<ApplicationProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<ApplicationProps>
 
   /**
    * @summary
@@ -53,7 +54,7 @@ export class Application {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -73,7 +74,7 @@ export class Application {
    * @date 2026-09-13
    */
   get positionId(): EntityId {
-    return this.props.positionId;
+    return this.props.positionId
   }
 
   /**
@@ -93,7 +94,7 @@ export class Application {
    * @date 2026-09-13
    */
   get date(): Date {
-    return this.props.date;
+    return new Date(this.props.date)
   }
 
   /**
@@ -113,7 +114,7 @@ export class Application {
    * @date 2026-09-13
    */
   get amount(): PositiveMoney {
-    return this.props.amount;
+    return this.props.amount
   }
 
   /**
@@ -133,7 +134,7 @@ export class Application {
    * @date 2026-09-13
    */
   get quotas(): QuotaQuantity {
-    return this.props.quotas;
+    return this.props.quotas
   }
 
   /**
@@ -153,7 +154,7 @@ export class Application {
    * @date 2026-09-13
    */
   get reversedAt(): Date | null {
-    return this.props.reversedAt;
+    return this.props.reversedAt ? new Date(this.props.reversedAt) : null
   }
 
   /**
@@ -173,7 +174,27 @@ export class Application {
    * @date 2026-09-13
    */
   get reversedByUserId(): EntityId | null {
-    return this.props.reversedByUserId;
+    return this.props.reversedByUserId
+  }
+
+  /**
+   * @summary
+   * Returns the optimistic-locking version of the application.
+   *
+   * @remarks
+   * Required number, defaults to zero.
+   *
+   * @explanation
+   * Use to guard concurrent updates in the repository.
+   *
+   * @returns The current version number.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  get version(): number {
+    return this.props.version
   }
 
   /**
@@ -193,7 +214,7 @@ export class Application {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -213,7 +234,7 @@ export class Application {
    * @date 2026-09-13
    */
   get updatedAt(): Date {
-    return this.props.updatedAt;
+    return new Date(this.props.updatedAt)
   }
 
   /**
@@ -234,8 +255,14 @@ export class Application {
    * @date 2026-09-13
    */
   private constructor(props: Required<ApplicationProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      date: new Date(props.date),
+      reversedAt: props.reversedAt ? new Date(props.reversedAt) : null,
+      createdAt: new Date(props.createdAt),
+      updatedAt: new Date(props.updatedAt),
+    })
   }
 
   /**
@@ -269,10 +296,10 @@ export class Application {
    */
   public static create(props: ApplicationProps, id?: string): Application {
     if (!props.positionId || props.positionId.trim() === "") {
-      throw new ValidationError("`Application` must have a position id.");
+      throw new ValidationError("`Application` must have a position id.")
     }
     if (!props.date) {
-      throw new ValidationError("`Application` must have a date.");
+      throw new ValidationError("`Application` must have a date.")
     }
     if (!props.amount) {
       throw new ValidationError("`Application` must have an amount.")
@@ -287,6 +314,7 @@ export class Application {
       ...props,
       reversedAt: props.reversedAt ?? null,
       reversedByUserId: props.reversedByUserId ?? null,
+      version: props.version ?? 0,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
     }
@@ -321,12 +349,12 @@ export class Application {
   public reverse(userId: EntityId, now?: Date): Application {
     if (this._id === undefined) {
       throw new ValidationError(
-        "Cannot reverse an `Application` that has not been persisted.",
+        "Cannot reverse an `Application` that has not been persisted."
       )
     }
     if (this.props.reversedAt !== null) {
       throw new ValidationError(
-        "Cannot reverse an `Application` that is already reversed.",
+        "Cannot reverse an `Application` that is already reversed."
       )
     }
 
@@ -339,7 +367,7 @@ export class Application {
         reversedByUserId: userId,
         updatedAt: NOW,
       },
-      this._id,
+      this._id
     )
   }
 

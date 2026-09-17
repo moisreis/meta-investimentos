@@ -1,12 +1,12 @@
-import Decimal from "decimal.js";
+import Decimal from "decimal.js"
 import {
   MONEY_DECIMAL_PLACES,
   ROUNDING_MODE,
-} from "@constants/value-objects/rounding.constant";
-import { ValidationError } from "@/errors";
+} from "@constants/value-objects/rounding.constant"
+import { ValidationError } from "@/errors"
 
 interface SignedMoneyProps {
-  value: Decimal;
+  value: Decimal
 }
 
 /**
@@ -30,31 +30,31 @@ interface SignedMoneyProps {
  * @date 2026-09-13
  */
 export class SignedMoney {
-  private readonly props: SignedMoneyProps;
+  private readonly props: SignedMoneyProps
 
   // Gets the underlying Decimal signed monetary amount value.
   get value(): Decimal {
-    return this.props.value;
+    return this.props.value
   }
 
   // Returns true if the monetary amount is negative.
   get isNegative(): boolean {
-    return this.props.value.isNegative();
+    return this.props.value.isNegative()
   }
 
   // Returns true if the monetary amount is positive (greater than zero).
   get isPositive(): boolean {
-    return this.props.value.isPositive() && !this.props.value.isZero();
+    return this.props.value.isPositive() && !this.props.value.isZero()
   }
 
   // Returns true if the monetary amount is zero.
   get isZero(): boolean {
-    return this.props.value.isZero();
+    return this.props.value.isZero()
   }
 
   // Initializes internal properties for SignedMoney.
   private constructor(props: SignedMoneyProps) {
-    this.props = props;
+    this.props = props
   }
 
   /**
@@ -69,7 +69,7 @@ export class SignedMoney {
    * @explanation
    * Factory method to construct a valid **SignedMoney**.
    * Throws a **ValidationError** if the provided input is
-   * missing.
+   * missing or non-finite.
    *
    * @param value - Numerical value to construct the amount.
    *
@@ -84,20 +84,24 @@ export class SignedMoney {
    */
   public static create(value: Decimal.Value): SignedMoney {
     if (value === undefined || value === null) {
-      throw new ValidationError("`SignedMoney` must be defined.");
+      throw new ValidationError("`SignedMoney` must be defined.")
     }
 
-    let DECIMAL_VALUE: Decimal;
+    let DECIMAL_VALUE: Decimal
 
     try {
-      DECIMAL_VALUE = new Decimal(value);
+      DECIMAL_VALUE = new Decimal(value)
     } catch {
-      throw new ValidationError("`SignedMoney` must be a valid number.");
+      throw new ValidationError("`SignedMoney` must be a valid number.")
+    }
+
+    if (!DECIMAL_VALUE.isFinite()) {
+      throw new ValidationError("`SignedMoney` must be a finite number.")
     }
 
     return new SignedMoney({
       value: DECIMAL_VALUE.toDecimalPlaces(MONEY_DECIMAL_PLACES, ROUNDING_MODE),
-    });
+    })
   }
 
   /**
@@ -124,6 +128,6 @@ export class SignedMoney {
    * @date 2026-09-13
    */
   public static equals(a: SignedMoney, b: SignedMoney): boolean {
-    return a.value.equals(b.value);
+    return a.value.equals(b.value)
   }
 }

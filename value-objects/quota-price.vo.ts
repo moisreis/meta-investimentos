@@ -1,9 +1,9 @@
-import Decimal from "decimal.js";
+import Decimal from "decimal.js"
 import {
   PRICE_DECIMAL_PLACES,
   ROUNDING_MODE,
-} from "@constants/value-objects/rounding.constant";
-import { ValidationError } from "@/errors";
+} from "@constants/value-objects/rounding.constant"
+import { ValidationError } from "@/errors"
 
 interface QuotaPriceProps {
   value: Decimal
@@ -30,16 +30,16 @@ interface QuotaPriceProps {
  * @date 2026-09-13
  */
 export class QuotaPrice {
-  private readonly props: QuotaPriceProps;
+  private readonly props: QuotaPriceProps
 
   // Gets the underlying Decimal quota price value.
   get value(): Decimal {
-    return this.props.value;
+    return this.props.value
   }
 
   // Initializes internal properties for QuotaPrice.
   private constructor(props: QuotaPriceProps) {
-    this.props = props;
+    this.props = props
   }
 
   /**
@@ -53,7 +53,7 @@ export class QuotaPrice {
    * @explanation
    * Factory method to construct a valid **QuotaPrice**.
    * Throws a **ValidationError** if the provided input is
-   * missing or less than zero.
+   * missing, non-finite, or less than zero.
    *
    * @param value - Numerical value to construct the price.
    *
@@ -68,26 +68,28 @@ export class QuotaPrice {
    */
   public static create(value: Decimal.Value): QuotaPrice {
     if (value === undefined || value === null) {
-      throw new ValidationError("`QuotaPrice` must be defined.");
+      throw new ValidationError("`QuotaPrice` must be defined.")
     }
 
-    let DECIMAL_VALUE: Decimal;
+    let DECIMAL_VALUE: Decimal
 
     try {
-      DECIMAL_VALUE = new Decimal(value);
+      DECIMAL_VALUE = new Decimal(value)
     } catch {
-      throw new ValidationError("`QuotaPrice` must be a valid number.");
+      throw new ValidationError("`QuotaPrice` must be a valid number.")
+    }
+
+    if (!DECIMAL_VALUE.isFinite()) {
+      throw new ValidationError("`QuotaPrice` must be a finite number.")
     }
 
     if (DECIMAL_VALUE.lessThan(0)) {
-      throw new ValidationError(
-        "`QuotaPrice` must be equal or greater than 0.",
-      );
+      throw new ValidationError("`QuotaPrice` must be equal or greater than 0.")
     }
 
     return new QuotaPrice({
       value: DECIMAL_VALUE.toDecimalPlaces(PRICE_DECIMAL_PLACES, ROUNDING_MODE),
-    });
+    })
   }
 
   /**
@@ -114,6 +116,6 @@ export class QuotaPrice {
    * @date 2026-09-13
    */
   public static equals(a: QuotaPrice, b: QuotaPrice): boolean {
-    return a.value.equals(b.value);
+    return a.value.equals(b.value)
   }
 }

@@ -1,5 +1,5 @@
-import type { Verification } from "@domain/verification/entities/verification.entity";
-import type { EntityId } from "@/value-objects";
+import type { Verification } from "@domain/verification/entities/verification.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -42,7 +42,7 @@ export interface IVerification {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<Verification | null>;
+  findById(id: EntityId): Promise<Verification | null>
 
   /**
    * @summary
@@ -66,7 +66,31 @@ export interface IVerification {
    *
    * @date 2026-09-13
    */
-  findAllByIdentifier(identifier: string): Promise<Verification[]>;
+  findAllByIdentifier(identifier: string): Promise<Verification[]>
+
+  /**
+   * @summary
+   * Retrieves all verifications tied to the identifiers.
+   *
+   * @remarks
+   * Returns an empty array when no verifications match.
+   *
+   * @explanation
+   * Use this method to list verifications linked to
+   * several identifiers. Returns an empty array for no matches.
+   *
+   * @param identifiers - The identifiers of the verifications.
+   * @returns The matching entries.
+   *
+   * @example
+   * const VERS = await VERIFICATION_REPO
+   *   .findAllByIdentifiers(IDENTIFIERS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByIdentifiers(identifiers: string[]): Promise<Verification[]>
 
   /**
    * @summary
@@ -90,7 +114,7 @@ export interface IVerification {
    *
    * @date 2026-09-13
    */
-  save(verification: Verification): Promise<Verification>;
+  save(verification: Verification): Promise<Verification>
 
   /**
    * @summary
@@ -113,5 +137,5 @@ export interface IVerification {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

@@ -1,5 +1,32 @@
-import type { Application } from "@domain/application/entities/application.entity";
-import type { EntityId } from "@/value-objects";
+import type { Application } from "@domain/application/entities/application.entity"
+import type { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
+
+/**
+ * @summary
+ * Aggregates applications within a date range.
+ *
+ * @remarks
+ * Carries the summed amount and quota values of the
+ * matching applications, or `null` when none match.
+ *
+ * @explanation
+ * Use this shape to return the summed applications of a
+ * position within a date range.
+ *
+ * @example
+ * const TOTALS = { amount: null, quotas: null };
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-15
+ */
+export interface ApplicationTotals {
+  // Sum of application amounts, or `null` when none.
+  amount: PositiveMoney | null
+
+  // Sum of application quotas, or `null` when none.
+  quotas: QuotaQuantity | null
+}
 
 /**
  * @summary
@@ -42,7 +69,7 @@ export interface IApplication {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<Application | null>;
+  findById(id: EntityId): Promise<Application | null>
 
   /**
    * @summary
@@ -65,7 +92,7 @@ export interface IApplication {
    *
    * @date 2026-09-13
    */
-  findAllByPositionId(positionId: EntityId): Promise<Application[]>;
+  findAllByPositionId(positionId: EntityId): Promise<Application[]>
 
   /**
    * @summary
@@ -96,8 +123,71 @@ export interface IApplication {
   findAllByPositionIdInPeriod(
     positionId: EntityId,
     startDate: Date,
-    endDate: Date,
-  ): Promise<Application[]>;
+    endDate: Date
+  ): Promise<Application[]>
+
+  /**
+   * @summary
+   * Retrieves all applications of the provided positions
+   * dated within the given period.
+   *
+   * @remarks
+   * The period is inclusive of both dates. Returns an
+   * empty array when no applications match.
+   *
+   * @explanation
+   * Use this method to list applications for many positions
+   * inside a date range in a single query.
+   *
+   * @param positionIds - The identifiers of the positions.
+   * @param startDate - The start of the period, inclusive.
+   * @param endDate - The end of the period, inclusive.
+   * @returns The matching entries.
+   *
+   * @example
+   * const APPS = await APP_REPO
+   *   .findAllByPositionIdsInPeriod(POS_IDS, START, END);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByPositionIdsInPeriod(
+    positionIds: EntityId[],
+    startDate: Date,
+    endDate: Date
+  ): Promise<Application[]>
+
+  /**
+   * @summary
+   * Sums application amounts and quotas within the period.
+   *
+   * @remarks
+   * The period is inclusive of both dates. Returns null
+   * values when no applications match.
+   *
+   * @explanation
+   * Use this method to aggregate the applications of a
+   * position inside a date range.
+   *
+   * @param positionId - The identifier of the position.
+   * @param startDate - The start of the period, inclusive.
+   * @param endDate - The end of the period, inclusive.
+   * @returns The summed totals or `null` fields.
+   *
+   * @example
+   * const TOTALS = await APP_REPO
+   *   .sumByPositionIdInPeriod(POS_ID, START, END);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  sumByPositionIdInPeriod(
+    positionId: EntityId,
+    startDate: Date,
+    endDate: Date
+  ): Promise<ApplicationTotals>
 
   /**
    * @summary
@@ -121,7 +211,7 @@ export interface IApplication {
    *
    * @date 2026-09-13
    */
-  save(application: Application): Promise<Application>;
+  save(application: Application): Promise<Application>
 
   /**
    * @summary
@@ -144,5 +234,5 @@ export interface IApplication {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

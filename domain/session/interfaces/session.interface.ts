@@ -1,5 +1,5 @@
-import type { Session } from "@domain/session/entities/session.entity";
-import type { EntityId } from "@/value-objects";
+import type { Session } from "@domain/session/entities/session.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -42,7 +42,7 @@ export interface ISession {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<Session | null>;
+  findById(id: EntityId): Promise<Session | null>
 
   /**
    * @summary
@@ -65,7 +65,7 @@ export interface ISession {
    *
    * @date 2026-09-13
    */
-  findByToken(token: string): Promise<Session | null>;
+  findByToken(token: string): Promise<Session | null>
 
   /**
    * @summary
@@ -88,7 +88,31 @@ export interface ISession {
    *
    * @date 2026-09-13
    */
-  findAllByUserId(userId: EntityId): Promise<Session[]>;
+  findAllByUserId(userId: EntityId): Promise<Session[]>
+
+  /**
+   * @summary
+   * Retrieves all sessions of the provided users.
+   *
+   * @remarks
+   * Returns an empty array when no sessions match.
+   *
+   * @explanation
+   * Use this method to list sessions linked to several
+   * users. Returns an empty array for no matches.
+   *
+   * @param userIds - The ids of the users.
+   * @returns The matching entries.
+   *
+   * @example
+   * const SESS = await SESSION_REPO
+   *   .findAllByUserIds(USER_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByUserIds(userIds: EntityId[]): Promise<Session[]>
 
   /**
    * @summary
@@ -112,7 +136,7 @@ export interface ISession {
    *
    * @date 2026-09-13
    */
-  save(session: Session): Promise<Session>;
+  save(session: Session): Promise<Session>
 
   /**
    * @summary
@@ -135,5 +159,5 @@ export interface ISession {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

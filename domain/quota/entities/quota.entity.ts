@@ -1,11 +1,11 @@
-﻿import { EntityId, type QuotaPrice } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId, type QuotaPrice } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface QuotaProps {
-  fundId: EntityId;
-  date: Date;
-  price: QuotaPrice;
-  createdAt?: Date;
+export interface QuotaProps {
+  fundId: EntityId
+  date: Date
+  price: QuotaPrice
+  createdAt?: Date
 }
 
 /**
@@ -24,8 +24,8 @@ interface QuotaProps {
  * @date 2026-09-13
  */
 export class Quota {
-  private readonly _id?: EntityId;
-  private readonly props: Required<QuotaProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<QuotaProps>
 
   /**
    * @summary
@@ -44,7 +44,7 @@ export class Quota {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -64,7 +64,7 @@ export class Quota {
    * @date 2026-09-13
    */
   get fundId(): EntityId {
-    return this.props.fundId;
+    return this.props.fundId
   }
 
   /**
@@ -84,7 +84,7 @@ export class Quota {
    * @date 2026-09-13
    */
   get date(): Date {
-    return this.props.date;
+    return new Date(this.props.date)
   }
 
   /**
@@ -104,7 +104,7 @@ export class Quota {
    * @date 2026-09-13
    */
   get price(): QuotaPrice {
-    return this.props.price;
+    return this.props.price
   }
 
   /**
@@ -124,7 +124,7 @@ export class Quota {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -145,8 +145,12 @@ export class Quota {
    * @date 2026-09-13
    */
   private constructor(props: Required<QuotaProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      date: new Date(props.date),
+      createdAt: new Date(props.createdAt),
+    })
   }
 
   /**
@@ -178,23 +182,23 @@ export class Quota {
    */
   public static create(props: QuotaProps, id?: string): Quota {
     if (!props.fundId || props.fundId.trim() === "") {
-      throw new ValidationError("`Quota` must have a fund id.");
+      throw new ValidationError("`Quota` must have a fund id.")
     }
     if (!props.date) {
-      throw new ValidationError("`Quota` must have a date.");
+      throw new ValidationError("`Quota` must have a date.")
     }
     if (!props.price) {
-      throw new ValidationError("`Quota` must have a price.");
+      throw new ValidationError("`Quota` must have a price.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<QuotaProps> = {
       ...props,
       createdAt: props.createdAt ?? NOW,
-    };
+    }
 
-    return new Quota(NORMALIZED_PROPS, id);
+    return new Quota(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -221,7 +225,7 @@ export class Quota {
    */
   public updatePrice(price: QuotaPrice): Quota {
     if (!price) {
-      throw new ValidationError("`Quota` must have a price.");
+      throw new ValidationError("`Quota` must have a price.")
     }
 
     return new Quota(
@@ -229,8 +233,8 @@ export class Quota {
         ...this.props,
         price,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -258,15 +262,15 @@ export class Quota {
    */
   public equals(object?: Quota | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

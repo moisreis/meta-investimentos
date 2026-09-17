@@ -1,5 +1,5 @@
-import type { TransactionAllocation } from "@domain/transaction-allocation/entities/transaction-allocation.entity";
-import type { EntityId } from "@/value-objects";
+import type { TransactionAllocation } from "@domain/transaction-allocation/entities/transaction-allocation.entity"
+import type { EntityId, QuotaQuantity } from "@/value-objects"
 
 /**
  * @summary
@@ -45,7 +45,7 @@ export interface ITransactionAllocation {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<TransactionAllocation | null>;
+  findById(id: EntityId): Promise<TransactionAllocation | null>
 
   /**
    * @summary
@@ -70,8 +70,34 @@ export interface ITransactionAllocation {
    * @date 2026-09-13
    */
   findAllByApplicationId(
-    applicationId: EntityId,
-  ): Promise<TransactionAllocation[]>;
+    applicationId: EntityId
+  ): Promise<TransactionAllocation[]>
+
+  /**
+   * @summary
+   * Retrieves all allocations of the provided applications.
+   *
+   * @remarks
+   * Returns an empty array when no allocations match.
+   *
+   * @explanation
+   * Use this method to list allocations linked to several
+   * applications. Returns an empty array for no matches.
+   *
+   * @param applicationIds - The unique identifiers of the applications.
+   * @returns The matching entries.
+   *
+   * @example
+   * const TAS = await ALLOC_REPO
+   *   .findAllByApplicationIds(APPLICATION_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByApplicationIds(
+    applicationIds: EntityId[]
+  ): Promise<TransactionAllocation[]>
 
   /**
    * @summary
@@ -95,7 +121,60 @@ export interface ITransactionAllocation {
    *
    * @date 2026-09-13
    */
-  findAllByWithdrawalId(withdrawId: EntityId): Promise<TransactionAllocation[]>;
+  findAllByWithdrawalId(withdrawId: EntityId): Promise<TransactionAllocation[]>
+
+  /**
+   * @summary
+   * Retrieves all allocations of the provided withdrawals.
+   *
+   * @remarks
+   * Returns an empty array when no allocations match.
+   *
+   * @explanation
+   * Use this method to list allocations linked to several
+   * withdrawals. Returns an empty array for no matches.
+   *
+   * @param withdrawIds - The unique identifiers of the withdrawals.
+   * @returns The matching entries.
+   *
+   * @example
+   * const TAS = await ALLOC_REPO
+   *   .findAllByWithdrawIds(WITHDRAW_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByWithdrawIds(
+    withdrawIds: EntityId[]
+  ): Promise<TransactionAllocation[]>
+
+  /**
+   * @summary
+   * Sums the quotas consumed by the provided application.
+   *
+   * @remarks
+   * Uses a database aggregate. Returns null when the
+   * application has no allocations.
+   *
+   * @explanation
+   * Use this method to know the total quotas an
+   * application has consumed from the fund.
+   *
+   * @param applicationId - The unique identifier of the application.
+   * @returns The summed quotas or `null`.
+   *
+   * @example
+   * const TOTAL = await ALLOC_REPO
+   *   .sumQuotasConsumedByApplicationId(APPLICATION_ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  sumQuotasConsumedByApplicationId(
+    applicationId: EntityId
+  ): Promise<QuotaQuantity | null>
 
   /**
    * @summary
@@ -120,8 +199,8 @@ export interface ITransactionAllocation {
    * @date 2026-09-13
    */
   save(
-    transactionAllocation: TransactionAllocation,
-  ): Promise<TransactionAllocation>;
+    transactionAllocation: TransactionAllocation
+  ): Promise<TransactionAllocation>
 
   /**
    * @summary
@@ -144,5 +223,5 @@ export interface ITransactionAllocation {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

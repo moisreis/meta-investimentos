@@ -1,9 +1,9 @@
-import Decimal from "decimal.js";
+import Decimal from "decimal.js"
 
-import { SignedPercentage } from "@/value-objects";
+import { SignedPercentage } from "@/value-objects"
 
 interface CalculatePortfolioCumulativeBenchmarkProps {
-  monthlyIndexValues: { value: SignedPercentage }[];
+  monthlyIndexValues: { value: SignedPercentage }[]
 }
 
 /**
@@ -41,10 +41,10 @@ export function calculatePortfolioCumulativeBenchmark({
   const CUMULATIVE_FACTOR = monthlyIndexValues.reduce(
     (acc, monthlyIndexValue) =>
       acc.times(
-        new Decimal(1).plus(monthlyIndexValue.value.value.dividedBy(100)),
+        new Decimal(1).plus(monthlyIndexValue.value.value.dividedBy(100))
       ),
-    new Decimal(1),
-  );
+    new Decimal(1)
+  )
 
-  return SignedPercentage.create(CUMULATIVE_FACTOR.minus(1).times(100));
+  return SignedPercentage.create(CUMULATIVE_FACTOR.minus(1).times(100))
 }

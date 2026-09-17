@@ -1,40 +1,16 @@
-﻿import { and, eq, gte, inArray, lte, sql } from "drizzle-orm"
+﻿import { and, asc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { Withdrawal } from "@domain/withdrawal/entities/withdrawal.entity"
 import type { IWithdrawal } from "@domain/withdrawal/interfaces/withdrawal.interface"
+import type { WithdrawalTotals } from "@domain/withdrawal/interfaces/withdrawal.interface"
 import { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/withdrawal.mapper"
 import { withdrawal } from "@db-schemas/withdrawal.schema"
+import { ConcurrencyError } from "@errors/concurrency.error"
 import { NotFoundError } from "@errors/not-found.error"
 
 export type DbClient = PgAsyncDatabase<PgQueryResultHKT>
-
-/**
- * @summary
- * Holds the aggregate totals of a position period.
- *
- * @remarks
- * Amounts and quotas are value objects. They are null
- * when no transaction exists in the period.
- *
- * @explanation
- * Use this shape to return the summed withdrawals of a
- * position within a date range.
- *
- * @example
- * const TOTALS = { amount: null, quotas: null };
- *
- * @author Moisés Reis
- *
- * @date 2026-09-15
- */
-export interface WithdrawalTotals {
-  // The sum of amounts, or `null` when absent.
-  amount: PositiveMoney | null
-
-  // The sum of quotas, or `null` when absent.
-  quotas: QuotaQuantity | null
-}
 
 /**
  * @summary
@@ -89,116 +65,6 @@ export class WithdrawalRepository implements IWithdrawal {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create`
-   * method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape
-   * so services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof withdrawal.$inferSelect): Withdrawal {
-    return Withdrawal.create(
-      {
-        positionId: EntityId.create(row.positionId),
-        date: row.date,
-        amount: PositiveMoney.create(row.amount),
-        quotas: QuotaQuantity.create(row.quotas),
-        reversedAt: row.reversedAt,
-        reversedByUserId: row.reversedByUserId
-          ? EntityId.create(row.reversedByUserId)
-          : null,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps an entity to insert values.
-   *
-   * @remarks
-   * Serializes value objects through their `.value`
-   * property for **PostgreSQL** storage.
-   *
-   * @explanation
-   * Converts domain columns into a shape that the
-   * `withdrawal` insert statement accepts.
-   *
-   * @param entity - The entity to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Withdrawal): typeof withdrawal.$inferInsert {
-    return {
-      positionId: entity.positionId,
-      date: entity.date,
-      amount: entity.amount.value.toString(),
-      quotas: entity.quotas.value.toString(),
-      reversedAt: entity.reversedAt,
-      reversedByUserId: entity.reversedByUserId,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps an entity to mutable update values.
-   *
-   * @remarks
-   * Omits `createdAt` and `updatedAt`. The `updatedAt`
-   * column refreshes through the `$onUpdate` hook.
-   *
-   * @explanation
-   * Converts domain columns into a partial shape for
-   * the `withdrawal` update statement.
-   *
-   * @param entity - The entity to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(
-    entity: Withdrawal
-  ): Partial<typeof withdrawal.$inferInsert> {
-    return {
-      positionId: entity.positionId,
-      date: entity.date,
-      amount: entity.amount.value.toString(),
-      quotas: entity.quotas.value.toString(),
-      reversedAt: entity.reversedAt,
-      reversedByUserId: entity.reversedByUserId,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the withdrawal with the provided id.
    *
    * @remarks
@@ -225,7 +91,7 @@ export class WithdrawalRepository implements IWithdrawal {
       .where(eq(withdrawal.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -256,7 +122,7 @@ export class WithdrawalRepository implements IWithdrawal {
       .from(withdrawal)
       .where(eq(withdrawal.positionId, positionId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -299,8 +165,9 @@ export class WithdrawalRepository implements IWithdrawal {
           lte(withdrawal.date, endDate)
         )
       )
+      .orderBy(asc(withdrawal.date), asc(withdrawal.createdAt))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -333,7 +200,7 @@ export class WithdrawalRepository implements IWithdrawal {
    * @date 2026-09-15
    */
   async findAllByPositionIdsInPeriod(
-    positionIds: string[],
+    positionIds: EntityId[],
     startDate: Date,
     endDate: Date
   ): Promise<Withdrawal[]> {
@@ -351,8 +218,9 @@ export class WithdrawalRepository implements IWithdrawal {
           lte(withdrawal.date, endDate)
         )
       )
+      .orderBy(asc(withdrawal.date), asc(withdrawal.createdAt))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -361,8 +229,9 @@ export class WithdrawalRepository implements IWithdrawal {
    * period.
    *
    * @remarks
-   * The period is inclusive of both dates. Returns
-   * null fields when no withdrawals exist in the
+   * The period is inclusive of both dates. Reversed
+   * withdrawals are excluded from the totals. Returns
+   * null fields when no active withdrawals exist in the
    * period.
    *
    * @explanation
@@ -385,7 +254,7 @@ export class WithdrawalRepository implements IWithdrawal {
    * @date 2026-09-15
    */
   async sumByPositionIdInPeriod(
-    positionId: string,
+    positionId: EntityId,
     startDate: Date,
     endDate: Date
   ): Promise<WithdrawalTotals> {
@@ -399,7 +268,8 @@ export class WithdrawalRepository implements IWithdrawal {
         and(
           eq(withdrawal.positionId, positionId),
           gte(withdrawal.date, startDate),
-          lte(withdrawal.date, endDate)
+          lte(withdrawal.date, endDate),
+          isNull(withdrawal.reversedAt)
         )
       )
 
@@ -414,12 +284,15 @@ export class WithdrawalRepository implements IWithdrawal {
    * Persists the provided withdrawal.
    *
    * @remarks
-   * Inserts a new row when the entity has no id.
-   * Updates the existing row otherwise.
+   * Inserts a new row when the entity has no id. Updates
+   * the existing row only when the persisted version
+   * matches the stored version, and bumps the version.
+   * Throws `ConcurrencyError` on version mismatch and
+   * `NotFoundError` when the target row is missing.
    *
    * @explanation
-   * Use this method to create or update a withdrawal.
-   * Returns the persisted entity with its id.
+   * Use this method to create or update a withdrawal
+   * with optimistic locking. Returns the persisted entity.
    *
    * @param persisted - The withdrawal to persist.
    * @returns The persisted entity.
@@ -435,25 +308,42 @@ export class WithdrawalRepository implements IWithdrawal {
     if (persisted.id) {
       const [row] = await this.db
         .update(withdrawal)
-        .set(this.toUpdate(persisted))
-        .where(eq(withdrawal.id, persisted.id))
+        .set({ ...toUpdate(persisted), version: persisted.version + 1 })
+        .where(
+          and(
+            eq(withdrawal.id, persisted.id),
+            eq(withdrawal.version, persisted.version)
+          )
+        )
         .returning()
 
-      if (!row) {
+      if (row) {
+        return toDomain(row)
+      }
+
+      const [existing] = await this.db
+        .select({ id: withdrawal.id })
+        .from(withdrawal)
+        .where(eq(withdrawal.id, persisted.id))
+        .limit(1)
+
+      if (!existing) {
         throw new NotFoundError(
           `Withdrawal with id ${persisted.id} was not found.`
         )
       }
 
-      return this.toEntity(row)
+      throw new ConcurrencyError(
+        `Withdrawal with id ${persisted.id} has a stale version.`
+      )
     }
 
     const [row] = await this.db
       .insert(withdrawal)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

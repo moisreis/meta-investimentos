@@ -1,12 +1,11 @@
-import type { PositiveMoney } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for setting a `Position` initial balance.
  *
  * @remarks
  * Both the balance and its date are required to assign
- * the opening balance of an existing position.
+ * the opening balance of an existing position. The
+ * balance is a decimal string; the date is ISO 8601.
  *
  * @explanation
  * Use this DTO to register the opening balance and date
@@ -14,8 +13,8 @@ import type { PositiveMoney } from "@/value-objects"
  *
  * @example
  * const DTO: UpdatePositionDTO = {
- *   initialBalance: PositiveMoney.create("10000"),
- *   initialBalanceDate: new Date("2026-01-01"),
+ *   initialBalance: "10000",
+ *   initialBalanceDate: "2026-01-01T00:00:00.000Z",
  * };
  *
  * @author Moisés Reis
@@ -23,6 +22,6 @@ import type { PositiveMoney } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface UpdatePositionDTO {
-  initialBalance: PositiveMoney
-  initialBalanceDate: Date
+  initialBalance: string
+  initialBalanceDate: string
 }

@@ -1,5 +1,5 @@
-import type { AuditLog } from "@domain/audit-log/entities/audit-log.entity";
-import type { EntityId } from "@/value-objects";
+import type { AuditLog } from "@domain/audit-log/entities/audit-log.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -43,7 +43,7 @@ export interface IAuditLog {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<AuditLog | null>;
+  findById(id: EntityId): Promise<AuditLog | null>
 
   /**
    * @summary
@@ -66,7 +66,7 @@ export interface IAuditLog {
    *
    * @date 2026-09-13
    */
-  findAllByEntity(entity: string): Promise<AuditLog[]>;
+  findAllByEntity(entity: string): Promise<AuditLog[]>
 
   /**
    * @summary
@@ -93,8 +93,37 @@ export interface IAuditLog {
    */
   findAllByEntityAndEntityId(
     entity: string,
-    entityId: string,
-  ): Promise<AuditLog[]>;
+    entityId: EntityId
+  ): Promise<AuditLog[]>
+
+  /**
+   * @summary
+   * Retrieves all logs for the entity and provided ids.
+   *
+   * @remarks
+   * Returns an empty array when no logs match.
+   *
+   * @explanation
+   * Use this method to list logs that target multiple
+   * records of an entity. Returns an empty array for
+   * no matches.
+   *
+   * @param entity - The name of the audited entity.
+   * @param entityIds - The unique identifiers of the audited entities.
+   * @returns The matching entries.
+   *
+   * @example
+   * const LOGS = await AUDIT_LOG_REPO
+   *   .findAllByEntityAndEntityIds(ENTITY, ENTITY_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByEntityAndEntityIds(
+    entity: string,
+    entityIds: EntityId[]
+  ): Promise<AuditLog[]>
 
   /**
    * @summary
@@ -117,7 +146,31 @@ export interface IAuditLog {
    *
    * @date 2026-09-13
    */
-  findAllByUserId(userId: string): Promise<AuditLog[]>;
+  findAllByUserId(userId: EntityId): Promise<AuditLog[]>
+
+  /**
+   * @summary
+   * Retrieves all logs performed by the provided user ids.
+   *
+   * @remarks
+   * Returns an empty array when no logs match.
+   *
+   * @explanation
+   * Use this method to list logs created by multiple
+   * users at once. Returns an empty array for no matches.
+   *
+   * @param userIds - The unique identifiers of the users.
+   * @returns The matching entries.
+   *
+   * @example
+   * const LOGS = await AUDIT_LOG_REPO
+   *   .findAllByUserIds(USER_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByUserIds(userIds: EntityId[]): Promise<AuditLog[]>
 
   /**
    * @summary
@@ -141,5 +194,5 @@ export interface IAuditLog {
    *
    * @date 2026-09-13
    */
-  save(auditLog: AuditLog): Promise<AuditLog>;
+  save(auditLog: AuditLog): Promise<AuditLog>
 }

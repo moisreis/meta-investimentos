@@ -1,12 +1,11 @@
-import type { EntityId, CNPJ, SignedPercentage } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for creating a `Fund`.
  *
  * @remarks
  * The cnpj must be unique. Optional fees default to
- * null when omitted.
+ * null when omitted. Cnpj and ids are strings; value
+ * objects are built in the service mapper.
  *
  * @explanation
  * Use this DTO to create a fund through the service
@@ -14,9 +13,9 @@ import type { EntityId, CNPJ, SignedPercentage } from "@/value-objects"
  *
  * @example
  * const DTO: CreateFundDTO = {
- *   cnpj: CNPJ.create("12.345.678/0001-90"),
+ *   cnpj: "12.345.678/0001-90",
  *   name: "Fundo Master",
- *   bankId: EntityId.create("bank-1"),
+ *   bankId: "bank-1",
  * };
  *
  * @author Moisés Reis
@@ -24,11 +23,11 @@ import type { EntityId, CNPJ, SignedPercentage } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface CreateFundDTO {
-  cnpj: CNPJ
+  cnpj: string
   name: string
-  administrationFee?: SignedPercentage | null
-  performanceFee?: SignedPercentage | null
-  bankId: EntityId
-  benchmarkId?: EntityId | null
-  categoryId?: EntityId | null
+  administrationFee?: string | null
+  performanceFee?: string | null
+  bankId: string
+  benchmarkId?: string | null
+  categoryId?: string | null
 }

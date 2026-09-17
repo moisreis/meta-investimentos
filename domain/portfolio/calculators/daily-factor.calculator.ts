@@ -1,10 +1,10 @@
-import { GrowthFactor, type SignedMoney } from "@/value-objects";
-import { ValidationError } from "@/errors";
+import { GrowthFactor, type SignedMoney } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
 interface CalculatePortfolioDailyFactorProps {
-  currentDayPortfolioValue: SignedMoney;
-  currentDayCashFlow: SignedMoney;
-  previousDayPortfolioValue: SignedMoney;
+  currentDayPortfolioValue: SignedMoney
+  currentDayCashFlow: SignedMoney
+  previousDayPortfolioValue: SignedMoney
 }
 
 /**
@@ -43,13 +43,13 @@ export function calculatePortfolioDailyFactor({
 }: CalculatePortfolioDailyFactorProps): GrowthFactor {
   if (previousDayPortfolioValue.value.isZero()) {
     throw new ValidationError(
-      "`Portfolio` daily factor cannot be calculated with a zero previous day value.",
-    );
+      "`Portfolio` daily factor cannot be calculated with a zero previous day value."
+    )
   }
 
   return GrowthFactor.create(
     currentDayPortfolioValue.value
       .minus(currentDayCashFlow.value)
-      .dividedBy(previousDayPortfolioValue.value),
-  );
+      .dividedBy(previousDayPortfolioValue.value)
+  )
 }

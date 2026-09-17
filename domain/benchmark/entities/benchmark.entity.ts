@@ -1,10 +1,10 @@
-﻿import { EntityId } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface BenchmarkProps {
-  acronym: string;
-  name: string;
-  createdAt?: Date;
+export interface BenchmarkProps {
+  acronym: string
+  name: string
+  createdAt?: Date
 }
 
 /**
@@ -24,8 +24,8 @@ interface BenchmarkProps {
  * @date 2026-09-13
  */
 export class Benchmark {
-  private readonly _id?: EntityId;
-  private readonly props: Required<BenchmarkProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<BenchmarkProps>
 
   /**
    * @summary
@@ -44,7 +44,7 @@ export class Benchmark {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -64,7 +64,7 @@ export class Benchmark {
    * @date 2026-09-13
    */
   get acronym(): string {
-    return this.props.acronym;
+    return this.props.acronym
   }
 
   /**
@@ -84,7 +84,7 @@ export class Benchmark {
    * @date 2026-09-13
    */
   get name(): string {
-    return this.props.name;
+    return this.props.name
   }
 
   /**
@@ -104,7 +104,7 @@ export class Benchmark {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -125,8 +125,11 @@ export class Benchmark {
    * @date 2026-09-13
    */
   private constructor(props: Required<BenchmarkProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      createdAt: new Date(props.createdAt),
+    })
   }
 
   /**
@@ -157,20 +160,20 @@ export class Benchmark {
    */
   public static create(props: BenchmarkProps, id?: string): Benchmark {
     if (!props.acronym || props.acronym.trim() === "") {
-      throw new ValidationError("`Benchmark` must have an acronym.");
+      throw new ValidationError("`Benchmark` must have an acronym.")
     }
     if (!props.name || props.name.trim() === "") {
-      throw new ValidationError("`Benchmark` must have a name.");
+      throw new ValidationError("`Benchmark` must have a name.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<BenchmarkProps> = {
       ...props,
       createdAt: props.createdAt ?? NOW,
-    };
+    }
 
-    return new Benchmark(NORMALIZED_PROPS, id);
+    return new Benchmark(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -197,7 +200,7 @@ export class Benchmark {
    */
   public rename(name: string): Benchmark {
     if (!name || name.trim() === "") {
-      throw new ValidationError("`Benchmark` must have a name.");
+      throw new ValidationError("`Benchmark` must have a name.")
     }
 
     return new Benchmark(
@@ -205,8 +208,8 @@ export class Benchmark {
         ...this.props,
         name,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -233,7 +236,7 @@ export class Benchmark {
    */
   public changeAcronym(acronym: string): Benchmark {
     if (!acronym || acronym.trim() === "") {
-      throw new ValidationError("`Benchmark` must have an acronym.");
+      throw new ValidationError("`Benchmark` must have an acronym.")
     }
 
     return new Benchmark(
@@ -241,8 +244,8 @@ export class Benchmark {
         ...this.props,
         acronym,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -270,15 +273,15 @@ export class Benchmark {
    */
   public equals(object?: Benchmark | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

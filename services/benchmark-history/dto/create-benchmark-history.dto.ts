@@ -1,11 +1,10 @@
-import type { EntityId, SignedPercentage } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for creating a `BenchmarkHistory`.
  *
  * @remarks
- * The rate may be positive or negative.
+ * The rate may be positive or negative and is a decimal
+ * string; the date is ISO 8601.
  *
  * @explanation
  * Use this DTO to register a benchmark rate for a date
@@ -13,9 +12,9 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
  *
  * @example
  * const DTO: CreateBenchmarkHistoryDTO = {
- *   benchmarkId: EntityId.create("benchmark-1"),
- *   date: new Date("2026-01-01"),
- *   rate: SignedPercentage.create("0.5"),
+ *   benchmarkId: "benchmark-1",
+ *   date: "2026-01-01T00:00:00.000Z",
+ *   rate: "0.5",
  * };
  *
  * @author Moisés Reis
@@ -23,7 +22,7 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface CreateBenchmarkHistoryDTO {
-  benchmarkId: EntityId
-  date: Date
-  rate: SignedPercentage
+  benchmarkId: string
+  date: string
+  rate: string
 }

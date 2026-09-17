@@ -1,14 +1,14 @@
-﻿import { EntityId, type PositiveMoney } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId, type PositiveMoney } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface PositionProps {
-  portfolioId: EntityId;
-  fundId: EntityId;
-  initialBalance?: PositiveMoney | null;
-  initialBalanceDate?: Date | null;
-  version?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface PositionProps {
+  portfolioId: EntityId
+  fundId: EntityId
+  initialBalance?: PositiveMoney | null
+  initialBalanceDate?: Date | null
+  version?: number
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 /**
@@ -29,8 +29,8 @@ interface PositionProps {
  * @date 2026-09-13
  */
 export class Position {
-  private readonly _id?: EntityId;
-  private readonly props: Required<PositionProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<PositionProps>
 
   /**
    * @summary
@@ -49,7 +49,7 @@ export class Position {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -69,7 +69,7 @@ export class Position {
    * @date 2026-09-13
    */
   get portfolioId(): EntityId {
-    return this.props.portfolioId;
+    return this.props.portfolioId
   }
 
   /**
@@ -89,7 +89,7 @@ export class Position {
    * @date 2026-09-13
    */
   get fundId(): EntityId {
-    return this.props.fundId;
+    return this.props.fundId
   }
 
   /**
@@ -109,7 +109,7 @@ export class Position {
    * @date 2026-09-13
    */
   get initialBalance(): PositiveMoney | null {
-    return this.props.initialBalance;
+    return this.props.initialBalance
   }
 
   /**
@@ -129,7 +129,9 @@ export class Position {
    * @date 2026-09-13
    */
   get initialBalanceDate(): Date | null {
-    return this.props.initialBalanceDate;
+    return this.props.initialBalanceDate
+      ? new Date(this.props.initialBalanceDate)
+      : null
   }
 
   /**
@@ -149,7 +151,7 @@ export class Position {
    * @date 2026-09-13
    */
   get version(): number {
-    return this.props.version;
+    return this.props.version
   }
 
   /**
@@ -169,7 +171,7 @@ export class Position {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -189,7 +191,7 @@ export class Position {
    * @date 2026-09-13
    */
   get updatedAt(): Date {
-    return this.props.updatedAt;
+    return new Date(this.props.updatedAt)
   }
 
   /**
@@ -210,8 +212,15 @@ export class Position {
    * @date 2026-09-13
    */
   private constructor(props: Required<PositionProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      initialBalanceDate: props.initialBalanceDate
+        ? new Date(props.initialBalanceDate)
+        : null,
+      createdAt: new Date(props.createdAt),
+      updatedAt: new Date(props.updatedAt),
+    })
   }
 
   /**
@@ -243,13 +252,13 @@ export class Position {
    */
   public static create(props: PositionProps, id?: string): Position {
     if (!props.portfolioId || props.portfolioId.trim() === "") {
-      throw new ValidationError("`Position` must have a portfolio id.");
+      throw new ValidationError("`Position` must have a portfolio id.")
     }
     if (!props.fundId || props.fundId.trim() === "") {
-      throw new ValidationError("`Position` must have a fund id.");
+      throw new ValidationError("`Position` must have a fund id.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<PositionProps> = {
       ...props,
@@ -258,9 +267,9 @@ export class Position {
       version: props.version ?? 0,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
-    };
+    }
 
-    return new Position(NORMALIZED_PROPS, id);
+    return new Position(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -294,23 +303,23 @@ export class Position {
   public setInitialBalance(
     initialBalance: PositiveMoney,
     date: Date,
-    now?: Date,
+    now?: Date
   ): Position {
     if (this._id === undefined) {
       throw new ValidationError(
-        "Cannot set an initial balance on a `Position` that has not been persisted.",
-      );
+        "Cannot set an initial balance on a `Position` that has not been persisted."
+      )
     }
     if (!initialBalance) {
-      throw new ValidationError("`Position` initial balance must be defined.");
+      throw new ValidationError("`Position` initial balance must be defined.")
     }
     if (!date) {
       throw new ValidationError(
-        "`Position` initial balance date must be defined.",
-      );
+        "`Position` initial balance date must be defined."
+      )
     }
 
-    const NOW = now ?? new Date();
+    const NOW = now ?? new Date()
 
     return new Position(
       {
@@ -319,8 +328,8 @@ export class Position {
         initialBalanceDate: date,
         updatedAt: NOW,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -348,15 +357,15 @@ export class Position {
    */
   public equals(object?: Position | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

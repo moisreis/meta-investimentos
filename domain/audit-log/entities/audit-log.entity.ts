@@ -1,13 +1,13 @@
-﻿import { EntityId } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
 interface AuditLogProps {
-  entity: string;
-  entityId: EntityId;
-  action: string;
-  changes?: Record<string, unknown> | null;
-  userId?: EntityId | null;
-  createdAt?: Date;
+  entity: string
+  entityId: EntityId
+  action: string
+  changes?: Record<string, unknown> | null
+  userId?: EntityId | null
+  createdAt?: Date
 }
 
 /**
@@ -26,8 +26,8 @@ interface AuditLogProps {
  * @date 2026-09-13
  */
 export class AuditLog {
-  private readonly _id?: EntityId;
-  private readonly props: Required<AuditLogProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<AuditLogProps>
 
   /**
    * @summary
@@ -46,7 +46,7 @@ export class AuditLog {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -66,7 +66,7 @@ export class AuditLog {
    * @date 2026-09-13
    */
   get entity(): string {
-    return this.props.entity;
+    return this.props.entity
   }
 
   /**
@@ -86,7 +86,7 @@ export class AuditLog {
    * @date 2026-09-13
    */
   get entityId(): EntityId {
-    return this.props.entityId;
+    return this.props.entityId
   }
 
   /**
@@ -106,7 +106,7 @@ export class AuditLog {
    * @date 2026-09-13
    */
   get action(): string {
-    return this.props.action;
+    return this.props.action
   }
 
   /**
@@ -126,7 +126,7 @@ export class AuditLog {
    * @date 2026-09-13
    */
   get changes(): Record<string, unknown> | null {
-    return this.props.changes;
+    return this.props.changes
   }
 
   /**
@@ -146,7 +146,7 @@ export class AuditLog {
    * @date 2026-09-13
    */
   get userId(): EntityId | null {
-    return this.props.userId;
+    return this.props.userId
   }
 
   /**
@@ -166,7 +166,7 @@ export class AuditLog {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -187,8 +187,11 @@ export class AuditLog {
    * @date 2026-09-13
    */
   private constructor(props: Required<AuditLogProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      createdAt: new Date(props.createdAt),
+    })
   }
 
   /**
@@ -221,25 +224,25 @@ export class AuditLog {
    */
   public static create(props: AuditLogProps, id?: string): AuditLog {
     if (!props.entity || props.entity.trim() === "") {
-      throw new ValidationError("`AuditLog` must have an entity.");
+      throw new ValidationError("`AuditLog` must have an entity.")
     }
     if (!props.entityId || props.entityId.trim() === "") {
-      throw new ValidationError("`AuditLog` must have an entity id.");
+      throw new ValidationError("`AuditLog` must have an entity id.")
     }
     if (!props.action || props.action.trim() === "") {
-      throw new ValidationError("`AuditLog` must have an action.");
+      throw new ValidationError("`AuditLog` must have an action.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<AuditLogProps> = {
       ...props,
       changes: props.changes ?? null,
       userId: props.userId ?? null,
       createdAt: props.createdAt ?? NOW,
-    };
+    }
 
-    return new AuditLog(NORMALIZED_PROPS, id);
+    return new AuditLog(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -267,15 +270,15 @@ export class AuditLog {
    */
   public equals(object?: AuditLog | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

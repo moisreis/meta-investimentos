@@ -1,4 +1,4 @@
-﻿import { and, desc, eq, gte, inArray, lte, or, sql } from "drizzle-orm"
+﻿import { and, asc, desc, eq, gte, inArray, lte, or, sql } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { Quota } from "@domain/quota/entities/quota.entity"
@@ -8,6 +8,7 @@ import type {
   UpsertQuotaResult,
 } from "@domain/quota/interfaces/quota.interface"
 import { EntityId, QuotaPrice } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/quota.mapper"
 import { quota } from "@db-schemas/quota.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -65,99 +66,6 @@ export class QuotaRepository implements IQuota {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates the price through its `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof quota.$inferSelect): Quota {
-    return Quota.create(
-      {
-        fundId: EntityId.create(row.fundId),
-        date: row.date,
-        price: QuotaPrice.create(row.price),
-        createdAt: row.createdAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to insert values.
-   *
-   * @remarks
-   * Serializes the price with `.value.toString()`.
-   *
-   * @explanation
-   * Use this mapper to build the row inserted when the
-   * entity has no id.
-   *
-   * @param entity - The quota to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Quota): typeof quota.$inferInsert {
-    return {
-      fundId: entity.fundId,
-      date: entity.date,
-      price: entity.price.value.toString(),
-      createdAt: entity.createdAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to update values.
-   *
-   * @remarks
-   * `createdAt` never changes and is left out of the
-   * update.
-   *
-   * @explanation
-   * Use this mapper to build the row updated when the
-   * entity already has an id.
-   *
-   * @param entity - The quota to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(entity: Quota): Partial<typeof quota.$inferInsert> {
-    return {
-      fundId: entity.fundId,
-      date: entity.date,
-      price: entity.price.value.toString(),
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the quota with the provided id.
    *
    * @remarks
@@ -184,7 +92,7 @@ export class QuotaRepository implements IQuota {
       .where(eq(quota.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -214,7 +122,7 @@ export class QuotaRepository implements IQuota {
       .from(quota)
       .where(eq(quota.fundId, fundId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -239,7 +147,7 @@ export class QuotaRepository implements IQuota {
    *
    * @date 2026-09-15
    */
-  async findAllByFundIds(fundIds: string[]): Promise<Quota[]> {
+  async findAllByFundIds(fundIds: EntityId[]): Promise<Quota[]> {
     if (fundIds.length === 0) {
       return []
     }
@@ -249,7 +157,7 @@ export class QuotaRepository implements IQuota {
       .from(quota)
       .where(inArray(quota.fundId, fundIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -285,7 +193,7 @@ export class QuotaRepository implements IQuota {
       .where(and(eq(quota.fundId, fundId), eq(quota.date, date)))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -294,7 +202,8 @@ export class QuotaRepository implements IQuota {
    *
    * @remarks
    * The period is inclusive on both ends. Batched lookup
-   * avoids an N+1 query pattern.
+   * avoids an N+1 query pattern. Rows are ordered
+   * oldest-first by date then createdAt.
    *
    * @explanation
    * Use this method to load the price series of many funds
@@ -314,7 +223,7 @@ export class QuotaRepository implements IQuota {
    * @date 2026-09-15
    */
   async findAllByFundIdsInPeriod(
-    fundIds: string[],
+    fundIds: EntityId[],
     startDate: Date,
     endDate: Date
   ): Promise<Quota[]> {
@@ -332,8 +241,9 @@ export class QuotaRepository implements IQuota {
           lte(quota.date, endDate)
         )
       )
+      .orderBy(asc(quota.date), asc(quota.createdAt))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -367,7 +277,7 @@ export class QuotaRepository implements IQuota {
       .orderBy(desc(quota.date))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -394,7 +304,7 @@ export class QuotaRepository implements IQuota {
    *
    * @date 2026-09-15
    */
-  async findLatestByFundIds(fundIds: string[]): Promise<Quota[]> {
+  async findLatestByFundIds(fundIds: EntityId[]): Promise<Quota[]> {
     if (fundIds.length === 0) {
       return []
     }
@@ -405,7 +315,7 @@ export class QuotaRepository implements IQuota {
       .where(inArray(quota.fundId, fundIds))
       .orderBy(quota.fundId, desc(quota.date))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -500,7 +410,7 @@ export class QuotaRepository implements IQuota {
     if (persisted.id) {
       const [row] = await this.db
         .update(quota)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(quota.id, persisted.id))
         .returning()
 
@@ -508,15 +418,15 @@ export class QuotaRepository implements IQuota {
         throw new NotFoundError(`Quota with id ${persisted.id} was not found.`)
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(quota)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

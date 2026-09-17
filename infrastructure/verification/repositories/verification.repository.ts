@@ -4,6 +4,7 @@ import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 import { Verification } from "@domain/verification/entities/verification.entity"
 import type { IVerification } from "@domain/verification/interfaces/verification.interface"
 import type { EntityId } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/verification.mapper"
 import { verification } from "@db-schemas/verification.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -60,105 +61,6 @@ export class VerificationRepository implements IVerification {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create`
-   * method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape
-   * so services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof verification.$inferSelect): Verification {
-    return Verification.create(
-      {
-        identifier: row.identifier,
-        value: row.value,
-        expiresAt: row.expiresAt,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps an entity to insert values.
-   *
-   * @remarks
-   * Serializes value objects through their `.value`
-   * property for **PostgreSQL** storage.
-   *
-   * @explanation
-   * Converts domain columns into a shape that the
-   * `verification` insert statement accepts.
-   *
-   * @param entity - The entity to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Verification): typeof verification.$inferInsert {
-    return {
-      identifier: entity.identifier,
-      value: entity.value,
-      expiresAt: entity.expiresAt,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps an entity to mutable update values.
-   *
-   * @remarks
-   * Omits `createdAt` and `updatedAt`. The `updatedAt`
-   * column refreshes through the `$onUpdate` hook.
-   *
-   * @explanation
-   * Converts domain columns into a partial shape for
-   * the `verification` update statement.
-   *
-   * @param entity - The entity to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(
-    entity: Verification
-  ): Partial<typeof verification.$inferInsert> {
-    return {
-      identifier: entity.identifier,
-      value: entity.value,
-      expiresAt: entity.expiresAt,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the verification with the provided id.
    *
    * @remarks
@@ -185,7 +87,7 @@ export class VerificationRepository implements IVerification {
       .where(eq(verification.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -216,7 +118,7 @@ export class VerificationRepository implements IVerification {
       .from(verification)
       .where(eq(verification.identifier, identifier))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -252,7 +154,7 @@ export class VerificationRepository implements IVerification {
       .from(verification)
       .where(inArray(verification.identifier, identifiers))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -281,7 +183,7 @@ export class VerificationRepository implements IVerification {
     if (persisted.id) {
       const [row] = await this.db
         .update(verification)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(verification.id, persisted.id))
         .returning()
 
@@ -291,15 +193,15 @@ export class VerificationRepository implements IVerification {
         )
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(verification)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

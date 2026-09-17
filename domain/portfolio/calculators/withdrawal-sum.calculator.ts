@@ -1,7 +1,7 @@
-import { PositiveMoney } from "@/value-objects";
+import { PositiveMoney } from "@/value-objects"
 
 interface CalculatePortfolioWithdrawalSumProps {
-  withdrawal: { value: PositiveMoney }[];
+  withdrawal: { value: PositiveMoney }[]
 }
 
 /**
@@ -39,8 +39,8 @@ export function calculatePortfolioWithdrawalSum({
 }: CalculatePortfolioWithdrawalSumProps): PositiveMoney {
   const SUM = withdrawal.reduce(
     (acc, { value }) => acc.plus(value.value),
-    PositiveMoney.create(0).value,
-  );
+    PositiveMoney.create(0).value
+  )
 
-  return PositiveMoney.create(SUM);
+  return PositiveMoney.create(SUM)
 }

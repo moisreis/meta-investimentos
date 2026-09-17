@@ -1,12 +1,11 @@
-import type { EntityId, SignedPercentage } from "@/value-objects"
-
 /**
  * @summary
  * Represents the shape of the portfolio response.
  *
  * @remarks
  * This DTO is the format of the response for portfolio
- * queries and mutations.
+ * queries and mutations. Ids are strings, dates are ISO
+ * 8601, and percentages are decimal strings.
  *
  * @explanation
  * Use this DTO when exposing a portfolio to the
@@ -20,14 +19,14 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface PortfolioResponseDTO {
-  id: EntityId
+  id: string
   acronym: string
   name: string
-  userId: EntityId
-  annualInterestRate: SignedPercentage
-  minAllocation: SignedPercentage
-  maxAllocation: SignedPercentage
-  targetAllocation: SignedPercentage
-  createdAt: Date
-  updatedAt: Date
+  userId: string
+  annualInterestRate: string
+  minAllocation: string
+  maxAllocation: string
+  targetAllocation: string
+  createdAt: string
+  updatedAt: string
 }

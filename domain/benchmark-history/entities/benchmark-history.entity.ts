@@ -1,11 +1,11 @@
-﻿import { EntityId, type SignedPercentage } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId, type SignedPercentage } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface BenchmarkHistoryProps {
-  benchmarkId: EntityId;
-  date: Date;
-  rate: SignedPercentage;
-  createdAt?: Date;
+export interface BenchmarkHistoryProps {
+  benchmarkId: EntityId
+  date: Date
+  rate: SignedPercentage
+  createdAt?: Date
 }
 
 /**
@@ -24,8 +24,8 @@ interface BenchmarkHistoryProps {
  * @date 2026-09-13
  */
 export class BenchmarkHistory {
-  private readonly _id?: EntityId;
-  private readonly props: Required<BenchmarkHistoryProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<BenchmarkHistoryProps>
 
   /**
    * @summary
@@ -44,7 +44,7 @@ export class BenchmarkHistory {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -64,7 +64,7 @@ export class BenchmarkHistory {
    * @date 2026-09-13
    */
   get benchmarkId(): EntityId {
-    return this.props.benchmarkId;
+    return this.props.benchmarkId
   }
 
   /**
@@ -84,7 +84,7 @@ export class BenchmarkHistory {
    * @date 2026-09-13
    */
   get date(): Date {
-    return this.props.date;
+    return new Date(this.props.date)
   }
 
   /**
@@ -104,7 +104,7 @@ export class BenchmarkHistory {
    * @date 2026-09-13
    */
   get rate(): SignedPercentage {
-    return this.props.rate;
+    return this.props.rate
   }
 
   /**
@@ -124,7 +124,7 @@ export class BenchmarkHistory {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -145,8 +145,12 @@ export class BenchmarkHistory {
    * @date 2026-09-13
    */
   private constructor(props: Required<BenchmarkHistoryProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      date: new Date(props.date),
+      createdAt: new Date(props.createdAt),
+    })
   }
 
   /**
@@ -178,26 +182,26 @@ export class BenchmarkHistory {
    */
   public static create(
     props: BenchmarkHistoryProps,
-    id?: string,
+    id?: string
   ): BenchmarkHistory {
     if (!props.benchmarkId || props.benchmarkId.trim() === "") {
-      throw new ValidationError("`BenchmarkHistory` must have a benchmark id.");
+      throw new ValidationError("`BenchmarkHistory` must have a benchmark id.")
     }
     if (!props.date) {
-      throw new ValidationError("`BenchmarkHistory` must have a date.");
+      throw new ValidationError("`BenchmarkHistory` must have a date.")
     }
     if (!props.rate) {
-      throw new ValidationError("`BenchmarkHistory` must have a rate.");
+      throw new ValidationError("`BenchmarkHistory` must have a rate.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<BenchmarkHistoryProps> = {
       ...props,
       createdAt: props.createdAt ?? NOW,
-    };
+    }
 
-    return new BenchmarkHistory(NORMALIZED_PROPS, id);
+    return new BenchmarkHistory(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -224,7 +228,7 @@ export class BenchmarkHistory {
    */
   public updateRate(rate: SignedPercentage): BenchmarkHistory {
     if (!rate) {
-      throw new ValidationError("`BenchmarkHistory` must have a rate.");
+      throw new ValidationError("`BenchmarkHistory` must have a rate.")
     }
 
     return new BenchmarkHistory(
@@ -232,8 +236,8 @@ export class BenchmarkHistory {
         ...this.props,
         rate,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -261,15 +265,15 @@ export class BenchmarkHistory {
    */
   public equals(object?: BenchmarkHistory | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

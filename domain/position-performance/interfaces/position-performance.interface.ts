@@ -1,5 +1,5 @@
-import type { PositionPerformance } from "@domain/position-performance/entities/position-performance.entity";
-import type { EntityId } from "@/value-objects";
+import type { PositionPerformance } from "@domain/position-performance/entities/position-performance.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -45,7 +45,7 @@ export interface IPositionPerformance {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<PositionPerformance | null>;
+  findById(id: EntityId): Promise<PositionPerformance | null>
 
   /**
    * @summary
@@ -68,7 +68,31 @@ export interface IPositionPerformance {
    *
    * @date 2026-09-13
    */
-  findAllByPositionId(positionId: EntityId): Promise<PositionPerformance[]>;
+  findAllByPositionId(positionId: EntityId): Promise<PositionPerformance[]>
+
+  /**
+   * @summary
+   * Retrieves all performances of the provided positions.
+   *
+   * @remarks
+   * Returns an empty array when no performances match.
+   *
+   * @explanation
+   * Use this method to list performances linked to several
+   * positions. Returns an empty array for no matches.
+   *
+   * @param positionIds - The unique identifiers of the positions.
+   * @returns The matching entries.
+   *
+   * @example
+   * const PERFS = await PERF_REPO
+   *   .findAllByPositionIds(POSITION_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByPositionIds(positionIds: EntityId[]): Promise<PositionPerformance[]>
 
   /**
    * @summary
@@ -96,8 +120,8 @@ export interface IPositionPerformance {
    */
   findByPositionIdAndDate(
     positionId: EntityId,
-    date: Date,
-  ): Promise<PositionPerformance | null>;
+    date: Date
+  ): Promise<PositionPerformance | null>
 
   /**
    * @summary
@@ -121,7 +145,37 @@ export interface IPositionPerformance {
    *
    * @date 2026-09-13
    */
-  findLatestByPositionId(positionId: EntityId): Promise<PositionPerformance | null>;
+  findLatestByPositionId(
+    positionId: EntityId
+  ): Promise<PositionPerformance | null>
+
+  /**
+   * @summary
+   * Retrieves the latest performance of each provided position.
+   *
+   * @remarks
+   * Returns an empty array when a position has no
+   * performance. Only the latest entry of each position
+   * is returned.
+   *
+   * @explanation
+   * Use this method to get the most recent performance of
+   * every given position. Returns an empty array for none.
+   *
+   * @param positionIds - The unique identifiers of the positions.
+   * @returns The latest snapshots.
+   *
+   * @example
+   * const PERFS = await PERF_REPO
+   *   .findLatestByPositionIds(POSITION_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findLatestByPositionIds(
+    positionIds: EntityId[]
+  ): Promise<PositionPerformance[]>
 
   /**
    * @summary
@@ -145,7 +199,7 @@ export interface IPositionPerformance {
    *
    * @date 2026-09-13
    */
-  save(positionPerformance: PositionPerformance): Promise<PositionPerformance>;
+  save(positionPerformance: PositionPerformance): Promise<PositionPerformance>
 
   /**
    * @summary
@@ -168,5 +222,5 @@ export interface IPositionPerformance {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

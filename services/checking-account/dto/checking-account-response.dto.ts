@@ -1,12 +1,12 @@
-import type { EntityId, SignedMoney } from "@/value-objects"
-
 /**
  * @summary
  * Represents the shape of the checking account response.
  *
  * @remarks
  * This DTO is the format of the response for checking
- * account queries and mutations.
+ * account queries and mutations. All ids are strings,
+ * dates are ISO 8601 strings, and values are decimal
+ * strings.
  *
  * @explanation
  * Use this DTO when exposing a checking account entry
@@ -20,8 +20,8 @@ import type { EntityId, SignedMoney } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface CheckingAccountResponseDTO {
-  id: EntityId
-  bankAccountId: EntityId
-  date: Date
-  value: SignedMoney
+  id: string
+  bankAccountId: string
+  date: string
+  value: string
 }

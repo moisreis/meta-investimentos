@@ -1,5 +1,5 @@
-import type { Fund } from "@domain/fund/entities/fund.entity";
-import type { EntityId } from "@/value-objects";
+import type { Fund } from "@domain/fund/entities/fund.entity"
+import type { CNPJ, EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -42,7 +42,7 @@ export interface IFund {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<Fund | null>;
+  findById(id: EntityId): Promise<Fund | null>
 
   /**
    * @summary
@@ -66,7 +66,7 @@ export interface IFund {
    *
    * @date 2026-09-13
    */
-  findByCnpj(cnpj: string): Promise<Fund | null>;
+  findByCnpj(cnpj: CNPJ): Promise<Fund | null>
 
   /**
    * @summary
@@ -91,7 +91,103 @@ export interface IFund {
    *
    * @date 2026-09-13
    */
-  findAll(options?: { limit?: number; offset?: number }): Promise<Fund[]>;
+  findAll(options?: { limit?: number; offset?: number }): Promise<Fund[]>
+
+  /**
+   * @summary
+   * Retrieves all funds with the provided ids.
+   *
+   * @remarks
+   * Returns an empty array when no funds match.
+   *
+   * @explanation
+   * Use this method to fetch multiple funds by their
+   * unique identifiers. Returns an empty array for
+   * no matches.
+   *
+   * @param ids - The unique identifiers of the funds.
+   * @returns The matching entries.
+   *
+   * @example
+   * const FUNDS = await FUND_REPO.findAllByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByIds(ids: EntityId[]): Promise<Fund[]>
+
+  /**
+   * @summary
+   * Retrieves all funds belonging to the provided bank.
+   *
+   * @remarks
+   * Returns an empty array when no funds match.
+   *
+   * @explanation
+   * Use this method to list funds linked to a bank.
+   * Returns an empty array for no matches.
+   *
+   * @param bankId - The id of the bank.
+   * @returns The matching entries.
+   *
+   * @example
+   * const FUNDS = await FUND_REPO
+   *   .findAllByBankId(BANK_ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByBankId(bankId: EntityId): Promise<Fund[]>
+
+  /**
+   * @summary
+   * Retrieves all funds with the provided benchmark.
+   *
+   * @remarks
+   * Returns an empty array when no funds match.
+   *
+   * @explanation
+   * Use this method to list funds that track a given
+   * benchmark. Returns an empty array for no matches.
+   *
+   * @param benchmarkId - The id of the benchmark.
+   * @returns The matching entries.
+   *
+   * @example
+   * const FUNDS = await FUND_REPO
+   *   .findAllByBenchmarkId(BENCHMARK_ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByBenchmarkId(benchmarkId: EntityId): Promise<Fund[]>
+
+  /**
+   * @summary
+   * Retrieves all funds in the provided category.
+   *
+   * @remarks
+   * Returns an empty array when no funds match.
+   *
+   * @explanation
+   * Use this method to list funds belonging to a
+   * category. Returns an empty array for no matches.
+   *
+   * @param categoryId - The id of the category.
+   * @returns The matching entries.
+   *
+   * @example
+   * const FUNDS = await FUND_REPO
+   *   .findAllByCategoryId(CATEGORY_ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByCategoryId(categoryId: EntityId): Promise<Fund[]>
 
   /**
    * @summary
@@ -115,7 +211,7 @@ export interface IFund {
    *
    * @date 2026-09-13
    */
-  save(fund: Fund): Promise<Fund>;
+  save(fund: Fund): Promise<Fund>
 
   /**
    * @summary
@@ -138,5 +234,5 @@ export interface IFund {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

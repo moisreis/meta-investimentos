@@ -1,9 +1,9 @@
-import { SignedMoney } from "@/value-objects";
+import { SignedMoney } from "@/value-objects"
 
 interface CalculatePortfolioEarningsProps {
-  sumOfPositionCurrentBalances: SignedMoney;
-  sumOfPositionInitialBalance: SignedMoney;
-  cashFlow: SignedMoney;
+  sumOfPositionCurrentBalances: SignedMoney
+  sumOfPositionInitialBalance: SignedMoney
+  cashFlow: SignedMoney
 }
 
 /**
@@ -43,6 +43,6 @@ export function calculatePortfolioEarnings({
   return SignedMoney.create(
     sumOfPositionCurrentBalances.value
       .minus(sumOfPositionInitialBalance.value)
-      .minus(cashFlow.value),
-  );
+      .minus(cashFlow.value)
+  )
 }

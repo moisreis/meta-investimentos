@@ -1,5 +1,5 @@
-import type { BankAccount } from "@domain/bank-account/entities/bank-account.entity";
-import type { EntityId } from "@/value-objects";
+import type { BankAccount } from "@domain/bank-account/entities/bank-account.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -42,7 +42,7 @@ export interface IBankAccount {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<BankAccount | null>;
+  findById(id: EntityId): Promise<BankAccount | null>
 
   /**
    * @summary
@@ -66,7 +66,32 @@ export interface IBankAccount {
    *
    * @date 2026-09-13
    */
-  findAllByPortfolioId(portfolioId: EntityId): Promise<BankAccount[]>;
+  findAllByPortfolioId(portfolioId: EntityId): Promise<BankAccount[]>
+
+  /**
+   * @summary
+   * Retrieves all bank accounts of the provided portfolios.
+   *
+   * @remarks
+   * Returns an empty array when no bank accounts match.
+   *
+   * @explanation
+   * Use this method to list bank accounts linked to
+   * multiple portfolios. Returns an empty array for
+   * no matches.
+   *
+   * @param portfolioIds - The ids of the portfolios.
+   * @returns The matching entries.
+   *
+   * @example
+   * const BAS = await BANK_ACCOUNT_REPO
+   *   .findAllByPortfolioIds(PORTFOLIO_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<BankAccount[]>
 
   /**
    * @summary
@@ -90,7 +115,31 @@ export interface IBankAccount {
    *
    * @date 2026-09-13
    */
-  findAllByBankId(bankId: EntityId): Promise<BankAccount[]>;
+  findAllByBankId(bankId: EntityId): Promise<BankAccount[]>
+
+  /**
+   * @summary
+   * Retrieves all bank accounts of the provided banks.
+   *
+   * @remarks
+   * Returns an empty array when no bank accounts match.
+   *
+   * @explanation
+   * Use this method to list bank accounts linked to
+   * multiple banks. Returns an empty array for no matches.
+   *
+   * @param bankIds - The ids of the banks.
+   * @returns The matching entries.
+   *
+   * @example
+   * const BAS = await BANK_ACCOUNT_REPO
+   *   .findAllByBankIds(BANK_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByBankIds(bankIds: EntityId[]): Promise<BankAccount[]>
 
   /**
    * @summary
@@ -114,7 +163,7 @@ export interface IBankAccount {
    *
    * @date 2026-09-13
    */
-  save(bankAccount: BankAccount): Promise<BankAccount>;
+  save(bankAccount: BankAccount): Promise<BankAccount>
 
   /**
    * @summary
@@ -137,5 +186,5 @@ export interface IBankAccount {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

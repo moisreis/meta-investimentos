@@ -4,24 +4,24 @@
   type QuotaQuantity,
   type SignedMoney,
   type SignedPercentage,
-} from "@/value-objects";
-import { ValidationError } from "@/errors";
+} from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface PositionPerformanceProps {
-  positionId: EntityId;
-  date: Date;
-  quotasHeld: QuotaQuantity;
-  patrimony: PositiveMoney;
-  applicationTotal: PositiveMoney;
-  redemptionTotal: PositiveMoney;
-  cashFlowNet: SignedMoney;
-  earnings: SignedMoney;
-  returnDaily: SignedPercentage;
-  returnMonthly?: SignedPercentage | null;
-  returnYearly?: SignedPercentage | null;
-  returnLast12m?: SignedPercentage | null;
-  allocation: SignedPercentage;
-  createdAt?: Date;
+export interface PositionPerformanceProps {
+  positionId: EntityId
+  date: Date
+  quotasHeld: QuotaQuantity
+  patrimony: PositiveMoney
+  applicationTotal: PositiveMoney
+  redemptionTotal: PositiveMoney
+  cashFlowNet: SignedMoney
+  earnings: SignedMoney
+  returnDaily: SignedPercentage
+  returnMonthly?: SignedPercentage | null
+  returnYearly?: SignedPercentage | null
+  returnLast12m?: SignedPercentage | null
+  allocation: SignedPercentage
+  createdAt?: Date
 }
 
 /**
@@ -41,8 +41,8 @@ interface PositionPerformanceProps {
  * @date 2026-09-13
  */
 export class PositionPerformance {
-  private readonly _id?: EntityId;
-  private readonly props: Required<PositionPerformanceProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<PositionPerformanceProps>
 
   /**
    * @summary
@@ -61,7 +61,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -81,7 +81,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get positionId(): EntityId {
-    return this.props.positionId;
+    return this.props.positionId
   }
 
   /**
@@ -101,7 +101,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get date(): Date {
-    return this.props.date;
+    return new Date(this.props.date)
   }
 
   /**
@@ -121,7 +121,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get quotasHeld(): QuotaQuantity {
-    return this.props.quotasHeld;
+    return this.props.quotasHeld
   }
 
   /**
@@ -141,7 +141,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get patrimony(): PositiveMoney {
-    return this.props.patrimony;
+    return this.props.patrimony
   }
 
   /**
@@ -161,7 +161,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get applicationTotal(): PositiveMoney {
-    return this.props.applicationTotal;
+    return this.props.applicationTotal
   }
 
   /**
@@ -181,7 +181,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get redemptionTotal(): PositiveMoney {
-    return this.props.redemptionTotal;
+    return this.props.redemptionTotal
   }
 
   /**
@@ -201,7 +201,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get cashFlowNet(): SignedMoney {
-    return this.props.cashFlowNet;
+    return this.props.cashFlowNet
   }
 
   /**
@@ -221,7 +221,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get earnings(): SignedMoney {
-    return this.props.earnings;
+    return this.props.earnings
   }
 
   /**
@@ -241,7 +241,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get returnDaily(): SignedPercentage {
-    return this.props.returnDaily;
+    return this.props.returnDaily
   }
 
   /**
@@ -261,7 +261,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get returnMonthly(): SignedPercentage | null {
-    return this.props.returnMonthly;
+    return this.props.returnMonthly
   }
 
   /**
@@ -281,7 +281,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get returnYearly(): SignedPercentage | null {
-    return this.props.returnYearly;
+    return this.props.returnYearly
   }
 
   /**
@@ -301,7 +301,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get returnLast12m(): SignedPercentage | null {
-    return this.props.returnLast12m;
+    return this.props.returnLast12m
   }
 
   /**
@@ -321,7 +321,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get allocation(): SignedPercentage {
-    return this.props.allocation;
+    return this.props.allocation
   }
 
   /**
@@ -341,7 +341,7 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -362,8 +362,12 @@ export class PositionPerformance {
    * @date 2026-09-13
    */
   private constructor(props: Required<PositionPerformanceProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      date: new Date(props.date),
+      createdAt: new Date(props.createdAt),
+    })
   }
 
   /**
@@ -403,46 +407,52 @@ export class PositionPerformance {
    */
   public static create(
     props: PositionPerformanceProps,
-    id?: string,
+    id?: string
   ): PositionPerformance {
     if (!props.positionId || props.positionId.trim() === "") {
-      throw new ValidationError("`PositionPerformance` must have a position id.");
+      throw new ValidationError(
+        "`PositionPerformance` must have a position id."
+      )
     }
     if (!props.date) {
-      throw new ValidationError("`PositionPerformance` must have a date.");
+      throw new ValidationError("`PositionPerformance` must have a date.")
     }
     if (!props.quotasHeld) {
-      throw new ValidationError("`PositionPerformance` must have quotas held.");
+      throw new ValidationError("`PositionPerformance` must have quotas held.")
     }
     if (!props.patrimony) {
-      throw new ValidationError("`PositionPerformance` must have patrimony.");
+      throw new ValidationError("`PositionPerformance` must have patrimony.")
     }
     if (!props.applicationTotal) {
       throw new ValidationError(
-        "`PositionPerformance` must have an application total.",
-      );
+        "`PositionPerformance` must have an application total."
+      )
     }
     if (!props.redemptionTotal) {
       throw new ValidationError(
-        "`PositionPerformance` must have a redemption total.",
-      );
+        "`PositionPerformance` must have a redemption total."
+      )
     }
     if (!props.cashFlowNet) {
-      throw new ValidationError("`PositionPerformance` must have cash flow net.");
+      throw new ValidationError(
+        "`PositionPerformance` must have cash flow net."
+      )
     }
     if (!props.earnings) {
-      throw new ValidationError("`PositionPerformance` must have earnings.");
+      throw new ValidationError("`PositionPerformance` must have earnings.")
     }
     if (!props.returnDaily) {
       throw new ValidationError(
-        "`PositionPerformance` must have a daily return.",
-      );
+        "`PositionPerformance` must have a daily return."
+      )
     }
     if (!props.allocation) {
-      throw new ValidationError("`PositionPerformance` must have an allocation.");
+      throw new ValidationError(
+        "`PositionPerformance` must have an allocation."
+      )
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<PositionPerformanceProps> = {
       ...props,
@@ -450,9 +460,9 @@ export class PositionPerformance {
       returnYearly: props.returnYearly ?? null,
       returnLast12m: props.returnLast12m ?? null,
       createdAt: props.createdAt ?? NOW,
-    };
+    }
 
-    return new PositionPerformance(NORMALIZED_PROPS, id);
+    return new PositionPerformance(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -480,15 +490,15 @@ export class PositionPerformance {
    */
   public equals(object?: PositionPerformance | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

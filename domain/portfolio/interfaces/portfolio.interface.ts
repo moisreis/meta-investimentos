@@ -1,5 +1,5 @@
-import type { Portfolio } from "@domain/portfolio/entities/portfolio.entity";
-import type { EntityId } from "@/value-objects";
+import type { Portfolio } from "@domain/portfolio/entities/portfolio.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -42,7 +42,30 @@ export interface IPortfolio {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<Portfolio | null>;
+  findById(id: EntityId): Promise<Portfolio | null>
+
+  /**
+   * @summary
+   * Retrieves the portfolios with the provided ids.
+   *
+   * @remarks
+   * Returns an empty array when no portfolios match.
+   *
+   * @explanation
+   * Use this method to look up portfolios by their unique
+   * identifiers. Returns an empty array for no matches.
+   *
+   * @param ids - The unique identifiers of the portfolios.
+   * @returns The matching entries.
+   *
+   * @example
+   * const PTFS = await PORTFOLIO_REPO.findAllByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByIds(ids: EntityId[]): Promise<Portfolio[]>
 
   /**
    * @summary
@@ -65,7 +88,7 @@ export interface IPortfolio {
    *
    * @date 2026-09-13
    */
-  findAllByUserId(userId: EntityId): Promise<Portfolio[]>;
+  findAllByUserId(userId: EntityId): Promise<Portfolio[]>
 
   /**
    * @summary
@@ -90,7 +113,7 @@ export interface IPortfolio {
    *
    * @date 2026-09-13
    */
-  findAll(options?: { limit?: number; offset?: number }): Promise<Portfolio[]>;
+  findAll(options?: { limit?: number; offset?: number }): Promise<Portfolio[]>
 
   /**
    * @summary
@@ -114,7 +137,7 @@ export interface IPortfolio {
    *
    * @date 2026-09-13
    */
-  save(portfolio: Portfolio): Promise<Portfolio>;
+  save(portfolio: Portfolio): Promise<Portfolio>
 
   /**
    * @summary
@@ -137,5 +160,5 @@ export interface IPortfolio {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

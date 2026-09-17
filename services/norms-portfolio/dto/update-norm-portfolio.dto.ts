@@ -1,5 +1,3 @@
-import type { SignedPercentage } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for updating a norm-portfolio relation.
@@ -13,7 +11,7 @@ import type { SignedPercentage } from "@/value-objects"
  *
  * @example
  * const DTO: UpdateNormPortfolioDTO = {
- *   targetAllocation: SignedPercentage.create("15"),
+ *   targetAllocation: "15",
  * };
  *
  * @author Moisés Reis
@@ -21,7 +19,7 @@ import type { SignedPercentage } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface UpdateNormPortfolioDTO {
-  minAllocation?: SignedPercentage
-  maxAllocation?: SignedPercentage
-  targetAllocation?: SignedPercentage
+  minAllocation?: string
+  maxAllocation?: string
+  targetAllocation?: string
 }

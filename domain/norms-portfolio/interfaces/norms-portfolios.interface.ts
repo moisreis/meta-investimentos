@@ -1,5 +1,5 @@
-import type { NormsPortfolios } from "@domain/norms-portfolio/entities/norms-portfolios.entity";
-import type { EntityId } from "@/value-objects";
+import type { NormsPortfolios } from "@domain/norms-portfolio/entities/norms-portfolios.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -49,8 +49,8 @@ export interface INormsPortfolios {
    */
   findByNormIdAndPortfolioId(
     normId: EntityId,
-    portfolioId: EntityId,
-  ): Promise<NormsPortfolios | null>;
+    portfolioId: EntityId
+  ): Promise<NormsPortfolios | null>
 
   /**
    * @summary
@@ -73,7 +73,31 @@ export interface INormsPortfolios {
    *
    * @date 2026-09-13
    */
-  findAllByPortfolioId(portfolioId: EntityId): Promise<NormsPortfolios[]>;
+  findAllByPortfolioId(portfolioId: EntityId): Promise<NormsPortfolios[]>
+
+  /**
+   * @summary
+   * Retrieves all relations of the provided portfolios.
+   *
+   * @remarks
+   * Returns an empty array when no relations match.
+   *
+   * @explanation
+   * Use this method to list relations linked to several
+   * portfolios. Returns an empty array for no matches.
+   *
+   * @param portfolioIds - The unique identifiers of the portfolios.
+   * @returns The matching entries.
+   *
+   * @example
+   * const RELS = await NP_REPO
+   *   .findAllByPortfolioIds(PORTFOLIO_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<NormsPortfolios[]>
 
   /**
    * @summary
@@ -96,7 +120,7 @@ export interface INormsPortfolios {
    *
    * @date 2026-09-13
    */
-  findAllByNormId(normId: EntityId): Promise<NormsPortfolios[]>;
+  findAllByNormId(normId: EntityId): Promise<NormsPortfolios[]>
 
   /**
    * @summary
@@ -120,7 +144,7 @@ export interface INormsPortfolios {
    *
    * @date 2026-09-13
    */
-  save(normsPortfolios: NormsPortfolios): Promise<NormsPortfolios>;
+  save(normsPortfolios: NormsPortfolios): Promise<NormsPortfolios>
 
   /**
    * @summary
@@ -144,5 +168,5 @@ export interface INormsPortfolios {
    *
    * @date 2026-09-13
    */
-  delete(normId: EntityId, portfolioId: EntityId): Promise<void>;
+  delete(normId: EntityId, portfolioId: EntityId): Promise<void>
 }

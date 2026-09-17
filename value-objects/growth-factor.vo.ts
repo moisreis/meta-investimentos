@@ -1,9 +1,9 @@
-import Decimal from "decimal.js";
+import Decimal from "decimal.js"
 import {
   FACTOR_DECIMAL_PLACES,
   ROUNDING_MODE,
-} from "@constants/value-objects/rounding.constant";
-import { ValidationError } from "@/errors";
+} from "@constants/value-objects/rounding.constant"
+import { ValidationError } from "@/errors"
 
 interface GrowthFactorProps {
   value: Decimal
@@ -29,31 +29,31 @@ interface GrowthFactorProps {
  * @date 2026-09-13
  */
 export class GrowthFactor {
-  private readonly props: GrowthFactorProps;
+  private readonly props: GrowthFactorProps
 
   // Gets the underlying Decimal growth factor value.
   get value(): Decimal {
-    return this.props.value;
+    return this.props.value
   }
 
   // Returns true if the growth factor represents a loss.
   get isLoss(): boolean {
-    return this.props.value.lessThan(1);
+    return this.props.value.lessThan(1)
   }
 
   // Returns true if the growth factor represents a gain.
   get isGain(): boolean {
-    return this.props.value.greaterThan(1);
+    return this.props.value.greaterThan(1)
   }
 
   // Returns true if the growth factor represents no change.
   get isFlat(): boolean {
-    return this.props.value.equals(1);
+    return this.props.value.equals(1)
   }
 
   // Initializes internal properties for GrowthFactor.
   private constructor(props: GrowthFactorProps) {
-    this.props = props;
+    this.props = props
   }
 
   /**
@@ -67,7 +67,7 @@ export class GrowthFactor {
    * @explanation
    * Factory method to construct a valid **GrowthFactor**.
    * Throws a **ValidationError** if the provided input is
-   * missing or less than zero.
+   * missing, non-finite, or less than zero.
    *
    * @param value - Numerical value to construct the factor.
    *
@@ -80,35 +80,35 @@ export class GrowthFactor {
    *
    * @date 2026-09-13
    */
-  public static create(
-    value: Decimal.Value,
-  ): GrowthFactor {
+  public static create(value: Decimal.Value): GrowthFactor {
     if (value === undefined || value === null) {
-      throw new ValidationError(
-        "`GrowthFactor` must be defined.",
-      );
+      throw new ValidationError("`GrowthFactor` must be defined.")
     }
 
-    let DECIMAL_VALUE: Decimal;
+    let DECIMAL_VALUE: Decimal
 
     try {
-      DECIMAL_VALUE = new Decimal(value);
+      DECIMAL_VALUE = new Decimal(value)
     } catch {
-      throw new ValidationError("`GrowthFactor` must be a valid number.");
+      throw new ValidationError("`GrowthFactor` must be a valid number.")
+    }
+
+    if (!DECIMAL_VALUE.isFinite()) {
+      throw new ValidationError("`GrowthFactor` must be a finite number.")
     }
 
     if (DECIMAL_VALUE.lessThan(0)) {
       throw new ValidationError(
-        "`GrowthFactor` must be equal or greater than 0.",
-      );
+        "`GrowthFactor` must be equal or greater than 0."
+      )
     }
 
     return new GrowthFactor({
       value: DECIMAL_VALUE.toDecimalPlaces(
         FACTOR_DECIMAL_PLACES,
-        ROUNDING_MODE,
+        ROUNDING_MODE
       ),
-    });
+    })
   }
 
   /**
@@ -134,11 +134,8 @@ export class GrowthFactor {
    *
    * @date 2026-09-13
    */
-  public static equals(
-    a: GrowthFactor,
-    b: GrowthFactor,
-  ): boolean {
-    return a.value.equals(b.value);
+  public static equals(a: GrowthFactor, b: GrowthFactor): boolean {
+    return a.value.equals(b.value)
   }
 
   /**
@@ -162,6 +159,6 @@ export class GrowthFactor {
    * @date 2026-09-13
    */
   toPercentage(): Decimal {
-    return this.props.value.minus(1).times(100);
+    return this.props.value.minus(1).times(100)
   }
 }

@@ -4,6 +4,7 @@ import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 import { NormsPortfolios } from "@domain/norms-portfolio/entities/norms-portfolios.entity"
 import type { INormsPortfolios } from "@domain/norms-portfolio/interfaces/norms-portfolios.interface"
 import { EntityId, SignedPercentage } from "@/value-objects"
+import { toDomain, toInsert } from "../mappers/norms-portfolios.mapper"
 import { normsPortfolios } from "@db-schemas/norms-portfolios.schema"
 
 export type DbClient = PgAsyncDatabase<PgQueryResultHKT>
@@ -67,73 +68,6 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof normsPortfolios.$inferSelect): NormsPortfolios {
-    return NormsPortfolios.create({
-      normId: EntityId.create(row.normId),
-      portfolioId: EntityId.create(row.portfolioId),
-      minAllocation: SignedPercentage.create(row.minAllocation),
-      maxAllocation: SignedPercentage.create(row.maxAllocation),
-      targetAllocation: SignedPercentage.create(row.targetAllocation),
-      createdAt: row.createdAt,
-    })
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to persistence values.
-   *
-   * @remarks
-   * Converts `SignedPercentage` values to strings for
-   * **Drizzle** insert operations.
-   *
-   * @explanation
-   * Produces the column map required by **Drizzle** when
-   * inserting or upserting a norms-portfolios row.
-   *
-   * @param entity - The relation to persist.
-   * @returns The persistence values.
-   *
-   * @example
-   * const VALUES = toValues(RELATION);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toValues(
-    entity: NormsPortfolios
-  ): typeof normsPortfolios.$inferInsert {
-    return {
-      normId: entity.normId,
-      portfolioId: entity.portfolioId,
-      minAllocation: entity.minAllocation.value.toString(),
-      maxAllocation: entity.maxAllocation.value.toString(),
-      targetAllocation: entity.targetAllocation.value.toString(),
-      createdAt: entity.createdAt,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the relation for the provided ids.
    *
    * @remarks
@@ -170,7 +104,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
       )
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -203,7 +137,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
       .from(normsPortfolios)
       .where(eq(normsPortfolios.portfolioId, portfolioId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -230,7 +164,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    * @date 2026-09-15
    */
   async findAllByPortfolioIds(
-    portfolioIds: string[]
+    portfolioIds: EntityId[]
   ): Promise<NormsPortfolios[]> {
     if (portfolioIds.length === 0) {
       return []
@@ -241,7 +175,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
       .from(normsPortfolios)
       .where(inArray(normsPortfolios.portfolioId, portfolioIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -272,7 +206,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
       .from(normsPortfolios)
       .where(eq(normsPortfolios.normId, normId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -302,7 +236,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
   async save(persisted: NormsPortfolios): Promise<NormsPortfolios> {
     const [row] = await this.db
       .insert(normsPortfolios)
-      .values(this.toValues(persisted))
+      .values(toInsert(persisted))
       .onConflictDoUpdate({
         target: [normsPortfolios.normId, normsPortfolios.portfolioId],
         set: {
@@ -313,7 +247,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
       })
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

@@ -1,20 +1,20 @@
-﻿import { EntityId } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
 interface AccountProps {
-  issuer: string;
-  providerId: string;
-  accountId: string;
-  userId: EntityId;
-  accessToken?: string | null;
-  refreshToken?: string | null;
-  idToken?: string | null;
-  accessTokenExpiresAt?: Date | null;
-  refreshTokenExpiresAt?: Date | null;
-  scope?: string | null;
-  password?: string | null;
-  createdAt?: Date;
-  updatedAt?: Date;
+  issuer: string
+  providerId: string
+  accountId: string
+  userId: EntityId
+  accessToken?: string | null
+  refreshToken?: string | null
+  idToken?: string | null
+  accessTokenExpiresAt?: Date | null
+  refreshTokenExpiresAt?: Date | null
+  scope?: string | null
+  password?: string | null
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 /**
@@ -34,8 +34,8 @@ interface AccountProps {
  * @date 2026-09-13
  */
 export class Account {
-  private readonly _id?: EntityId;
-  private readonly props: Required<AccountProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<AccountProps>
 
   /**
    * @summary
@@ -54,7 +54,7 @@ export class Account {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -74,7 +74,7 @@ export class Account {
    * @date 2026-09-13
    */
   get issuer(): string {
-    return this.props.issuer;
+    return this.props.issuer
   }
 
   /**
@@ -94,7 +94,7 @@ export class Account {
    * @date 2026-09-13
    */
   get providerId(): string {
-    return this.props.providerId;
+    return this.props.providerId
   }
 
   /**
@@ -114,7 +114,7 @@ export class Account {
    * @date 2026-09-13
    */
   get accountId(): string {
-    return this.props.accountId;
+    return this.props.accountId
   }
 
   /**
@@ -134,7 +134,7 @@ export class Account {
    * @date 2026-09-13
    */
   get userId(): EntityId {
-    return this.props.userId;
+    return this.props.userId
   }
 
   /**
@@ -154,7 +154,7 @@ export class Account {
    * @date 2026-09-13
    */
   get accessToken(): string | null {
-    return this.props.accessToken;
+    return this.props.accessToken
   }
 
   /**
@@ -174,7 +174,7 @@ export class Account {
    * @date 2026-09-13
    */
   get refreshToken(): string | null {
-    return this.props.refreshToken;
+    return this.props.refreshToken
   }
 
   /**
@@ -194,7 +194,7 @@ export class Account {
    * @date 2026-09-13
    */
   get idToken(): string | null {
-    return this.props.idToken;
+    return this.props.idToken
   }
 
   /**
@@ -214,7 +214,9 @@ export class Account {
    * @date 2026-09-13
    */
   get accessTokenExpiresAt(): Date | null {
-    return this.props.accessTokenExpiresAt;
+    return this.props.accessTokenExpiresAt
+      ? new Date(this.props.accessTokenExpiresAt)
+      : null
   }
 
   /**
@@ -234,7 +236,9 @@ export class Account {
    * @date 2026-09-13
    */
   get refreshTokenExpiresAt(): Date | null {
-    return this.props.refreshTokenExpiresAt;
+    return this.props.refreshTokenExpiresAt
+      ? new Date(this.props.refreshTokenExpiresAt)
+      : null
   }
 
   /**
@@ -254,7 +258,7 @@ export class Account {
    * @date 2026-09-13
    */
   get scope(): string | null {
-    return this.props.scope;
+    return this.props.scope
   }
 
   /**
@@ -274,7 +278,7 @@ export class Account {
    * @date 2026-09-13
    */
   get password(): string | null {
-    return this.props.password;
+    return this.props.password
   }
 
   /**
@@ -294,7 +298,7 @@ export class Account {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -314,7 +318,7 @@ export class Account {
    * @date 2026-09-13
    */
   get updatedAt(): Date {
-    return this.props.updatedAt;
+    return new Date(this.props.updatedAt)
   }
 
   /**
@@ -335,8 +339,18 @@ export class Account {
    * @date 2026-09-13
    */
   private constructor(props: Required<AccountProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      accessTokenExpiresAt: props.accessTokenExpiresAt
+        ? new Date(props.accessTokenExpiresAt)
+        : null,
+      refreshTokenExpiresAt: props.refreshTokenExpiresAt
+        ? new Date(props.refreshTokenExpiresAt)
+        : null,
+      createdAt: new Date(props.createdAt),
+      updatedAt: new Date(props.updatedAt),
+    })
   }
 
   /**
@@ -370,19 +384,19 @@ export class Account {
    */
   public static create(props: AccountProps, id?: string): Account {
     if (!props.issuer || props.issuer.trim() === "") {
-      throw new ValidationError("`Account` must have an issuer.");
+      throw new ValidationError("`Account` must have an issuer.")
     }
     if (!props.providerId || props.providerId.trim() === "") {
-      throw new ValidationError("`Account` must have a provider id.");
+      throw new ValidationError("`Account` must have a provider id.")
     }
     if (!props.accountId || props.accountId.trim() === "") {
-      throw new ValidationError("`Account` must have an account id.");
+      throw new ValidationError("`Account` must have an account id.")
     }
     if (!props.userId || props.userId.trim() === "") {
-      throw new ValidationError("`Account` must have a user id.");
+      throw new ValidationError("`Account` must have a user id.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<AccountProps> = {
       ...props,
@@ -395,9 +409,9 @@ export class Account {
       password: props.password ?? null,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
-    };
+    }
 
-    return new Account(NORMALIZED_PROPS, id);
+    return new Account(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -425,15 +439,15 @@ export class Account {
    */
   public equals(object?: Account | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

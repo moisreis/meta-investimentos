@@ -4,6 +4,7 @@ import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 import { Category } from "@domain/category/entities/category.entity"
 import type { ICategory } from "@domain/category/interfaces/category.interface"
 import type { EntityId } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/category.mapper"
 import { category } from "@db-schemas/category.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -59,96 +60,6 @@ export class CategoryRepository implements ICategory {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = TO_ENTITY(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof category.$inferSelect): Category {
-    return Category.create(
-      {
-        name: row.name,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps an entity to its insert values.
-   *
-   * @remarks
-   * Returns the columns required by the `category` insert
-   * statement.
-   *
-   * @explanation
-   * Translates domain properties into the column shape
-   * expected by the **Drizzle** insert call.
-   *
-   * @param entity - The category to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = TO_INSERT(CATEGORY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Category): typeof category.$inferInsert {
-    return {
-      name: entity.name,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps an entity to its update values.
-   *
-   * @remarks
-   * Omits `createdAt` and `updatedAt`. The column
-   * `updatedAt` is refreshed by the `$onUpdate` hook.
-   *
-   * @explanation
-   * Translates domain properties into the column shape
-   * expected by the **Drizzle** update call.
-   *
-   * @param entity - The category to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = TO_UPDATE(CATEGORY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(entity: Category): Partial<typeof category.$inferInsert> {
-    return {
-      name: entity.name,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the category with the provided id.
    *
    * @remarks
@@ -175,7 +86,7 @@ export class CategoryRepository implements ICategory {
       .where(eq(category.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -207,7 +118,7 @@ export class CategoryRepository implements ICategory {
       .where(eq(category.name, name))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -246,7 +157,7 @@ export class CategoryRepository implements ICategory {
       .limit(options?.limit ?? 100)
       .offset(options?.offset ?? 0)
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -272,7 +183,7 @@ export class CategoryRepository implements ICategory {
    *
    * @date 2026-09-15
    */
-  async findAllByIds(ids: string[]): Promise<Category[]> {
+  async findAllByIds(ids: EntityId[]): Promise<Category[]> {
     if (ids.length === 0) {
       return []
     }
@@ -282,7 +193,7 @@ export class CategoryRepository implements ICategory {
       .from(category)
       .where(inArray(category.id, ids))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -311,7 +222,7 @@ export class CategoryRepository implements ICategory {
     if (persisted.id) {
       const [row] = await this.db
         .update(category)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(category.id, persisted.id))
         .returning()
 
@@ -321,15 +232,15 @@ export class CategoryRepository implements ICategory {
         )
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(category)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

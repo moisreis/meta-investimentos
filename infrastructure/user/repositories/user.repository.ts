@@ -4,6 +4,7 @@ import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 import { User } from "@domain/user/entities/user.entity"
 import type { IUser } from "@domain/user/interfaces/user.interface"
 import { CPF, EntityId } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/user.mapper"
 import { user } from "@db-schemas/user.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -60,118 +61,6 @@ export class UserRepository implements IUser {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create`
-   * method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape
-   * so services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof user.$inferSelect): User {
-    return User.create(
-      {
-        name: row.name,
-        email: row.email,
-        firstName: row.firstName,
-        lastName: row.lastName,
-        cpf: CPF.create(row.cpf),
-        role: row.role,
-        emailVerified: row.emailVerified,
-        image: row.image,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps an entity to insert values.
-   *
-   * @remarks
-   * Serializes value objects through their `.value`
-   * property for **PostgreSQL** storage.
-   *
-   * @explanation
-   * Converts domain columns into a shape that the
-   * `user` insert statement accepts.
-   *
-   * @param entity - The entity to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: User): typeof user.$inferInsert {
-    return {
-      name: entity.name,
-      email: entity.email,
-      firstName: entity.firstName,
-      lastName: entity.lastName,
-      cpf: entity.cpf.value,
-      role: entity.role,
-      emailVerified: entity.emailVerified,
-      image: entity.image,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps an entity to mutable update values.
-   *
-   * @remarks
-   * Omits `createdAt` and `updatedAt`. The `updatedAt`
-   * column refreshes through the `$onUpdate` hook.
-   *
-   * @explanation
-   * Converts domain columns into a partial shape for
-   * the `user` update statement.
-   *
-   * @param entity - The entity to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(entity: User): Partial<typeof user.$inferInsert> {
-    return {
-      name: entity.name,
-      email: entity.email,
-      firstName: entity.firstName,
-      lastName: entity.lastName,
-      cpf: entity.cpf.value,
-      role: entity.role,
-      emailVerified: entity.emailVerified,
-      image: entity.image,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the user with the provided id.
    *
    * @remarks
@@ -198,7 +87,7 @@ export class UserRepository implements IUser {
       .where(eq(user.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -230,7 +119,7 @@ export class UserRepository implements IUser {
       .where(eq(user.email, email))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -254,14 +143,14 @@ export class UserRepository implements IUser {
    *
    * @date 2026-09-15
    */
-  async findByCpf(cpf: string): Promise<User | null> {
+  async findByCpf(cpf: CPF): Promise<User | null> {
     const [row] = await this.db
       .select()
       .from(user)
-      .where(eq(user.cpf, cpf))
+      .where(eq(user.cpf, cpf.value))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -286,14 +175,14 @@ export class UserRepository implements IUser {
    *
    * @date 2026-09-15
    */
-  async findAllByIds(ids: string[]): Promise<User[]> {
+  async findAllByIds(ids: EntityId[]): Promise<User[]> {
     if (ids.length === 0) {
       return []
     }
 
     const rows = await this.db.select().from(user).where(inArray(user.id, ids))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -331,7 +220,7 @@ export class UserRepository implements IUser {
       .limit(options?.limit ?? 100)
       .offset(options?.offset ?? 0)
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -360,7 +249,7 @@ export class UserRepository implements IUser {
     if (persisted.id) {
       const [row] = await this.db
         .update(user)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(user.id, persisted.id))
         .returning()
 
@@ -368,15 +257,15 @@ export class UserRepository implements IUser {
         throw new NotFoundError(`User with id ${persisted.id} was not found.`)
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(user)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

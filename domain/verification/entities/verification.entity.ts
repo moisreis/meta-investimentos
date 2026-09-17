@@ -1,12 +1,12 @@
-﻿import { EntityId } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
 interface VerificationProps {
-  identifier: string;
-  value: string;
-  expiresAt: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
+  identifier: string
+  value: string
+  expiresAt: Date
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 /**
@@ -27,8 +27,8 @@ interface VerificationProps {
  * @date 2026-09-13
  */
 export class Verification {
-  private readonly _id?: EntityId;
-  private readonly props: Required<VerificationProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<VerificationProps>
 
   /**
    * @summary
@@ -47,7 +47,7 @@ export class Verification {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -67,7 +67,7 @@ export class Verification {
    * @date 2026-09-13
    */
   get identifier(): string {
-    return this.props.identifier;
+    return this.props.identifier
   }
 
   /**
@@ -87,7 +87,7 @@ export class Verification {
    * @date 2026-09-13
    */
   get value(): string {
-    return this.props.value;
+    return this.props.value
   }
 
   /**
@@ -107,7 +107,7 @@ export class Verification {
    * @date 2026-09-13
    */
   get expiresAt(): Date {
-    return this.props.expiresAt;
+    return new Date(this.props.expiresAt)
   }
 
   /**
@@ -127,7 +127,7 @@ export class Verification {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -147,7 +147,7 @@ export class Verification {
    * @date 2026-09-13
    */
   get updatedAt(): Date {
-    return this.props.updatedAt;
+    return new Date(this.props.updatedAt)
   }
 
   /**
@@ -168,8 +168,13 @@ export class Verification {
    * @date 2026-09-13
    */
   private constructor(props: Required<VerificationProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      expiresAt: new Date(props.expiresAt),
+      createdAt: new Date(props.createdAt),
+      updatedAt: new Date(props.updatedAt),
+    })
   }
 
   /**
@@ -202,24 +207,24 @@ export class Verification {
    */
   public static create(props: VerificationProps, id?: string): Verification {
     if (!props.identifier || props.identifier.trim() === "") {
-      throw new ValidationError("`Verification` must have an identifier.");
+      throw new ValidationError("`Verification` must have an identifier.")
     }
     if (!props.value || props.value.trim() === "") {
-      throw new ValidationError("`Verification` must have a value.");
+      throw new ValidationError("`Verification` must have a value.")
     }
     if (!props.expiresAt) {
-      throw new ValidationError("`Verification` must have an expiration date.");
+      throw new ValidationError("`Verification` must have an expiration date.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<VerificationProps> = {
       ...props,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
-    };
+    }
 
-    return new Verification(NORMALIZED_PROPS, id);
+    return new Verification(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -248,15 +253,15 @@ export class Verification {
    */
   public equals(object?: Verification | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

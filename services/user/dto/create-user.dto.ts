@@ -1,5 +1,3 @@
-import type { CPF } from "@/value-objects"
-
 // The role granted to the user on creation.
 export type UserRole = "USER" | "MANAGER"
 
@@ -20,7 +18,7 @@ export type UserRole = "USER" | "MANAGER"
  *   email: "maria@example.com",
  *   firstName: "Maria",
  *   lastName: "Silva",
- *   cpf: CPF.create("123.456.789-09"),
+ *   cpf: "123.456.789-09",
  *   role: "MANAGER",
  * };
  *
@@ -33,7 +31,7 @@ export interface CreateUserDTO {
   email: string
   firstName: string
   lastName: string
-  cpf: CPF
+  cpf: string
   role?: UserRole
   // Clears the profile picture when set to null.
   image?: string | null

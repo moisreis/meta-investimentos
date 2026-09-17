@@ -1,9 +1,14 @@
-﻿import { and, eq, gte, inArray, lte } from "drizzle-orm"
+﻿import { and, asc, eq, gte, inArray, lte } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { CheckingAccount } from "@domain/checking-account/entities/checking-account.entity"
 import type { ICheckingAccount } from "@domain/checking-account/interfaces/checking-account.interface"
 import { EntityId, SignedMoney } from "@/value-objects"
+import {
+  toDomain,
+  toInsert,
+  toUpdate,
+} from "../mappers/checking-account.mapper"
 import { checkingAccount } from "@db-schemas/checking-account.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -59,101 +64,6 @@ export class CheckingAccountRepository implements ICheckingAccount {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof checkingAccount.$inferSelect): CheckingAccount {
-    return CheckingAccount.create(
-      {
-        bankAccountId: EntityId.create(row.bankAccountId),
-        date: row.date,
-        value: SignedMoney.create(row.value),
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to insert values.
-   *
-   * @remarks
-   * Serializes value objects to their database
-   * representation.
-   *
-   * @explanation
-   * Converts an entity into the shape expected by
-   * **Drizzle** insert operations.
-   *
-   * @param entity - The entity to serialize.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(
-    entity: CheckingAccount
-  ): typeof checkingAccount.$inferInsert {
-    return {
-      bankAccountId: entity.bankAccountId,
-      date: entity.date,
-      value: entity.value.value.toString(),
-    }
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to update values.
-   *
-   * @remarks
-   * Omits `createdAt` which never changes.
-   *
-   * @explanation
-   * Converts an entity into the shape expected by
-   * **Drizzle** update operations.
-   *
-   * @param entity - The entity to serialize.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(
-    entity: CheckingAccount
-  ): Partial<typeof checkingAccount.$inferInsert> {
-    return {
-      bankAccountId: entity.bankAccountId,
-      date: entity.date,
-      value: entity.value.value.toString(),
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the checking account balance with the provided id.
    *
    * @remarks
@@ -180,7 +90,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
       .where(eq(checkingAccount.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -214,7 +124,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
       .from(checkingAccount)
       .where(eq(checkingAccount.bankAccountId, bankAccountId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -242,7 +152,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
    * @date 2026-09-15
    */
   async findAllByBankAccountIds(
-    bankAccountIds: string[]
+    bankAccountIds: EntityId[]
   ): Promise<CheckingAccount[]> {
     if (bankAccountIds.length === 0) {
       return []
@@ -253,7 +163,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
       .from(checkingAccount)
       .where(inArray(checkingAccount.bankAccountId, bankAccountIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -263,7 +173,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
    * @remarks
    * The period is inclusive of both dates. Batched lookup
    * avoids an N+1 query pattern. Returns an empty array
-   * when no ids match.
+   * when no ids match. Rows are ordered oldest-first by date.
    *
    * @explanation
    * Use this method to hydrate the balance series of many
@@ -284,7 +194,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
    * @date 2026-09-15
    */
   async findAllByBankAccountIdsInPeriod(
-    bankAccountIds: string[],
+    bankAccountIds: EntityId[],
     startDate: Date,
     endDate: Date
   ): Promise<CheckingAccount[]> {
@@ -302,8 +212,9 @@ export class CheckingAccountRepository implements ICheckingAccount {
           lte(checkingAccount.date, endDate)
         )
       )
+      .orderBy(asc(checkingAccount.date))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -345,7 +256,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
       )
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -374,7 +285,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
     if (persisted.id) {
       const [row] = await this.db
         .update(checkingAccount)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(checkingAccount.id, persisted.id))
         .returning()
 
@@ -384,15 +295,15 @@ export class CheckingAccountRepository implements ICheckingAccount {
         )
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(checkingAccount)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

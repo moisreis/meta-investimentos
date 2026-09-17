@@ -1,9 +1,14 @@
-﻿import { and, eq, gte, inArray, lte } from "drizzle-orm"
+﻿import { and, asc, eq, gte, inArray, lte } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { BenchmarkHistory } from "@domain/benchmark-history/entities/benchmark-history.entity"
-import type { IBenchmarkHistory } from "@domain/benchmark/interfaces/benchmark-history.interface"
+import type { IBenchmarkHistory } from "@domain/benchmark-history/interfaces/benchmark-history.interface"
 import { EntityId, SignedPercentage } from "@/value-objects"
+import {
+  toDomain,
+  toInsert,
+  toUpdate,
+} from "../mappers/benchmark-history.mapper"
 import { benchmarkHistory } from "@db-schemas/benchmark-history.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -60,105 +65,6 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(
-    row: typeof benchmarkHistory.$inferSelect
-  ): BenchmarkHistory {
-    return BenchmarkHistory.create(
-      {
-        benchmarkId: EntityId.create(row.benchmarkId),
-        date: row.date,
-        rate: SignedPercentage.create(row.rate),
-        createdAt: row.createdAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to insert values.
-   *
-   * @remarks
-   * Serializes value objects to their database
-   * representation.
-   *
-   * @explanation
-   * Converts an entity into the shape expected by
-   * **Drizzle** insert operations.
-   *
-   * @param entity - The entity to serialize.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(
-    entity: BenchmarkHistory
-  ): typeof benchmarkHistory.$inferInsert {
-    return {
-      benchmarkId: entity.benchmarkId,
-      date: entity.date,
-      rate: entity.rate.value.toString(),
-      createdAt: entity.createdAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to update values.
-   *
-   * @remarks
-   * Omits `createdAt` which never changes.
-   *
-   * @explanation
-   * Converts an entity into the shape expected by
-   * **Drizzle** update operations.
-   *
-   * @param entity - The entity to serialize.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(
-    entity: BenchmarkHistory
-  ): Partial<typeof benchmarkHistory.$inferInsert> {
-    return {
-      benchmarkId: entity.benchmarkId,
-      date: entity.date,
-      rate: entity.rate.value.toString(),
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the history record with the provided id.
    *
    * @remarks
@@ -185,7 +91,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
       .where(eq(benchmarkHistory.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -219,7 +125,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
       .from(benchmarkHistory)
       .where(eq(benchmarkHistory.benchmarkId, benchmarkId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -247,7 +153,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    * @date 2026-09-15
    */
   async findAllByBenchmarkIds(
-    benchmarkIds: string[]
+    benchmarkIds: EntityId[]
   ): Promise<BenchmarkHistory[]> {
     if (benchmarkIds.length === 0) {
       return []
@@ -258,7 +164,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
       .from(benchmarkHistory)
       .where(inArray(benchmarkHistory.benchmarkId, benchmarkIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -268,8 +174,9 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    *
    * @remarks
    * The period is inclusive of both dates. Batched lookup
-   * avoids an N+1 query pattern. Returns an empty array
-   * when no ids match.
+   * avoids an N+1 query pattern. Rows are ordered oldest
+   * first by date, then by createdAt. Returns an empty
+   * array when no ids match.
    *
    * @explanation
    * Use this method to hydrate the rate series of many
@@ -290,7 +197,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    * @date 2026-09-15
    */
   async findAllByBenchmarkIdsInPeriod(
-    benchmarkIds: string[],
+    benchmarkIds: EntityId[],
     startDate: Date,
     endDate: Date
   ): Promise<BenchmarkHistory[]> {
@@ -308,8 +215,9 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
           lte(benchmarkHistory.date, endDate)
         )
       )
+      .orderBy(asc(benchmarkHistory.date), asc(benchmarkHistory.createdAt))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -351,7 +259,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
       )
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -380,7 +288,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
     if (persisted.id) {
       const [row] = await this.db
         .update(benchmarkHistory)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(benchmarkHistory.id, persisted.id))
         .returning()
 
@@ -390,15 +298,15 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
         )
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(benchmarkHistory)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

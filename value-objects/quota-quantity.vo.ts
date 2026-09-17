@@ -1,12 +1,12 @@
-import Decimal from "decimal.js";
+import Decimal from "decimal.js"
 import {
   QUANTITY_DECIMAL_PLACES,
   ROUNDING_MODE,
-} from "@constants/value-objects/rounding.constant";
-import { ValidationError } from "@/errors";
+} from "@constants/value-objects/rounding.constant"
+import { ValidationError } from "@/errors"
 
 interface QuotaQuantityProps {
-  value: Decimal;
+  value: Decimal
 }
 
 /**
@@ -30,16 +30,16 @@ interface QuotaQuantityProps {
  * @date 2026-09-13
  */
 export class QuotaQuantity {
-  private readonly props: QuotaQuantityProps;
+  private readonly props: QuotaQuantityProps
 
   // Gets the underlying Decimal quota quantity value.
   get value(): Decimal {
-    return this.props.value;
+    return this.props.value
   }
 
   // Initializes internal properties for QuotaQuantity.
   private constructor(props: QuotaQuantityProps) {
-    this.props = props;
+    this.props = props
   }
 
   /**
@@ -53,7 +53,7 @@ export class QuotaQuantity {
    * @explanation
    * Factory method to construct a valid **QuotaQuantity**.
    * Throws a **ValidationError** if the provided input is
-   * missing or less than zero.
+   * missing, non-finite, or less than zero.
    *
    * @param value - Numerical value to construct the quantity.
    *
@@ -68,26 +68,33 @@ export class QuotaQuantity {
    */
   public static create(value: Decimal.Value): QuotaQuantity {
     if (value === undefined || value === null) {
-      throw new ValidationError("`QuotaQuantity` must be defined.");
+      throw new ValidationError("`QuotaQuantity` must be defined.")
     }
 
-    let DECIMAL_VALUE: Decimal;
+    let DECIMAL_VALUE: Decimal
 
     try {
-      DECIMAL_VALUE = new Decimal(value);
+      DECIMAL_VALUE = new Decimal(value)
     } catch {
-      throw new ValidationError("`QuotaQuantity` must be a valid number.");
+      throw new ValidationError("`QuotaQuantity` must be a valid number.")
+    }
+
+    if (!DECIMAL_VALUE.isFinite()) {
+      throw new ValidationError("`QuotaQuantity` must be a finite number.")
     }
 
     if (DECIMAL_VALUE.lessThan(0)) {
       throw new ValidationError(
-        "`QuotaQuantity` must be equal or greater than 0.",
-      );
+        "`QuotaQuantity` must be equal or greater than 0."
+      )
     }
 
     return new QuotaQuantity({
-      value: DECIMAL_VALUE.toDecimalPlaces(QUANTITY_DECIMAL_PLACES, ROUNDING_MODE),
-    });
+      value: DECIMAL_VALUE.toDecimalPlaces(
+        QUANTITY_DECIMAL_PLACES,
+        ROUNDING_MODE
+      ),
+    })
   }
 
   /**
@@ -114,6 +121,6 @@ export class QuotaQuantity {
    * @date 2026-09-13
    */
   public static equals(a: QuotaQuantity, b: QuotaQuantity): boolean {
-    return a.value.equals(b.value);
+    return a.value.equals(b.value)
   }
 }

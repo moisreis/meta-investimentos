@@ -1,9 +1,9 @@
-import Decimal from "decimal.js";
+import Decimal from "decimal.js"
 import {
   MONEY_DECIMAL_PLACES,
   ROUNDING_MODE,
-} from "@constants/value-objects/rounding.constant";
-import { ValidationError } from "@/errors";
+} from "@constants/value-objects/rounding.constant"
+import { ValidationError } from "@/errors"
 
 interface PositiveMoneyProps {
   value: Decimal
@@ -30,16 +30,16 @@ interface PositiveMoneyProps {
  * @date 2026-09-13
  */
 export class PositiveMoney {
-  private readonly props: PositiveMoneyProps;
+  private readonly props: PositiveMoneyProps
 
   // Gets the underlying Decimal positive monetary amount value.
   get value(): Decimal {
-    return this.props.value;
+    return this.props.value
   }
 
   // Initializes internal properties for PositiveMoney.
   private constructor(props: PositiveMoneyProps) {
-    this.props = props;
+    this.props = props
   }
 
   /**
@@ -53,7 +53,7 @@ export class PositiveMoney {
    * @explanation
    * Factory method to construct a valid **PositiveMoney**.
    * Throws a **ValidationError** if the provided input is
-   * missing or less than zero.
+   * missing, non-finite, or less than zero.
    *
    * @param value - Numerical value to construct the amount.
    *
@@ -68,26 +68,30 @@ export class PositiveMoney {
    */
   public static create(value: Decimal.Value): PositiveMoney {
     if (value === undefined || value === null) {
-      throw new ValidationError("`PositiveMoney` must be defined.");
+      throw new ValidationError("`PositiveMoney` must be defined.")
     }
 
-    let DECIMAL_VALUE: Decimal;
+    let DECIMAL_VALUE: Decimal
 
     try {
-      DECIMAL_VALUE = new Decimal(value);
+      DECIMAL_VALUE = new Decimal(value)
     } catch {
-      throw new ValidationError("`PositiveMoney` must be a valid number.");
+      throw new ValidationError("`PositiveMoney` must be a valid number.")
+    }
+
+    if (!DECIMAL_VALUE.isFinite()) {
+      throw new ValidationError("`PositiveMoney` must be a finite number.")
     }
 
     if (DECIMAL_VALUE.lessThan(0)) {
       throw new ValidationError(
-        "`PositiveMoney` must be equal or greater than 0.",
-      );
+        "`PositiveMoney` must be equal or greater than 0."
+      )
     }
 
     return new PositiveMoney({
       value: DECIMAL_VALUE.toDecimalPlaces(MONEY_DECIMAL_PLACES, ROUNDING_MODE),
-    });
+    })
   }
 
   /**
@@ -114,6 +118,6 @@ export class PositiveMoney {
    * @date 2026-09-13
    */
   public static equals(a: PositiveMoney, b: PositiveMoney): boolean {
-    return a.value.equals(b.value);
+    return a.value.equals(b.value)
   }
 }

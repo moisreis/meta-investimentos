@@ -1,5 +1,5 @@
-import type { Category } from "@domain/category/entities/category.entity";
-import type { EntityId } from "@/value-objects";
+import type { Category } from "@domain/category/entities/category.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -42,7 +42,7 @@ export interface ICategory {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<Category | null>;
+  findById(id: EntityId): Promise<Category | null>
 
   /**
    * @summary
@@ -65,7 +65,7 @@ export interface ICategory {
    *
    * @date 2026-09-13
    */
-  findByName(name: string): Promise<Category | null>;
+  findByName(name: string): Promise<Category | null>
 
   /**
    * @summary
@@ -90,7 +90,31 @@ export interface ICategory {
    *
    * @date 2026-09-13
    */
-  findAll(options?: { limit?: number; offset?: number }): Promise<Category[]>;
+  findAll(options?: { limit?: number; offset?: number }): Promise<Category[]>
+
+  /**
+   * @summary
+   * Retrieves all categories with the provided ids.
+   *
+   * @remarks
+   * Returns an empty array when no categories match.
+   *
+   * @explanation
+   * Use this method to fetch multiple categories by their
+   * unique identifiers. Returns an empty array for
+   * no matches.
+   *
+   * @param ids - The unique identifiers of the categories.
+   * @returns The matching entries.
+   *
+   * @example
+   * const CATS = await CATEGORY_REPO.findAllByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByIds(ids: EntityId[]): Promise<Category[]>
 
   /**
    * @summary
@@ -114,7 +138,7 @@ export interface ICategory {
    *
    * @date 2026-09-13
    */
-  save(category: Category): Promise<Category>;
+  save(category: Category): Promise<Category>
 
   /**
    * @summary
@@ -137,5 +161,5 @@ export interface ICategory {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

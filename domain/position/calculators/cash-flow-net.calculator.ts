@@ -1,8 +1,8 @@
-import { SignedMoney, type PositiveMoney } from "@/value-objects";
+import { SignedMoney, type PositiveMoney } from "@/value-objects"
 
 interface CalculateCashFlowNetProps {
-  applications: PositiveMoney;
-  withdrawals: PositiveMoney;
+  applications: PositiveMoney
+  withdrawals: PositiveMoney
 }
 
 /**
@@ -36,5 +36,5 @@ export function calculateCashFlowNet({
   applications,
   withdrawals,
 }: CalculateCashFlowNetProps): SignedMoney {
-  return SignedMoney.create(applications.value.minus(withdrawals.value));
+  return SignedMoney.create(applications.value.minus(withdrawals.value))
 }

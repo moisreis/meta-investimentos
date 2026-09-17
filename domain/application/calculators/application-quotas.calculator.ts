@@ -2,12 +2,12 @@ import {
   type PositiveMoney,
   type QuotaPrice,
   QuotaQuantity,
-} from "@/value-objects";
-import { ValidationError } from "@/errors";
+} from "@/value-objects"
+import { ValidationError } from "@/errors"
 
 interface CalculateApplicationQuotasProps {
-  application: PositiveMoney;
-  quota: QuotaPrice;
+  application: PositiveMoney
+  quota: QuotaPrice
 }
 
 /**
@@ -43,9 +43,9 @@ export function calculateApplicationQuotas({
 }: CalculateApplicationQuotasProps): QuotaQuantity {
   if (quota.value.isZero()) {
     throw new ValidationError(
-      "`Application` quotas cannot be calculated with a zero quota price.",
-    );
+      "`Application` quotas cannot be calculated with a zero quota price."
+    )
   }
 
-  return QuotaQuantity.create(application.value.dividedBy(quota.value));
+  return QuotaQuantity.create(application.value.dividedBy(quota.value))
 }

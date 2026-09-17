@@ -1,13 +1,11 @@
-import type { EntityId } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for generating a `Statement`.
  *
  * @remarks
- * The period start must not be after the period end.
- * The portfolio id is optional for portfolio-wide
- * statements.
+ * The period must not start after it ends. Period dates
+ * are ISO 8601 strings. The portfolio id is optional for
+ * portfolio-wide statements.
  *
  * @explanation
  * Use this DTO to request the generation of a statement
@@ -15,10 +13,10 @@ import type { EntityId } from "@/value-objects"
  *
  * @example
  * const DTO: GenerateStatementDTO = {
- *   portfolioId: EntityId.create("portfolio-1"),
- *   periodStart: new Date("2026-01-01"),
- *   periodEnd: new Date("2026-01-31"),
- *   generatedByUserId: EntityId.create("user-1"),
+ *   portfolioId: "portfolio-1",
+ *   periodStart: "2026-01-01T00:00:00.000Z",
+ *   periodEnd: "2026-01-31T00:00:00.000Z",
+ *   generatedByUserId: "user-1",
  * };
  *
  * @author Moisés Reis
@@ -26,8 +24,8 @@ import type { EntityId } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface GenerateStatementDTO {
-  portfolioId?: EntityId | null
-  periodStart: Date
-  periodEnd: Date
-  generatedByUserId?: EntityId | null
+  portfolioId?: string | null
+  periodStart: string
+  periodEnd: string
+  generatedByUserId?: string | null
 }

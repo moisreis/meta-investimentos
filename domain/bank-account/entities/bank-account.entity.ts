@@ -1,13 +1,13 @@
-﻿import { EntityId } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface BankAccountProps {
-  portfolioId: EntityId;
-  bankId: EntityId;
-  agency: string;
-  accountNumber: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface BankAccountProps {
+  portfolioId: EntityId
+  bankId: EntityId
+  agency: string
+  accountNumber: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 /**
@@ -27,8 +27,8 @@ interface BankAccountProps {
  * @date 2026-09-13
  */
 export class BankAccount {
-  private readonly _id?: EntityId;
-  private readonly props: Required<BankAccountProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<BankAccountProps>
 
   /**
    * @summary
@@ -47,7 +47,7 @@ export class BankAccount {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -67,7 +67,7 @@ export class BankAccount {
    * @date 2026-09-13
    */
   get portfolioId(): EntityId {
-    return this.props.portfolioId;
+    return this.props.portfolioId
   }
 
   /**
@@ -87,7 +87,7 @@ export class BankAccount {
    * @date 2026-09-13
    */
   get bankId(): EntityId {
-    return this.props.bankId;
+    return this.props.bankId
   }
 
   /**
@@ -107,7 +107,7 @@ export class BankAccount {
    * @date 2026-09-13
    */
   get agency(): string {
-    return this.props.agency;
+    return this.props.agency
   }
 
   /**
@@ -127,7 +127,7 @@ export class BankAccount {
    * @date 2026-09-13
    */
   get accountNumber(): string {
-    return this.props.accountNumber;
+    return this.props.accountNumber
   }
 
   /**
@@ -147,7 +147,7 @@ export class BankAccount {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -167,7 +167,7 @@ export class BankAccount {
    * @date 2026-09-13
    */
   get updatedAt(): Date {
-    return this.props.updatedAt;
+    return new Date(this.props.updatedAt)
   }
 
   /**
@@ -188,8 +188,12 @@ export class BankAccount {
    * @date 2026-09-13
    */
   private constructor(props: Required<BankAccountProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      createdAt: new Date(props.createdAt),
+      updatedAt: new Date(props.updatedAt),
+    })
   }
 
   /**
@@ -222,27 +226,27 @@ export class BankAccount {
    */
   public static create(props: BankAccountProps, id?: string): BankAccount {
     if (!props.portfolioId || props.portfolioId.trim() === "") {
-      throw new ValidationError("`BankAccount` must have a portfolio id.");
+      throw new ValidationError("`BankAccount` must have a portfolio id.")
     }
     if (!props.bankId || props.bankId.trim() === "") {
-      throw new ValidationError("`BankAccount` must have a bank id.");
+      throw new ValidationError("`BankAccount` must have a bank id.")
     }
     if (!props.agency || props.agency.trim() === "") {
-      throw new ValidationError("`BankAccount` must have an agency.");
+      throw new ValidationError("`BankAccount` must have an agency.")
     }
     if (!props.accountNumber || props.accountNumber.trim() === "") {
-      throw new ValidationError("`BankAccount` must have an account number.");
+      throw new ValidationError("`BankAccount` must have an account number.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<BankAccountProps> = {
       ...props,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
-    };
+    }
 
-    return new BankAccount(NORMALIZED_PROPS, id);
+    return new BankAccount(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -273,22 +277,22 @@ export class BankAccount {
    */
   public update(
     options: {
-      agency?: string;
-      accountNumber?: string;
+      agency?: string
+      accountNumber?: string
     },
-    now?: Date,
+    now?: Date
   ): BankAccount {
-    const AGENCY = options.agency ?? this.props.agency;
-    const ACCOUNT_NUMBER = options.accountNumber ?? this.props.accountNumber;
+    const AGENCY = options.agency ?? this.props.agency
+    const ACCOUNT_NUMBER = options.accountNumber ?? this.props.accountNumber
 
     if (!AGENCY || AGENCY.trim() === "") {
-      throw new ValidationError("`BankAccount` must have an agency.");
+      throw new ValidationError("`BankAccount` must have an agency.")
     }
     if (!ACCOUNT_NUMBER || ACCOUNT_NUMBER.trim() === "") {
-      throw new ValidationError("`BankAccount` must have an account number.");
+      throw new ValidationError("`BankAccount` must have an account number.")
     }
 
-    const NOW = now ?? new Date();
+    const NOW = now ?? new Date()
 
     return new BankAccount(
       {
@@ -297,8 +301,8 @@ export class BankAccount {
         accountNumber: ACCOUNT_NUMBER,
         updatedAt: NOW,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -326,15 +330,15 @@ export class BankAccount {
    */
   public equals(object?: BankAccount | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

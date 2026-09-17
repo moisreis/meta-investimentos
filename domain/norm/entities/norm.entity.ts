@@ -1,15 +1,16 @@
-﻿import { EntityId, type SignedPercentage } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId, type SignedPercentage } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface NormProps {
-  articleNumber: string;
-  name: string;
-  categoryId: EntityId;
-  minAllocation: SignedPercentage;
-  maxAllocation: SignedPercentage;
-  targetAllocation: SignedPercentage;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface NormProps {
+  articleNumber: string
+  name: string
+  categoryId: EntityId
+  minAllocation: SignedPercentage
+  maxAllocation: SignedPercentage
+  targetAllocation: SignedPercentage
+  version?: number
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 /**
@@ -29,8 +30,8 @@ interface NormProps {
  * @date 2026-09-13
  */
 export class Norm {
-  private readonly _id?: EntityId;
-  private readonly props: Required<NormProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<NormProps>
 
   /**
    * @summary
@@ -49,7 +50,7 @@ export class Norm {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -69,7 +70,7 @@ export class Norm {
    * @date 2026-09-13
    */
   get articleNumber(): string {
-    return this.props.articleNumber;
+    return this.props.articleNumber
   }
 
   /**
@@ -89,7 +90,7 @@ export class Norm {
    * @date 2026-09-13
    */
   get name(): string {
-    return this.props.name;
+    return this.props.name
   }
 
   /**
@@ -109,7 +110,7 @@ export class Norm {
    * @date 2026-09-13
    */
   get categoryId(): EntityId {
-    return this.props.categoryId;
+    return this.props.categoryId
   }
 
   /**
@@ -129,7 +130,7 @@ export class Norm {
    * @date 2026-09-13
    */
   get minAllocation(): SignedPercentage {
-    return this.props.minAllocation;
+    return this.props.minAllocation
   }
 
   /**
@@ -149,7 +150,7 @@ export class Norm {
    * @date 2026-09-13
    */
   get maxAllocation(): SignedPercentage {
-    return this.props.maxAllocation;
+    return this.props.maxAllocation
   }
 
   /**
@@ -169,7 +170,27 @@ export class Norm {
    * @date 2026-09-13
    */
   get targetAllocation(): SignedPercentage {
-    return this.props.targetAllocation;
+    return this.props.targetAllocation
+  }
+
+  /**
+   * @summary
+   * Returns the optimistic-locking version of the norm.
+   *
+   * @remarks
+   * Required number, defaults to zero.
+   *
+   * @explanation
+   * Use to guard concurrent updates in the repository.
+   *
+   * @returns The current version number.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  get version(): number {
+    return this.props.version
   }
 
   /**
@@ -189,7 +210,7 @@ export class Norm {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -209,7 +230,7 @@ export class Norm {
    * @date 2026-09-13
    */
   get updatedAt(): Date {
-    return this.props.updatedAt;
+    return new Date(this.props.updatedAt)
   }
 
   /**
@@ -230,8 +251,12 @@ export class Norm {
    * @date 2026-09-13
    */
   private constructor(props: Required<NormProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      createdAt: new Date(props.createdAt),
+      updatedAt: new Date(props.updatedAt),
+    })
   }
 
   /**
@@ -267,43 +292,44 @@ export class Norm {
    */
   public static create(props: NormProps, id?: string): Norm {
     if (!props.articleNumber || props.articleNumber.trim() === "") {
-      throw new ValidationError("`Norm` must have an article number.");
+      throw new ValidationError("`Norm` must have an article number.")
     }
     if (!props.name || props.name.trim() === "") {
-      throw new ValidationError("`Norm` must have a name.");
+      throw new ValidationError("`Norm` must have a name.")
     }
     if (!props.categoryId || props.categoryId.trim() === "") {
-      throw new ValidationError("`Norm` must have a category id.");
+      throw new ValidationError("`Norm` must have a category id.")
     }
     if (!props.minAllocation) {
-      throw new ValidationError("`Norm` must have a minimum allocation.");
+      throw new ValidationError("`Norm` must have a minimum allocation.")
     }
     if (!props.maxAllocation) {
-      throw new ValidationError("`Norm` must have a maximum allocation.");
+      throw new ValidationError("`Norm` must have a maximum allocation.")
     }
     if (!props.targetAllocation) {
-      throw new ValidationError("`Norm` must have a target allocation.");
+      throw new ValidationError("`Norm` must have a target allocation.")
     }
     if (props.minAllocation.value.gt(props.targetAllocation.value)) {
       throw new ValidationError(
-        "`Norm` minimum allocation must not exceed target allocation.",
-      );
+        "`Norm` minimum allocation must not exceed target allocation."
+      )
     }
     if (props.targetAllocation.value.gt(props.maxAllocation.value)) {
       throw new ValidationError(
-        "`Norm` target allocation must not exceed maximum allocation.",
-      );
+        "`Norm` target allocation must not exceed maximum allocation."
+      )
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<NormProps> = {
       ...props,
+      version: props.version ?? 0,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
-    };
+    }
 
-    return new Norm(NORMALIZED_PROPS, id);
+    return new Norm(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -334,52 +360,52 @@ export class Norm {
    */
   public update(
     options: {
-      articleNumber?: string;
-      name?: string;
-      categoryId?: EntityId;
-      minAllocation?: SignedPercentage;
-      maxAllocation?: SignedPercentage;
-      targetAllocation?: SignedPercentage;
+      articleNumber?: string
+      name?: string
+      categoryId?: EntityId
+      minAllocation?: SignedPercentage
+      maxAllocation?: SignedPercentage
+      targetAllocation?: SignedPercentage
     },
-    now?: Date,
+    now?: Date
   ): Norm {
-    const ARTICLE_NUMBER = options.articleNumber ?? this.props.articleNumber;
-    const NAME = options.name ?? this.props.name;
-    const CATEGORY_ID = options.categoryId ?? this.props.categoryId;
-    const MIN = options.minAllocation ?? this.props.minAllocation;
-    const MAX = options.maxAllocation ?? this.props.maxAllocation;
-    const TARGET = options.targetAllocation ?? this.props.targetAllocation;
+    const ARTICLE_NUMBER = options.articleNumber ?? this.props.articleNumber
+    const NAME = options.name ?? this.props.name
+    const CATEGORY_ID = options.categoryId ?? this.props.categoryId
+    const MIN = options.minAllocation ?? this.props.minAllocation
+    const MAX = options.maxAllocation ?? this.props.maxAllocation
+    const TARGET = options.targetAllocation ?? this.props.targetAllocation
 
     if (!ARTICLE_NUMBER || ARTICLE_NUMBER.trim() === "") {
-      throw new ValidationError("`Norm` must have an article number.");
+      throw new ValidationError("`Norm` must have an article number.")
     }
     if (!NAME || NAME.trim() === "") {
-      throw new ValidationError("`Norm` must have a name.");
+      throw new ValidationError("`Norm` must have a name.")
     }
     if (!CATEGORY_ID || CATEGORY_ID.trim() === "") {
-      throw new ValidationError("`Norm` must have a category id.");
+      throw new ValidationError("`Norm` must have a category id.")
     }
     if (!MIN) {
-      throw new ValidationError("`Norm` must have a minimum allocation.");
+      throw new ValidationError("`Norm` must have a minimum allocation.")
     }
     if (!MAX) {
-      throw new ValidationError("`Norm` must have a maximum allocation.");
+      throw new ValidationError("`Norm` must have a maximum allocation.")
     }
     if (!TARGET) {
-      throw new ValidationError("`Norm` must have a target allocation.");
+      throw new ValidationError("`Norm` must have a target allocation.")
     }
     if (MIN.value.gt(TARGET.value)) {
       throw new ValidationError(
-        "`Norm` minimum allocation must not exceed target allocation.",
-      );
+        "`Norm` minimum allocation must not exceed target allocation."
+      )
     }
     if (TARGET.value.gt(MAX.value)) {
       throw new ValidationError(
-        "`Norm` target allocation must not exceed maximum allocation.",
-      );
+        "`Norm` target allocation must not exceed maximum allocation."
+      )
     }
 
-    const NOW = now ?? new Date();
+    const NOW = now ?? new Date()
 
     return new Norm(
       {
@@ -392,8 +418,8 @@ export class Norm {
         targetAllocation: TARGET,
         updatedAt: NOW,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -421,15 +447,15 @@ export class Norm {
    */
   public equals(object?: Norm | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

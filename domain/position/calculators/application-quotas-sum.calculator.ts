@@ -1,7 +1,7 @@
-import { QuotaQuantity } from "@/value-objects";
+import { QuotaQuantity } from "@/value-objects"
 
 interface CalculateApplicationQuotasSumProps {
-  quotaQuantity: { value: QuotaQuantity }[];
+  quotaQuantity: { value: QuotaQuantity }[]
 }
 
 /**
@@ -36,8 +36,8 @@ export function calculateApplicationQuotasSum({
 }: CalculateApplicationQuotasSumProps): QuotaQuantity {
   const SUM = quotaQuantity.reduce(
     (acc, { value }) => acc.plus(value.value),
-    QuotaQuantity.create(0).value,
-  );
+    QuotaQuantity.create(0).value
+  )
 
-  return QuotaQuantity.create(SUM);
+  return QuotaQuantity.create(SUM)
 }

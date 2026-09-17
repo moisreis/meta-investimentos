@@ -2,12 +2,12 @@ import {
   type PositiveMoney,
   type QuotaPrice,
   QuotaQuantity,
-} from "@/value-objects";
-import { ValidationError } from "@/errors";
+} from "@/value-objects"
+import { ValidationError } from "@/errors"
 
 interface CalculateWithdrawalQuotasProps {
-  withdrawal: PositiveMoney;
-  quota: QuotaPrice;
+  withdrawal: PositiveMoney
+  quota: QuotaPrice
 }
 
 /**
@@ -43,9 +43,9 @@ export function calculateWithdrawalQuotas({
 }: CalculateWithdrawalQuotasProps): QuotaQuantity {
   if (quota.value.isZero()) {
     throw new ValidationError(
-      "`Withdrawal` quotas cannot be calculated with a zero quota price.",
-    );
+      "`Withdrawal` quotas cannot be calculated with a zero quota price."
+    )
   }
 
-  return QuotaQuantity.create(withdrawal.value.dividedBy(quota.value));
+  return QuotaQuantity.create(withdrawal.value.dividedBy(quota.value))
 }

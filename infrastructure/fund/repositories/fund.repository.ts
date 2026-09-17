@@ -4,6 +4,7 @@ import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 import { Fund } from "@domain/fund/entities/fund.entity"
 import type { IFund } from "@domain/fund/interfaces/fund.interface"
 import { CNPJ, EntityId, SignedPercentage } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/fund.mapper"
 import { fund } from "@db-schemas/fund.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -59,122 +60,6 @@ export class FundRepository implements IFund {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   * Percentage columns are stored as `numeric` in
-   * **PostgreSQL**, returned as strings, and hydrated into
-   * `SignedPercentage` value objects.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = TO_ENTITY(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof fund.$inferSelect): Fund {
-    return Fund.create(
-      {
-        cnpj: CNPJ.create(row.cnpj),
-        name: row.name,
-        administrationFee: row.administrationFee
-          ? SignedPercentage.create(row.administrationFee)
-          : null,
-        performanceFee: row.performanceFee
-          ? SignedPercentage.create(row.performanceFee)
-          : null,
-        bankId: EntityId.create(row.bankId),
-        benchmarkId: row.benchmarkId ? EntityId.create(row.benchmarkId) : null,
-        categoryId: row.categoryId ? EntityId.create(row.categoryId) : null,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps an entity to its insert values.
-   *
-   * @remarks
-   * Returns the columns required by the `fund` insert
-   * statement. Percentage values are serialized via their
-   * `.value.toString()` representation.
-   *
-   * @explanation
-   * Translates domain properties into the column shape
-   * expected by the **Drizzle** insert call.
-   *
-   * @param entity - The fund to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = TO_INSERT(FUND);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Fund): typeof fund.$inferInsert {
-    return {
-      cnpj: entity.cnpj.value,
-      name: entity.name,
-      administrationFee: entity.administrationFee?.value.toString() ?? null,
-      performanceFee: entity.performanceFee?.value.toString() ?? null,
-      bankId: entity.bankId,
-      benchmarkId: entity.benchmarkId,
-      categoryId: entity.categoryId,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps an entity to its update values.
-   *
-   * @remarks
-   * Omits `createdAt` and `updatedAt`. The column
-   * `updatedAt` is refreshed by the `$onUpdate` hook.
-   *
-   * @explanation
-   * Translates domain properties into the column shape
-   * expected by the **Drizzle** update call.
-   *
-   * @param entity - The fund to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = TO_UPDATE(FUND);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(entity: Fund): Partial<typeof fund.$inferInsert> {
-    return {
-      cnpj: entity.cnpj.value,
-      name: entity.name,
-      administrationFee: entity.administrationFee?.value.toString() ?? null,
-      performanceFee: entity.performanceFee?.value.toString() ?? null,
-      bankId: entity.bankId,
-      benchmarkId: entity.benchmarkId,
-      categoryId: entity.categoryId,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the fund with the provided id.
    *
    * @remarks
@@ -201,7 +86,7 @@ export class FundRepository implements IFund {
       .where(eq(fund.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -226,14 +111,14 @@ export class FundRepository implements IFund {
    *
    * @date 2026-09-15
    */
-  async findAllByIds(ids: string[]): Promise<Fund[]> {
+  async findAllByIds(ids: EntityId[]): Promise<Fund[]> {
     if (ids.length === 0) {
       return []
     }
 
     const rows = await this.db.select().from(fund).where(inArray(fund.id, ids))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -259,14 +144,14 @@ export class FundRepository implements IFund {
    *
    * @date 2026-09-15
    */
-  async findByCnpj(cnpj: string): Promise<Fund | null> {
+  async findByCnpj(cnpj: CNPJ): Promise<Fund | null> {
     const [row] = await this.db
       .select()
       .from(fund)
-      .where(eq(fund.cnpj, cnpj))
+      .where(eq(fund.cnpj, cnpj.value))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -305,7 +190,7 @@ export class FundRepository implements IFund {
       .limit(options?.limit ?? 100)
       .offset(options?.offset ?? 0)
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -330,13 +215,13 @@ export class FundRepository implements IFund {
    *
    * @date 2026-09-15
    */
-  async findAllByBankId(bankId: string): Promise<Fund[]> {
+  async findAllByBankId(bankId: EntityId): Promise<Fund[]> {
     const rows = await this.db
       .select()
       .from(fund)
       .where(eq(fund.bankId, bankId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -361,13 +246,13 @@ export class FundRepository implements IFund {
    *
    * @date 2026-09-15
    */
-  async findAllByBenchmarkId(benchmarkId: string): Promise<Fund[]> {
+  async findAllByBenchmarkId(benchmarkId: EntityId): Promise<Fund[]> {
     const rows = await this.db
       .select()
       .from(fund)
       .where(eq(fund.benchmarkId, benchmarkId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -392,13 +277,13 @@ export class FundRepository implements IFund {
    *
    * @date 2026-09-15
    */
-  async findAllByCategoryId(categoryId: string): Promise<Fund[]> {
+  async findAllByCategoryId(categoryId: EntityId): Promise<Fund[]> {
     const rows = await this.db
       .select()
       .from(fund)
       .where(eq(fund.categoryId, categoryId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -427,7 +312,7 @@ export class FundRepository implements IFund {
     if (persisted.id) {
       const [row] = await this.db
         .update(fund)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(fund.id, persisted.id))
         .returning()
 
@@ -435,15 +320,15 @@ export class FundRepository implements IFund {
         throw new NotFoundError(`Fund with id ${persisted.id} was not found.`)
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(fund)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

@@ -1,8 +1,8 @@
-import { SignedPercentage } from "@/value-objects";
+import { SignedPercentage } from "@/value-objects"
 
 interface CalculatePortfolioRiskFreeSpreadProps {
-  portfolioReturn: SignedPercentage;
-  riskFreeRate: SignedPercentage;
+  portfolioReturn: SignedPercentage
+  riskFreeRate: SignedPercentage
 }
 
 /**
@@ -37,6 +37,6 @@ export function calculatePortfolioRiskFreeSpread({
   riskFreeRate,
 }: CalculatePortfolioRiskFreeSpreadProps): SignedPercentage {
   return SignedPercentage.create(
-    portfolioReturn.value.minus(riskFreeRate.value),
-  );
+    portfolioReturn.value.minus(riskFreeRate.value)
+  )
 }

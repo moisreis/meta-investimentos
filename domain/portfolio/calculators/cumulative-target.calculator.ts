@@ -1,9 +1,9 @@
-import Decimal from "decimal.js";
+import Decimal from "decimal.js"
 
-import { SignedPercentage } from "@/value-objects";
+import { SignedPercentage } from "@/value-objects"
 
 interface CalculatePortfolioCumulativeTargetProps {
-  monthlyTargets: { value: SignedPercentage }[];
+  monthlyTargets: { value: SignedPercentage }[]
 }
 
 /**
@@ -41,8 +41,8 @@ export function calculatePortfolioCumulativeTarget({
   const CUMULATIVE_FACTOR = monthlyTargets.reduce(
     (acc, monthlyTarget) =>
       acc.times(new Decimal(1).plus(monthlyTarget.value.value.dividedBy(100))),
-    new Decimal(1),
-  );
+    new Decimal(1)
+  )
 
-  return SignedPercentage.create(CUMULATIVE_FACTOR.minus(1).times(100));
+  return SignedPercentage.create(CUMULATIVE_FACTOR.minus(1).times(100))
 }

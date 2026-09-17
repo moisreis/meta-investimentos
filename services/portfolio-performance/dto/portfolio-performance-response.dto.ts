@@ -1,11 +1,3 @@
-import type {
-  EntityId,
-  QuotaQuantity,
-  PositiveMoney,
-  SignedMoney,
-  SignedPercentage,
-} from "@/value-objects"
-
 /**
  * @summary
  * Represents the daily performance snapshot of a portfolio.
@@ -26,26 +18,26 @@ import type {
  * @date 2026-09-15
  */
 export interface PortfolioPerformanceResponseDTO {
-  id: EntityId
-  portfolioId: EntityId
-  date: Date
+  id: string
+  portfolioId: string
+  date: string
   // Total quotas held by the portfolio.
-  quotasHeld: QuotaQuantity
-  patrimony: PositiveMoney
-  applicationTotal: PositiveMoney
-  redemptionTotal: PositiveMoney
-  cashFlowNet: SignedMoney
-  earnings: SignedMoney
-  returnDaily: SignedPercentage
+  quotasHeld: string
+  patrimony: string
+  applicationTotal: string
+  redemptionTotal: string
+  cashFlowNet: string
+  earnings: string
+  returnDaily: string
   // Nullable returns at longer horizons.
-  returnMonthly: SignedPercentage | null
-  returnYearly: SignedPercentage | null
-  returnLast12m: SignedPercentage | null
+  returnMonthly: string | null
+  returnYearly: string | null
+  returnLast12m: string | null
   // Null when no target is defined.
-  target: SignedPercentage | null
-  cumulativeTarget: SignedPercentage | null
-  inflationSpread: SignedPercentage | null
-  riskFreeSpread: SignedPercentage | null
-  marketSpread: SignedPercentage | null
-  createdAt: Date
+  target: string | null
+  cumulativeTarget: string | null
+  inflationSpread: string | null
+  riskFreeSpread: string | null
+  marketSpread: string | null
+  createdAt: string
 }

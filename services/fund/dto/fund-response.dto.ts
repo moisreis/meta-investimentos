@@ -1,12 +1,11 @@
-import type { EntityId, CNPJ, SignedPercentage } from "@/value-objects"
-
 /**
  * @summary
  * Represents the shape of the fund response.
  *
  * @remarks
  * This DTO is the format of the response for fund
- * queries and mutations.
+ * queries and mutations. Cnpj, ids, and fees are
+ * strings; timestamps are ISO 8601 strings.
  *
  * @explanation
  * Use this DTO when exposing a fund to the consumers
@@ -20,18 +19,18 @@ import type { EntityId, CNPJ, SignedPercentage } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface FundResponseDTO {
-  id: EntityId
-  cnpj: CNPJ
+  id: string
+  cnpj: string
   name: string
   // Null when no administration fee is set.
-  administrationFee: SignedPercentage | null
+  administrationFee: string | null
   // Null when no performance fee is set.
-  performanceFee: SignedPercentage | null
-  bankId: EntityId
+  performanceFee: string | null
+  bankId: string
   // Null when no benchmark is linked.
-  benchmarkId: EntityId | null
+  benchmarkId: string | null
   // Null when no category is linked.
-  categoryId: EntityId | null
-  createdAt: Date
-  updatedAt: Date
+  categoryId: string | null
+  createdAt: string
+  updatedAt: string
 }

@@ -1,40 +1,16 @@
-﻿import { and, asc, eq, gte, inArray, lte, sql } from "drizzle-orm"
+﻿import { and, asc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { Application } from "@domain/application/entities/application.entity"
 import type { IApplication } from "@domain/application/interfaces/application.interface"
+import type { ApplicationTotals } from "@domain/application/interfaces/application.interface"
 import { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/application.mapper"
 import { application } from "@db-schemas/application.schema"
+import { ConcurrencyError } from "@errors/concurrency.error"
 import { NotFoundError } from "@errors/not-found.error"
 
 export type DbClient = PgAsyncDatabase<PgQueryResultHKT>
-
-/**
- * @summary
- * Holds the aggregate totals of a position period.
- *
- * @remarks
- * Amounts and quotas are value objects. They are null
- * when no transaction exists in the period.
- *
- * @explanation
- * Use this shape to return the summed applications of a
- * position within a date range.
- *
- * @example
- * const TOTALS = { amount: null, quotas: null };
- *
- * @author Moisés Reis
- *
- * @date 2026-09-15
- */
-export interface ApplicationTotals {
-  // Sum of application amounts, or `null` when none.
-  amount: PositiveMoney | null
-
-  // Sum of application quotas, or `null` when none.
-  quotas: QuotaQuantity | null
-}
 
 /**
  * @summary
@@ -86,115 +62,6 @@ export class ApplicationRepository implements IApplication {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof application.$inferSelect): Application {
-    return Application.create(
-      {
-        positionId: EntityId.create(row.positionId),
-        date: row.date,
-        amount: PositiveMoney.create(row.amount),
-        quotas: QuotaQuantity.create(row.quotas),
-        reversedAt: row.reversedAt,
-        reversedByUserId: row.reversedByUserId
-          ? EntityId.create(row.reversedByUserId)
-          : null,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to insert values.
-   *
-   * @remarks
-   * Serializes value objects to their database
-   * representation.
-   *
-   * @explanation
-   * Converts an entity into the shape expected by
-   * **Drizzle** insert operations.
-   *
-   * @param entity - The entity to serialize.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Application): typeof application.$inferInsert {
-    return {
-      positionId: entity.positionId,
-      date: entity.date,
-      amount: entity.amount.value.toString(),
-      quotas: entity.quotas.value.toString(),
-      reversedAt: entity.reversedAt,
-      reversedByUserId: entity.reversedByUserId,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to update values.
-   *
-   * @remarks
-   * Omits `createdAt` and `updatedAt`. The first never
-   * changes; the second refreshes via `$onUpdate`.
-   *
-   * @explanation
-   * Converts an entity into the shape expected by
-   * **Drizzle** update operations.
-   *
-   * @param entity - The entity to serialize.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(
-    entity: Application
-  ): Partial<typeof application.$inferInsert> {
-    return {
-      positionId: entity.positionId,
-      date: entity.date,
-      amount: entity.amount.value.toString(),
-      quotas: entity.quotas.value.toString(),
-      reversedAt: entity.reversedAt,
-      reversedByUserId: entity.reversedByUserId,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the application with the provided id.
    *
    * @remarks
@@ -221,7 +88,7 @@ export class ApplicationRepository implements IApplication {
       .where(eq(application.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -254,7 +121,7 @@ export class ApplicationRepository implements IApplication {
       .where(eq(application.positionId, positionId))
       .orderBy(asc(application.date), asc(application.createdAt))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -299,7 +166,7 @@ export class ApplicationRepository implements IApplication {
       )
       .orderBy(asc(application.date), asc(application.createdAt))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -329,7 +196,7 @@ export class ApplicationRepository implements IApplication {
    * @date 2026-09-15
    */
   async findAllByPositionIdsInPeriod(
-    positionIds: string[],
+    positionIds: EntityId[],
     startDate: Date,
     endDate: Date
   ): Promise<Application[]> {
@@ -347,8 +214,9 @@ export class ApplicationRepository implements IApplication {
           lte(application.date, endDate)
         )
       )
+      .orderBy(asc(application.date), asc(application.createdAt))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -356,8 +224,9 @@ export class ApplicationRepository implements IApplication {
    * Sums the amounts and quotas of a position in a period.
    *
    * @remarks
-   * The period is inclusive of both dates. Null totals mean
-   * no applications exist in the period.
+   * The period is inclusive of both dates. Reversed
+   * applications are excluded from the totals. Null
+   * totals mean no applications exist in the period.
    *
    * @explanation
    * Use this method to compute period totals without loading
@@ -377,7 +246,7 @@ export class ApplicationRepository implements IApplication {
    * @date 2026-09-15
    */
   async sumByPositionIdInPeriod(
-    positionId: string,
+    positionId: EntityId,
     startDate: Date,
     endDate: Date
   ): Promise<ApplicationTotals> {
@@ -391,7 +260,8 @@ export class ApplicationRepository implements IApplication {
         and(
           eq(application.positionId, positionId),
           gte(application.date, startDate),
-          lte(application.date, endDate)
+          lte(application.date, endDate),
+          isNull(application.reversedAt)
         )
       )
 
@@ -407,11 +277,14 @@ export class ApplicationRepository implements IApplication {
    *
    * @remarks
    * Inserts a new row when the entity has no id. Updates
-   * the existing row otherwise.
+   * the existing row only when the persisted version
+   * matches the stored version, and bumps the version.
+   * Throws `ConcurrencyError` on version mismatch and
+   * `NotFoundError` when the target row is missing.
    *
    * @explanation
-   * Use this method to create or update an application.
-   * Returns the persisted entity with its id.
+   * Use this method to create or update an application
+   * with optimistic locking. Returns the persisted entity.
    *
    * @param persisted - The application to persist.
    * @returns The persisted entity.
@@ -427,25 +300,42 @@ export class ApplicationRepository implements IApplication {
     if (persisted.id) {
       const [row] = await this.db
         .update(application)
-        .set(this.toUpdate(persisted))
-        .where(eq(application.id, persisted.id))
+        .set({ ...toUpdate(persisted), version: persisted.version + 1 })
+        .where(
+          and(
+            eq(application.id, persisted.id),
+            eq(application.version, persisted.version)
+          )
+        )
         .returning()
 
-      if (!row) {
+      if (row) {
+        return toDomain(row)
+      }
+
+      const [existing] = await this.db
+        .select({ id: application.id })
+        .from(application)
+        .where(eq(application.id, persisted.id))
+        .limit(1)
+
+      if (!existing) {
         throw new NotFoundError(
           `Application with id ${persisted.id} was not found.`
         )
       }
 
-      return this.toEntity(row)
+      throw new ConcurrencyError(
+        `Application with id ${persisted.id} has a stale version.`
+      )
     }
 
     const [row] = await this.db
       .insert(application)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

@@ -1,11 +1,10 @@
-import type { EntityId, PositiveMoney } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for creating a `Position`.
  *
  * @remarks
  * The initial balance defaults to null when omitted.
+ * The balance is a decimal string; the date is ISO 8601.
  *
  * @explanation
  * Use this DTO to create a position through the service
@@ -13,8 +12,8 @@ import type { EntityId, PositiveMoney } from "@/value-objects"
  *
  * @example
  * const DTO: CreatePositionDTO = {
- *   portfolioId: EntityId.create("portfolio-1"),
- *   fundId: EntityId.create("fund-1"),
+ *   portfolioId: "portfolio-1",
+ *   fundId: "fund-1",
  * };
  *
  * @author Moisés Reis
@@ -22,8 +21,8 @@ import type { EntityId, PositiveMoney } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface CreatePositionDTO {
-  portfolioId: EntityId
-  fundId: EntityId
-  initialBalance?: PositiveMoney | null
-  initialBalanceDate?: Date | null
+  portfolioId: string
+  fundId: string
+  initialBalance?: string | null
+  initialBalanceDate?: string | null
 }

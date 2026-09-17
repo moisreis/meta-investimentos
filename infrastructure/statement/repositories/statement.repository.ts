@@ -4,6 +4,7 @@ import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 import { Statement } from "@domain/statement/entities/statement.entity"
 import type { IStatement } from "@domain/statement/interfaces/statement.interface"
 import { EntityId } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/statement.mapper"
 import { statement } from "@db-schemas/statement.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -60,107 +61,6 @@ export class StatementRepository implements IStatement {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates `periodStart` and `periodEnd` through `new Date`.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof statement.$inferSelect): Statement {
-    return Statement.create(
-      {
-        portfolioId: row.portfolioId ? EntityId.create(row.portfolioId) : null,
-        periodStart: new Date(row.periodStart),
-        periodEnd: new Date(row.periodEnd),
-        fileUrl: row.fileUrl,
-        generatedByUserId: row.generatedByUserId
-          ? EntityId.create(row.generatedByUserId)
-          : null,
-        createdAt: row.createdAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to insert values.
-   *
-   * @remarks
-   * Serializes period dates through `toISOString()`.
-   *
-   * @explanation
-   * Use this mapper to build the row inserted when the
-   * entity has no id.
-   *
-   * @param entity - The statement to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Statement): typeof statement.$inferInsert {
-    return {
-      portfolioId: entity.portfolioId,
-      periodStart: entity.periodStart.toISOString(),
-      periodEnd: entity.periodEnd.toISOString(),
-      fileUrl: entity.fileUrl,
-      generatedByUserId: entity.generatedByUserId,
-      createdAt: entity.createdAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to update values.
-   *
-   * @remarks
-   * `createdAt` never changes and is left out of the update.
-   * Period dates serialize through `toISOString()`.
-   *
-   * @explanation
-   * Use this mapper to build the row updated when the
-   * entity already has an id.
-   *
-   * @param entity - The statement to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(entity: Statement): Partial<typeof statement.$inferInsert> {
-    return {
-      portfolioId: entity.portfolioId,
-      periodStart: entity.periodStart.toISOString(),
-      periodEnd: entity.periodEnd.toISOString(),
-      fileUrl: entity.fileUrl,
-      generatedByUserId: entity.generatedByUserId,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the statement with the provided id.
    *
    * @remarks
@@ -187,7 +87,7 @@ export class StatementRepository implements IStatement {
       .where(eq(statement.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -218,7 +118,7 @@ export class StatementRepository implements IStatement {
       .from(statement)
       .where(eq(statement.portfolioId, portfolioId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -244,7 +144,7 @@ export class StatementRepository implements IStatement {
    *
    * @date 2026-09-15
    */
-  async findAllByPortfolioIds(portfolioIds: string[]): Promise<Statement[]> {
+  async findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<Statement[]> {
     if (portfolioIds.length === 0) {
       return []
     }
@@ -254,7 +154,7 @@ export class StatementRepository implements IStatement {
       .from(statement)
       .where(inArray(statement.portfolioId, portfolioIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -285,7 +185,7 @@ export class StatementRepository implements IStatement {
       .from(statement)
       .where(eq(statement.generatedByUserId, userId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -311,7 +211,7 @@ export class StatementRepository implements IStatement {
    *
    * @date 2026-09-15
    */
-  async findAllByGeneratedByUserIds(userIds: string[]): Promise<Statement[]> {
+  async findAllByGeneratedByUserIds(userIds: EntityId[]): Promise<Statement[]> {
     if (userIds.length === 0) {
       return []
     }
@@ -321,7 +221,7 @@ export class StatementRepository implements IStatement {
       .from(statement)
       .where(inArray(statement.generatedByUserId, userIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -350,7 +250,7 @@ export class StatementRepository implements IStatement {
     if (persisted.id) {
       const [row] = await this.db
         .update(statement)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(statement.id, persisted.id))
         .returning()
 
@@ -360,15 +260,15 @@ export class StatementRepository implements IStatement {
         )
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(statement)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

@@ -1,12 +1,11 @@
-import type { EntityId, QuotaQuantity } from "@/value-objects"
-
 /**
  * @summary
  * Represents the shape of the allocation response.
  *
  * @remarks
  * This DTO is the format of the response for allocation
- * queries and mutations.
+ * queries and mutations. All ids are strings, the date
+ * is ISO 8601, and consumed quotas are a decimal string.
  *
  * @explanation
  * Use this DTO when exposing a transaction allocation to
@@ -20,9 +19,9 @@ import type { EntityId, QuotaQuantity } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface TransactionAllocationResponseDTO {
-  id: EntityId
-  applicationId: EntityId
-  withdrawId: EntityId
-  quotasConsumed: QuotaQuantity
-  createdAt: Date
+  id: string
+  applicationId: string
+  withdrawId: string
+  quotasConsumed: string
+  createdAt: string
 }

@@ -1,11 +1,10 @@
-import type { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for creating an `Application`.
  *
  * @remarks
- * Amount and quotas must be positive values.
+ * Amount and quotas are decimal strings; date is ISO
+ * 8601. Value objects are built in the service mapper.
  *
  * @explanation
  * Use this DTO to register an application through the
@@ -13,10 +12,10 @@ import type { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
  *
  * @example
  * const DTO: CreateApplicationDTO = {
- *   positionId: EntityId.create("position-1"),
- *   date: new Date("2026-01-01"),
- *   amount: PositiveMoney.create("10000"),
- *   quotas: QuotaQuantity.create("1000"),
+ *   positionId: "position-1",
+ *   date: "2026-01-01T00:00:00.000Z",
+ *   amount: "10000",
+ *   quotas: "1000",
  * };
  *
  * @author Moisés Reis
@@ -24,8 +23,8 @@ import type { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface CreateApplicationDTO {
-  positionId: EntityId
-  date: Date
-  amount: PositiveMoney
-  quotas: QuotaQuantity
+  positionId: string
+  date: string
+  amount: string
+  quotas: string
 }

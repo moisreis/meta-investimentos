@@ -1,5 +1,3 @@
-import type { EntityId, SignedPercentage } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for updating a `Fund`.
@@ -23,8 +21,8 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
  */
 export interface UpdateFundDTO {
   name?: string
-  administrationFee?: SignedPercentage | null
-  performanceFee?: SignedPercentage | null
-  benchmarkId?: EntityId | null
-  categoryId?: EntityId | null
+  administrationFee?: string | null
+  performanceFee?: string | null
+  benchmarkId?: string | null
+  categoryId?: string | null
 }

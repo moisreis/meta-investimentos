@@ -1,12 +1,11 @@
-import type { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
-
 /**
  * @summary
  * Represents the shape of the withdrawal response.
  *
  * @remarks
  * This DTO is the format of the response for withdrawal
- * queries and mutations.
+ * queries and mutations. All ids are strings, dates are
+ * ISO 8601 strings, and amounts are decimal strings.
  *
  * @explanation
  * Use this DTO when exposing a withdrawal to the
@@ -20,14 +19,14 @@ import type { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface WithdrawalResponseDTO {
-  id: EntityId
-  positionId: EntityId
-  date: Date
-  amount: PositiveMoney
-  quotas: QuotaQuantity
+  id: string
+  positionId: string
+  date: string
+  amount: string
+  quotas: string
   // Null while the withdrawal has not been reversed.
-  reversedAt: Date | null
-  reversedByUserId: EntityId | null
-  createdAt: Date
-  updatedAt: Date
+  reversedAt: string | null
+  reversedByUserId: string | null
+  createdAt: string
+  updatedAt: string
 }

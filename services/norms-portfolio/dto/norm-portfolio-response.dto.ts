@@ -1,5 +1,3 @@
-import type { EntityId, SignedPercentage } from "@/value-objects"
-
 /**
  * @summary
  * Represents the shape of the norm-portfolio response.
@@ -20,11 +18,11 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface NormPortfolioResponseDTO {
-  id: EntityId
-  normId: EntityId
-  portfolioId: EntityId
-  minAllocation: SignedPercentage
-  maxAllocation: SignedPercentage
-  targetAllocation: SignedPercentage
-  createdAt: Date
+  id: string
+  normId: string
+  portfolioId: string
+  minAllocation: string
+  maxAllocation: string
+  targetAllocation: string
+  createdAt: string
 }

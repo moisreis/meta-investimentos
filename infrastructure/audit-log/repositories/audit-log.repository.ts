@@ -4,6 +4,7 @@ import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 import { AuditLog } from "@domain/audit-log/entities/audit-log.entity"
 import type { IAuditLog } from "@domain/audit-log/interfaces/audit-log.interface"
 import { EntityId } from "@/value-objects"
+import { toDomain, toInsert } from "../mappers/audit-log.mapper"
 import { auditLog } from "@db-schemas/audit-log.schema"
 
 export type DbClient = PgAsyncDatabase<PgQueryResultHKT>
@@ -58,74 +59,6 @@ export class AuditLogRepository implements IAuditLog {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = TO_ENTITY(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof auditLog.$inferSelect): AuditLog {
-    return AuditLog.create(
-      {
-        entity: row.entity,
-        entityId: EntityId.create(row.entityId),
-        action: row.action,
-        changes: row.changes as Record<string, unknown> | null,
-        userId: row.userId ? EntityId.create(row.userId) : null,
-        createdAt: row.createdAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps an entity to its insert values.
-   *
-   * @remarks
-   * Returns the columns required by the `audit_log` insert
-   * statement.
-   *
-   * @explanation
-   * Translates domain properties into the column shape
-   * expected by the **Drizzle** insert call.
-   *
-   * @param entity - The log to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = TO_INSERT(LOG);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: AuditLog): typeof auditLog.$inferInsert {
-    return {
-      entity: entity.entity,
-      entityId: entity.entityId,
-      action: entity.action,
-      changes: entity.changes,
-      userId: entity.userId,
-      createdAt: entity.createdAt,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the audit log with the provided id.
    *
    * @remarks
@@ -152,7 +85,7 @@ export class AuditLogRepository implements IAuditLog {
       .where(eq(auditLog.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -183,7 +116,7 @@ export class AuditLogRepository implements IAuditLog {
       .from(auditLog)
       .where(eq(auditLog.entity, entity))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -211,14 +144,14 @@ export class AuditLogRepository implements IAuditLog {
    */
   async findAllByEntityAndEntityId(
     entity: string,
-    entityId: string
+    entityId: EntityId
   ): Promise<AuditLog[]> {
     const rows = await this.db
       .select()
       .from(auditLog)
       .where(and(eq(auditLog.entity, entity), eq(auditLog.entityId, entityId)))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -247,7 +180,7 @@ export class AuditLogRepository implements IAuditLog {
    */
   async findAllByEntityAndEntityIds(
     entity: string,
-    entityIds: string[]
+    entityIds: EntityId[]
   ): Promise<AuditLog[]> {
     if (entityIds.length === 0) {
       return []
@@ -260,7 +193,7 @@ export class AuditLogRepository implements IAuditLog {
         and(eq(auditLog.entity, entity), inArray(auditLog.entityId, entityIds))
       )
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -285,13 +218,13 @@ export class AuditLogRepository implements IAuditLog {
    *
    * @date 2026-09-15
    */
-  async findAllByUserId(userId: string): Promise<AuditLog[]> {
+  async findAllByUserId(userId: EntityId): Promise<AuditLog[]> {
     const rows = await this.db
       .select()
       .from(auditLog)
       .where(eq(auditLog.userId, userId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -317,7 +250,7 @@ export class AuditLogRepository implements IAuditLog {
    *
    * @date 2026-09-15
    */
-  async findAllByUserIds(userIds: string[]): Promise<AuditLog[]> {
+  async findAllByUserIds(userIds: EntityId[]): Promise<AuditLog[]> {
     if (userIds.length === 0) {
       return []
     }
@@ -327,7 +260,7 @@ export class AuditLogRepository implements IAuditLog {
       .from(auditLog)
       .where(inArray(auditLog.userId, userIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -355,9 +288,9 @@ export class AuditLogRepository implements IAuditLog {
   async save(persisted: AuditLog): Promise<AuditLog> {
     const [row] = await this.db
       .insert(auditLog)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 }

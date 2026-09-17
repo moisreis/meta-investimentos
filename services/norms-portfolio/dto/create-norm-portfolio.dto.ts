@@ -1,5 +1,3 @@
-import type { EntityId, SignedPercentage } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for creating a norm-portfolio relation.
@@ -13,11 +11,11 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
  *
  * @example
  * const DTO: CreateNormPortfolioDTO = {
- *   normId: EntityId.create("norm-1"),
- *   portfolioId: EntityId.create("portfolio-1"),
- *   minAllocation: SignedPercentage.create("5"),
- *   maxAllocation: SignedPercentage.create("20"),
- *   targetAllocation: SignedPercentage.create("12"),
+ *   normId: "norm-1",
+ *   portfolioId: "portfolio-1",
+ *   minAllocation: "5",
+ *   maxAllocation: "20",
+ *   targetAllocation: "12",
  * };
  *
  * @author Moisés Reis
@@ -25,9 +23,9 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface CreateNormPortfolioDTO {
-  normId: EntityId
-  portfolioId: EntityId
-  minAllocation: SignedPercentage
-  maxAllocation: SignedPercentage
-  targetAllocation: SignedPercentage
+  normId: string
+  portfolioId: string
+  minAllocation: string
+  maxAllocation: string
+  targetAllocation: string
 }

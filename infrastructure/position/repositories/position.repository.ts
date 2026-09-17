@@ -4,6 +4,7 @@ import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 import { Position } from "@domain/position/entities/position.entity"
 import type { IPosition } from "@domain/position/interfaces/position.interface"
 import { EntityId, PositiveMoney } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/position.mapper"
 import { position } from "@db-schemas/position.schema"
 import { ConcurrencyError } from "@errors/concurrency.error"
 import { NotFoundError } from "@errors/not-found.error"
@@ -71,111 +72,6 @@ export class PositionRepository implements IPosition {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof position.$inferSelect): Position {
-    return Position.create(
-      {
-        portfolioId: EntityId.create(row.portfolioId),
-        fundId: EntityId.create(row.fundId),
-        initialBalance: row.initialBalance
-          ? PositiveMoney.create(row.initialBalance)
-          : null,
-        initialBalanceDate: row.initialBalanceDate,
-        version: row.version,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to insert values.
-   *
-   * @remarks
-   * Converts `PositiveMoney` to its string representation
-   * for **Drizzle** insert operations.
-   *
-   * @explanation
-   * Produces the column map required by **Drizzle** when
-   * inserting a new position row.
-   *
-   * @param entity - The position to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(POSITION);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Position): typeof position.$inferInsert {
-    return {
-      portfolioId: entity.portfolioId,
-      fundId: entity.fundId,
-      initialBalance: entity.initialBalance?.value.toString() ?? null,
-      initialBalanceDate: entity.initialBalanceDate,
-      version: entity.version,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to mutable update values.
-   *
-   * @remarks
-   * Omits `createdAt` and `updatedAt`. Bumps `version`
-   * by one to enforce optimistic locking.
-   *
-   * @explanation
-   * Produces the column map required by **Drizzle** when
-   * updating an existing position row. The incremented
-   * version allows the save method to detect stale writes.
-   *
-   * @param entity - The position to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(POSITION);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(entity: Position): Partial<typeof position.$inferInsert> {
-    return {
-      portfolioId: entity.portfolioId,
-      fundId: entity.fundId,
-      initialBalance: entity.initialBalance?.value.toString() ?? null,
-      initialBalanceDate: entity.initialBalanceDate,
-      version: entity.version + 1,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the position with the provided id.
    *
    * @remarks
@@ -202,7 +98,7 @@ export class PositionRepository implements IPosition {
       .where(eq(position.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -233,7 +129,7 @@ export class PositionRepository implements IPosition {
       .from(position)
       .where(eq(position.portfolioId, portfolioId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -269,7 +165,7 @@ export class PositionRepository implements IPosition {
       .from(position)
       .where(inArray(position.portfolioId, portfolioIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -294,7 +190,7 @@ export class PositionRepository implements IPosition {
    *
    * @date 2026-09-15
    */
-  async findAllByFundIds(fundIds: string[]): Promise<Position[]> {
+  async findAllByFundIds(fundIds: EntityId[]): Promise<Position[]> {
     if (fundIds.length === 0) {
       return []
     }
@@ -304,7 +200,7 @@ export class PositionRepository implements IPosition {
       .from(position)
       .where(inArray(position.fundId, fundIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -342,7 +238,7 @@ export class PositionRepository implements IPosition {
       )
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -375,7 +271,10 @@ export class PositionRepository implements IPosition {
     if (persisted.id) {
       const [row] = await this.db
         .update(position)
-        .set(this.toUpdate(persisted))
+        .set({
+          ...toUpdate(persisted),
+          version: persisted.version + 1,
+        })
         .where(
           and(
             eq(position.id, persisted.id),
@@ -385,7 +284,7 @@ export class PositionRepository implements IPosition {
         .returning()
 
       if (row) {
-        return this.toEntity(row)
+        return toDomain(row)
       }
 
       const [existing] = await this.db
@@ -407,10 +306,10 @@ export class PositionRepository implements IPosition {
 
     const [row] = await this.db
       .insert(position)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

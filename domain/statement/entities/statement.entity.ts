@@ -1,13 +1,13 @@
-﻿import { EntityId } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface StatementProps {
-  portfolioId?: EntityId | null;
-  periodStart: Date;
-  periodEnd: Date;
-  fileUrl: string;
-  generatedByUserId?: EntityId | null;
-  createdAt?: Date;
+export interface StatementProps {
+  portfolioId?: EntityId | null
+  periodStart: Date
+  periodEnd: Date
+  fileUrl: string
+  generatedByUserId?: EntityId | null
+  createdAt?: Date
 }
 
 /**
@@ -27,8 +27,8 @@ interface StatementProps {
  * @date 2026-09-13
  */
 export class Statement {
-  private readonly _id?: EntityId;
-  private readonly props: Required<StatementProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<StatementProps>
 
   /**
    * @summary
@@ -47,7 +47,7 @@ export class Statement {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -67,7 +67,7 @@ export class Statement {
    * @date 2026-09-13
    */
   get portfolioId(): EntityId | null {
-    return this.props.portfolioId;
+    return this.props.portfolioId
   }
 
   /**
@@ -87,7 +87,7 @@ export class Statement {
    * @date 2026-09-13
    */
   get periodStart(): Date {
-    return this.props.periodStart;
+    return new Date(this.props.periodStart)
   }
 
   /**
@@ -107,7 +107,7 @@ export class Statement {
    * @date 2026-09-13
    */
   get periodEnd(): Date {
-    return this.props.periodEnd;
+    return new Date(this.props.periodEnd)
   }
 
   /**
@@ -127,7 +127,7 @@ export class Statement {
    * @date 2026-09-13
    */
   get fileUrl(): string {
-    return this.props.fileUrl;
+    return this.props.fileUrl
   }
 
   /**
@@ -147,7 +147,7 @@ export class Statement {
    * @date 2026-09-13
    */
   get generatedByUserId(): EntityId | null {
-    return this.props.generatedByUserId;
+    return this.props.generatedByUserId
   }
 
   /**
@@ -167,7 +167,7 @@ export class Statement {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -188,8 +188,13 @@ export class Statement {
    * @date 2026-09-13
    */
   private constructor(props: Required<StatementProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      periodStart: new Date(props.periodStart),
+      periodEnd: new Date(props.periodEnd),
+      createdAt: new Date(props.createdAt),
+    })
   }
 
   /**
@@ -222,30 +227,30 @@ export class Statement {
    */
   public static create(props: StatementProps, id?: string): Statement {
     if (!props.periodStart) {
-      throw new ValidationError("`Statement` must have a period start.");
+      throw new ValidationError("`Statement` must have a period start.")
     }
     if (!props.periodEnd) {
-      throw new ValidationError("`Statement` must have a period end.");
+      throw new ValidationError("`Statement` must have a period end.")
     }
     if (!props.fileUrl || props.fileUrl.trim() === "") {
-      throw new ValidationError("`Statement` must have a file url.");
+      throw new ValidationError("`Statement` must have a file url.")
     }
     if (props.periodStart.getTime() > props.periodEnd.getTime()) {
       throw new ValidationError(
-        "`Statement` period start must not be after period end.",
-      );
+        "`Statement` period start must not be after period end."
+      )
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<StatementProps> = {
       ...props,
       portfolioId: props.portfolioId ?? null,
       generatedByUserId: props.generatedByUserId ?? null,
       createdAt: props.createdAt ?? NOW,
-    };
+    }
 
-    return new Statement(NORMALIZED_PROPS, id);
+    return new Statement(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -273,15 +278,15 @@ export class Statement {
    */
   public equals(object?: Statement | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

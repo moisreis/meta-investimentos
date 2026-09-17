@@ -1,5 +1,5 @@
-import type { Account } from "@domain/account/entities/account.entity";
-import type { EntityId } from "@/value-objects";
+import type { Account } from "@domain/account/entities/account.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -42,7 +42,7 @@ export interface IAccount {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<Account | null>;
+  findById(id: EntityId): Promise<Account | null>
 
   /**
    * @summary
@@ -69,8 +69,8 @@ export interface IAccount {
    */
   findByIssuerAndAccountId(
     issuer: string,
-    accountId: string,
-  ): Promise<Account | null>;
+    accountId: string
+  ): Promise<Account | null>
 
   /**
    * @summary
@@ -93,7 +93,31 @@ export interface IAccount {
    *
    * @date 2026-09-13
    */
-  findAllByUserId(userId: EntityId): Promise<Account[]>;
+  findAllByUserId(userId: EntityId): Promise<Account[]>
+
+  /**
+   * @summary
+   * Retrieves all accounts belonging to the provided user ids.
+   *
+   * @remarks
+   * Returns an empty array when no accounts match.
+   *
+   * @explanation
+   * Use this method to list accounts linked to multiple
+   * users at once. Returns an empty array for no matches.
+   *
+   * @param userIds - The ids of the users the accounts belong to.
+   * @returns The matching entries.
+   *
+   * @example
+   * const ACCTS = await ACCOUNT_REPO
+   *   .findAllByUserIds(USER_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByUserIds(userIds: EntityId[]): Promise<Account[]>
 
   /**
    * @summary
@@ -117,7 +141,7 @@ export interface IAccount {
    *
    * @date 2026-09-13
    */
-  save(account: Account): Promise<Account>;
+  save(account: Account): Promise<Account>
 
   /**
    * @summary
@@ -140,5 +164,5 @@ export interface IAccount {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

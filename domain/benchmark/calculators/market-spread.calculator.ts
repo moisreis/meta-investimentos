@@ -1,8 +1,8 @@
-import { SignedPercentage } from "@/value-objects";
+import { SignedPercentage } from "@/value-objects"
 
 interface CalculatePortfolioMarketSpreadProps {
-  portfolioReturn: SignedPercentage;
-  marketRate: SignedPercentage;
+  portfolioReturn: SignedPercentage
+  marketRate: SignedPercentage
 }
 
 /**
@@ -36,5 +36,5 @@ export function calculatePortfolioMarketSpread({
   portfolioReturn,
   marketRate,
 }: CalculatePortfolioMarketSpreadProps): SignedPercentage {
-  return SignedPercentage.create(portfolioReturn.value.minus(marketRate.value));
+  return SignedPercentage.create(portfolioReturn.value.minus(marketRate.value))
 }

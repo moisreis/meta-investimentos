@@ -2,8 +2,9 @@ import { asc, desc, eq, inArray } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { Benchmark } from "@domain/benchmark/entities/benchmark.entity"
-import type { IBenchmark } from "@domain/benchmark-history/interfaces/benchmark.interface"
+import type { IBenchmark } from "@domain/benchmark/interfaces/benchmark.interface"
 import type { EntityId } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/benchmark.mapper"
 import { benchmark } from "@db-schemas/benchmark.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -58,95 +59,6 @@ export class BenchmarkRepository implements IBenchmark {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof benchmark.$inferSelect): Benchmark {
-    return Benchmark.create(
-      {
-        acronym: row.acronym,
-        name: row.name,
-        createdAt: row.createdAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to insert values.
-   *
-   * @remarks
-   * Maps entity fields to their database column names.
-   *
-   * @explanation
-   * Converts an entity into the shape expected by
-   * **Drizzle** insert operations.
-   *
-   * @param entity - The entity to serialize.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Benchmark): typeof benchmark.$inferInsert {
-    return {
-      acronym: entity.acronym,
-      name: entity.name,
-      createdAt: entity.createdAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to update values.
-   *
-   * @remarks
-   * Omits `createdAt` which never changes.
-   *
-   * @explanation
-   * Converts an entity into the shape expected by
-   * **Drizzle** update operations.
-   *
-   * @param entity - The entity to serialize.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(entity: Benchmark): Partial<typeof benchmark.$inferInsert> {
-    return {
-      acronym: entity.acronym,
-      name: entity.name,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the benchmark with the provided id.
    *
    * @remarks
@@ -173,7 +85,7 @@ export class BenchmarkRepository implements IBenchmark {
       .where(eq(benchmark.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -212,7 +124,7 @@ export class BenchmarkRepository implements IBenchmark {
       .limit(options?.limit ?? 100)
       .offset(options?.offset ?? 0)
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -238,7 +150,7 @@ export class BenchmarkRepository implements IBenchmark {
    *
    * @date 2026-09-15
    */
-  async findAllByIds(ids: string[]): Promise<Benchmark[]> {
+  async findAllByIds(ids: EntityId[]): Promise<Benchmark[]> {
     if (ids.length === 0) {
       return []
     }
@@ -248,7 +160,7 @@ export class BenchmarkRepository implements IBenchmark {
       .from(benchmark)
       .where(inArray(benchmark.id, ids))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -283,7 +195,7 @@ export class BenchmarkRepository implements IBenchmark {
       .orderBy(desc(benchmark.createdAt))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -312,7 +224,7 @@ export class BenchmarkRepository implements IBenchmark {
     if (persisted.id) {
       const [row] = await this.db
         .update(benchmark)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(benchmark.id, persisted.id))
         .returning()
 
@@ -322,15 +234,15 @@ export class BenchmarkRepository implements IBenchmark {
         )
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(benchmark)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

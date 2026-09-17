@@ -1,10 +1,10 @@
-﻿import { EntityId } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface CategoryProps {
-  name: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface CategoryProps {
+  name: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 /**
@@ -23,8 +23,8 @@ interface CategoryProps {
  * @date 2026-09-13
  */
 export class Category {
-  private readonly _id?: EntityId;
-  private readonly props: Required<CategoryProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<CategoryProps>
 
   /**
    * @summary
@@ -43,7 +43,7 @@ export class Category {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -63,7 +63,7 @@ export class Category {
    * @date 2026-09-13
    */
   get name(): string {
-    return this.props.name;
+    return this.props.name
   }
 
   /**
@@ -83,7 +83,7 @@ export class Category {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -103,7 +103,7 @@ export class Category {
    * @date 2026-09-13
    */
   get updatedAt(): Date {
-    return this.props.updatedAt;
+    return new Date(this.props.updatedAt)
   }
 
   /**
@@ -124,8 +124,12 @@ export class Category {
    * @date 2026-09-13
    */
   private constructor(props: Required<CategoryProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      createdAt: new Date(props.createdAt),
+      updatedAt: new Date(props.updatedAt),
+    })
   }
 
   /**
@@ -155,18 +159,18 @@ export class Category {
    */
   public static create(props: CategoryProps, id?: string): Category {
     if (!props.name || props.name.trim() === "") {
-      throw new ValidationError("`Category` must have a name.");
+      throw new ValidationError("`Category` must have a name.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<CategoryProps> = {
       ...props,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
-    };
+    }
 
-    return new Category(NORMALIZED_PROPS, id);
+    return new Category(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -194,10 +198,10 @@ export class Category {
    */
   public rename(name: string, now?: Date): Category {
     if (!name || name.trim() === "") {
-      throw new ValidationError("`Category` must have a name.");
+      throw new ValidationError("`Category` must have a name.")
     }
 
-    const NOW = now ?? new Date();
+    const NOW = now ?? new Date()
 
     return new Category(
       {
@@ -205,8 +209,8 @@ export class Category {
         name,
         updatedAt: NOW,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -234,15 +238,15 @@ export class Category {
    */
   public equals(object?: Category | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

@@ -1,10 +1,10 @@
-﻿import { EntityId, type SignedMoney } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId, type SignedMoney } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface CheckingAccountProps {
-  bankAccountId: EntityId;
-  date: Date;
-  value: SignedMoney;
+export interface CheckingAccountProps {
+  bankAccountId: EntityId
+  date: Date
+  value: SignedMoney
 }
 
 /**
@@ -23,8 +23,8 @@ interface CheckingAccountProps {
  * @date 2026-09-13
  */
 export class CheckingAccount {
-  private readonly _id?: EntityId;
-  private readonly props: Required<CheckingAccountProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<CheckingAccountProps>
 
   /**
    * @summary
@@ -43,7 +43,7 @@ export class CheckingAccount {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -63,7 +63,7 @@ export class CheckingAccount {
    * @date 2026-09-13
    */
   get bankAccountId(): EntityId {
-    return this.props.bankAccountId;
+    return this.props.bankAccountId
   }
 
   /**
@@ -83,7 +83,7 @@ export class CheckingAccount {
    * @date 2026-09-13
    */
   get date(): Date {
-    return this.props.date;
+    return this.props.date
   }
 
   /**
@@ -103,7 +103,7 @@ export class CheckingAccount {
    * @date 2026-09-13
    */
   get value(): SignedMoney {
-    return this.props.value;
+    return this.props.value
   }
 
   /**
@@ -124,8 +124,8 @@ export class CheckingAccount {
    * @date 2026-09-13
    */
   private constructor(props: Required<CheckingAccountProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze(props)
   }
 
   /**
@@ -157,23 +157,25 @@ export class CheckingAccount {
    */
   public static create(
     props: CheckingAccountProps,
-    id?: string,
+    id?: string
   ): CheckingAccount {
     if (!props.bankAccountId || props.bankAccountId.trim() === "") {
-      throw new ValidationError("`CheckingAccount` must have a bank account id.");
+      throw new ValidationError(
+        "`CheckingAccount` must have a bank account id."
+      )
     }
     if (!props.date) {
-      throw new ValidationError("`CheckingAccount` must have a date.");
+      throw new ValidationError("`CheckingAccount` must have a date.")
     }
     if (!props.value) {
-      throw new ValidationError("`CheckingAccount` must have a value.");
+      throw new ValidationError("`CheckingAccount` must have a value.")
     }
 
     const NORMALIZED_PROPS: Required<CheckingAccountProps> = {
       ...props,
-    };
+    }
 
-    return new CheckingAccount(NORMALIZED_PROPS, id);
+    return new CheckingAccount(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -200,7 +202,7 @@ export class CheckingAccount {
    */
   public updateValue(value: SignedMoney): CheckingAccount {
     if (!value) {
-      throw new ValidationError("`CheckingAccount` must have a value.");
+      throw new ValidationError("`CheckingAccount` must have a value.")
     }
 
     return new CheckingAccount(
@@ -208,8 +210,8 @@ export class CheckingAccount {
         ...this.props,
         value,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -237,15 +239,15 @@ export class CheckingAccount {
    */
   public equals(object?: CheckingAccount | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

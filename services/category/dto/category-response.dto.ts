@@ -1,12 +1,11 @@
-import type { EntityId } from "@/value-objects"
-
 /**
  * @summary
  * Represents the shape of the category response.
  *
  * @remarks
  * This DTO is the format of the response for category
- * queries and mutations.
+ * queries and mutations. The id is a string and
+ * timestamps are ISO 8601 strings.
  *
  * @explanation
  * Use this DTO when exposing a category to the
@@ -20,8 +19,8 @@ import type { EntityId } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface CategoryResponseDTO {
-  id: EntityId
+  id: string
   name: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
 }

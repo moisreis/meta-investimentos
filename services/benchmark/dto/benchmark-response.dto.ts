@@ -1,12 +1,11 @@
-import type { EntityId } from "@/value-objects"
-
 /**
  * @summary
  * Represents the shape of the benchmark response.
  *
  * @remarks
  * This DTO is the format of the response for benchmark
- * queries and mutations.
+ * queries and mutations. The id is a string and the
+ * creation date is an ISO 8601 string.
  *
  * @explanation
  * Use this DTO when exposing a benchmark to the
@@ -20,8 +19,8 @@ import type { EntityId } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface BenchmarkResponseDTO {
-  id: EntityId
+  id: string
   acronym: string
   name: string
-  createdAt: Date
+  createdAt: string
 }

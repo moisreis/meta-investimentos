@@ -1,11 +1,13 @@
-﻿import { eq, inArray } from "drizzle-orm"
+﻿import { and, eq, inArray } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { Norm } from "@domain/norm/entities/norm.entity"
 import type { INorm } from "@domain/norm/interfaces/norm.interface"
 import { EntityId, SignedPercentage } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/norm.mapper"
 import { norm } from "@db-schemas/norm.schema"
 import { NotFoundError } from "@errors/not-found.error"
+import { ConcurrencyError } from "@errors/concurrency.error"
 
 export type DbClient = PgAsyncDatabase<PgQueryResultHKT>
 
@@ -65,111 +67,6 @@ export class NormRepository implements INorm {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof norm.$inferSelect): Norm {
-    return Norm.create(
-      {
-        articleNumber: row.articleNumber,
-        name: row.name,
-        categoryId: EntityId.create(row.categoryId),
-        minAllocation: SignedPercentage.create(row.minAllocation),
-        maxAllocation: SignedPercentage.create(row.maxAllocation),
-        targetAllocation: SignedPercentage.create(row.targetAllocation),
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to insert values.
-   *
-   * @remarks
-   * Converts `SignedPercentage` values to strings for
-   * **Drizzle** insert operations.
-   *
-   * @explanation
-   * Produces the column map required by **Drizzle** when
-   * inserting a new norm row.
-   *
-   * @param entity - The norm to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(NORM);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Norm): typeof norm.$inferInsert {
-    return {
-      articleNumber: entity.articleNumber,
-      name: entity.name,
-      categoryId: entity.categoryId,
-      minAllocation: entity.minAllocation.value.toString(),
-      maxAllocation: entity.maxAllocation.value.toString(),
-      targetAllocation: entity.targetAllocation.value.toString(),
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to mutable update values.
-   *
-   * @remarks
-   * Omits `createdAt` and `updatedAt`. The `updatedAt`
-   * field is refreshed by the `$onUpdate` hook.
-   *
-   * @explanation
-   * Produces the column map required by **Drizzle** when
-   * updating an existing norm row.
-   *
-   * @param entity - The norm to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(NORM);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(entity: Norm): Partial<typeof norm.$inferInsert> {
-    return {
-      articleNumber: entity.articleNumber,
-      name: entity.name,
-      categoryId: entity.categoryId,
-      minAllocation: entity.minAllocation.value.toString(),
-      maxAllocation: entity.maxAllocation.value.toString(),
-      targetAllocation: entity.targetAllocation.value.toString(),
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the norm with the provided id.
    *
    * @remarks
@@ -196,7 +93,7 @@ export class NormRepository implements INorm {
       .where(eq(norm.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -227,7 +124,7 @@ export class NormRepository implements INorm {
       .from(norm)
       .where(eq(norm.categoryId, categoryId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -253,7 +150,7 @@ export class NormRepository implements INorm {
    *
    * @date 2026-09-15
    */
-  async findAllByCategoryIds(categoryIds: string[]): Promise<Norm[]> {
+  async findAllByCategoryIds(categoryIds: EntityId[]): Promise<Norm[]> {
     if (categoryIds.length === 0) {
       return []
     }
@@ -263,7 +160,7 @@ export class NormRepository implements INorm {
       .from(norm)
       .where(inArray(norm.categoryId, categoryIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -272,12 +169,14 @@ export class NormRepository implements INorm {
    *
    * @remarks
    * Inserts a new row when the entity has no id. Updates
-   * the existing row otherwise. Throws `NotFoundError` when
-   * the target row is missing.
+   * the existing row only when the persisted version
+   * matches the stored version, and bumps the version.
+   * Throws `ConcurrencyError` on version mismatch and
+   * `NotFoundError` when the target row is missing.
    *
    * @explanation
-   * Use this method to create or update a norm. Returns
-   * the persisted entity with its id.
+   * Use this method to create or update a norm with
+   * optimistic locking. Returns the persisted entity.
    *
    * @param persisted - The norm to persist.
    * @returns The persisted entity.
@@ -293,23 +192,37 @@ export class NormRepository implements INorm {
     if (persisted.id) {
       const [row] = await this.db
         .update(norm)
-        .set(this.toUpdate(persisted))
-        .where(eq(norm.id, persisted.id))
+        .set({ ...toUpdate(persisted), version: persisted.version + 1 })
+        .where(
+          and(eq(norm.id, persisted.id), eq(norm.version, persisted.version))
+        )
         .returning()
 
-      if (!row) {
+      if (row) {
+        return toDomain(row)
+      }
+
+      const [existing] = await this.db
+        .select({ id: norm.id })
+        .from(norm)
+        .where(eq(norm.id, persisted.id))
+        .limit(1)
+
+      if (!existing) {
         throw new NotFoundError(`Norm with id ${persisted.id} was not found.`)
       }
 
-      return this.toEntity(row)
+      throw new ConcurrencyError(
+        `Norm with id ${persisted.id} has a stale version.`
+      )
     }
 
     const [row] = await this.db
       .insert(norm)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

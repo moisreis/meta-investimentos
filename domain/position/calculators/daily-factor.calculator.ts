@@ -3,15 +3,15 @@ import {
   type QuotaPrice,
   type QuotaQuantity,
   type SignedMoney,
-} from "@/value-objects";
-import { ValidationError } from "@/errors";
+} from "@/value-objects"
+import { ValidationError } from "@/errors"
 
 interface CalculateDailyFactorProps {
-  currentDayQuotaValue: QuotaPrice;
-  currentDayQuotaQuantity: QuotaQuantity;
-  currentDayCashFlow: SignedMoney;
-  previousDayQuotaValue: QuotaPrice;
-  previousDayQuotaQuantity: QuotaQuantity;
+  currentDayQuotaValue: QuotaPrice
+  currentDayQuotaQuantity: QuotaQuantity
+  currentDayCashFlow: SignedMoney
+  previousDayQuotaValue: QuotaPrice
+  previousDayQuotaQuantity: QuotaQuantity
 }
 
 /**
@@ -55,19 +55,19 @@ export function calculateDailyFactor({
   previousDayQuotaQuantity,
 }: CalculateDailyFactorProps): GrowthFactor {
   const PREVIOUS_DAY_VALUE = previousDayQuotaQuantity.value.times(
-    previousDayQuotaValue.value,
-  );
+    previousDayQuotaValue.value
+  )
 
   if (PREVIOUS_DAY_VALUE.isZero()) {
     throw new ValidationError(
-      "Daily factor cannot be calculated with a zero previous day quota value.",
-    );
+      "Daily factor cannot be calculated with a zero previous day quota value."
+    )
   }
 
   return GrowthFactor.create(
     currentDayQuotaValue.value
       .times(currentDayQuotaQuantity.value)
       .minus(currentDayCashFlow.value)
-      .dividedBy(PREVIOUS_DAY_VALUE),
-  );
+      .dividedBy(PREVIOUS_DAY_VALUE)
+  )
 }

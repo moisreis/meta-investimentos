@@ -1,14 +1,14 @@
-﻿import { EntityId } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
 interface SessionProps {
-  userId: EntityId;
-  token: string;
-  expiresAt: Date;
-  ipAddress?: string | null;
-  userAgent?: string | null;
-  createdAt?: Date;
-  updatedAt?: Date;
+  userId: EntityId
+  token: string
+  expiresAt: Date
+  ipAddress?: string | null
+  userAgent?: string | null
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 /**
@@ -28,8 +28,8 @@ interface SessionProps {
  * @date 2026-09-13
  */
 export class Session {
-  private readonly _id?: EntityId;
-  private readonly props: Required<SessionProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<SessionProps>
 
   /**
    * @summary
@@ -48,7 +48,7 @@ export class Session {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -68,7 +68,7 @@ export class Session {
    * @date 2026-09-13
    */
   get userId(): EntityId {
-    return this.props.userId;
+    return this.props.userId
   }
 
   /**
@@ -88,7 +88,7 @@ export class Session {
    * @date 2026-09-13
    */
   get token(): string {
-    return this.props.token;
+    return this.props.token
   }
 
   /**
@@ -108,7 +108,7 @@ export class Session {
    * @date 2026-09-13
    */
   get expiresAt(): Date {
-    return this.props.expiresAt;
+    return new Date(this.props.expiresAt)
   }
 
   /**
@@ -128,7 +128,7 @@ export class Session {
    * @date 2026-09-13
    */
   get ipAddress(): string | null {
-    return this.props.ipAddress;
+    return this.props.ipAddress
   }
 
   /**
@@ -148,7 +148,7 @@ export class Session {
    * @date 2026-09-13
    */
   get userAgent(): string | null {
-    return this.props.userAgent;
+    return this.props.userAgent
   }
 
   /**
@@ -168,7 +168,7 @@ export class Session {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -188,7 +188,7 @@ export class Session {
    * @date 2026-09-13
    */
   get updatedAt(): Date {
-    return this.props.updatedAt;
+    return new Date(this.props.updatedAt)
   }
 
   /**
@@ -209,8 +209,13 @@ export class Session {
    * @date 2026-09-13
    */
   private constructor(props: Required<SessionProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      expiresAt: new Date(props.expiresAt),
+      createdAt: new Date(props.createdAt),
+      updatedAt: new Date(props.updatedAt),
+    })
   }
 
   /**
@@ -243,16 +248,16 @@ export class Session {
    */
   public static create(props: SessionProps, id?: string): Session {
     if (!props.userId || props.userId.trim() === "") {
-      throw new ValidationError("`Session` must have a user id.");
+      throw new ValidationError("`Session` must have a user id.")
     }
     if (!props.token || props.token.trim() === "") {
-      throw new ValidationError("`Session` must have a token.");
+      throw new ValidationError("`Session` must have a token.")
     }
     if (!props.expiresAt) {
-      throw new ValidationError("`Session` must have an expiration date.");
+      throw new ValidationError("`Session` must have an expiration date.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<SessionProps> = {
       ...props,
@@ -260,9 +265,9 @@ export class Session {
       userAgent: props.userAgent ?? null,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
-    };
+    }
 
-    return new Session(NORMALIZED_PROPS, id);
+    return new Session(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -290,15 +295,15 @@ export class Session {
    */
   public equals(object?: Session | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

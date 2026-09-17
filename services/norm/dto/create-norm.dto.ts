@@ -1,5 +1,3 @@
-import type { EntityId, SignedPercentage } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for creating a `Norm`.
@@ -15,10 +13,10 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
  * const DTO: CreateNormDTO = {
  *   articleNumber: "Art. 12",
  *   name: "Limite de Concentração",
- *   categoryId: EntityId.create("category-1"),
- *   minAllocation: SignedPercentage.create("5"),
- *   maxAllocation: SignedPercentage.create("20"),
- *   targetAllocation: SignedPercentage.create("12"),
+ *   categoryId: "category-1",
+ *   minAllocation: "5",
+ *   maxAllocation: "20",
+ *   targetAllocation: "12",
  * };
  *
  * @author Moisés Reis
@@ -28,8 +26,8 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
 export interface CreateNormDTO {
   articleNumber: string
   name: string
-  categoryId: EntityId
-  minAllocation: SignedPercentage
-  maxAllocation: SignedPercentage
-  targetAllocation: SignedPercentage
+  categoryId: string
+  minAllocation: string
+  maxAllocation: string
+  targetAllocation: string
 }

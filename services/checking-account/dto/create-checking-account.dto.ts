@@ -1,11 +1,10 @@
-import type { EntityId, SignedMoney } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for creating a `CheckingAccount`.
  *
  * @remarks
- * The value may be positive or negative.
+ * The value is a signed decimal string; the date is ISO
+ * 8601. Value objects are built in the service mapper.
  *
  * @explanation
  * Use this DTO to create a checking account entry
@@ -13,9 +12,9 @@ import type { EntityId, SignedMoney } from "@/value-objects"
  *
  * @example
  * const DTO: CreateCheckingAccountDTO = {
- *   bankAccountId: EntityId.create("bank-account-1"),
- *   date: new Date("2026-01-01"),
- *   value: SignedMoney.create("1000"),
+ *   bankAccountId: "bank-account-1",
+ *   date: "2026-01-01T00:00:00.000Z",
+ *   value: "1000",
  * };
  *
  * @author Moisés Reis
@@ -23,7 +22,7 @@ import type { EntityId, SignedMoney } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface CreateCheckingAccountDTO {
-  bankAccountId: EntityId
-  date: Date
-  value: SignedMoney
+  bankAccountId: string
+  date: string
+  value: string
 }

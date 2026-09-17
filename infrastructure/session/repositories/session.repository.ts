@@ -4,6 +4,7 @@ import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 import { Session } from "@domain/session/entities/session.entity"
 import type { ISession } from "@domain/session/interfaces/session.interface"
 import { EntityId } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/session.mapper"
 import { session } from "@db-schemas/session.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -59,107 +60,6 @@ export class SessionRepository implements ISession {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof session.$inferSelect): Session {
-    return Session.create(
-      {
-        userId: EntityId.create(row.userId),
-        token: row.token,
-        expiresAt: row.expiresAt,
-        ipAddress: row.ipAddress,
-        userAgent: row.userAgent,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to insert values.
-   *
-   * @remarks
-   * Includes the `updatedAt` column for new rows.
-   *
-   * @explanation
-   * Use this mapper to build the row inserted when the
-   * entity has no id.
-   *
-   * @param entity - The session to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Session): typeof session.$inferInsert {
-    return {
-      userId: entity.userId,
-      token: entity.token,
-      expiresAt: entity.expiresAt,
-      ipAddress: entity.ipAddress,
-      userAgent: entity.userAgent,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to update values.
-   *
-   * @remarks
-   * Leaves out `createdAt` and `updatedAt`. The `$onUpdate`
-   * hook refreshes `updatedAt` on each mutation.
-   *
-   * @explanation
-   * Use this mapper to build the row updated when the
-   * entity already has an id.
-   *
-   * @param entity - The session to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(entity: Session): Partial<typeof session.$inferInsert> {
-    return {
-      userId: entity.userId,
-      token: entity.token,
-      expiresAt: entity.expiresAt,
-      ipAddress: entity.ipAddress,
-      userAgent: entity.userAgent,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the session with the provided id.
    *
    * @remarks
@@ -186,7 +86,7 @@ export class SessionRepository implements ISession {
       .where(eq(session.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -217,7 +117,7 @@ export class SessionRepository implements ISession {
       .where(eq(session.token, token))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -247,7 +147,7 @@ export class SessionRepository implements ISession {
       .from(session)
       .where(eq(session.userId, userId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -273,7 +173,7 @@ export class SessionRepository implements ISession {
    *
    * @date 2026-09-15
    */
-  async findAllByUserIds(userIds: string[]): Promise<Session[]> {
+  async findAllByUserIds(userIds: EntityId[]): Promise<Session[]> {
     if (userIds.length === 0) {
       return []
     }
@@ -283,7 +183,7 @@ export class SessionRepository implements ISession {
       .from(session)
       .where(inArray(session.userId, userIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -312,7 +212,7 @@ export class SessionRepository implements ISession {
     if (persisted.id) {
       const [row] = await this.db
         .update(session)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(session.id, persisted.id))
         .returning()
 
@@ -322,15 +222,15 @@ export class SessionRepository implements ISession {
         )
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(session)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

@@ -1,7 +1,7 @@
-import { QuotaQuantity } from "@/value-objects";
+import { QuotaQuantity } from "@/value-objects"
 
 interface CalculatePortfolioWithdrawalQuotasSumProps {
-  quotaQuantity: { value: QuotaQuantity }[];
+  quotaQuantity: { value: QuotaQuantity }[]
 }
 
 /**
@@ -37,8 +37,8 @@ export function calculatePortfolioWithdrawalQuotasSum({
 }: CalculatePortfolioWithdrawalQuotasSumProps): QuotaQuantity {
   const SUM = quotaQuantity.reduce(
     (acc, { value }) => acc.plus(value.value),
-    QuotaQuantity.create(0).value,
-  );
+    QuotaQuantity.create(0).value
+  )
 
-  return QuotaQuantity.create(SUM);
+  return QuotaQuantity.create(SUM)
 }

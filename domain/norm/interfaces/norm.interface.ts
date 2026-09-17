@@ -1,5 +1,5 @@
-import type { Norm } from "@domain/norm/entities/norm.entity";
-import type { EntityId } from "@/value-objects";
+import type { Norm } from "@domain/norm/entities/norm.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -42,7 +42,7 @@ export interface INorm {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<Norm | null>;
+  findById(id: EntityId): Promise<Norm | null>
 
   /**
    * @summary
@@ -65,7 +65,31 @@ export interface INorm {
    *
    * @date 2026-09-13
    */
-  findAllByCategoryId(categoryId: EntityId): Promise<Norm[]>;
+  findAllByCategoryId(categoryId: EntityId): Promise<Norm[]>
+
+  /**
+   * @summary
+   * Retrieves all norms belonging to the provided categories.
+   *
+   * @remarks
+   * Returns an empty array when no norms match.
+   *
+   * @explanation
+   * Use this method to list norms linked to several
+   * categories. Returns an empty array for no matches.
+   *
+   * @param categoryIds - The unique identifiers of the categories.
+   * @returns The matching entries.
+   *
+   * @example
+   * const NORMS = await NORM_REPO
+   *   .findAllByCategoryIds(CATEGORY_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByCategoryIds(categoryIds: EntityId[]): Promise<Norm[]>
 
   /**
    * @summary
@@ -89,7 +113,7 @@ export interface INorm {
    *
    * @date 2026-09-13
    */
-  save(norm: Norm): Promise<Norm>;
+  save(norm: Norm): Promise<Norm>
 
   /**
    * @summary
@@ -112,5 +136,5 @@ export interface INorm {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

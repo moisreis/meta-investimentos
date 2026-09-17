@@ -1,5 +1,5 @@
-import type { User } from "@domain/user/entities/user.entity";
-import type { EntityId } from "@/value-objects";
+import type { User } from "@domain/user/entities/user.entity"
+import type { CPF, EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -42,7 +42,30 @@ export interface IUser {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<User | null>;
+  findById(id: EntityId): Promise<User | null>
+
+  /**
+   * @summary
+   * Retrieves all users with the provided ids.
+   *
+   * @remarks
+   * Returns an empty array when no users match.
+   *
+   * @explanation
+   * Use this method to list users linked to several
+   * ids. Returns an empty array for no matches.
+   *
+   * @param ids - The unique identifiers of the users.
+   * @returns The matching entries.
+   *
+   * @example
+   * const USERS = await USER_REPO.findAllByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByIds(ids: EntityId[]): Promise<User[]>
 
   /**
    * @summary
@@ -65,7 +88,7 @@ export interface IUser {
    *
    * @date 2026-09-13
    */
-  findByEmail(email: string): Promise<User | null>;
+  findByEmail(email: string): Promise<User | null>
 
   /**
    * @summary
@@ -78,7 +101,7 @@ export interface IUser {
    * Use this method to look up a user by cpf number.
    * Callers check null for existence.
    *
-   * @param cpf - The cpf of the user.
+   * @param cpf - The cpf value object of the user.
    * @returns The entry or `null`.
    *
    * @example
@@ -88,7 +111,7 @@ export interface IUser {
    *
    * @date 2026-09-13
    */
-  findByCpf(cpf: string): Promise<User | null>;
+  findByCpf(cpf: CPF): Promise<User | null>
 
   /**
    * @summary
@@ -113,7 +136,7 @@ export interface IUser {
    *
    * @date 2026-09-13
    */
-  findAll(options?: { limit?: number; offset?: number }): Promise<User[]>;
+  findAll(options?: { limit?: number; offset?: number }): Promise<User[]>
 
   /**
    * @summary
@@ -137,7 +160,7 @@ export interface IUser {
    *
    * @date 2026-09-13
    */
-  save(user: User): Promise<User>;
+  save(user: User): Promise<User>
 
   /**
    * @summary
@@ -160,5 +183,5 @@ export interface IUser {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

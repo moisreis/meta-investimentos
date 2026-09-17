@@ -1,11 +1,10 @@
-import type { EntityId } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for reversing a `Withdrawal`.
  *
  * @remarks
- * Records the user who performed the reversal.
+ * Records the user who performed the reversal as a
+ * string id.
  *
  * @explanation
  * Use this DTO to reverse a withdrawal through the
@@ -13,7 +12,7 @@ import type { EntityId } from "@/value-objects"
  *
  * @example
  * const DTO: ReverseWithdrawalDTO = {
- *   reversedByUserId: EntityId.create("user-1"),
+ *   reversedByUserId: "user-1",
  * };
  *
  * @author Moisés Reis
@@ -21,5 +20,5 @@ import type { EntityId } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface ReverseWithdrawalDTO {
-  reversedByUserId: EntityId
+  reversedByUserId: string
 }

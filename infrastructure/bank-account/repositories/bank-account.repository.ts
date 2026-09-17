@@ -4,6 +4,7 @@ import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 import { BankAccount } from "@domain/bank-account/entities/bank-account.entity"
 import type { IBankAccount } from "@domain/bank-account/interfaces/bank-account.interface"
 import { EntityId } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/bank-account.mapper"
 import { bankAccount } from "@db-schemas/bank-account.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -59,107 +60,6 @@ export class BankAccountRepository implements IBankAccount {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = TO_ENTITY(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof bankAccount.$inferSelect): BankAccount {
-    return BankAccount.create(
-      {
-        portfolioId: EntityId.create(row.portfolioId),
-        bankId: EntityId.create(row.bankId),
-        agency: row.agency,
-        accountNumber: row.accountNumber,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps an entity to its insert values.
-   *
-   * @remarks
-   * Returns the columns required by the `bank_account`
-   * insert statement.
-   *
-   * @explanation
-   * Translates domain properties into the column shape
-   * expected by the **Drizzle** insert call.
-   *
-   * @param entity - The bank account to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = TO_INSERT(ACCOUNT);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: BankAccount): typeof bankAccount.$inferInsert {
-    return {
-      portfolioId: entity.portfolioId,
-      bankId: entity.bankId,
-      agency: entity.agency,
-      accountNumber: entity.accountNumber,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps an entity to its update values.
-   *
-   * @remarks
-   * Omits `createdAt` and `updatedAt`. The column
-   * `updatedAt` is refreshed by the `$onUpdate` hook.
-   *
-   * @explanation
-   * Translates domain properties into the column shape
-   * expected by the **Drizzle** update call.
-   *
-   * @param entity - The bank account to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = TO_UPDATE(ACCOUNT);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(
-    entity: BankAccount
-  ): Partial<typeof bankAccount.$inferInsert> {
-    return {
-      portfolioId: entity.portfolioId,
-      bankId: entity.bankId,
-      agency: entity.agency,
-      accountNumber: entity.accountNumber,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the bank account with the provided id.
    *
    * @remarks
@@ -186,7 +86,7 @@ export class BankAccountRepository implements IBankAccount {
       .where(eq(bankAccount.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -217,7 +117,7 @@ export class BankAccountRepository implements IBankAccount {
       .from(bankAccount)
       .where(eq(bankAccount.portfolioId, portfolioId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -243,7 +143,9 @@ export class BankAccountRepository implements IBankAccount {
    *
    * @date 2026-09-15
    */
-  async findAllByPortfolioIds(portfolioIds: string[]): Promise<BankAccount[]> {
+  async findAllByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<BankAccount[]> {
     if (portfolioIds.length === 0) {
       return []
     }
@@ -253,7 +155,7 @@ export class BankAccountRepository implements IBankAccount {
       .from(bankAccount)
       .where(inArray(bankAccount.portfolioId, portfolioIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -284,7 +186,7 @@ export class BankAccountRepository implements IBankAccount {
       .from(bankAccount)
       .where(eq(bankAccount.bankId, bankId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -310,7 +212,7 @@ export class BankAccountRepository implements IBankAccount {
    *
    * @date 2026-09-15
    */
-  async findAllByBankIds(bankIds: string[]): Promise<BankAccount[]> {
+  async findAllByBankIds(bankIds: EntityId[]): Promise<BankAccount[]> {
     if (bankIds.length === 0) {
       return []
     }
@@ -320,7 +222,7 @@ export class BankAccountRepository implements IBankAccount {
       .from(bankAccount)
       .where(inArray(bankAccount.bankId, bankIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -350,7 +252,7 @@ export class BankAccountRepository implements IBankAccount {
     if (persisted.id) {
       const [row] = await this.db
         .update(bankAccount)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(bankAccount.id, persisted.id))
         .returning()
 
@@ -360,15 +262,15 @@ export class BankAccountRepository implements IBankAccount {
         )
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(bankAccount)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

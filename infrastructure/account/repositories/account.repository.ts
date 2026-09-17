@@ -4,6 +4,7 @@ import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 import { Account } from "@domain/account/entities/account.entity"
 import type { IAccount } from "@domain/account/interfaces/account.interface"
 import { EntityId } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/account.mapper"
 import { account } from "@db-schemas/account.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -59,125 +60,6 @@ export class AccountRepository implements IAccount {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof account.$inferSelect): Account {
-    return Account.create(
-      {
-        issuer: row.issuer,
-        providerId: row.providerId,
-        accountId: row.accountId,
-        userId: EntityId.create(row.userId),
-        accessToken: row.accessToken,
-        refreshToken: row.refreshToken,
-        idToken: row.idToken,
-        accessTokenExpiresAt: row.accessTokenExpiresAt,
-        refreshTokenExpiresAt: row.refreshTokenExpiresAt,
-        scope: row.scope,
-        password: row.password,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to insert values.
-   *
-   * @remarks
-   * Maps entity fields to their database column names.
-   *
-   * @explanation
-   * Converts an entity into the shape expected by
-   * **Drizzle** insert operations.
-   *
-   * @param entity - The entity to serialize.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Account): typeof account.$inferInsert {
-    return {
-      issuer: entity.issuer,
-      providerId: entity.providerId,
-      accountId: entity.accountId,
-      userId: entity.userId,
-      accessToken: entity.accessToken,
-      refreshToken: entity.refreshToken,
-      idToken: entity.idToken,
-      accessTokenExpiresAt: entity.accessTokenExpiresAt,
-      refreshTokenExpiresAt: entity.refreshTokenExpiresAt,
-      scope: entity.scope,
-      password: entity.password,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to update values.
-   *
-   * @remarks
-   * Omits `createdAt` and `updatedAt`. The first never
-   * changes; the second refreshes via `$onUpdate`.
-   *
-   * @explanation
-   * Converts an entity into the shape expected by
-   * **Drizzle** update operations.
-   *
-   * @param entity - The entity to serialize.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(entity: Account): Partial<typeof account.$inferInsert> {
-    return {
-      issuer: entity.issuer,
-      providerId: entity.providerId,
-      accountId: entity.accountId,
-      userId: entity.userId,
-      accessToken: entity.accessToken,
-      refreshToken: entity.refreshToken,
-      idToken: entity.idToken,
-      accessTokenExpiresAt: entity.accessTokenExpiresAt,
-      refreshTokenExpiresAt: entity.refreshTokenExpiresAt,
-      scope: entity.scope,
-      password: entity.password,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the account with the provided id.
    *
    * @remarks
@@ -204,7 +86,7 @@ export class AccountRepository implements IAccount {
       .where(eq(account.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -241,7 +123,7 @@ export class AccountRepository implements IAccount {
       .where(and(eq(account.issuer, issuer), eq(account.accountId, accountId)))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -272,7 +154,7 @@ export class AccountRepository implements IAccount {
       .from(account)
       .where(eq(account.userId, userId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -298,7 +180,7 @@ export class AccountRepository implements IAccount {
    *
    * @date 2026-09-15
    */
-  async findAllByUserIds(userIds: string[]): Promise<Account[]> {
+  async findAllByUserIds(userIds: EntityId[]): Promise<Account[]> {
     if (userIds.length === 0) {
       return []
     }
@@ -308,7 +190,7 @@ export class AccountRepository implements IAccount {
       .from(account)
       .where(inArray(account.userId, userIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -337,7 +219,7 @@ export class AccountRepository implements IAccount {
     if (persisted.id) {
       const [row] = await this.db
         .update(account)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(account.id, persisted.id))
         .returning()
 
@@ -347,15 +229,15 @@ export class AccountRepository implements IAccount {
         )
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(account)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

@@ -1,11 +1,11 @@
-﻿import { EntityId } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface BankProps {
-  code: string;
-  name: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface BankProps {
+  code: string
+  name: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 /**
@@ -24,8 +24,8 @@ interface BankProps {
  * @date 2026-09-13
  */
 export class Bank {
-  private readonly _id?: EntityId;
-  private readonly props: Required<BankProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<BankProps>
 
   /**
    * @summary
@@ -44,7 +44,7 @@ export class Bank {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -64,7 +64,7 @@ export class Bank {
    * @date 2026-09-13
    */
   get code(): string {
-    return this.props.code;
+    return this.props.code
   }
 
   /**
@@ -84,7 +84,7 @@ export class Bank {
    * @date 2026-09-13
    */
   get name(): string {
-    return this.props.name;
+    return this.props.name
   }
 
   /**
@@ -104,7 +104,7 @@ export class Bank {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -124,7 +124,7 @@ export class Bank {
    * @date 2026-09-13
    */
   get updatedAt(): Date {
-    return this.props.updatedAt;
+    return new Date(this.props.updatedAt)
   }
 
   /**
@@ -145,8 +145,12 @@ export class Bank {
    * @date 2026-09-13
    */
   private constructor(props: Required<BankProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      createdAt: new Date(props.createdAt),
+      updatedAt: new Date(props.updatedAt),
+    })
   }
 
   /**
@@ -177,21 +181,21 @@ export class Bank {
    */
   public static create(props: BankProps, id?: string): Bank {
     if (!props.code || props.code.trim() === "") {
-      throw new ValidationError("`Bank` must have a code.");
+      throw new ValidationError("`Bank` must have a code.")
     }
     if (!props.name || props.name.trim() === "") {
-      throw new ValidationError("`Bank` must have a name.");
+      throw new ValidationError("`Bank` must have a name.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<BankProps> = {
       ...props,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
-    };
+    }
 
-    return new Bank(NORMALIZED_PROPS, id);
+    return new Bank(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -219,10 +223,10 @@ export class Bank {
    */
   public rename(name: string, now?: Date): Bank {
     if (!name || name.trim() === "") {
-      throw new ValidationError("`Bank` must have a name.");
+      throw new ValidationError("`Bank` must have a name.")
     }
 
-    const NOW = now ?? new Date();
+    const NOW = now ?? new Date()
 
     return new Bank(
       {
@@ -230,8 +234,8 @@ export class Bank {
         name,
         updatedAt: NOW,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -259,10 +263,10 @@ export class Bank {
    */
   public changeCode(code: string, now?: Date): Bank {
     if (!code || code.trim() === "") {
-      throw new ValidationError("`Bank` must have a code.");
+      throw new ValidationError("`Bank` must have a code.")
     }
 
-    const NOW = now ?? new Date();
+    const NOW = now ?? new Date()
 
     return new Bank(
       {
@@ -270,8 +274,8 @@ export class Bank {
         code,
         updatedAt: NOW,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -299,15 +303,15 @@ export class Bank {
    */
   public equals(object?: Bank | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

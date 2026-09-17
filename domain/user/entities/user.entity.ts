@@ -1,5 +1,5 @@
-﻿import { EntityId, type CPF } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId, type CPF } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
 /**
  * @summary
@@ -15,7 +15,7 @@ import { ValidationError } from "@/errors";
  *
  * @date 2026-09-13
  */
-export type UserRole = "USER" | "MANAGER";
+export type UserRole = "USER" | "MANAGER"
 
 /**
  * @summary
@@ -31,19 +31,19 @@ export type UserRole = "USER" | "MANAGER";
  *
  * @date 2026-09-13
  */
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-interface UserProps {
-  name: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  cpf: CPF;
-  role?: UserRole;
-  emailVerified?: boolean;
-  image?: string | null;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface UserProps {
+  name: string
+  email: string
+  firstName: string
+  lastName: string
+  cpf: CPF
+  role?: UserRole
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 /**
@@ -63,8 +63,8 @@ interface UserProps {
  * @date 2026-09-13
  */
 export class User {
-  private readonly _id?: EntityId;
-  private readonly props: Required<UserProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<UserProps>
 
   /**
    * @summary
@@ -83,7 +83,7 @@ export class User {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -103,7 +103,7 @@ export class User {
    * @date 2026-09-13
    */
   get name(): string {
-    return this.props.name;
+    return this.props.name
   }
 
   /**
@@ -123,7 +123,7 @@ export class User {
    * @date 2026-09-13
    */
   get email(): string {
-    return this.props.email;
+    return this.props.email
   }
 
   /**
@@ -143,7 +143,7 @@ export class User {
    * @date 2026-09-13
    */
   get firstName(): string {
-    return this.props.firstName;
+    return this.props.firstName
   }
 
   /**
@@ -163,7 +163,7 @@ export class User {
    * @date 2026-09-13
    */
   get lastName(): string {
-    return this.props.lastName;
+    return this.props.lastName
   }
 
   /**
@@ -183,7 +183,7 @@ export class User {
    * @date 2026-09-13
    */
   get cpf(): CPF {
-    return this.props.cpf;
+    return this.props.cpf
   }
 
   /**
@@ -203,8 +203,8 @@ export class User {
    * @date 2026-09-13
    */
   get maskedCpf(): string {
-    const VALUE = this.props.cpf.value;
-    return `${VALUE.slice(0, 3)}.***.***-${VALUE.slice(-2)}`;
+    const VALUE = this.props.cpf.value
+    return `${VALUE.slice(0, 3)}.***.***-${VALUE.slice(-2)}`
   }
 
   /**
@@ -224,7 +224,7 @@ export class User {
    * @date 2026-09-13
    */
   get role(): UserRole {
-    return this.props.role;
+    return this.props.role
   }
 
   /**
@@ -244,7 +244,7 @@ export class User {
    * @date 2026-09-13
    */
   get emailVerified(): boolean {
-    return this.props.emailVerified;
+    return this.props.emailVerified
   }
 
   /**
@@ -264,7 +264,7 @@ export class User {
    * @date 2026-09-13
    */
   get image(): string | null {
-    return this.props.image;
+    return this.props.image
   }
 
   /**
@@ -284,7 +284,7 @@ export class User {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -304,7 +304,7 @@ export class User {
    * @date 2026-09-13
    */
   get updatedAt(): Date {
-    return this.props.updatedAt;
+    return new Date(this.props.updatedAt)
   }
 
   /**
@@ -325,8 +325,12 @@ export class User {
    * @date 2026-09-13
    */
   private constructor(props: Required<UserProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      createdAt: new Date(props.createdAt),
+      updatedAt: new Date(props.updatedAt),
+    })
   }
 
   /**
@@ -361,29 +365,29 @@ export class User {
    */
   public static create(props: UserProps, id?: string): User {
     if (!props.name || props.name.trim() === "") {
-      throw new ValidationError("`User` must have a name.");
+      throw new ValidationError("`User` must have a name.")
     }
     if (!props.email || !EMAIL_PATTERN.test(props.email)) {
-      throw new ValidationError("`User` must have a valid email.");
+      throw new ValidationError("`User` must have a valid email.")
     }
     if (!props.firstName || props.firstName.trim() === "") {
-      throw new ValidationError("`User` must have a first name.");
+      throw new ValidationError("`User` must have a first name.")
     }
     if (!props.lastName || props.lastName.trim() === "") {
-      throw new ValidationError("`User` must have a last name.");
+      throw new ValidationError("`User` must have a last name.")
     }
     if (!props.cpf) {
-      throw new ValidationError("`User` must have a valid cpf.");
+      throw new ValidationError("`User` must have a valid cpf.")
     }
     if (
       props.role !== undefined &&
       props.role !== "USER" &&
       props.role !== "MANAGER"
     ) {
-      throw new ValidationError("`User` must have a valid role.");
+      throw new ValidationError("`User` must have a valid role.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<UserProps> = {
       ...props,
@@ -392,9 +396,9 @@ export class User {
       image: props.image ?? null,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
-    };
+    }
 
-    return new User(NORMALIZED_PROPS, id);
+    return new User(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -425,29 +429,29 @@ export class User {
    */
   public updateProfile(
     props: {
-      name?: string;
-      firstName?: string;
-      lastName?: string;
-      image?: string | null;
+      name?: string
+      firstName?: string
+      lastName?: string
+      image?: string | null
     },
-    now?: Date,
+    now?: Date
   ): User {
-    const name = props.name ?? this.props.name;
-    const firstName = props.firstName ?? this.props.firstName;
-    const lastName = props.lastName ?? this.props.lastName;
-    const image = props.image === undefined ? this.props.image : props.image;
+    const name = props.name ?? this.props.name
+    const firstName = props.firstName ?? this.props.firstName
+    const lastName = props.lastName ?? this.props.lastName
+    const image = props.image === undefined ? this.props.image : props.image
 
     if (name.trim() === "") {
-      throw new ValidationError("`User` must have a name.");
+      throw new ValidationError("`User` must have a name.")
     }
     if (firstName.trim() === "") {
-      throw new ValidationError("`User` must have a first name.");
+      throw new ValidationError("`User` must have a first name.")
     }
     if (lastName.trim() === "") {
-      throw new ValidationError("`User` must have a last name.");
+      throw new ValidationError("`User` must have a last name.")
     }
 
-    const NOW = now ?? new Date();
+    const NOW = now ?? new Date()
 
     return new User(
       {
@@ -458,8 +462,8 @@ export class User {
         image,
         updatedAt: NOW,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -487,15 +491,15 @@ export class User {
    */
   public equals(object?: User | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

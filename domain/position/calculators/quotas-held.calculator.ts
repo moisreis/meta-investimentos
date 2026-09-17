@@ -1,9 +1,9 @@
-import { QuotaQuantity } from "@/value-objects";
+import { QuotaQuantity } from "@/value-objects"
 
 interface CalculateQuotasHeldProps {
-  lastPeriodQuotaQuantity: QuotaQuantity;
-  applicationQuotasQuantity: QuotaQuantity;
-  withdrawalQuotasQuantity: QuotaQuantity;
+  lastPeriodQuotaQuantity: QuotaQuantity
+  applicationQuotasQuantity: QuotaQuantity
+  withdrawalQuotasQuantity: QuotaQuantity
 }
 
 /**
@@ -43,6 +43,6 @@ export function calculateQuotasHeld({
   return QuotaQuantity.create(
     lastPeriodQuotaQuantity.value
       .plus(applicationQuotasQuantity.value)
-      .minus(withdrawalQuotasQuantity.value),
-  );
+      .minus(withdrawalQuotasQuantity.value)
+  )
 }

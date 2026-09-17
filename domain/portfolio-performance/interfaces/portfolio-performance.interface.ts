@@ -1,5 +1,5 @@
-import type { PortfolioPerformance } from "@domain/portfolio-performance/entities/portfolio-performance.entity";
-import type { EntityId } from "@/value-objects";
+import type { PortfolioPerformance } from "@domain/portfolio-performance/entities/portfolio-performance.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -45,7 +45,7 @@ export interface IPortfolioPerformance {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<PortfolioPerformance | null>;
+  findById(id: EntityId): Promise<PortfolioPerformance | null>
 
   /**
    * @summary
@@ -68,7 +68,33 @@ export interface IPortfolioPerformance {
    *
    * @date 2026-09-13
    */
-  findAllByPortfolioId(portfolioId: EntityId): Promise<PortfolioPerformance[]>;
+  findAllByPortfolioId(portfolioId: EntityId): Promise<PortfolioPerformance[]>
+
+  /**
+   * @summary
+   * Retrieves all performances of the provided portfolios.
+   *
+   * @remarks
+   * Returns an empty array when no performances match.
+   *
+   * @explanation
+   * Use this method to list performances linked to several
+   * portfolios. Returns an empty array for no matches.
+   *
+   * @param portfolioIds - The unique identifiers of the portfolios.
+   * @returns The matching entries.
+   *
+   * @example
+   * const PERFS = await PERF_REPO
+   *   .findAllByPortfolioIds(PORTFOLIO_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<PortfolioPerformance[]>
 
   /**
    * @summary
@@ -96,8 +122,8 @@ export interface IPortfolioPerformance {
    */
   findByPortfolioIdAndDate(
     portfolioId: EntityId,
-    date: Date,
-  ): Promise<PortfolioPerformance | null>;
+    date: Date
+  ): Promise<PortfolioPerformance | null>
 
   /**
    * @summary
@@ -122,8 +148,36 @@ export interface IPortfolioPerformance {
    * @date 2026-09-13
    */
   findLatestByPortfolioId(
-    portfolioId: EntityId,
-  ): Promise<PortfolioPerformance | null>;
+    portfolioId: EntityId
+  ): Promise<PortfolioPerformance | null>
+
+  /**
+   * @summary
+   * Retrieves the latest performance of each provided portfolio.
+   *
+   * @remarks
+   * Returns an empty array when a portfolio has no
+   * performance. Only the latest entry of each portfolio
+   * is returned.
+   *
+   * @explanation
+   * Use this method to get the most recent performance of
+   * every given portfolio. Returns an empty array for none.
+   *
+   * @param portfolioIds - The unique identifiers of the portfolios.
+   * @returns The latest snapshots.
+   *
+   * @example
+   * const PERFS = await PERF_REPO
+   *   .findLatestByPortfolioIds(PORTFOLIO_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findLatestByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<PortfolioPerformance[]>
 
   /**
    * @summary
@@ -148,8 +202,8 @@ export interface IPortfolioPerformance {
    * @date 2026-09-13
    */
   save(
-    portfolioPerformance: PortfolioPerformance,
-  ): Promise<PortfolioPerformance>;
+    portfolioPerformance: PortfolioPerformance
+  ): Promise<PortfolioPerformance>
 
   /**
    * @summary
@@ -172,5 +226,5 @@ export interface IPortfolioPerformance {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

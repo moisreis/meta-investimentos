@@ -1,7 +1,7 @@
-import { PositiveMoney } from "@/value-objects";
+import { PositiveMoney } from "@/value-objects"
 
 interface CalculatePortfolioApplicationSumProps {
-  application: { value: PositiveMoney }[];
+  application: { value: PositiveMoney }[]
 }
 
 /**
@@ -39,8 +39,8 @@ export function calculatePortfolioApplicationSum({
 }: CalculatePortfolioApplicationSumProps): PositiveMoney {
   const SUM = application.reduce(
     (acc, { value }) => acc.plus(value.value),
-    PositiveMoney.create(0).value,
-  );
+    PositiveMoney.create(0).value
+  )
 
-  return PositiveMoney.create(SUM);
+  return PositiveMoney.create(SUM)
 }

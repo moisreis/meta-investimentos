@@ -4,28 +4,28 @@
   type QuotaQuantity,
   type SignedMoney,
   type SignedPercentage,
-} from "@/value-objects";
-import { ValidationError } from "@/errors";
+} from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface PortfolioPerformanceProps {
-  portfolioId: EntityId;
-  date: Date;
-  quotasHeld: QuotaQuantity;
-  patrimony: PositiveMoney;
-  applicationTotal: PositiveMoney;
-  redemptionTotal: PositiveMoney;
-  cashFlowNet: SignedMoney;
-  earnings: SignedMoney;
-  returnDaily: SignedPercentage;
-  returnMonthly?: SignedPercentage | null;
-  returnYearly?: SignedPercentage | null;
-  returnLast12m?: SignedPercentage | null;
-  target?: SignedPercentage | null;
-  cumulativeTarget?: SignedPercentage | null;
-  inflationSpread?: SignedPercentage | null;
-  riskFreeSpread?: SignedPercentage | null;
-  marketSpread?: SignedPercentage | null;
-  createdAt?: Date;
+export interface PortfolioPerformanceProps {
+  portfolioId: EntityId
+  date: Date
+  quotasHeld: QuotaQuantity
+  patrimony: PositiveMoney
+  applicationTotal: PositiveMoney
+  redemptionTotal: PositiveMoney
+  cashFlowNet: SignedMoney
+  earnings: SignedMoney
+  returnDaily: SignedPercentage
+  returnMonthly?: SignedPercentage | null
+  returnYearly?: SignedPercentage | null
+  returnLast12m?: SignedPercentage | null
+  target?: SignedPercentage | null
+  cumulativeTarget?: SignedPercentage | null
+  inflationSpread?: SignedPercentage | null
+  riskFreeSpread?: SignedPercentage | null
+  marketSpread?: SignedPercentage | null
+  createdAt?: Date
 }
 
 /**
@@ -45,8 +45,8 @@ interface PortfolioPerformanceProps {
  * @date 2026-09-13
  */
 export class PortfolioPerformance {
-  private readonly _id?: EntityId;
-  private readonly props: Required<PortfolioPerformanceProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<PortfolioPerformanceProps>
 
   /**
    * @summary
@@ -65,7 +65,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -85,7 +85,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get portfolioId(): EntityId {
-    return this.props.portfolioId;
+    return this.props.portfolioId
   }
 
   /**
@@ -105,7 +105,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get date(): Date {
-    return this.props.date;
+    return new Date(this.props.date)
   }
 
   /**
@@ -125,7 +125,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get quotasHeld(): QuotaQuantity {
-    return this.props.quotasHeld;
+    return this.props.quotasHeld
   }
 
   /**
@@ -145,7 +145,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get patrimony(): PositiveMoney {
-    return this.props.patrimony;
+    return this.props.patrimony
   }
 
   /**
@@ -165,7 +165,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get applicationTotal(): PositiveMoney {
-    return this.props.applicationTotal;
+    return this.props.applicationTotal
   }
 
   /**
@@ -185,7 +185,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get redemptionTotal(): PositiveMoney {
-    return this.props.redemptionTotal;
+    return this.props.redemptionTotal
   }
 
   /**
@@ -205,7 +205,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get cashFlowNet(): SignedMoney {
-    return this.props.cashFlowNet;
+    return this.props.cashFlowNet
   }
 
   /**
@@ -225,7 +225,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get earnings(): SignedMoney {
-    return this.props.earnings;
+    return this.props.earnings
   }
 
   /**
@@ -245,7 +245,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get returnDaily(): SignedPercentage {
-    return this.props.returnDaily;
+    return this.props.returnDaily
   }
 
   /**
@@ -265,7 +265,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get returnMonthly(): SignedPercentage | null {
-    return this.props.returnMonthly;
+    return this.props.returnMonthly
   }
 
   /**
@@ -285,7 +285,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get returnYearly(): SignedPercentage | null {
-    return this.props.returnYearly;
+    return this.props.returnYearly
   }
 
   /**
@@ -305,7 +305,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get returnLast12m(): SignedPercentage | null {
-    return this.props.returnLast12m;
+    return this.props.returnLast12m
   }
 
   /**
@@ -325,7 +325,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get target(): SignedPercentage | null {
-    return this.props.target;
+    return this.props.target
   }
 
   /**
@@ -345,7 +345,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get cumulativeTarget(): SignedPercentage | null {
-    return this.props.cumulativeTarget;
+    return this.props.cumulativeTarget
   }
 
   /**
@@ -365,7 +365,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get inflationSpread(): SignedPercentage | null {
-    return this.props.inflationSpread;
+    return this.props.inflationSpread
   }
 
   /**
@@ -385,7 +385,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get riskFreeSpread(): SignedPercentage | null {
-    return this.props.riskFreeSpread;
+    return this.props.riskFreeSpread
   }
 
   /**
@@ -405,7 +405,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get marketSpread(): SignedPercentage | null {
-    return this.props.marketSpread;
+    return this.props.marketSpread
   }
 
   /**
@@ -425,7 +425,7 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -446,8 +446,12 @@ export class PortfolioPerformance {
    * @date 2026-09-13
    */
   private constructor(props: Required<PortfolioPerformanceProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      date: new Date(props.date),
+      createdAt: new Date(props.createdAt),
+    })
   }
 
   /**
@@ -486,47 +490,47 @@ export class PortfolioPerformance {
    */
   public static create(
     props: PortfolioPerformanceProps,
-    id?: string,
+    id?: string
   ): PortfolioPerformance {
     if (!props.portfolioId || props.portfolioId.trim() === "") {
       throw new ValidationError(
-        "`PortfolioPerformance` must have a portfolio id.",
-      );
+        "`PortfolioPerformance` must have a portfolio id."
+      )
     }
     if (!props.date) {
-      throw new ValidationError("`PortfolioPerformance` must have a date.");
+      throw new ValidationError("`PortfolioPerformance` must have a date.")
     }
     if (!props.quotasHeld) {
-      throw new ValidationError("`PortfolioPerformance` must have quotas held.");
+      throw new ValidationError("`PortfolioPerformance` must have quotas held.")
     }
     if (!props.patrimony) {
-      throw new ValidationError("`PortfolioPerformance` must have patrimony.");
+      throw new ValidationError("`PortfolioPerformance` must have patrimony.")
     }
     if (!props.applicationTotal) {
       throw new ValidationError(
-        "`PortfolioPerformance` must have an application total.",
-      );
+        "`PortfolioPerformance` must have an application total."
+      )
     }
     if (!props.redemptionTotal) {
       throw new ValidationError(
-        "`PortfolioPerformance` must have a redemption total.",
-      );
+        "`PortfolioPerformance` must have a redemption total."
+      )
     }
     if (!props.cashFlowNet) {
       throw new ValidationError(
-        "`PortfolioPerformance` must have cash flow net.",
-      );
+        "`PortfolioPerformance` must have cash flow net."
+      )
     }
     if (!props.earnings) {
-      throw new ValidationError("`PortfolioPerformance` must have earnings.");
+      throw new ValidationError("`PortfolioPerformance` must have earnings.")
     }
     if (!props.returnDaily) {
       throw new ValidationError(
-        "`PortfolioPerformance` must have a daily return.",
-      );
+        "`PortfolioPerformance` must have a daily return."
+      )
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<PortfolioPerformanceProps> = {
       ...props,
@@ -539,9 +543,9 @@ export class PortfolioPerformance {
       riskFreeSpread: props.riskFreeSpread ?? null,
       marketSpread: props.marketSpread ?? null,
       createdAt: props.createdAt ?? NOW,
-    };
+    }
 
-    return new PortfolioPerformance(NORMALIZED_PROPS, id);
+    return new PortfolioPerformance(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -569,15 +573,15 @@ export class PortfolioPerformance {
    */
   public equals(object?: PortfolioPerformance | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

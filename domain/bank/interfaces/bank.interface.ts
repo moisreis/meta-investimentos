@@ -1,5 +1,5 @@
-import type { Bank } from "@domain/bank/entities/bank.entity";
-import type { EntityId } from "@/value-objects";
+import type { Bank } from "@domain/bank/entities/bank.entity"
+import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
@@ -42,7 +42,7 @@ export interface IBank {
    *
    * @date 2026-09-13
    */
-  findById(id: EntityId): Promise<Bank | null>;
+  findById(id: EntityId): Promise<Bank | null>
 
   /**
    * @summary
@@ -65,7 +65,7 @@ export interface IBank {
    *
    * @date 2026-09-13
    */
-  findByCode(code: string): Promise<Bank | null>;
+  findByCode(code: string): Promise<Bank | null>
 
   /**
    * @summary
@@ -90,7 +90,31 @@ export interface IBank {
    *
    * @date 2026-09-13
    */
-  findAll(options?: { limit?: number; offset?: number }): Promise<Bank[]>;
+  findAll(options?: { limit?: number; offset?: number }): Promise<Bank[]>
+
+  /**
+   * @summary
+   * Retrieves all banks with the provided ids.
+   *
+   * @remarks
+   * Returns an empty array when no banks match.
+   *
+   * @explanation
+   * Use this method to fetch multiple banks by their
+   * unique identifiers. Returns an empty array for
+   * no matches.
+   *
+   * @param ids - The unique identifiers of the banks.
+   * @returns The matching entries.
+   *
+   * @example
+   * const BANKS = await BANK_REPO.findAllByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  findAllByIds(ids: EntityId[]): Promise<Bank[]>
 
   /**
    * @summary
@@ -114,7 +138,7 @@ export interface IBank {
    *
    * @date 2026-09-13
    */
-  save(bank: Bank): Promise<Bank>;
+  save(bank: Bank): Promise<Bank>
 
   /**
    * @summary
@@ -137,5 +161,5 @@ export interface IBank {
    *
    * @date 2026-09-13
    */
-  delete(id: EntityId): Promise<void>;
+  delete(id: EntityId): Promise<void>
 }

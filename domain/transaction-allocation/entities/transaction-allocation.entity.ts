@@ -1,11 +1,12 @@
-﻿import { EntityId, type QuotaQuantity } from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { EntityId, type QuotaQuantity } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface TransactionAllocationProps {
-  applicationId: EntityId;
-  withdrawId: EntityId;
-  quotasConsumed: QuotaQuantity;
-  createdAt?: Date;
+export interface TransactionAllocationProps {
+  applicationId: EntityId
+  withdrawId: EntityId
+  quotasConsumed: QuotaQuantity
+  version?: number
+  createdAt?: Date
 }
 
 /**
@@ -25,8 +26,8 @@ interface TransactionAllocationProps {
  * @date 2026-09-13
  */
 export class TransactionAllocation {
-  private readonly _id?: EntityId;
-  private readonly props: Required<TransactionAllocationProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<TransactionAllocationProps>
 
   /**
    * @summary
@@ -45,7 +46,7 @@ export class TransactionAllocation {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -65,7 +66,7 @@ export class TransactionAllocation {
    * @date 2026-09-13
    */
   get applicationId(): EntityId {
-    return this.props.applicationId;
+    return this.props.applicationId
   }
 
   /**
@@ -85,7 +86,7 @@ export class TransactionAllocation {
    * @date 2026-09-13
    */
   get withdrawId(): EntityId {
-    return this.props.withdrawId;
+    return this.props.withdrawId
   }
 
   /**
@@ -105,7 +106,27 @@ export class TransactionAllocation {
    * @date 2026-09-13
    */
   get quotasConsumed(): QuotaQuantity {
-    return this.props.quotasConsumed;
+    return this.props.quotasConsumed
+  }
+
+  /**
+   * @summary
+   * Returns the optimistic-locking version of the allocation.
+   *
+   * @remarks
+   * Required number, defaults to zero.
+   *
+   * @explanation
+   * Use to guard concurrent updates in the repository.
+   *
+   * @returns The current version number.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-15
+   */
+  get version(): number {
+    return this.props.version
   }
 
   /**
@@ -125,7 +146,7 @@ export class TransactionAllocation {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -147,10 +168,13 @@ export class TransactionAllocation {
    */
   private constructor(
     props: Required<TransactionAllocationProps>,
-    id?: string,
+    id?: string
   ) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      createdAt: new Date(props.createdAt),
+    })
   }
 
   /**
@@ -183,32 +207,33 @@ export class TransactionAllocation {
    */
   public static create(
     props: TransactionAllocationProps,
-    id?: string,
+    id?: string
   ): TransactionAllocation {
     if (!props.applicationId || props.applicationId.trim() === "") {
       throw new ValidationError(
-        "`TransactionAllocation` must have an application id.",
-      );
+        "`TransactionAllocation` must have an application id."
+      )
     }
     if (!props.withdrawId || props.withdrawId.trim() === "") {
       throw new ValidationError(
-        "`TransactionAllocation` must have a withdrawal id.",
-      );
+        "`TransactionAllocation` must have a withdrawal id."
+      )
     }
     if (!props.quotasConsumed) {
       throw new ValidationError(
-        "`TransactionAllocation` must have consumed quotas.",
-      );
+        "`TransactionAllocation` must have consumed quotas."
+      )
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<TransactionAllocationProps> = {
       ...props,
+      version: props.version ?? 0,
       createdAt: props.createdAt ?? NOW,
-    };
+    }
 
-    return new TransactionAllocation(NORMALIZED_PROPS, id);
+    return new TransactionAllocation(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -236,15 +261,15 @@ export class TransactionAllocation {
    */
   public equals(object?: TransactionAllocation | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

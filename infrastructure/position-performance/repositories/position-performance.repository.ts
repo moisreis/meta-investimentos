@@ -10,6 +10,11 @@ import {
   SignedMoney,
   SignedPercentage,
 } from "@/value-objects"
+import {
+  toDomain,
+  toInsert,
+  toUpdate,
+} from "../mappers/position-performance.mapper"
 import { positionPerformance } from "@db-schemas/position-performance.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -70,141 +75,6 @@ export class PositionPerformanceRepository implements IPositionPerformance {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = toEntity(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(
-    row: typeof positionPerformance.$inferSelect
-  ): PositionPerformance {
-    return PositionPerformance.create(
-      {
-        positionId: EntityId.create(row.positionId),
-        date: row.date,
-        quotasHeld: QuotaQuantity.create(row.quotasHeld),
-        patrimony: PositiveMoney.create(row.patrimony),
-        applicationTotal: PositiveMoney.create(row.applicationTotal),
-        redemptionTotal: PositiveMoney.create(row.redemptionTotal),
-        cashFlowNet: SignedMoney.create(row.cashFlowNet),
-        earnings: SignedMoney.create(row.earnings),
-        returnDaily: SignedPercentage.create(row.returnDaily),
-        returnMonthly: row.returnMonthly
-          ? SignedPercentage.create(row.returnMonthly)
-          : null,
-        returnYearly: row.returnYearly
-          ? SignedPercentage.create(row.returnYearly)
-          : null,
-        returnLast12m: row.returnLast12m
-          ? SignedPercentage.create(row.returnLast12m)
-          : null,
-        allocation: SignedPercentage.create(row.allocation),
-        createdAt: row.createdAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to insert values.
-   *
-   * @remarks
-   * Serializes each value object with `.value.toString()`.
-   *
-   * @explanation
-   * Use this mapper to build the row inserted when the
-   * entity has no id.
-   *
-   * @param entity - The snapshot to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = toInsert(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(
-    entity: PositionPerformance
-  ): typeof positionPerformance.$inferInsert {
-    return {
-      positionId: entity.positionId,
-      date: entity.date,
-      quotasHeld: entity.quotasHeld.value.toString(),
-      patrimony: entity.patrimony.value.toString(),
-      applicationTotal: entity.applicationTotal.value.toString(),
-      redemptionTotal: entity.redemptionTotal.value.toString(),
-      cashFlowNet: entity.cashFlowNet.value.toString(),
-      earnings: entity.earnings.value.toString(),
-      returnDaily: entity.returnDaily.value.toString(),
-      returnMonthly: entity.returnMonthly?.value.toString() ?? null,
-      returnYearly: entity.returnYearly?.value.toString() ?? null,
-      returnLast12m: entity.returnLast12m?.value.toString() ?? null,
-      allocation: entity.allocation.value.toString(),
-      createdAt: entity.createdAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps a domain entity to update values.
-   *
-   * @remarks
-   * `createdAt` never changes and is left out of the
-   * update.
-   *
-   * @explanation
-   * Use this mapper to build the row updated when the
-   * entity already has an id.
-   *
-   * @param entity - The snapshot to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = toUpdate(ENTITY);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(
-    entity: PositionPerformance
-  ): Partial<typeof positionPerformance.$inferInsert> {
-    return {
-      positionId: entity.positionId,
-      date: entity.date,
-      quotasHeld: entity.quotasHeld.value.toString(),
-      patrimony: entity.patrimony.value.toString(),
-      applicationTotal: entity.applicationTotal.value.toString(),
-      redemptionTotal: entity.redemptionTotal.value.toString(),
-      cashFlowNet: entity.cashFlowNet.value.toString(),
-      earnings: entity.earnings.value.toString(),
-      returnDaily: entity.returnDaily.value.toString(),
-      returnMonthly: entity.returnMonthly?.value.toString() ?? null,
-      returnYearly: entity.returnYearly?.value.toString() ?? null,
-      returnLast12m: entity.returnLast12m?.value.toString() ?? null,
-      allocation: entity.allocation.value.toString(),
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the snapshot with the provided id.
    *
    * @remarks
@@ -231,7 +101,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
       .where(eq(positionPerformance.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -264,7 +134,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
       .from(positionPerformance)
       .where(eq(positionPerformance.positionId, positionId))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -292,7 +162,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * @date 2026-09-15
    */
   async findAllByPositionIds(
-    positionIds: string[]
+    positionIds: EntityId[]
   ): Promise<PositionPerformance[]> {
     if (positionIds.length === 0) {
       return []
@@ -303,7 +173,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
       .from(positionPerformance)
       .where(inArray(positionPerformance.positionId, positionIds))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -344,7 +214,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
       )
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -380,7 +250,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
       .orderBy(desc(positionPerformance.date))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -408,7 +278,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * @date 2026-09-15
    */
   async findLatestByPositionIds(
-    positionIds: string[]
+    positionIds: EntityId[]
   ): Promise<PositionPerformance[]> {
     if (positionIds.length === 0) {
       return []
@@ -420,7 +290,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
       .where(inArray(positionPerformance.positionId, positionIds))
       .orderBy(positionPerformance.positionId, desc(positionPerformance.date))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -449,7 +319,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
     if (persisted.id) {
       const [row] = await this.db
         .update(positionPerformance)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(positionPerformance.id, persisted.id))
         .returning()
 
@@ -459,15 +329,15 @@ export class PositionPerformanceRepository implements IPositionPerformance {
         )
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(positionPerformance)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

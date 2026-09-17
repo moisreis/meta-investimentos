@@ -4,6 +4,7 @@ import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 import { Bank } from "@domain/bank/entities/bank.entity"
 import type { IBank } from "@domain/bank/interfaces/bank.interface"
 import type { EntityId } from "@/value-objects"
+import { toDomain, toInsert, toUpdate } from "../mappers/bank.mapper"
 import { bank } from "@db-schemas/bank.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -58,99 +59,6 @@ export class BankRepository implements IBank {
 
   /**
    * @summary
-   * Maps a database row to a domain entity.
-   *
-   * @remarks
-   * Hydrates value objects through their `create` method.
-   *
-   * @explanation
-   * Converts persisted columns into the domain shape so
-   * services work with entities, not raw rows.
-   *
-   * @param row - The row returned by the query.
-   * @returns The hydrated entity.
-   *
-   * @example
-   * const ENTITY = TO_ENTITY(ROW);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toEntity(row: typeof bank.$inferSelect): Bank {
-    return Bank.create(
-      {
-        code: row.code,
-        name: row.name,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      },
-      row.id
-    )
-  }
-
-  /**
-   * @summary
-   * Maps an entity to its insert values.
-   *
-   * @remarks
-   * Returns the columns required by the `bank` insert
-   * statement.
-   *
-   * @explanation
-   * Translates domain properties into the column shape
-   * expected by the **Drizzle** insert call.
-   *
-   * @param entity - The bank to persist.
-   * @returns The insert values.
-   *
-   * @example
-   * const VALUES = TO_INSERT(BANK);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toInsert(entity: Bank): typeof bank.$inferInsert {
-    return {
-      code: entity.code,
-      name: entity.name,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
-   * @summary
-   * Maps an entity to its update values.
-   *
-   * @remarks
-   * Omits `createdAt` and `updatedAt`. The column
-   * `updatedAt` is refreshed by the `$onUpdate` hook.
-   *
-   * @explanation
-   * Translates domain properties into the column shape
-   * expected by the **Drizzle** update call.
-   *
-   * @param entity - The bank to persist.
-   * @returns The update values.
-   *
-   * @example
-   * const VALUES = TO_UPDATE(BANK);
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-15
-   */
-  private toUpdate(entity: Bank): Partial<typeof bank.$inferInsert> {
-    return {
-      code: entity.code,
-      name: entity.name,
-    }
-  }
-
-  /**
-   * @summary
    * Retrieves the bank with the provided id.
    *
    * @remarks
@@ -177,7 +85,7 @@ export class BankRepository implements IBank {
       .where(eq(bank.id, id))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -208,7 +116,7 @@ export class BankRepository implements IBank {
       .where(eq(bank.code, code))
       .limit(1)
 
-    return row ? this.toEntity(row) : null
+    return row ? toDomain(row) : null
   }
 
   /**
@@ -247,7 +155,7 @@ export class BankRepository implements IBank {
       .limit(options?.limit ?? 100)
       .offset(options?.offset ?? 0)
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -272,14 +180,14 @@ export class BankRepository implements IBank {
    *
    * @date 2026-09-15
    */
-  async findAllByIds(ids: string[]): Promise<Bank[]> {
+  async findAllByIds(ids: EntityId[]): Promise<Bank[]> {
     if (ids.length === 0) {
       return []
     }
 
     const rows = await this.db.select().from(bank).where(inArray(bank.id, ids))
 
-    return rows.map((row) => this.toEntity(row))
+    return rows.map((row) => toDomain(row))
   }
 
   /**
@@ -308,7 +216,7 @@ export class BankRepository implements IBank {
     if (persisted.id) {
       const [row] = await this.db
         .update(bank)
-        .set(this.toUpdate(persisted))
+        .set(toUpdate(persisted))
         .where(eq(bank.id, persisted.id))
         .returning()
 
@@ -316,15 +224,15 @@ export class BankRepository implements IBank {
         throw new NotFoundError(`Bank with id ${persisted.id} was not found.`)
       }
 
-      return this.toEntity(row)
+      return toDomain(row)
     }
 
     const [row] = await this.db
       .insert(bank)
-      .values(this.toInsert(persisted))
+      .values(toInsert(persisted))
       .returning()
 
-    return this.toEntity(row)
+    return toDomain(row)
   }
 
   /**

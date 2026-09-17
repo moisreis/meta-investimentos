@@ -1,11 +1,10 @@
-import type { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for creating a `Withdrawal`.
  *
  * @remarks
- * Amount and quotas must be positive values.
+ * Amount and quotas are decimal strings; date is ISO
+ * 8601. Value objects are built in the service mapper.
  *
  * @explanation
  * Use this DTO to register a withdrawal through the
@@ -13,10 +12,10 @@ import type { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
  *
  * @example
  * const DTO: CreateWithdrawalDTO = {
- *   positionId: EntityId.create("position-1"),
- *   date: new Date("2026-01-01"),
- *   amount: PositiveMoney.create("5000"),
- *   quotas: QuotaQuantity.create("500"),
+ *   positionId: "position-1",
+ *   date: "2026-01-01T00:00:00.000Z",
+ *   amount: "5000",
+ *   quotas: "500",
  * };
  *
  * @author Moisés Reis
@@ -24,8 +23,8 @@ import type { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface CreateWithdrawalDTO {
-  positionId: EntityId
-  date: Date
-  amount: PositiveMoney
-  quotas: QuotaQuantity
+  positionId: string
+  date: string
+  amount: string
+  quotas: string
 }

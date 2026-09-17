@@ -1,12 +1,12 @@
-import Decimal from "decimal.js";
+import Decimal from "decimal.js"
 import {
   PERCENTAGE_DECIMAL_PLACES,
   ROUNDING_MODE,
-} from "@constants/value-objects/rounding.constant";
-import { ValidationError } from "@/errors";
+} from "@constants/value-objects/rounding.constant"
+import { ValidationError } from "@/errors"
 
 interface SignedPercentageProps {
-  value: Decimal;
+  value: Decimal
 }
 
 /**
@@ -30,31 +30,31 @@ interface SignedPercentageProps {
  * @date 2026-09-13
  */
 export class SignedPercentage {
-  private readonly props: SignedPercentageProps;
+  private readonly props: SignedPercentageProps
 
   // Gets the underlying Decimal signed percentage value.
   get value(): Decimal {
-    return this.props.value;
+    return this.props.value
   }
 
   // Returns true if the percentage is negative.
   get isNegative(): boolean {
-    return this.props.value.isNegative();
+    return this.props.value.isNegative()
   }
 
   // Returns true if the percentage is positive (greater than zero).
   get isPositive(): boolean {
-    return this.props.value.isPositive() && !this.props.value.isZero();
+    return this.props.value.isPositive() && !this.props.value.isZero()
   }
 
   // Returns true if the percentage is zero.
   get isZero(): boolean {
-    return this.props.value.isZero();
+    return this.props.value.isZero()
   }
 
   // Initializes internal properties for SignedPercentage.
   private constructor(props: SignedPercentageProps) {
-    this.props = props;
+    this.props = props
   }
 
   /**
@@ -69,7 +69,7 @@ export class SignedPercentage {
    * @explanation
    * Factory method to construct a valid **SignedPercentage**.
    * Throws a **ValidationError** if the provided input is
-   * missing.
+   * missing or non-finite.
    *
    * @param value - Numerical value to construct the percentage.
    *
@@ -84,20 +84,27 @@ export class SignedPercentage {
    */
   public static create(value: Decimal.Value): SignedPercentage {
     if (value === undefined || value === null) {
-      throw new ValidationError("`SignedPercentage` must be defined.");
+      throw new ValidationError("`SignedPercentage` must be defined.")
     }
 
-    let DECIMAL_VALUE: Decimal;
+    let DECIMAL_VALUE: Decimal
 
     try {
-      DECIMAL_VALUE = new Decimal(value);
+      DECIMAL_VALUE = new Decimal(value)
     } catch {
-      throw new ValidationError("`SignedPercentage` must be a valid number.");
+      throw new ValidationError("`SignedPercentage` must be a valid number.")
+    }
+
+    if (!DECIMAL_VALUE.isFinite()) {
+      throw new ValidationError("`SignedPercentage` must be a finite number.")
     }
 
     return new SignedPercentage({
-      value: DECIMAL_VALUE.toDecimalPlaces(PERCENTAGE_DECIMAL_PLACES, ROUNDING_MODE),
-    });
+      value: DECIMAL_VALUE.toDecimalPlaces(
+        PERCENTAGE_DECIMAL_PLACES,
+        ROUNDING_MODE
+      ),
+    })
   }
 
   /**
@@ -124,6 +131,6 @@ export class SignedPercentage {
    * @date 2026-09-13
    */
   public static equals(a: SignedPercentage, b: SignedPercentage): boolean {
-    return a.value.equals(b.value);
+    return a.value.equals(b.value)
   }
 }

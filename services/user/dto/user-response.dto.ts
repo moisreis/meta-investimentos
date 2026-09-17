@@ -1,4 +1,3 @@
-import type { EntityId, CPF } from "@/value-objects"
 import type { UserRole } from "./create-user.dto"
 
 /**
@@ -21,17 +20,17 @@ import type { UserRole } from "./create-user.dto"
  * @date 2026-09-15
  */
 export interface UserResponseDTO {
-  id: EntityId
+  id: string
   name: string
   email: string
   firstName: string
   lastName: string
-  cpf: CPF
+  cpf: string
   // Partially masked `CPF` for safe display.
   maskedCpf: string
   role: UserRole
   emailVerified: boolean
   image: string | null
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
 }

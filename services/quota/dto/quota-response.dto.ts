@@ -1,12 +1,11 @@
-import type { EntityId, QuotaPrice } from "@/value-objects"
-
 /**
  * @summary
  * Represents the shape of the quota response.
  *
  * @remarks
  * This DTO is the format of the response for quota
- * queries.
+ * queries. All ids are strings, dates are ISO 8601
+ * strings, and the price is a decimal string.
  *
  * @explanation
  * Use this DTO when exposing a quota to the consumers
@@ -20,9 +19,9 @@ import type { EntityId, QuotaPrice } from "@/value-objects"
  * @date 2026-09-15
  */
 export interface QuotaResponseDTO {
-  id: EntityId
-  fundId: EntityId
-  date: Date
-  price: QuotaPrice
-  createdAt: Date
+  id: string
+  fundId: string
+  date: string
+  price: string
+  createdAt: string
 }

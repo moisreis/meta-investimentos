@@ -1,20 +1,16 @@
-﻿import {
-  type CNPJ,
-  EntityId,
-  type SignedPercentage,
-} from "@/value-objects";
-import { ValidationError } from "@/errors";
+﻿import { type CNPJ, EntityId, type SignedPercentage } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
-interface FundProps {
-  cnpj: CNPJ;
-  name: string;
-  administrationFee?: SignedPercentage | null;
-  performanceFee?: SignedPercentage | null;
-  bankId: EntityId;
-  benchmarkId?: EntityId | null;
-  categoryId?: EntityId | null;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface FundProps {
+  cnpj: CNPJ
+  name: string
+  administrationFee?: SignedPercentage | null
+  performanceFee?: SignedPercentage | null
+  bankId: EntityId
+  benchmarkId?: EntityId | null
+  categoryId?: EntityId | null
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 /**
@@ -33,8 +29,8 @@ interface FundProps {
  * @date 2026-09-13
  */
 export class Fund {
-  private readonly _id?: EntityId;
-  private readonly props: Required<FundProps>;
+  private readonly _id?: EntityId
+  private readonly props: Required<FundProps>
 
   /**
    * @summary
@@ -53,7 +49,7 @@ export class Fund {
    * @date 2026-09-13
    */
   get id(): EntityId | undefined {
-    return this._id;
+    return this._id
   }
 
   /**
@@ -73,7 +69,7 @@ export class Fund {
    * @date 2026-09-13
    */
   get cnpj(): CNPJ {
-    return this.props.cnpj;
+    return this.props.cnpj
   }
 
   /**
@@ -93,7 +89,7 @@ export class Fund {
    * @date 2026-09-13
    */
   get name(): string {
-    return this.props.name;
+    return this.props.name
   }
 
   /**
@@ -113,7 +109,7 @@ export class Fund {
    * @date 2026-09-13
    */
   get administrationFee(): SignedPercentage | null {
-    return this.props.administrationFee;
+    return this.props.administrationFee
   }
 
   /**
@@ -133,7 +129,7 @@ export class Fund {
    * @date 2026-09-13
    */
   get performanceFee(): SignedPercentage | null {
-    return this.props.performanceFee;
+    return this.props.performanceFee
   }
 
   /**
@@ -153,7 +149,7 @@ export class Fund {
    * @date 2026-09-13
    */
   get bankId(): EntityId {
-    return this.props.bankId;
+    return this.props.bankId
   }
 
   /**
@@ -173,7 +169,7 @@ export class Fund {
    * @date 2026-09-13
    */
   get benchmarkId(): EntityId | null {
-    return this.props.benchmarkId;
+    return this.props.benchmarkId
   }
 
   /**
@@ -193,7 +189,7 @@ export class Fund {
    * @date 2026-09-13
    */
   get categoryId(): EntityId | null {
-    return this.props.categoryId;
+    return this.props.categoryId
   }
 
   /**
@@ -213,7 +209,7 @@ export class Fund {
    * @date 2026-09-13
    */
   get createdAt(): Date {
-    return this.props.createdAt;
+    return new Date(this.props.createdAt)
   }
 
   /**
@@ -233,7 +229,7 @@ export class Fund {
    * @date 2026-09-13
    */
   get updatedAt(): Date {
-    return this.props.updatedAt;
+    return new Date(this.props.updatedAt)
   }
 
   /**
@@ -254,8 +250,12 @@ export class Fund {
    * @date 2026-09-13
    */
   private constructor(props: Required<FundProps>, id?: string) {
-    this._id = id ? EntityId.create(id) : undefined;
-    this.props = Object.freeze(props);
+    this._id = id ? EntityId.create(id) : undefined
+    this.props = Object.freeze({
+      ...props,
+      createdAt: new Date(props.createdAt),
+      updatedAt: new Date(props.updatedAt),
+    })
   }
 
   /**
@@ -288,16 +288,16 @@ export class Fund {
    */
   public static create(props: FundProps, id?: string): Fund {
     if (!props.cnpj) {
-      throw new ValidationError("`Fund` must have a cnpj.");
+      throw new ValidationError("`Fund` must have a cnpj.")
     }
     if (!props.name || props.name.trim() === "") {
-      throw new ValidationError("`Fund` must have a name.");
+      throw new ValidationError("`Fund` must have a name.")
     }
     if (!props.bankId || props.bankId.trim() === "") {
-      throw new ValidationError("`Fund` must have a bank id.");
+      throw new ValidationError("`Fund` must have a bank id.")
     }
 
-    const NOW = new Date();
+    const NOW = new Date()
 
     const NORMALIZED_PROPS: Required<FundProps> = {
       ...props,
@@ -307,9 +307,9 @@ export class Fund {
       categoryId: props.categoryId ?? null,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
-    };
+    }
 
-    return new Fund(NORMALIZED_PROPS, id);
+    return new Fund(NORMALIZED_PROPS, id)
   }
 
   /**
@@ -341,19 +341,19 @@ export class Fund {
    */
   public update(
     options: {
-      name?: string;
-      administrationFee?: SignedPercentage | null;
-      performanceFee?: SignedPercentage | null;
-      benchmarkId?: EntityId | null;
-      categoryId?: EntityId | null;
+      name?: string
+      administrationFee?: SignedPercentage | null
+      performanceFee?: SignedPercentage | null
+      benchmarkId?: EntityId | null
+      categoryId?: EntityId | null
     },
-    now?: Date,
+    now?: Date
   ): Fund {
     if (options.name !== undefined && options.name.trim() === "") {
-      throw new ValidationError("`Fund` must have a name.");
+      throw new ValidationError("`Fund` must have a name.")
     }
 
-    const NOW = now ?? new Date();
+    const NOW = now ?? new Date()
 
     return new Fund(
       {
@@ -377,8 +377,8 @@ export class Fund {
             : options.categoryId,
         updatedAt: NOW,
       },
-      this._id,
-    );
+      this._id
+    )
   }
 
   /**
@@ -406,15 +406,15 @@ export class Fund {
    */
   public equals(object?: Fund | null): boolean {
     if (object == null || object === undefined) {
-      return false;
+      return false
     }
     if (this === object) {
-      return true;
+      return true
     }
     if (!this._id || !object._id) {
-      return false;
+      return false
     }
 
-    return this._id === object._id;
+    return this._id === object._id
   }
 }

@@ -120,10 +120,10 @@ export class CNPJ {
    * @param a - First **CNPJ** instance to compare.
    * @param b - Second **CNPJ** instance to compare.
    *
-* @returns True if both instances hold equal values.
-    *
-    * @example
-    * const IS_SAME = CNPJ.equals(cnpjA, cnpjB);
+   * @returns True if both instances hold equal values.
+   *
+   * @example
+   * const IS_SAME = CNPJ.equals(cnpjA, cnpjB);
    *
    * @author Moisés Reis
    *
@@ -145,12 +145,12 @@ export class CNPJ {
    * Internal helper method that executes the standard
    * Brazilian **CNPJ** verification algorithm.
    *
-* @param digits - Sanitized 14-digit **CNPJ** string.
-    *
-    * @returns True if the check digits match.
-    *
-    * @example
-    * const VALID = CNPJ.isValid("00000000000191");
+   * @param digits - Sanitized 14-digit **CNPJ** string.
+   *
+   * @returns True if the check digits match.
+   *
+   * @example
+   * const VALID = CNPJ.isValid("00000000000191");
    *
    * @author Moisés Reis
    *
@@ -188,13 +188,13 @@ export class CNPJ {
    * digit character based on partial **CNPJ** input and
    * weight sequences.
    *
-* @param partial - Partial digit string to compute against.
-    * @param weights - Array of numerical weights.
-    *
-    * @returns Computed check digit character.
-    *
-    * @example
-    * const DIGIT = CNPJ.computeCheckDigit("000000000001", weights);
+   * @param partial - Partial digit string to compute against.
+   * @param weights - Array of numerical weights.
+   *
+   * @returns Computed check digit character.
+   *
+   * @example
+   * const DIGIT = CNPJ.computeCheckDigit("000000000001", weights);
    *
    * @author Moisés Reis
    *

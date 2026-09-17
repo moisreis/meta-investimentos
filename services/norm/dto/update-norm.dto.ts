@@ -1,5 +1,3 @@
-import type { EntityId, SignedPercentage } from "@/value-objects"
-
 /**
  * @summary
  * Defines the payload for updating a `Norm`.
@@ -24,8 +22,8 @@ import type { EntityId, SignedPercentage } from "@/value-objects"
 export interface UpdateNormDTO {
   articleNumber?: string
   name?: string
-  categoryId?: EntityId
-  minAllocation?: SignedPercentage
-  maxAllocation?: SignedPercentage
-  targetAllocation?: SignedPercentage
+  categoryId?: string
+  minAllocation?: string
+  maxAllocation?: string
+  targetAllocation?: string
 }
