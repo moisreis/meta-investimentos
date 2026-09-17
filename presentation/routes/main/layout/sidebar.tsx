@@ -1,70 +1,151 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarRail,
   SidebarHeader,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarRail,
 } from "@/presentation/ui/sidebar"
+
+import { SidebarNavGroup } from "@/presentation/routes/main/others/sidebar-group"
+
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/presentation/ui/collapsible"
+  IconLayoutDashboard,
+  IconLogs,
+  IconWallet,
+  IconChartDonut,
+  IconCash,
+  IconBuildingBank,
+  IconPigMoney,
+  IconCreditCard,
+  IconFileAnalytics,
+  IconBrandSpeedtest,
+  IconChartHistogram,
+  IconCoin,
+  IconChartPie,
+  IconCategory,
+  IconUsers,
+} from "@tabler/icons-react"
+import { ComposedAvatar } from "../others/composed-avatar"
 
 function MainSidebar() {
   return (
     <Sidebar>
-      <SidebarHeader className="h-11 border-b border-border" />
-      <SidebarContent>
-        <Collapsible defaultOpen className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel render={<CollapsibleTrigger />}>
-              Carteiras
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>Performance</SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>Performance</SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
-        <Collapsible defaultOpen className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel render={<CollapsibleTrigger />}>
-              Carteiras
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>Performance</SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>Performance</SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+      <SidebarHeader className="h-11 border-b border-border">
+        <ComposedAvatar />
+      </SidebarHeader >
+
+      <SidebarContent className="scroll-fade">
+        <SidebarNavGroup
+          label="Visão Geral"
+          items={[
+            {
+              icon: <IconLayoutDashboard />,
+              label: "Painel",
+              href: "/main",
+            },
+          ]}
+        />
+
+        <SidebarNavGroup
+          label="Carteiras"
+          items={[
+            {
+              icon: <IconWallet />,
+              label: "Carteiras",
+              href: "/portfolio",
+            },
+            {
+              icon: <IconChartDonut />,
+              label: "Posições",
+              href: "/position",
+            },
+            {
+              icon: <IconCash />,
+              label: "Transações",
+              href: "/transaction",
+            },
+            {
+              icon: <IconFileAnalytics />,
+              label: "Relatórios",
+              href: "/statement",
+            },
+            {
+              icon: <IconBrandSpeedtest />,
+              label: "Performance",
+              href: "/statement",
+            },
+          ]}
+        />
+
+        <SidebarNavGroup
+          label="Instituições bancárias"
+          items={[
+            {
+              icon: <IconBuildingBank />,
+              label: "Bancos",
+              href: "/bank",
+            },
+            {
+              icon: <IconPigMoney />,
+              label: "Contas bancárias",
+              href: "/bank-account",
+            },
+            {
+              icon: <IconCreditCard />,
+              label: "Contas correntes",
+              href: "/checking-account",
+            },
+          ]}
+        />
+
+        <SidebarNavGroup
+          label="Ìndices econômicos"
+          items={[
+            {
+              icon: <IconChartHistogram />,
+              label: "Histórico de registros",
+              href: "/benchmark-history",
+            },
+          ]}
+        />
+
+        <SidebarNavGroup
+          label="Fundos de investimento"
+          items={[
+            {
+              icon: <IconCoin />,
+              label: "Fundos credenciados",
+              href: "/fund",
+            },
+            {
+              icon: <IconCategory />,
+              label: "Categorias",
+              href: "/category",
+            },
+            {
+              icon: <IconChartPie />,
+              label: "Registros de cotas",
+              href: "/quota",
+            },
+          ]}
+        />
+
+        <SidebarNavGroup
+          label="Administração"
+          items={[
+            {
+              icon: <IconUsers />,
+              label: "Usuários",
+              href: "/users",
+            },
+            {
+              icon: <IconLogs />,
+              label: "Atividades do sistema",
+              href: "/audit-log",
+            },
+          ]}
+        />
       </SidebarContent>
       <SidebarRail />
-      <SidebarFooter className="h-11 border-t border-border">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton>Username</SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   )
 }

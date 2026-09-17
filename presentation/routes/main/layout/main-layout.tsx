@@ -9,7 +9,12 @@ interface MainLayoutProps {
 
 function MainLayout({ children }: MainLayoutProps) {
   return (
-    <SidebarProvider>
+    <SidebarProvider style={
+        {
+          "--sidebar-width": "13rem",
+          "--sidebar-width-mobile": "18rem",
+        } as React.CSSProperties
+      }>
       <MainSidebar />
       <main className="w-full flex flex-col">
         <MainHeader />
