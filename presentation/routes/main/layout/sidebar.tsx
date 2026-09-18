@@ -5,7 +5,7 @@ import {
   SidebarRail,
 } from "@/presentation/ui/sidebar"
 
-import { SidebarNavGroup } from "@/presentation/routes/main/others/sidebar-group"
+import { SidebarNavGroup } from "@/presentation/routes/main/components/sidebar-group"
 
 import {
   IconLayoutDashboard,
@@ -24,14 +24,14 @@ import {
   IconCategory,
   IconUsers,
 } from "@tabler/icons-react"
-import { ComposedAvatar } from "../others/composed-avatar"
+import { ComposedAvatar } from "../components/composed-avatar"
 
 function MainSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="h-11 border-b border-border">
         <ComposedAvatar />
-      </SidebarHeader >
+      </SidebarHeader>
 
       <SidebarContent className="scroll-fade">
         <SidebarNavGroup
@@ -71,7 +71,7 @@ function MainSidebar() {
             {
               icon: <IconBrandSpeedtest />,
               label: "Performance",
-              href: "/statement",
+              href: "/portfolio-performance",
             },
           ]}
         />

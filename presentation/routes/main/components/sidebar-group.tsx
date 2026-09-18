@@ -7,9 +7,7 @@ import {
   SidebarMenu,
 } from "@/presentation/ui/sidebar"
 
-import { IconChevronDown } from "@tabler/icons-react"
-
-import { MainSidebarMenuItem } from "@/presentation/routes/main/others/sidebar-menu-item"
+import { MainSidebarMenuItem } from "@/presentation/routes/main/components/sidebar-menu-item"
 
 interface SidebarGroupItem {
   label: string

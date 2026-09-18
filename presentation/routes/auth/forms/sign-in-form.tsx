@@ -11,7 +11,7 @@ import {
 import { Input } from "@/presentation/ui/input"
 import { IconLoader } from "@tabler/icons-react"
 import { useSignIn } from "@/presentation/routes/auth/hooks/use-sign-in.hook"
-import { SignInToast } from "@/presentation/routes/auth/others/sign-in-toast"
+import { SignInToast } from "@/presentation/routes/auth/components/sign-in-toast"
 import { SIGN_IN } from "@/presentation/routes/auth/settings/form-labels.settings"
 
 /**

@@ -19,6 +19,7 @@ function ComposedAvatar() {
     <DropdownMenu>
       <DropdownMenuTrigger
         className="cursor-pointer"
+        nativeButton={false}
         render={
           <div className="flex h-full w-full flex-row items-center justify-between gap-2">
             <div className="flex flex-row items-center gap-2">
@@ -41,7 +42,12 @@ function ComposedAvatar() {
           <DropdownMenuItem>Configurações</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>Acessos <Badge variant="outline" className="rounded-full">Em breve</Badge></DropdownMenuItem>
+        <DropdownMenuItem disabled>
+          Acessos{" "}
+          <Badge variant="outline" className="rounded-full">
+            Em breve
+          </Badge>
+        </DropdownMenuItem>
         <DropdownMenuItem variant="destructive">Sair</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

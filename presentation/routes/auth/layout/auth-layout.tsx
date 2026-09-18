@@ -8,8 +8,8 @@ import {
 } from "@/presentation/ui/card"
 import { Separator } from "@/presentation/ui/separator"
 import { AsciiFluid } from "@/presentation/ui/ascii-fluid"
-import { AuthSecondaryLink } from "@/presentation/routes/auth/others/auth-secondary-link"
-import { Copyright } from "@/presentation/routes/auth/others/copyright"
+import { AuthSecondaryLink } from "@/presentation/routes/auth/components/auth-secondary-link"
+import { Copyright } from "@/presentation/routes/auth/components/copyright"
 
 /**
  * @summary

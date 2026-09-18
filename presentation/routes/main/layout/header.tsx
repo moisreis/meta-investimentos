@@ -1,16 +1,15 @@
 "use client"
 
 import { SidebarTrigger } from "@/presentation/ui/sidebar"
-import { ModeToggle } from "../others/mode-toggle"
-import { NotificationsToggle } from "../others/notifications-toggle"
-import { MainBreadcrumb } from "../others/breadcrumb"
-import { SystemHealthToggle } from "../others/system-health-toggle"
-import { CommandTrigger } from "../others/command-trigger"
-import { ComposedAvatar } from "../others/composed-avatar"
+import { ModeToggle } from "../components/mode-toggle"
+import { NotificationsToggle } from "../components/notifications-toggle"
+import { MainBreadcrumb } from "../components/breadcrumb"
+import { SystemHealthToggle } from "../components/system-health-toggle"
+import { CommandTrigger } from "../components/command-trigger"
 
 function MainHeader() {
   return (
-    <header className="flex h-11 w-full flex-row items-center justify-between px-2">
+    <header className="flex min-h-11 w-full flex-row items-center justify-between px-2 border-b border-border">
       <div className="flex flex-row items-center justify-start gap-2">
         <SidebarTrigger />
         <MainBreadcrumb />
@@ -20,7 +19,6 @@ function MainHeader() {
         <SystemHealthToggle />
         <NotificationsToggle />
         <ModeToggle />
-        <ComposedAvatar />
       </div>
     </header>
   )

@@ -12,7 +12,7 @@ function CommandTrigger() {
 
   return (
     <>
-    <Button variant="outline" onClick={() => setOpen(true)}>
+    <Button variant="outline" className="rounded-full" size="xs" onClick={() => setOpen(true)}>
       <IconSearch />
       Buscar
     </Button>

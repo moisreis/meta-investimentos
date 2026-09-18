@@ -13,7 +13,12 @@ import {
   CommandShortcut,
 } from "@/presentation/ui/command"
 
-export function MainCommandDialog({ open, onOpenChange }) {
+interface MainCommandDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export function MainCommandDialog({ open, onOpenChange }: MainCommandDialogProps) {
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
       <Command>

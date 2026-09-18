@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/presentation/ui/button"
-import { CpfInput } from "@/presentation/routes/auth/others/cpf-input"
+import { CpfInput } from "@/presentation/routes/auth/components/cpf-input"
 import {
   Field,
   FieldContent,
@@ -12,7 +12,7 @@ import {
 import { Input } from "@/presentation/ui/input"
 import { useSignUp } from "@/presentation/routes/auth/hooks/use-sign-up.hook"
 import { IconLoader } from "@tabler/icons-react"
-import { SignUpToast } from "@/presentation/routes/auth/others/sign-up-toast"
+import { SignUpToast } from "@/presentation/routes/auth/components/sign-up-toast"
 import { SIGN_UP } from "@/presentation/routes/auth/settings/form-labels.settings"
 
 /**

@@ -18,7 +18,7 @@ function MainLayout({ children }: MainLayoutProps) {
       }
     >
       <MainSidebar />
-      <main className="flex w-full flex-col">
+      <main className="flex h-svh w-full flex-col overflow-hidden">
         <MainHeader />
         {children}
       </main>
