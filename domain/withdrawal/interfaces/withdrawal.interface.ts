@@ -60,6 +60,7 @@ export interface IWithdrawal {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the withdrawal.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -83,6 +84,7 @@ export interface IWithdrawal {
    * position. Returns an empty array for no matches.
    *
    * @param positionId - The unique identifier of the position.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -97,8 +99,7 @@ export interface IWithdrawal {
 
   /**
    * @summary
-   * Retrieves all withdrawals of the position dated within
-   * the provided period.
+   * Retrieves the position's withdrawals in the period.
    *
    * @remarks
    * The period is inclusive of both dates. Returns an
@@ -111,6 +112,7 @@ export interface IWithdrawal {
    * @param positionId - The unique identifier of the position.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -129,8 +131,7 @@ export interface IWithdrawal {
 
   /**
    * @summary
-   * Retrieves all withdrawals of the provided positions
-   * dated within the given period.
+   * Retrieves the positions' withdrawals in the period.
    *
    * @remarks
    * The period is inclusive of both dates. Returns an
@@ -143,6 +144,7 @@ export interface IWithdrawal {
    * @param positionIds - The identifiers of the positions.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -174,7 +176,8 @@ export interface IWithdrawal {
    * @param positionId - The identifier of the position.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
-   * @returns The summed totals or `null` fields.
+   *
+   * @returns Summed totals or `null`.
    *
    * @example
    * const TOTALS = await WITHDRAWAL_REPO
@@ -203,6 +206,7 @@ export interface IWithdrawal {
    * The persisted entity with its id is returned.
    *
    * @param withdrawal - The withdrawal to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -226,6 +230,7 @@ export interface IWithdrawal {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the withdrawal.
+   *
    * @returns Resolves when removed.
    *
    * @example

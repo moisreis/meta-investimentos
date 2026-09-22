@@ -17,7 +17,8 @@ interface CalculatePortfolioWithdrawalQuotasSumProps {
  * from a portfolio at period end. Each entry represents
  * one position's withdrawal quota quantity.
  *
- * @param quotaQuantity - Array of position withdrawal quota quantities.
+ * @param quotaQuantity - Withdrawal quotas per position.
+ *
  * @returns QuotaQuantity instance.
  *
  * @example

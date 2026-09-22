@@ -19,8 +19,8 @@ export interface BankAccountProps {
  * Instances immutable after creation.
  *
  * @explanation
- * Links portfolio to bank account for cash movements.
- * Supports agency/account updates.
+ * Links a portfolio to a bank account for cash movements.
+ * Supports agency and account number updates.
  *
  * @author Moisés Reis
  *
@@ -30,6 +30,10 @@ export class BankAccount {
   private readonly _id?: EntityId
   private readonly props: Required<BankAccountProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the bank account.
@@ -38,7 +42,8 @@ export class BankAccount {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare bank accounts.
    *
    * @returns EntityId or undefined.
    *
@@ -58,7 +63,7 @@ export class BankAccount {
    * Valid EntityId.
    *
    * @explanation
-   * Use to associate bank account with portfolio.
+   * Identifies the portfolio that owns this bank account.
    *
    * @returns EntityId.
    *
@@ -78,7 +83,7 @@ export class BankAccount {
    * Valid EntityId.
    *
    * @explanation
-   * Use to identify the financial institution.
+   * Identifies the bank hosting the account.
    *
    * @returns EntityId.
    *
@@ -98,7 +103,7 @@ export class BankAccount {
    * Required string.
    *
    * @explanation
-   * Use for bank identification.
+   * Groups the account under the bank's agency branch.
    *
    * @returns Agency string.
    *
@@ -118,7 +123,7 @@ export class BankAccount {
    * Required string.
    *
    * @explanation
-   * Use for transaction processing.
+   * Identifies the account for transfers and cashouts.
    *
    * @returns Account number string.
    *
@@ -138,7 +143,7 @@ export class BankAccount {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -158,7 +163,7 @@ export class BankAccount {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and cache invalidation.
+   * Shows when the bank account last changed.
    *
    * @returns Last update Date.
    *
@@ -169,6 +174,10 @@ export class BankAccount {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -196,6 +205,10 @@ export class BankAccount {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid BankAccount from the provided properties.
@@ -207,15 +220,19 @@ export class BankAccount {
    * Factory method to construct a valid BankAccount.
    * Throws ValidationError if validation fails.
    *
-   * @param props - Properties required to create the bank account.
+   * @param props - Properties required to create the account.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid BankAccount instance.
+   * @returns Valid BankAccount.
    *
    * @example
    * const BANK_ACCOUNT = BankAccount.create({
-   *   portfolioId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
-   *   bankId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
+   *   portfolioId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
+   *   bankId: EntityId.create(
+   *     "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"
+   *   ),
    *   agency: "1234",
    *   accountNumber: "56789-0",
    * });
@@ -249,6 +266,10 @@ export class BankAccount {
     return new BankAccount(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Updates the mutable fields of this bank account.
@@ -263,7 +284,7 @@ export class BankAccount {
    * @param options - Fields to update.
    * @param now - Update timestamp (optional, defaults to now).
    *
-   * @returns New BankAccount instance with updated fields.
+   * @returns Updated BankAccount.
    *
    * @example
    * const UPDATED = bankAccount.update({
@@ -305,6 +326,10 @@ export class BankAccount {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this BankAccount with another for equality.
@@ -313,11 +338,11 @@ export class BankAccount {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two bank accounts by their persisted identity.
    *
    * @param object - The BankAccount to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = BankAccount.create(PROPS, ID);

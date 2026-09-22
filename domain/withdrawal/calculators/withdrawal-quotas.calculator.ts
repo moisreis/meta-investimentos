@@ -11,31 +11,33 @@ interface CalculateWithdrawalQuotasProps {
 }
 
 /**
- * Calculates the number of quotas corresponding to
- * a withdrawal amount based on the current quota price.
+ * @summary
+ * Calculates the quotas for a withdrawal amount.
  *
- * The result is represented as a {@link QuotaQuantity}
- * and is normalized to a maximum of 6 decimal places.
+ * @remarks
+ * Divides the withdrawal amount by the current quota price.
+ * Throws `ValidationError` when the quota price is zero.
+ * The result is normalized to at most 6 decimal places.
+ *
+ * @explanation
+ * Use this function when a withdrawal is made to determine
+ * how many quotas the investor redeems. It converts the
+ * monetary amount into quota units using the current price.
  *
  * @param withdrawal - The monetary amount being withdrawn.
  * @param quota - The current price of a single quota.
  *
- * @returns The calculated number of quotas.
- *
- * @throws {ValidationError} If `quota` is zero.
- *
- * @equation Qₜᵂˢ = Wₜⁿ / Qₜ
+ * @returns Withdrawn quota count.
  *
  * @example
- * ```ts
  * const RESULT = calculateWithdrawalQuotas({
- *   withdrawal: PositiveMoney.create('1000000'),
- *   quota: QuotaPrice.create('4.450869'),
- * })
+ *   withdrawal: PositiveMoney.create("1000000"),
+ *   quota: QuotaPrice.create("4.450869"),
+ * });
  *
- * RESULT.value.toString()
- * // '224675.226343'
- * ```
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function calculateWithdrawalQuotas({
   withdrawal,

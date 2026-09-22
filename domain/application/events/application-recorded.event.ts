@@ -76,10 +76,7 @@ export class ApplicationRecorded {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(
-    props: Required<ApplicationRecordedProps>,
-    id?: string
-  ) {
+  private constructor(props: Required<ApplicationRecordedProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,

@@ -33,6 +33,7 @@ export interface IFund {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the fund.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -57,6 +58,7 @@ export interface IFund {
    * for existence.
    *
    * @param cnpj - The cnpj of the fund.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -82,6 +84,7 @@ export interface IFund {
    * @param options - The pagination options.
    * @param options.limit - Maximum funds to return.
    * @param options.offset - Starting offset.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -106,6 +109,7 @@ export interface IFund {
    * no matches.
    *
    * @param ids - The unique identifiers of the funds.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -129,6 +133,7 @@ export interface IFund {
    * Returns an empty array for no matches.
    *
    * @param bankId - The id of the bank.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -153,6 +158,7 @@ export interface IFund {
    * benchmark. Returns an empty array for no matches.
    *
    * @param benchmarkId - The id of the benchmark.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -177,6 +183,7 @@ export interface IFund {
    * category. Returns an empty array for no matches.
    *
    * @param categoryId - The id of the category.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -202,6 +209,7 @@ export interface IFund {
    * The persisted entity with its id is returned.
    *
    * @param fund - The fund to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -225,6 +233,7 @@ export interface IFund {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the fund.
+   *
    * @returns Resolves when removed.
    *
    * @example

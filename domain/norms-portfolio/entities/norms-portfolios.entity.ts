@@ -16,7 +16,8 @@ export interface NormsPortfoliosProps {
  * Represents norm-portfolio relationship with allocation limits.
  *
  * @remarks
- * Must have normId, portfolioId, min/max/target allocation.
+ * Must have normId, portfolioId, and min/max/target
+ * allocation percentages.
  * Instances are immutable after creation.
  *
  * @explanation
@@ -31,6 +32,10 @@ export class NormsPortfolios {
   private readonly _id?: EntityId
   private readonly props: Required<NormsPortfoliosProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the relation.
@@ -39,7 +44,8 @@ export class NormsPortfolios {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare relations.
    *
    * @returns EntityId or undefined.
    *
@@ -59,7 +65,7 @@ export class NormsPortfolios {
    * Valid EntityId.
    *
    * @explanation
-   * Use to identify the regulatory norm.
+   * Identifies the regulatory norm applied to the portfolio.
    *
    * @returns EntityId.
    *
@@ -79,7 +85,7 @@ export class NormsPortfolios {
    * Valid EntityId.
    *
    * @explanation
-   * Use to identify the portfolio.
+   * Identifies the portfolio bound by the norm limits.
    *
    * @returns EntityId.
    *
@@ -99,7 +105,7 @@ export class NormsPortfolios {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for compliance checks.
+   * Lower bound used for allocation compliance checks.
    *
    * @returns SignedPercentage.
    *
@@ -119,7 +125,7 @@ export class NormsPortfolios {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for compliance checks.
+   * Upper bound used for allocation compliance checks.
    *
    * @returns SignedPercentage.
    *
@@ -139,7 +145,7 @@ export class NormsPortfolios {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for compliance checks.
+   * Desired value used for allocation compliance checks.
    *
    * @returns SignedPercentage.
    *
@@ -161,7 +167,7 @@ export class NormsPortfolios {
    * @explanation
    * Use to guard concurrent updates in the repository.
    *
-   * @returns The current version number.
+   * @returns Current version number.
    *
    * @author Moisés Reis
    *
@@ -179,7 +185,7 @@ export class NormsPortfolios {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -190,6 +196,10 @@ export class NormsPortfolios {
   get createdAt(): Date {
     return new Date(this.props.createdAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -216,9 +226,13 @@ export class NormsPortfolios {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
-   * Creates a valid NormsPortfolios from the provided properties.
+   * Creates a valid NormsPortfolios from the props.
    *
    * @remarks
    * Validates all fields and enforces min <= target <= max.
@@ -231,12 +245,16 @@ export class NormsPortfolios {
    * @param props - Properties required to create the relation.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid NormsPortfolios instance.
+   * @returns Valid NormsPortfolios.
    *
    * @example
    * const RELATION = NormsPortfolios.create({
-   *   normId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
-   *   portfolioId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
+   *   normId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
+   *   portfolioId: EntityId.create(
+   *     "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"
+   *   ),
    *   minAllocation: SignedPercentage.create("5"),
    *   maxAllocation: SignedPercentage.create("20"),
    *   targetAllocation: SignedPercentage.create("12"),
@@ -293,6 +311,10 @@ export class NormsPortfolios {
     return new NormsPortfolios(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this NormsPortfolios with another for equality.
@@ -301,11 +323,11 @@ export class NormsPortfolios {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two relations by their persisted identity.
    *
    * @param object - The NormsPortfolios to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = NormsPortfolios.create(PROPS, ID);

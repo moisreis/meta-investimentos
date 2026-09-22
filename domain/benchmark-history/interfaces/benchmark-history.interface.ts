@@ -3,7 +3,7 @@ import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
- * Defines the repository contract for `BenchmarkHistory` entities.
+ * Defines the repository contract for `BenchmarkHistory`.
  *
  * @remarks
  * An `IBenchmarkHistory` persists, retrieves, and removes
@@ -35,6 +35,7 @@ export interface IBenchmarkHistory {
    * by its unique identifier. Callers check null.
    *
    * @param id - The unique identifier of the benchmark history.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -48,8 +49,7 @@ export interface IBenchmarkHistory {
 
   /**
    * @summary
-   * Retrieves all history belonging to the provided
-   * benchmark id.
+   * Retrieves all history of the provided benchmark.
    *
    * @remarks
    * Returns an empty array when no entries match.
@@ -59,6 +59,7 @@ export interface IBenchmarkHistory {
    * benchmark. Returns an empty array for no matches.
    *
    * @param benchmarkId - The unique identifier of the benchmark.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -73,8 +74,7 @@ export interface IBenchmarkHistory {
 
   /**
    * @summary
-   * Retrieves all history belonging to the provided
-   * benchmark ids.
+   * Retrieves all history of the provided benchmarks.
    *
    * @remarks
    * Returns an empty array when no entries match.
@@ -84,6 +84,7 @@ export interface IBenchmarkHistory {
    * in a single query.
    *
    * @param benchmarkIds - The identifiers of the benchmarks.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -98,8 +99,7 @@ export interface IBenchmarkHistory {
 
   /**
    * @summary
-   * Retrieves all history dated within the provided period
-   * for the provided benchmark ids.
+   * Retrieves the benchmarks' history within the period.
    *
    * @remarks
    * The period is inclusive of both dates. Returns an
@@ -112,6 +112,7 @@ export interface IBenchmarkHistory {
    * @param benchmarkIds - The identifiers of the benchmarks.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -130,8 +131,7 @@ export interface IBenchmarkHistory {
 
   /**
    * @summary
-   * Retrieves the benchmark history of the benchmark on
-   * the provided date.
+   * Retrieves the benchmark's history on the provided date.
    *
    * @remarks
    * Returns null when no entry matches.
@@ -142,6 +142,7 @@ export interface IBenchmarkHistory {
    *
    * @param benchmarkId - The unique identifier of the benchmark.
    * @param date - The date of the benchmark history.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -170,6 +171,7 @@ export interface IBenchmarkHistory {
    * history entry. The persisted entity is returned.
    *
    * @param benchmarkHistory - The benchmark history to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -193,6 +195,7 @@ export interface IBenchmarkHistory {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the benchmark history.
+   *
    * @returns Resolves when removed.
    *
    * @example

@@ -13,7 +13,8 @@ export interface BenchmarkHistoryProps {
  * Represents the rate history of a benchmark on a given date.
  *
  * @remarks
- * Must have benchmarkId, date, rate. Instances immutable after creation.
+ * Must have benchmarkId, date, rate.
+ * Instances immutable after creation.
  *
  * @explanation
  * Stores daily benchmark rates for spread calculations.
@@ -27,6 +28,10 @@ export class BenchmarkHistory {
   private readonly _id?: EntityId
   private readonly props: Required<BenchmarkHistoryProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the benchmark history.
@@ -35,7 +40,8 @@ export class BenchmarkHistory {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare history records.
    *
    * @returns EntityId or undefined.
    *
@@ -55,7 +61,7 @@ export class BenchmarkHistory {
    * Valid EntityId.
    *
    * @explanation
-   * Use to associate history with benchmark.
+   * Identifies the benchmark this rate belongs to.
    *
    * @returns EntityId.
    *
@@ -75,7 +81,7 @@ export class BenchmarkHistory {
    * Required Date.
    *
    * @explanation
-   * Use for time-series queries.
+   * Fixes the trading day of the quoted rate.
    *
    * @returns History Date.
    *
@@ -95,7 +101,7 @@ export class BenchmarkHistory {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for spread and return calculations.
+   * Daily rate used for spread calculations.
    *
    * @returns SignedPercentage.
    *
@@ -115,7 +121,7 @@ export class BenchmarkHistory {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -126,6 +132,10 @@ export class BenchmarkHistory {
   get createdAt(): Date {
     return new Date(this.props.createdAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -153,12 +163,17 @@ export class BenchmarkHistory {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
-   * Creates a valid BenchmarkHistory from the provided properties.
+   * Creates a valid BenchmarkHistory from the props.
    *
    * @remarks
-   * Validates benchmarkId, date, rate. createdAt defaults to now.
+   * Validates benchmarkId, date, rate. createdAt
+   * defaults to now.
    *
    * @explanation
    * Factory method to construct a valid BenchmarkHistory.
@@ -167,11 +182,13 @@ export class BenchmarkHistory {
    * @param props - Properties required to create the history.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid BenchmarkHistory instance.
+   * @returns Valid BenchmarkHistory.
    *
    * @example
    * const HISTORY = BenchmarkHistory.create({
-   *   benchmarkId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   benchmarkId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
    *   date: new Date("2026-01-01T00:00:00.000Z"),
    *   rate: SignedPercentage.create("12.345"),
    * });
@@ -204,6 +221,10 @@ export class BenchmarkHistory {
     return new BenchmarkHistory(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Updates the rate of this benchmark history.
@@ -212,15 +233,16 @@ export class BenchmarkHistory {
    * Returns new BenchmarkHistory instance with updated rate.
    *
    * @explanation
-   * Use to correct benchmark rates.
-   * Original instance unchanged.
+   * Corrects a quoted rate without touching other fields.
    *
    * @param rate - New SignedPercentage rate.
    *
-   * @returns New BenchmarkHistory instance with updated rate.
+   * @returns Updated history rate.
    *
    * @example
-   * const UPDATED = history.updateRate(SignedPercentage.create("12.50"));
+   * const UPDATED = history.updateRate(
+   *   SignedPercentage.create("12.50")
+   * );
    *
    * @author Moisés Reis
    *
@@ -240,6 +262,10 @@ export class BenchmarkHistory {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this BenchmarkHistory with another for equality.
@@ -248,11 +274,11 @@ export class BenchmarkHistory {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two history records by their persisted identity.
    *
    * @param object - The BenchmarkHistory to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = BenchmarkHistory.create(PROPS, ID);

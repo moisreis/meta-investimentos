@@ -19,8 +19,9 @@ interface CalculateReturnProps {
  * period. It neutralizes cash flow effects by using daily
  * growth factors that already incorporate daily flows.
  *
- * @param dailyGrowthFactors - Daily growth factors in chronological order.
- * @returns SignedPercentage instance.
+ * @param dailyGrowthFactors - Daily growth factors in
+ *   chronological order.
+ * @returns The cumulative return.
  *
  * @example
  * const RESULT = calculateReturn({

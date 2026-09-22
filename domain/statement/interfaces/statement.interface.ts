@@ -33,6 +33,7 @@ export interface IStatement {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the statement.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -56,6 +57,7 @@ export interface IStatement {
    * portfolio. Returns an empty array for no matches.
    *
    * @param portfolioId - The unique identifier of the portfolio.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -79,7 +81,8 @@ export interface IStatement {
    * Use this method to list statements linked to several
    * portfolios. Returns an empty array for no matches.
    *
-   * @param portfolioIds - The unique identifiers of the portfolios.
+   * @param portfolioIds - The identifiers of the portfolios.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -104,6 +107,7 @@ export interface IStatement {
    * user. Returns an empty array for no matches.
    *
    * @param userId - The unique identifier of the user.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -128,6 +132,7 @@ export interface IStatement {
    * several users. Returns an empty array for no matches.
    *
    * @param userIds - The unique identifiers of the users.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -153,6 +158,7 @@ export interface IStatement {
    * The persisted entity with its id is returned.
    *
    * @param statement - The statement to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -176,6 +182,7 @@ export interface IStatement {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the statement.
+   *
    * @returns Resolves when removed.
    *
    * @example

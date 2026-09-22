@@ -37,6 +37,10 @@ export class Application {
   private readonly _id?: EntityId
   private readonly props: Required<ApplicationProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the application.
@@ -45,7 +49,8 @@ export class Application {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the identity used by the repository
+   * and by `equals` to compare applications.
    *
    * @returns EntityId or undefined.
    *
@@ -65,7 +70,7 @@ export class Application {
    * Valid EntityId.
    *
    * @explanation
-   * Use to associate application with position.
+   * Links the application to the target position.
    *
    * @returns EntityId.
    *
@@ -85,7 +90,7 @@ export class Application {
    * Required Date.
    *
    * @explanation
-   * Use for time-series queries.
+   * Orders applications in time-series queries.
    *
    * @returns Application Date.
    *
@@ -105,7 +110,7 @@ export class Application {
    * PositiveMoney value.
    *
    * @explanation
-   * Use for cash flow tracking.
+   * Feeds position cash-flow calculations.
    *
    * @returns PositiveMoney.
    *
@@ -125,7 +130,7 @@ export class Application {
    * QuotaQuantity value.
    *
    * @explanation
-   * Use for position sizing.
+   * Tracks the quotas acquired by this application.
    *
    * @returns QuotaQuantity.
    *
@@ -145,7 +150,7 @@ export class Application {
    * Nullable Date.
    *
    * @explanation
-   * Use to check if application was reversed.
+   * Distinguishes active from reversed applications.
    *
    * @returns Reversal Date or null.
    *
@@ -165,7 +170,7 @@ export class Application {
    * Nullable EntityId.
    *
    * @explanation
-   * Use for audit trail.
+   * Records who cancelled the application.
    *
    * @returns EntityId or null.
    *
@@ -187,7 +192,7 @@ export class Application {
    * @explanation
    * Use to guard concurrent updates in the repository.
    *
-   * @returns The current version number.
+   * @returns Current version number.
    *
    * @author Moisés Reis
    *
@@ -205,7 +210,7 @@ export class Application {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -225,7 +230,7 @@ export class Application {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and cache invalidation.
+   * Shows when the application last changed.
    *
    * @returns Last update Date.
    *
@@ -236,6 +241,10 @@ export class Application {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -265,6 +274,10 @@ export class Application {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid Application from the provided properties.
@@ -277,14 +290,17 @@ export class Application {
    * Factory method to construct a valid Application.
    * Throws ValidationError if validation fails.
    *
-   * @param props - Properties required to create the application.
+   * @param props - Properties required to create the
+   *                application.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid Application instance.
+   * @returns Valid Application.
    *
    * @example
    * const APPLICATION = Application.create({
-   *   positionId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   positionId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
    *   date: new Date("2026-01-01T00:00:00.000Z"),
    *   amount: PositiveMoney.create("1000.00"),
    *   quotas: QuotaQuantity.create("12.345"),
@@ -322,6 +338,10 @@ export class Application {
     return new Application(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Reverses this application.
@@ -337,10 +357,12 @@ export class Application {
    * @param userId - Reversing user EntityId.
    * @param now - Reversal timestamp (optional, defaults to now).
    *
-   * @returns New reversed Application instance.
+   * @returns Reversed Application.
    *
    * @example
-   * const REVERSED = application.reverse(EntityId.create("user-id"));
+   * const REVERSED = application.reverse(
+   *   EntityId.create("user-id")
+   * );
    *
    * @author Moisés Reis
    *
@@ -371,6 +393,10 @@ export class Application {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Application with another for equality.
@@ -379,11 +405,11 @@ export class Application {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two applications by their persisted identity.
    *
    * @param object - The Application to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Application.create(PROPS, ID)

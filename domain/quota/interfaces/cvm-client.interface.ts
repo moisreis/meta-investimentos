@@ -33,6 +33,7 @@ export interface ICvmClient {
    *
    * @param year - The four-digit year of the file.
    * @param month - The month of the file (1 to 12).
+   *
    * @returns The file bytes or `null`.
    *
    * @example

@@ -17,6 +17,7 @@ interface CalculateApplicationQuotasSumProps {
  * through all applications to a position during a period.
  *
  * @param quotaQuantity - Array of application quota quantities.
+ *
  * @returns QuotaQuantity instance.
  *
  * @example

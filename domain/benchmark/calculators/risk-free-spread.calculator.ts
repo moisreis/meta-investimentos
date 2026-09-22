@@ -10,7 +10,7 @@ interface CalculatePortfolioRiskFreeSpreadProps {
  * Calculates the risk-free spread for a Portfolio.
  *
  * @remarks
- * Subtracts monthly risk-free rate (CDI) from portfolio return.
+ * Subtracts the monthly **CDI** rate from the portfolio return.
  * Result is rounded to 2 decimal places.
  *
  * @explanation
@@ -19,8 +19,9 @@ interface CalculatePortfolioRiskFreeSpreadProps {
  * the risk-free rate.
  *
  * @param portfolioReturn - Portfolio return for period (%).
- * @param riskFreeRate - Monthly risk-free index CDI (%).
- * @returns SignedPercentage instance.
+ * @param riskFreeRate - Monthly risk-free index **CDI** (%).
+ *
+ * @returns The risk-free spread.
  *
  * @example
  * const RESULT = calculatePortfolioRiskFreeSpread({

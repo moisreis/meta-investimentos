@@ -20,11 +20,12 @@ interface CalculateApplicationQuotasProps {
  *
  * @explanation
  * Use this function when a new application is made to determine
- * how many quotas the investor receives. It converts the monetary
- * amount into quota units using the current price.
+ * how many quotas the investor receives. It converts the
+ * monetary amount into quota units using the current price.
  *
  * @param application - The monetary amount being invested.
  * @param quota - The current price of a single quota.
+ *
  * @returns QuotaQuantity instance.
  *
  * @example

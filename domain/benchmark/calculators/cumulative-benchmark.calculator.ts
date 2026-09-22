@@ -12,15 +12,16 @@ interface CalculatePortfolioCumulativeBenchmarkProps {
  *
  * @remarks
  * Chains monthly index values to compute cumulative return.
- * Works for IPCA, CDI, or Ibovespa indices.
+ * Works for **IPCA**, **CDI**, or **Ibovespa** indices.
  *
  * @explanation
  * Use this function to compute the cumulative benchmark value
  * over multiple months. It compounds each monthly index value
  * in chronological order.
  *
- * @param monthlyIndexValues - Monthly index values in chronological order.
- * @returns SignedPercentage instance.
+ * @param monthlyIndexValues - Monthly index values in
+ *   chronological order.
+ * @returns The cumulative value.
  *
  * @example
  * const RESULT = calculatePortfolioCumulativeBenchmark({

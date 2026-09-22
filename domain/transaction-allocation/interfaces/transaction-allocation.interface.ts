@@ -3,8 +3,7 @@ import type { EntityId, QuotaQuantity } from "@/value-objects"
 
 /**
  * @summary
- * Defines the repository contract for `TransactionAllocation`
- * entities.
+ * Defines the repository contract for `TransactionAllocation`.
  *
  * @remarks
  * An `ITransactionAllocation` persists, retrieves, and removes
@@ -13,8 +12,8 @@ import type { EntityId, QuotaQuantity } from "@/value-objects"
  *
  * @explanation
  * Use this interface to implement data access for allocations.
- * Persistence implementations map rows to `TransactionAllocation`
- * entities.
+ * Persistence implementations map rows to
+ * `TransactionAllocation` entities.
  *
  * @example
  * const TA = await ALLOC_REPO.findById(ID);
@@ -36,6 +35,7 @@ export interface ITransactionAllocation {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the allocation.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -58,7 +58,8 @@ export interface ITransactionAllocation {
    * Use this method to list allocations linked to an
    * application. Returns an empty array for no matches.
    *
-   * @param applicationId - The unique identifier of the application.
+   * @param applicationId - The identifier of the application.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -84,7 +85,8 @@ export interface ITransactionAllocation {
    * Use this method to list allocations linked to several
    * applications. Returns an empty array for no matches.
    *
-   * @param applicationIds - The unique identifiers of the applications.
+   * @param applicationIds - The application identifiers.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -111,6 +113,7 @@ export interface ITransactionAllocation {
    * withdrawal. Returns an empty array for no matches.
    *
    * @param withdrawId - The unique identifier of the withdrawal.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -134,7 +137,8 @@ export interface ITransactionAllocation {
    * Use this method to list allocations linked to several
    * withdrawals. Returns an empty array for no matches.
    *
-   * @param withdrawIds - The unique identifiers of the withdrawals.
+   * @param withdrawIds - The withdrawal identifiers.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -161,8 +165,9 @@ export interface ITransactionAllocation {
    * Use this method to know the total quotas an
    * application has consumed from the fund.
    *
-   * @param applicationId - The unique identifier of the application.
-   * @returns The summed quotas or `null`.
+   * @param applicationId - The identifier of the application.
+   *
+   * @returns Summed quotas or `null`.
    *
    * @example
    * const TOTAL = await ALLOC_REPO
@@ -189,6 +194,7 @@ export interface ITransactionAllocation {
    * The persisted entity with its id is returned.
    *
    * @param transactionAllocation - The allocation to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -214,6 +220,7 @@ export interface ITransactionAllocation {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the allocation.
+   *
    * @returns Resolves when removed.
    *
    * @example

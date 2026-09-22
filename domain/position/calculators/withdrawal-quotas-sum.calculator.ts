@@ -17,6 +17,7 @@ interface CalculateWithdrawalQuotasSumProps {
  * through all withdrawals from a position during a period.
  *
  * @param quotaQuantity - Array of withdrawal quota quantities.
+ *
  * @returns QuotaQuantity instance.
  *
  * @example

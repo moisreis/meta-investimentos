@@ -13,17 +13,19 @@ interface CalculatePortfolioTargetProps {
  * Calculates the monthly Target return of a Portfolio.
  *
  * @remarks
- * Compounds monthly inflation with monthly portfolio interest rate.
+ * Compounds the monthly inflation index with the
+ * monthly portfolio interest rate.
  * Throws if annual interest rate is below -100%.
  *
  * @explanation
  * Use this function to compute the Portfolio's monthly target
  * return. It converts the annual rate to monthly via compound
- * interest, then combines with monthly inflation (IPCA).
+ * interest, then combines with monthly inflation (**IPCA**).
  *
- * @param annualInterestRate - Portfolio annual interest rate (%).
- * @param inflationRate - Monthly inflation index IPCA (%).
- * @returns SignedPercentage instance.
+ * @param annualInterestRate - Annual interest rate (%).
+ * @param inflationRate - Monthly inflation index **IPCA** (%).
+ *
+ * @returns The monthly target.
  *
  * @example
  * const RESULT = calculatePortfolioTarget({

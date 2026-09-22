@@ -33,6 +33,7 @@ export interface IAccount {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the account.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -57,6 +58,7 @@ export interface IAccount {
    *
    * @param providerId - The provider of the account.
    * @param accountId - The account id from the provider.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -84,6 +86,7 @@ export interface IAccount {
    * user. Returns an empty array for no matches.
    *
    * @param userId - The id of the user the accounts belong to.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -106,7 +109,8 @@ export interface IAccount {
    * Use this method to list accounts linked to multiple
    * users at once. Returns an empty array for no matches.
    *
-   * @param userIds - The ids of the users the accounts belong to.
+   * @param userIds - The ids of the users the accounts
+   *                  belong to.
    * @returns The matching entries.
    *
    * @example
@@ -132,6 +136,7 @@ export interface IAccount {
    * The persisted entity with its id is returned.
    *
    * @param account - The account to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -155,6 +160,7 @@ export interface IAccount {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the account.
+   *
    * @returns Resolves when removed.
    *
    * @example

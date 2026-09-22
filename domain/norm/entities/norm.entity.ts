@@ -18,7 +18,8 @@ export interface NormProps {
  * Represents a regulatory norm that constrains allocations.
  *
  * @remarks
- * Must have articleNumber, name, categoryId, min/max/target allocation.
+ * Must have articleNumber, name, categoryId, and
+ * min/max/target allocation percentages.
  * Instances are immutable after creation.
  *
  * @explanation
@@ -33,6 +34,10 @@ export class Norm {
   private readonly _id?: EntityId
   private readonly props: Required<NormProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the norm.
@@ -41,7 +46,8 @@ export class Norm {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare norms.
    *
    * @returns EntityId or undefined.
    *
@@ -61,7 +67,7 @@ export class Norm {
    * Regulatory article identifier.
    *
    * @explanation
-   * Use for legal reference.
+   * Refers to the legal article that defines the norm.
    *
    * @returns Article number string.
    *
@@ -81,7 +87,7 @@ export class Norm {
    * Descriptive name.
    *
    * @explanation
-   * Use for display and identification.
+   * Human-readable name shown in lists and reports.
    *
    * @returns Name string.
    *
@@ -101,7 +107,7 @@ export class Norm {
    * Valid EntityId.
    *
    * @explanation
-   * Use to group norms by category.
+   * Applies the norm to a specific fund category.
    *
    * @returns EntityId.
    *
@@ -121,7 +127,7 @@ export class Norm {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for compliance checks.
+   * Lower bound used for allocation compliance checks.
    *
    * @returns SignedPercentage.
    *
@@ -141,7 +147,7 @@ export class Norm {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for compliance checks.
+   * Upper bound used for allocation compliance checks.
    *
    * @returns SignedPercentage.
    *
@@ -161,7 +167,7 @@ export class Norm {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for compliance checks.
+   * Desired value used for allocation compliance checks.
    *
    * @returns SignedPercentage.
    *
@@ -183,7 +189,7 @@ export class Norm {
    * @explanation
    * Use to guard concurrent updates in the repository.
    *
-   * @returns The current version number.
+   * @returns Current version number.
    *
    * @author Moisés Reis
    *
@@ -201,7 +207,7 @@ export class Norm {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -221,7 +227,7 @@ export class Norm {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and cache invalidation.
+   * Shows when the norm last changed.
    *
    * @returns Last update Date.
    *
@@ -232,6 +238,10 @@ export class Norm {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -259,6 +269,10 @@ export class Norm {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid Norm from the provided properties.
@@ -274,13 +288,15 @@ export class Norm {
    * @param props - Properties required to create the norm.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid Norm instance.
+   * @returns Valid Norm.
    *
    * @example
    * const NORM = Norm.create({
    *   articleNumber: "Art. 12",
    *   name: "Limite de Concentração",
-   *   categoryId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   categoryId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
    *   minAllocation: SignedPercentage.create("5"),
    *   maxAllocation: SignedPercentage.create("20"),
    *   targetAllocation: SignedPercentage.create("12"),
@@ -332,6 +348,10 @@ export class Norm {
     return new Norm(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Updates the mutable fields of this norm.
@@ -346,7 +366,7 @@ export class Norm {
    * @param options - Fields to update.
    * @param now - Update timestamp (optional, defaults to now).
    *
-   * @returns New Norm instance with updated fields.
+   * @returns Updated Norm.
    *
    * @example
    * const UPDATED = norm.update({
@@ -422,6 +442,10 @@ export class Norm {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Norm with another for equality.
@@ -430,11 +454,11 @@ export class Norm {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two norms by their persisted identity.
    *
    * @param object - The Norm to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Norm.create(PROPS, ID);

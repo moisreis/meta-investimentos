@@ -3,8 +3,7 @@ import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
- * Defines the repository contract for `PositionPerformance`
- * entities.
+ * Defines the repository contract for `PositionPerformance`.
  *
  * @remarks
  * An `IPositionPerformance` persists, retrieves, and removes
@@ -36,6 +35,7 @@ export interface IPositionPerformance {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the performance.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -59,6 +59,7 @@ export interface IPositionPerformance {
    * position. Returns an empty array for no matches.
    *
    * @param positionId - The unique identifier of the position.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -81,7 +82,8 @@ export interface IPositionPerformance {
    * Use this method to list performances linked to several
    * positions. Returns an empty array for no matches.
    *
-   * @param positionIds - The unique identifiers of the positions.
+   * @param positionIds - The identifiers of the positions.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -96,8 +98,7 @@ export interface IPositionPerformance {
 
   /**
    * @summary
-   * Retrieves the performance of the position on the
-   * provided date.
+   * Retrieves the position's performance on a date.
    *
    * @remarks
    * Returns null when no performance matches.
@@ -108,6 +109,7 @@ export interface IPositionPerformance {
    *
    * @param positionId - The unique identifier of the position.
    * @param date - The date of the performance.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -135,6 +137,7 @@ export interface IPositionPerformance {
    * a position. Callers check null for no data.
    *
    * @param positionId - The unique identifier of the position.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -162,7 +165,8 @@ export interface IPositionPerformance {
    * Use this method to get the most recent performance of
    * every given position. Returns an empty array for none.
    *
-   * @param positionIds - The unique identifiers of the positions.
+   * @param positionIds - The identifiers of the positions.
+   *
    * @returns The latest snapshots.
    *
    * @example
@@ -190,6 +194,7 @@ export interface IPositionPerformance {
    * The persisted entity with its id is returned.
    *
    * @param positionPerformance - The performance to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -213,6 +218,7 @@ export interface IPositionPerformance {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the performance.
+   *
    * @returns Resolves when removed.
    *
    * @example

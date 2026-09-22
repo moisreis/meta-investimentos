@@ -15,7 +15,8 @@ interface AuditLogProps {
  * Represents an audit log entry.
  *
  * @remarks
- * Must have entity, entityId, action. Instances immutable after creation.
+ * Must have entity, entityId, action.
+ * Instances immutable after creation.
  *
  * @explanation
  * Tracks system changes for compliance and debugging.
@@ -29,6 +30,10 @@ export class AuditLog {
   private readonly _id?: EntityId
   private readonly props: Required<AuditLogProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the audit log.
@@ -37,7 +42,8 @@ export class AuditLog {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the identity used by the repository
+   * and by `equals` to compare audit entries.
    *
    * @returns EntityId or undefined.
    *
@@ -169,6 +175,10 @@ export class AuditLog {
     return new Date(this.props.createdAt)
   }
 
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
+
   /**
    * @summary
    * Creates an AuditLog instance.
@@ -194,6 +204,10 @@ export class AuditLog {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid AuditLog from the provided properties.
@@ -214,7 +228,9 @@ export class AuditLog {
    * @example
    * const AUDIT_LOG = AuditLog.create({
    *   entity: "User",
-   *   entityId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   entityId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
    *   action: "CREATED",
    * });
    *
@@ -245,6 +261,10 @@ export class AuditLog {
     return new AuditLog(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this AuditLog with another for equality.
@@ -253,11 +273,11 @@ export class AuditLog {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two audit entries by their persisted identity.
    *
    * @param object - The AuditLog to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = AuditLog.create(PROPS, ID);

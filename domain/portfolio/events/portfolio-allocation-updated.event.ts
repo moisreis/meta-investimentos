@@ -137,16 +137,11 @@ export class PortfolioAllocationUpdated {
       occurredAt: props.occurredAt ?? NOW,
     }
 
-    return new PortfolioAllocationUpdated(
-      NORMALIZED_PROPS,
-      id
-    )
+    return new PortfolioAllocationUpdated(NORMALIZED_PROPS, id)
   }
 
   // Compares this event with another for equality.
-  public equals(
-    object?: PortfolioAllocationUpdated | null
-  ): boolean {
+  public equals(object?: PortfolioAllocationUpdated | null): boolean {
     if (object == null || object === undefined) {
       return false
     }

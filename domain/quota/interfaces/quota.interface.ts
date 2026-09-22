@@ -48,6 +48,7 @@ export interface IQuota {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the quota.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -71,6 +72,7 @@ export interface IQuota {
    * Returns an empty array for no matches.
    *
    * @param fundId - The unique identifier of the fund.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -95,6 +97,7 @@ export interface IQuota {
    *
    * @param fundId - The unique identifier of the fund.
    * @param date - The date the quota refers to.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -119,6 +122,7 @@ export interface IQuota {
    * fund. Callers check null for no data.
    *
    * @param fundId - The unique identifier of the fund.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -143,6 +147,7 @@ export interface IQuota {
    * Returns an empty array for no matches.
    *
    * @param fundIds - The ids of the funds.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -166,6 +171,7 @@ export interface IQuota {
    * given fund. Returns an empty array for no matches.
    *
    * @param fundIds - The ids of the funds.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -193,6 +199,7 @@ export interface IQuota {
    * @param fundIds - The ids of the funds.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -222,6 +229,7 @@ export interface IQuota {
    * The persisted entity with its id is returned.
    *
    * @param quota - The quota to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -246,6 +254,7 @@ export interface IQuota {
    * The result reports the action taken for each record.
    *
    * @param records - The records to upsert.
+   *
    * @returns The upsert results.
    *
    * @example
@@ -269,6 +278,7 @@ export interface IQuota {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the quota.
+   *
    * @returns Resolves when removed.
    *
    * @example

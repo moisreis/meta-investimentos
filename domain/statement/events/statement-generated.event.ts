@@ -72,10 +72,7 @@ export class StatementGenerated {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(
-    props: Required<StatementGeneratedProps>,
-    id?: string
-  ) {
+  private constructor(props: Required<StatementGeneratedProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -132,9 +129,7 @@ export class StatementGenerated {
       )
     }
     if (!props.periodEnd) {
-      throw new ValidationError(
-        "`StatementGenerated` must have a period end."
-      )
+      throw new ValidationError("`StatementGenerated` must have a period end.")
     }
     if (!props.fileUrl || props.fileUrl.trim() === "") {
       throw new ValidationError("`StatementGenerated` must have a file url.")

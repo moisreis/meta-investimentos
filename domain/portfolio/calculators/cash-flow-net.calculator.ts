@@ -16,10 +16,12 @@ interface CalculatePortfolioCashFlowNetProps {
  * @explanation
  * Use this function to determine the net capital movement
  * for a portfolio in a period. Aggregates across all
- * positions. Positive means net inflows, negative means net outflows.
+ * positions. Positive means net inflows, negative means
+ * net outflows.
  *
- * @param applications - Total application amount across positions.
- * @param withdrawals - Total withdrawal amount across positions.
+ * @param applications - Total application amount.
+ * @param withdrawals - Total withdrawal amount.
+ *
  * @returns SignedMoney instance.
  *
  * @example

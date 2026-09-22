@@ -19,15 +19,20 @@ interface CalculatePortfolioEarningsProps {
  * portfolio over a period. It uses aggregated balances
  * across all positions and the portfolio's net cash flow.
  *
- * @param sumOfPositionCurrentBalances - Sum of all position current balances.
- * @param sumOfPositionInitialBalance - Sum of all position initial balances.
+ * @param sumOfPositionCurrentBalances - Sum of all
+ *   position current balances.
+ * @param sumOfPositionInitialBalance - Sum of all
+ *   position initial balances.
  * @param cashFlow - Portfolio net cash flow during period.
+ *
  * @returns SignedMoney instance.
  *
  * @example
  * const RESULT = calculatePortfolioEarnings({
- *   sumOfPositionCurrentBalances: SignedMoney.create("7303437.91"),
- *   sumOfPositionInitialBalance: SignedMoney.create("6072272.64"),
+ *   sumOfPositionCurrentBalances:
+ *     SignedMoney.create("7303437.91"),
+ *   sumOfPositionInitialBalance:
+ *     SignedMoney.create("6072272.64"),
  *   cashFlow: SignedMoney.create("1140000.00"),
  * });
  *

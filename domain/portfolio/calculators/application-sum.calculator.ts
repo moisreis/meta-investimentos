@@ -18,6 +18,7 @@ interface CalculatePortfolioApplicationSumProps {
  * one position's application amount.
  *
  * @param application - Array of position application amounts.
+ *
  * @returns PositiveMoney instance.
  *
  * @example

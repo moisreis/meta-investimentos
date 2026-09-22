@@ -27,6 +27,10 @@ export class Benchmark {
   private readonly _id?: EntityId
   private readonly props: Required<BenchmarkProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the benchmark.
@@ -35,7 +39,8 @@ export class Benchmark {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the identity used by the repository
+   * and by `equals` to compare benchmarks.
    *
    * @returns EntityId or undefined.
    *
@@ -55,7 +60,7 @@ export class Benchmark {
    * Required string.
    *
    * @explanation
-   * Use for short identification.
+   * Used as the short label in reports and charts.
    *
    * @returns Acronym string.
    *
@@ -75,7 +80,7 @@ export class Benchmark {
    * Required string.
    *
    * @explanation
-   * Use for display and identification.
+   * Shown as the full benchmark name.
    *
    * @returns Name string.
    *
@@ -95,7 +100,7 @@ export class Benchmark {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -106,6 +111,10 @@ export class Benchmark {
   get createdAt(): Date {
     return new Date(this.props.createdAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -132,12 +141,17 @@ export class Benchmark {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid Benchmark from the provided properties.
    *
    * @remarks
-   * Validates acronym and name. createdAt defaults to current time.
+   * Validates acronym and name.
+   * createdAt defaults to current time.
    *
    * @explanation
    * Factory method to construct a valid Benchmark.
@@ -176,6 +190,10 @@ export class Benchmark {
     return new Benchmark(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Renames this benchmark.
@@ -189,7 +207,7 @@ export class Benchmark {
    *
    * @param name - New benchmark name.
    *
-   * @returns New Benchmark instance with updated name.
+   * @returns Renamed benchmark.
    *
    * @example
    * const RENAMED = benchmark.rename("Ibovespa Total Return");
@@ -225,7 +243,7 @@ export class Benchmark {
    *
    * @param acronym - New benchmark acronym.
    *
-   * @returns New Benchmark instance with updated acronym.
+   * @returns Acronym updated.
    *
    * @example
    * const RECODED = benchmark.changeAcronym("IBX");
@@ -248,6 +266,10 @@ export class Benchmark {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Benchmark with another for equality.
@@ -256,11 +278,11 @@ export class Benchmark {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two benchmarks by their persisted identity.
    *
    * @param object - The Benchmark to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Benchmark.create(PROPS, ID);

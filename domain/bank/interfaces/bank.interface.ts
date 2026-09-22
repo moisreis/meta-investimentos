@@ -33,6 +33,7 @@ export interface IBank {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the bank.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -56,6 +57,7 @@ export interface IBank {
    * external code. Callers check null for existence.
    *
    * @param code - The code of the bank.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -81,6 +83,7 @@ export interface IBank {
    * @param options - The pagination options.
    * @param options.limit - Maximum banks to return.
    * @param options.offset - Starting offset.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -105,6 +108,7 @@ export interface IBank {
    * no matches.
    *
    * @param ids - The unique identifiers of the banks.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -129,6 +133,7 @@ export interface IBank {
    * The persisted entity with its id is returned.
    *
    * @param bank - The bank to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -152,6 +157,7 @@ export interface IBank {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the bank.
+   *
    * @returns Resolves when removed.
    *
    * @example

@@ -1,7 +1,4 @@
-import {
-  EntityId,
-  type QuotaPrice,
-} from "@/value-objects"
+import { EntityId, type QuotaPrice } from "@/value-objects"
 import { ValidationError } from "@/errors"
 
 export interface QuotaPriceRecordedProps {
@@ -63,10 +60,7 @@ export class QuotaPriceRecorded {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(
-    props: Required<QuotaPriceRecordedProps>,
-    id?: string
-  ) {
+  private constructor(props: Required<QuotaPriceRecordedProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,

@@ -26,6 +26,10 @@ export class Category {
   private readonly _id?: EntityId
   private readonly props: Required<CategoryProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the category.
@@ -34,7 +38,8 @@ export class Category {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the identity used by the repository
+   * and by `equals` to compare categories.
    *
    * @returns EntityId or undefined.
    *
@@ -54,7 +59,7 @@ export class Category {
    * Required string.
    *
    * @explanation
-   * Use for display and classification.
+   * Shown in classification lists and reports.
    *
    * @returns Name string.
    *
@@ -74,7 +79,7 @@ export class Category {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -94,7 +99,7 @@ export class Category {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and cache invalidation.
+   * Shows when the category last changed.
    *
    * @returns Last update Date.
    *
@@ -105,6 +110,10 @@ export class Category {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -131,6 +140,10 @@ export class Category {
       updatedAt: new Date(props.updatedAt),
     })
   }
+
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
 
   /**
    * @summary
@@ -173,6 +186,10 @@ export class Category {
     return new Category(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Renames this category.
@@ -187,7 +204,7 @@ export class Category {
    * @param name - New category name.
    * @param now - Update timestamp (optional, defaults to now).
    *
-   * @returns New Category instance with updated name.
+   * @returns Updated category name.
    *
    * @example
    * const RENAMED = category.rename("Renda Fixa");
@@ -213,6 +230,10 @@ export class Category {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Category with another for equality.
@@ -221,11 +242,11 @@ export class Category {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two categories by their persisted identity.
    *
    * @param object - The Category to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Category.create(PROPS, ID);

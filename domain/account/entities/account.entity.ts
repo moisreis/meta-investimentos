@@ -26,8 +26,8 @@ interface AccountProps {
  * Instances are immutable after creation.
  *
  * @explanation
- * Stores OAuth/credential accounts for user authentication.
- * Supports multiple providers per user.
+ * Stores **OAuth** and credential accounts for user
+ * authentication. Supports multiple providers per user.
  *
  * @author Moisés Reis
  *
@@ -37,6 +37,10 @@ export class Account {
   private readonly _id?: EntityId
   private readonly props: Required<AccountProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the account.
@@ -45,7 +49,8 @@ export class Account {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare accounts.
    *
    * @returns EntityId or undefined.
    *
@@ -62,10 +67,11 @@ export class Account {
    * Returns the issuer of the account.
    *
    * @remarks
-   * OAuth provider name.
+   * **OAuth** provider name.
    *
    * @explanation
-   * Use to identify authentication source.
+   * Identifies the authentication server that issued the
+   * account. The auth client uses it for token renewal.
    *
    * @returns Issuer string.
    *
@@ -85,7 +91,7 @@ export class Account {
    * Provider-specific identifier.
    *
    * @explanation
-   * Use for provider-specific operations.
+   * Maps this account to its identity on the provider.
    *
    * @returns Provider ID string.
    *
@@ -102,10 +108,10 @@ export class Account {
    * Returns the account ID provided by the issuer.
    *
    * @remarks
-   * Unique ID from the OAuth provider.
+   * Unique ID from the **OAuth** provider.
    *
    * @explanation
-   * Use to link with provider's user record.
+   * Links the account to the provider's user record.
    *
    * @returns Account ID string.
    *
@@ -125,7 +131,7 @@ export class Account {
    * Valid EntityId.
    *
    * @explanation
-   * Use to associate account with user.
+   * Binds the account to the owning application user.
    *
    * @returns EntityId.
    *
@@ -145,7 +151,7 @@ export class Account {
    * Nullable string.
    *
    * @explanation
-   * Use for API calls on behalf of user.
+   * Use for **API** calls that run on behalf of the user.
    *
    * @returns Access token or null.
    *
@@ -182,7 +188,7 @@ export class Account {
    * Returns the ID token of the account.
    *
    * @remarks
-   * Nullable string (OIDC).
+   * Nullable string (**OIDC**).
    *
    * @explanation
    * Use for identity verification.
@@ -289,7 +295,7 @@ export class Account {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -309,7 +315,7 @@ export class Account {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit.
+   * Shows when the account last changed.
    *
    * @returns Last update Date.
    *
@@ -320,6 +326,10 @@ export class Account {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -353,6 +363,10 @@ export class Account {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid Account from the provided properties.
@@ -375,7 +389,9 @@ export class Account {
    *   issuer: "github",
    *   providerId: "github",
    *   accountId: "octocat",
-   *   userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   userId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
    * });
    *
    * @author Moisés Reis
@@ -412,6 +428,10 @@ export class Account {
     return new Account(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Account with another for equality.
@@ -420,11 +440,11 @@ export class Account {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two Account instances represent same entity.
+   * Compares two accounts by their persisted identity.
    *
    * @param object - The Account to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Account.create(PROPS, ID);

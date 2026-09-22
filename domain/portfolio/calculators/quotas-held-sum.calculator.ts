@@ -17,7 +17,8 @@ interface CalculatePortfolioQuotasHeldSumProps {
  * of a portfolio at period end. Each entry represents one
  * position's quota quantity.
  *
- * @param quotaQuantity - Array of position quota quantities held.
+ * @param quotaQuantity - Quotas held per position.
+ *
  * @returns QuotaQuantity instance.
  *
  * @example

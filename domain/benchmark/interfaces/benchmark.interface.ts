@@ -33,6 +33,7 @@ export interface IBenchmark {
    * its unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the benchmark.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -56,6 +57,7 @@ export interface IBenchmark {
    * external acronym. Callers check null for existence.
    *
    * @param acronym - The acronym of the benchmark.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -81,6 +83,7 @@ export interface IBenchmark {
    * @param options - The pagination options.
    * @param options.limit - Maximum benchmarks to return.
    * @param options.offset - Starting offset.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -104,6 +107,7 @@ export interface IBenchmark {
    * identifiers in a single query.
    *
    * @param ids - The identifiers of the benchmarks.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -128,6 +132,7 @@ export interface IBenchmark {
    * The persisted entity with its id is returned.
    *
    * @param benchmark - The benchmark to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -151,6 +156,7 @@ export interface IBenchmark {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the benchmark.
+   *
    * @returns Resolves when removed.
    *
    * @example

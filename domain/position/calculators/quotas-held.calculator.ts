@@ -19,16 +19,22 @@ interface CalculateQuotasHeldProps {
  * quota balance for a position. It accounts for all changes
  * during the period: new applications and withdrawals.
  *
- * @param lastPeriodQuotaQuantity - Quotas held at previous period end.
- * @param applicationQuotasQuantity - Quotas acquired via applications.
- * @param withdrawalQuotasQuantity - Quotas redeemed via withdrawals.
+ * @param lastPeriodQuotaQuantity - Quotas held at
+ *   previous period end.
+ * @param applicationQuotasQuantity - Quotas acquired
+ *   via applications.
+ * @param withdrawalQuotasQuantity - Quotas redeemed
+ *   via withdrawals.
  * @returns QuotaQuantity instance.
  *
  * @example
  * const RESULT = calculateQuotasHeld({
- *   lastPeriodQuotaQuantity: QuotaQuantity.create("342021.111191"),
- *   applicationQuotasQuantity: QuotaQuantity.create("225825.442804"),
- *   withdrawalQuotasQuantity: QuotaQuantity.create("224675.226343"),
+ *   lastPeriodQuotaQuantity:
+ *     QuotaQuantity.create("342021.111191"),
+ *   applicationQuotasQuantity:
+ *     QuotaQuantity.create("225825.442804"),
+ *   withdrawalQuotasQuantity:
+ *     QuotaQuantity.create("224675.226343"),
  * });
  *
  * @author Moisés Reis

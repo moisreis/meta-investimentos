@@ -20,6 +20,7 @@ interface CalculateCashFlowNetProps {
  *
  * @param applications - Total application amount.
  * @param withdrawals - Total withdrawal amount.
+ *
  * @returns SignedMoney instance.
  *
  * @example

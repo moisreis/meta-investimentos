@@ -14,9 +14,10 @@ interface CalculateWithdrawalSumProps {
  *
  * @explanation
  * Use this function to aggregate all withdrawals made from a
- * position during a period. Each entry represents one withdrawal.
+ * position during a period. Each entry is one withdrawal.
  *
  * @param withdrawal - Array of withdrawal amounts.
+ *
  * @returns PositiveMoney instance.
  *
  * @example

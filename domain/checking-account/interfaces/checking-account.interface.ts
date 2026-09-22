@@ -3,7 +3,7 @@ import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
- * Defines the repository contract for `CheckingAccount` entities.
+ * Defines the repository contract for `CheckingAccount`.
  *
  * @remarks
  * An `ICheckingAccount` persists, retrieves, and removes
@@ -35,6 +35,7 @@ export interface ICheckingAccount {
    * by its unique identifier. Callers check null.
    *
    * @param id - The unique identifier of the checking account.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -58,6 +59,7 @@ export interface ICheckingAccount {
    * bank account. Returns an empty array for no matches.
    *
    * @param bankAccountId - The id of the bank account.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -72,8 +74,7 @@ export interface ICheckingAccount {
 
   /**
    * @summary
-   * Retrieves the checking account of the bank account on
-   * the provided date.
+   * Retrieves the checking account of the bank on a date.
    *
    * @remarks
    * Returns null when no checking account matches.
@@ -84,6 +85,7 @@ export interface ICheckingAccount {
    *
    * @param bankAccountId - The id of the bank account.
    * @param date - The date of the checking account.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -94,9 +96,14 @@ export interface ICheckingAccount {
    *
    * @date 2026-09-13
    */
+  findByBankAccountIdAndDate(
+    bankAccountId: EntityId,
+    date: Date
+  ): Promise<CheckingAccount | null>
+
   /**
    * @summary
-   * Retrieves all checking accounts of the provided bank accounts.
+   * Retrieves all checking accounts of the given bank accounts.
    *
    * @remarks
    * Returns an empty array when no checking accounts match.
@@ -107,6 +114,7 @@ export interface ICheckingAccount {
    * no matches.
    *
    * @param bankAccountIds - The ids of the bank accounts.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -136,6 +144,7 @@ export interface ICheckingAccount {
    * @param bankAccountIds - The ids of the bank accounts.
    * @param startDate - The start of the date range.
    * @param endDate - The end of the date range.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -154,11 +163,6 @@ export interface ICheckingAccount {
     endDate: Date
   ): Promise<CheckingAccount[]>
 
-  findByBankAccountIdAndDate(
-    bankAccountId: EntityId,
-    date: Date
-  ): Promise<CheckingAccount | null>
-
   /**
    * @summary
    * Persists the provided checking account.
@@ -172,6 +176,7 @@ export interface ICheckingAccount {
    * The persisted entity with its id is returned.
    *
    * @param checkingAccount - The checking account to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -195,6 +200,7 @@ export interface ICheckingAccount {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the checking account.
+   *
    * @returns Resolves when removed.
    *
    * @example

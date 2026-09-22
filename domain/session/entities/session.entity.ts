@@ -31,6 +31,10 @@ export class Session {
   private readonly _id?: EntityId
   private readonly props: Required<SessionProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the session.
@@ -39,7 +43,8 @@ export class Session {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare sessions.
    *
    * @returns EntityId or undefined.
    *
@@ -59,7 +64,7 @@ export class Session {
    * Valid EntityId.
    *
    * @explanation
-   * Use to associate session with user.
+   * Binds the session to the authenticated application user.
    *
    * @returns EntityId.
    *
@@ -79,7 +84,7 @@ export class Session {
    * The session token string.
    *
    * @explanation
-   * Use for authentication validation.
+   * Credential presented on each authenticated request.
    *
    * @returns Token string.
    *
@@ -99,7 +104,7 @@ export class Session {
    * Date after which session is invalid.
    *
    * @explanation
-   * Use to check session validity.
+   * Instant after which the session is rejected.
    *
    * @returns Expiration Date.
    *
@@ -119,7 +124,7 @@ export class Session {
    * Nullable string.
    *
    * @explanation
-   * Use for security auditing.
+   * Source address recorded for security auditing.
    *
    * @returns IP address or null.
    *
@@ -139,7 +144,7 @@ export class Session {
    * Nullable string.
    *
    * @explanation
-   * Use for device identification.
+   * Client identification for device-based checks.
    *
    * @returns User agent or null.
    *
@@ -159,7 +164,7 @@ export class Session {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -179,7 +184,7 @@ export class Session {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit.
+   * Shows when the session last changed.
    *
    * @returns Last update Date.
    *
@@ -190,6 +195,10 @@ export class Session {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -218,6 +227,10 @@ export class Session {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid Session from the provided properties.
@@ -233,11 +246,13 @@ export class Session {
    * @param props - Properties required to create the session.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid Session instance.
+   * @returns Valid Session.
    *
    * @example
    * const SESSION = Session.create({
-   *   userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   userId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
    *   token: "session-token",
    *   expiresAt: new Date("2026-02-01T00:00:00.000Z"),
    * });
@@ -270,6 +285,10 @@ export class Session {
     return new Session(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Session with another for equality.
@@ -278,11 +297,11 @@ export class Session {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two Session instances represent same entity.
+   * Compares two sessions by their persisted identity.
    *
    * @param object - The Session to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Session.create(PROPS, ID);

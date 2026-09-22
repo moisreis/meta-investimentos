@@ -6,12 +6,14 @@ import type { EntityId } from "@/value-objects"
  * Defines the repository contract for `BankAccount` entities.
  *
  * @remarks
- * An `IBankAccount` persists, retrieves, and removes bank accounts.
+ * An `IBankAccount` persists, retrieves, and
+ * removes bank accounts.
  * Supports lookup by id, portfolio id, and bank id.
  *
  * @explanation
  * Use this interface to implement data access for bank accounts.
- * Persistence implementations map rows to `BankAccount` entities.
+ * Persistence implementations map rows to
+ * `BankAccount` entities.
  *
  * @example
  * const BA = await BANK_ACCOUNT_REPO.findById(ID);
@@ -33,6 +35,7 @@ export interface IBankAccount {
    * its unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the bank account.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -56,6 +59,7 @@ export interface IBankAccount {
    * portfolio. Returns an empty array for no matches.
    *
    * @param portfolioId - The id of the portfolio.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -81,6 +85,7 @@ export interface IBankAccount {
    * no matches.
    *
    * @param portfolioIds - The ids of the portfolios.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -105,6 +110,7 @@ export interface IBankAccount {
    * bank. Returns an empty array for no matches.
    *
    * @param bankId - The id of the bank.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -129,6 +135,7 @@ export interface IBankAccount {
    * multiple banks. Returns an empty array for no matches.
    *
    * @param bankIds - The ids of the banks.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -154,6 +161,7 @@ export interface IBankAccount {
    * The persisted entity with its id is returned.
    *
    * @param bankAccount - The bank account to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -177,6 +185,7 @@ export interface IBankAccount {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the bank account.
+   *
    * @returns Resolves when removed.
    *
    * @example

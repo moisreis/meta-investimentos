@@ -140,9 +140,7 @@ export class BenchmarkRateRecorded {
   }
 
   // Compares this event with another for equality.
-  public equals(
-    object?: BenchmarkRateRecorded | null
-  ): boolean {
+  public equals(object?: BenchmarkRateRecorded | null): boolean {
     if (object == null || object === undefined) {
       return false
     }

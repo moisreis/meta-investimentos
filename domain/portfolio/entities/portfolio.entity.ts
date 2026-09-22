@@ -19,12 +19,12 @@ export interface PortfolioProps {
  * Represents an investment portfolio owned by a user.
  *
  * @remarks
- * Must have acronym, name, userId, annualInterestRate, min/max/target allocation.
- * Instances immutable after creation.
+ * Must have acronym, name, userId, annualInterestRate,
+ * min/max/target allocation. Instances are immutable.
  *
  * @explanation
- * Core portfolio entity with allocation constraints and target return.
- * Supports allocation and rate updates.
+ * Core portfolio entity with allocation constraints and
+ * target return. Supports allocation and rate updates.
  *
  * @author Moisés Reis
  *
@@ -34,6 +34,10 @@ export class Portfolio {
   private readonly _id?: EntityId
   private readonly props: Required<PortfolioProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the portfolio.
@@ -42,7 +46,8 @@ export class Portfolio {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare portfolios.
    *
    * @returns EntityId or undefined.
    *
@@ -62,7 +67,7 @@ export class Portfolio {
    * Required string.
    *
    * @explanation
-   * Use for short identification.
+   * Short identifier used in lists and reports.
    *
    * @returns Acronym string.
    *
@@ -82,7 +87,7 @@ export class Portfolio {
    * Required string.
    *
    * @explanation
-   * Use for display and identification.
+   * Human-readable name shown in lists and reports.
    *
    * @returns Name string.
    *
@@ -102,7 +107,7 @@ export class Portfolio {
    * Valid EntityId.
    *
    * @explanation
-   * Use to associate portfolio with user.
+   * Binds the portfolio to the owning application user.
    *
    * @returns EntityId.
    *
@@ -122,7 +127,7 @@ export class Portfolio {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for target return calculation.
+   * Target annual return used for projections.
    *
    * @returns SignedPercentage.
    *
@@ -142,7 +147,7 @@ export class Portfolio {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for allocation compliance.
+   * Lower bound used for allocation compliance.
    *
    * @returns SignedPercentage.
    *
@@ -162,7 +167,7 @@ export class Portfolio {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for allocation compliance.
+   * Upper bound used for allocation compliance.
    *
    * @returns SignedPercentage.
    *
@@ -182,7 +187,7 @@ export class Portfolio {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for allocation compliance.
+   * Desired value used for allocation compliance.
    *
    * @returns SignedPercentage.
    *
@@ -204,7 +209,7 @@ export class Portfolio {
    * @explanation
    * Use to guard concurrent updates in the repository.
    *
-   * @returns The current version number.
+   * @returns Current version number.
    *
    * @author Moisés Reis
    *
@@ -222,7 +227,7 @@ export class Portfolio {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -242,7 +247,7 @@ export class Portfolio {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and cache invalidation.
+   * Shows when the portfolio last changed.
    *
    * @returns Last update Date.
    *
@@ -253,6 +258,10 @@ export class Portfolio {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -280,13 +289,17 @@ export class Portfolio {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid Portfolio from the provided properties.
    *
    * @remarks
-   * Validates all fields. Enforces non-negative rate and min <= target <= max.
-   * Timestamps default to current time.
+   * Validates all fields. Enforces non-negative rate and
+   * min <= target <= max.
    *
    * @explanation
    * Factory method to construct a valid Portfolio.
@@ -295,13 +308,15 @@ export class Portfolio {
    * @param props - Properties required to create the portfolio.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid Portfolio instance.
+   * @returns Valid Portfolio.
    *
    * @example
    * const PORTFOLIO = Portfolio.create({
    *   acronym: "FIA",
    *   name: "Fundo de Investimento em Ações",
-   *   userId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   userId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
    *   annualInterestRate: SignedPercentage.create("10.5"),
    *   minAllocation: SignedPercentage.create("5"),
    *   maxAllocation: SignedPercentage.create("20"),
@@ -364,6 +379,10 @@ export class Portfolio {
     return new Portfolio(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Updates the allocation bounds of this portfolio.
@@ -381,7 +400,7 @@ export class Portfolio {
    * @param maxAllocation - New maximum SignedPercentage.
    * @param now - Update timestamp (optional, defaults to now).
    *
-   * @returns New Portfolio instance with updated allocation.
+   * @returns New allocation bounds.
    *
    * @example
    * const UPDATED = portfolio.updateAllocation(
@@ -449,7 +468,7 @@ export class Portfolio {
    * @param annualInterestRate - New SignedPercentage rate.
    * @param now - Update timestamp (optional, defaults to now).
    *
-   * @returns New Portfolio instance with updated rate.
+   * @returns Portfolio with new rate.
    *
    * @example
    * const UPDATED = portfolio.updateAnnualInterestRate(
@@ -487,6 +506,10 @@ export class Portfolio {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Portfolio with another for equality.
@@ -495,11 +518,11 @@ export class Portfolio {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two portfolios by their persisted identity.
    *
    * @param object - The Portfolio to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Portfolio.create(PROPS, ID);

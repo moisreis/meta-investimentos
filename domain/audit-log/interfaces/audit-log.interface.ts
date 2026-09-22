@@ -34,6 +34,7 @@ export interface IAuditLog {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the log.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -57,6 +58,7 @@ export interface IAuditLog {
    * entity type. Returns an empty array for no matches.
    *
    * @param entity - The name of the audited entity.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -80,7 +82,8 @@ export interface IAuditLog {
    * an entity. Returns an empty array for no matches.
    *
    * @param entity - The name of the audited entity.
-   * @param entityId - The unique identifier of the audited entity.
+   * @param entityId - The identifier of the audited entity.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -109,7 +112,8 @@ export interface IAuditLog {
    * no matches.
    *
    * @param entity - The name of the audited entity.
-   * @param entityIds - The unique identifiers of the audited entities.
+   * @param entityIds - The identifiers of the audited entities.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -137,6 +141,7 @@ export interface IAuditLog {
    * Returns an empty array for no matches.
    *
    * @param userId - The unique identifier of the user.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -160,6 +165,7 @@ export interface IAuditLog {
    * users at once. Returns an empty array for no matches.
    *
    * @param userIds - The unique identifiers of the users.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -185,6 +191,7 @@ export interface IAuditLog {
    * The persisted entity with its id is returned.
    *
    * @param auditLog - The log to persist.
+   *
    * @returns The persisted entry.
    *
    * @example

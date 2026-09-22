@@ -3,11 +3,12 @@ import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
- * Defines the repository contract for `NormsPortfolios` relations.
+ * Defines the `NormsPortfolios` repository contract.
  *
  * @remarks
- * An `INormsPortfolios` persists, retrieves, and removes relations.
- * The relation has no id column, so lookups and mutations use the
+ * An `INormsPortfolios` persists, retrieves, and
+ * removes relations.
+ * No id column exists, so lookups and mutations use the
  * composite `(normId, portfolioId)` pair.
  *
  * @explanation
@@ -37,6 +38,7 @@ export interface INormsPortfolios {
    *
    * @param normId - The unique identifier of the norm.
    * @param portfolioId - The unique identifier of the portfolio.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -64,6 +66,7 @@ export interface INormsPortfolios {
    * portfolio. Returns an empty array for no matches.
    *
    * @param portfolioId - The unique identifier of the portfolio.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -86,7 +89,8 @@ export interface INormsPortfolios {
    * Use this method to list relations linked to several
    * portfolios. Returns an empty array for no matches.
    *
-   * @param portfolioIds - The unique identifiers of the portfolios.
+   * @param portfolioIds - The identifiers of the portfolios.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -111,6 +115,7 @@ export interface INormsPortfolios {
    * Returns an empty array for no matches.
    *
    * @param normId - The unique identifier of the norm.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -135,6 +140,7 @@ export interface INormsPortfolios {
    * The persisted `NormsPortfolios` entity is returned.
    *
    * @param normsPortfolios - The relation to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -159,6 +165,7 @@ export interface INormsPortfolios {
    *
    * @param normId - The unique identifier of the norm.
    * @param portfolioId - The unique identifier of the portfolio.
+   *
    * @returns Resolves when removed.
    *
    * @example

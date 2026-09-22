@@ -33,6 +33,7 @@ export interface INorm {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the norm.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -56,6 +57,7 @@ export interface INorm {
    * category. Returns an empty array for no matches.
    *
    * @param categoryId - The unique identifier of the category.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -78,7 +80,8 @@ export interface INorm {
    * Use this method to list norms linked to several
    * categories. Returns an empty array for no matches.
    *
-   * @param categoryIds - The unique identifiers of the categories.
+   * @param categoryIds - The identifiers of the categories.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -104,6 +107,7 @@ export interface INorm {
    * The persisted entity with its id is returned.
    *
    * @param norm - The norm to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -127,6 +131,7 @@ export interface INorm {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the norm.
+   *
    * @returns Resolves when removed.
    *
    * @example

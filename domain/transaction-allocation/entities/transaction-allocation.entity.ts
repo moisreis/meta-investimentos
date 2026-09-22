@@ -11,14 +11,14 @@ export interface TransactionAllocationProps {
 
 /**
  * @summary
- * Represents allocation of quotas from application to withdrawal.
+ * Represents a quota allocation from application to withdrawal.
  *
  * @remarks
  * Must have applicationId, withdrawId, quotasConsumed.
  * Instances are immutable after creation.
  *
  * @explanation
- * Tracks FIFO allocation of quotas for tax purposes.
+ * Tracks **FIFO** allocation of quotas for tax purposes.
  * Links applications to withdrawals.
  *
  * @author Moisés Reis
@@ -29,6 +29,10 @@ export class TransactionAllocation {
   private readonly _id?: EntityId
   private readonly props: Required<TransactionAllocationProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the transaction allocation.
@@ -37,7 +41,8 @@ export class TransactionAllocation {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare allocations.
    *
    * @returns EntityId or undefined.
    *
@@ -57,7 +62,7 @@ export class TransactionAllocation {
    * Valid EntityId.
    *
    * @explanation
-   * Use to trace allocation source.
+   * Identifies the application providing the quotas.
    *
    * @returns EntityId.
    *
@@ -77,7 +82,7 @@ export class TransactionAllocation {
    * Valid EntityId.
    *
    * @explanation
-   * Use to trace allocation destination.
+   * Identifies the withdrawal consuming the quotas.
    *
    * @returns EntityId.
    *
@@ -97,7 +102,7 @@ export class TransactionAllocation {
    * Valid QuotaQuantity.
    *
    * @explanation
-   * Use for tax lot tracking.
+   * Number of quotas drawn from the application lot.
    *
    * @returns QuotaQuantity.
    *
@@ -117,9 +122,9 @@ export class TransactionAllocation {
    * Required number, defaults to zero.
    *
    * @explanation
-   * Use to guard concurrent updates in the repository.
+   * Guards concurrent updates in the repository.
    *
-   * @returns The current version number.
+   * @returns Current version number.
    *
    * @author Moisés Reis
    *
@@ -137,7 +142,7 @@ export class TransactionAllocation {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -148,6 +153,10 @@ export class TransactionAllocation {
   get createdAt(): Date {
     return new Date(this.props.createdAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -177,9 +186,13 @@ export class TransactionAllocation {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
-   * Creates a valid TransactionAllocation from provided properties.
+   * Creates a valid TransactionAllocation from props.
    *
    * @remarks
    * Validates applicationId, withdrawId, quotasConsumed.
@@ -192,12 +205,16 @@ export class TransactionAllocation {
    * @param props - Properties required to create the allocation.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid TransactionAllocation instance.
+   * @returns Valid quota allocation.
    *
    * @example
    * const ALLOCATION = TransactionAllocation.create({
-   *   applicationId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
-   *   withdrawId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
+   *   applicationId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
+   *   withdrawId: EntityId.create(
+   *     "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"
+   *   ),
    *   quotasConsumed: QuotaQuantity.create("6.123"),
    * });
    *
@@ -236,19 +253,23 @@ export class TransactionAllocation {
     return new TransactionAllocation(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
-   * Compares this TransactionAllocation with another for equality.
+   * Compares this allocation with another for equality.
    *
    * @remarks
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two allocations by their persisted identity.
    *
-   * @param object - The TransactionAllocation to compare against.
+   * @param object - The allocation to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = TransactionAllocation.create(PROPS, ID);

@@ -7,7 +7,7 @@ import type { CPF, EntityId } from "@/value-objects"
  *
  * @remarks
  * An `IUser` persists, retrieves, and removes users.
- * Supports lookup by id, email, and cpf.
+ * Supports lookup by id, email, and **CPF**.
  *
  * @explanation
  * Use this interface to implement data access for users.
@@ -33,6 +33,7 @@ export interface IUser {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the user.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -56,6 +57,7 @@ export interface IUser {
    * ids. Returns an empty array for no matches.
    *
    * @param ids - The unique identifiers of the users.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -79,6 +81,7 @@ export interface IUser {
    * Callers check null for existence.
    *
    * @param email - The email of the user.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -92,16 +95,17 @@ export interface IUser {
 
   /**
    * @summary
-   * Retrieves the user with the provided cpf.
+   * Retrieves the user with the provided **CPF**.
    *
    * @remarks
    * Returns null when no user matches.
    *
    * @explanation
-   * Use this method to look up a user by cpf number.
+   * Use this method to look up a user by **CPF** number.
    * Callers check null for existence.
    *
-   * @param cpf - The cpf value object of the user.
+   * @param cpf - The **CPF** value object of the user.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -127,6 +131,7 @@ export interface IUser {
    * @param options - The pagination options.
    * @param options.limit - Maximum users to return.
    * @param options.offset - Starting offset.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -151,6 +156,7 @@ export interface IUser {
    * The persisted entity with its id is returned.
    *
    * @param user - The user to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -174,6 +180,7 @@ export interface IUser {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the user.
+   *
    * @returns Resolves when removed.
    *
    * @example

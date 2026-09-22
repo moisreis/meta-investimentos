@@ -29,8 +29,9 @@ export interface PositionPerformanceProps {
  * Represents the performance of a position on a given date.
  *
  * @remarks
- * Must have positionId, date, quotasHeld, patrimony, totals, cashFlowNet,
- * earnings, returnDaily, allocation. Instances immutable after creation.
+ * Must have positionId, date, quotasHeld, patrimony,
+ * totals, cashFlowNet, earnings, returnDaily.
+ * Instances immutable after creation.
  *
  * @explanation
  * Stores daily performance snapshot for a position.
@@ -44,6 +45,10 @@ export class PositionPerformance {
   private readonly _id?: EntityId
   private readonly props: Required<PositionPerformanceProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the position performance.
@@ -52,7 +57,8 @@ export class PositionPerformance {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare snapshots.
    *
    * @returns EntityId or undefined.
    *
@@ -72,7 +78,7 @@ export class PositionPerformance {
    * Valid EntityId.
    *
    * @explanation
-   * Use to associate performance with position.
+   * Identifies the position being measured on that day.
    *
    * @returns EntityId.
    *
@@ -92,7 +98,7 @@ export class PositionPerformance {
    * Required Date.
    *
    * @explanation
-   * Use for time-series queries.
+   * Fixes the trading day this snapshot refers to.
    *
    * @returns Performance Date.
    *
@@ -112,7 +118,7 @@ export class PositionPerformance {
    * QuotaQuantity value.
    *
    * @explanation
-   * Use for position sizing.
+   * Defines the total quota count on the snapshot date.
    *
    * @returns QuotaQuantity.
    *
@@ -132,7 +138,7 @@ export class PositionPerformance {
    * PositiveMoney value.
    *
    * @explanation
-   * Use for valuation.
+   * Net asset value of the position on that date.
    *
    * @returns PositiveMoney.
    *
@@ -152,7 +158,7 @@ export class PositionPerformance {
    * PositiveMoney value.
    *
    * @explanation
-   * Use for cash flow tracking.
+   * Cumulative applications up to the snapshot date.
    *
    * @returns PositiveMoney.
    *
@@ -172,7 +178,7 @@ export class PositionPerformance {
    * PositiveMoney value.
    *
    * @explanation
-   * Use for cash flow tracking.
+   * Cumulative redemptions up to the snapshot date.
    *
    * @returns PositiveMoney.
    *
@@ -192,7 +198,7 @@ export class PositionPerformance {
    * SignedMoney value.
    *
    * @explanation
-   * Use for net flow analysis.
+   * Net applications minus redemptions so far.
    *
    * @returns SignedMoney.
    *
@@ -212,7 +218,7 @@ export class PositionPerformance {
    * SignedMoney value.
    *
    * @explanation
-   * Use for profit/loss analysis.
+   * Cumulative earnings of the position to date.
    *
    * @returns SignedMoney.
    *
@@ -232,7 +238,7 @@ export class PositionPerformance {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for daily performance tracking.
+   * Single-day return of the position.
    *
    * @returns SignedPercentage.
    *
@@ -252,7 +258,7 @@ export class PositionPerformance {
    * Nullable SignedPercentage.
    *
    * @explanation
-   * Use for monthly performance reporting.
+   * Rolling monthly return of the position.
    *
    * @returns SignedPercentage or null.
    *
@@ -272,7 +278,7 @@ export class PositionPerformance {
    * Nullable SignedPercentage.
    *
    * @explanation
-   * Use for yearly performance reporting.
+   * Rolling yearly return of the position.
    *
    * @returns SignedPercentage or null.
    *
@@ -312,7 +318,7 @@ export class PositionPerformance {
    * SignedPercentage value.
    *
    * @explanation
-   * Use for portfolio weight analysis.
+   * Weight of the position within the portfolio.
    *
    * @returns SignedPercentage.
    *
@@ -332,7 +338,7 @@ export class PositionPerformance {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -343,6 +349,10 @@ export class PositionPerformance {
   get createdAt(): Date {
     return new Date(this.props.createdAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -370,26 +380,32 @@ export class PositionPerformance {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
-   * Creates a valid PositionPerformance from the provided properties.
+   * Creates a valid PositionPerformance from the props.
    *
    * @remarks
-   * Validates all required fields. Optional returns default to null.
-   * createdAt defaults to current time.
+   * Validates required fields. Optional returns
+   * default to null. createdAt defaults to current time.
    *
    * @explanation
    * Factory method to construct a valid PositionPerformance.
    * Throws ValidationError if validation fails.
    *
-   * @param props - Properties required to create the performance.
+   * @param props - Properties for the performance.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid PositionPerformance instance.
+   * @returns Valid Position snapshot.
    *
    * @example
    * const PERF = PositionPerformance.create({
-   *   positionId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   positionId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
    *   date: new Date("2026-01-01"),
    *   quotasHeld: QuotaQuantity.create("1000"),
    *   patrimony: PositiveMoney.create("50000"),
@@ -465,6 +481,10 @@ export class PositionPerformance {
     return new PositionPerformance(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this PositionPerformance with another for equality.
@@ -473,11 +493,11 @@ export class PositionPerformance {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two snapshots by their persisted identity.
    *
    * @param object - The PositionPerformance to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = PositionPerformance.create(PROPS, ID);

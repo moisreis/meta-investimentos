@@ -33,6 +33,7 @@ export interface IPosition {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the position.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -56,10 +57,12 @@ export interface IPosition {
    * portfolio. Returns an empty array for no matches.
    *
    * @param portfolioId - The unique identifier of the portfolio.
+   *
    * @returns The matching entries.
    *
    * @example
-   * const POSS = await POSITION_REPO.findAllByPortfolioId(PF_ID);
+   * const POSS = await POSITION_REPO
+   *   .findAllByPortfolioId(PF_ID);
    *
    * @author Moisés Reis
    *
@@ -78,7 +81,8 @@ export interface IPosition {
    * Use this method to list positions linked to several
    * portfolios. Returns an empty array for no matches.
    *
-   * @param portfolioIds - The unique identifiers of the portfolios.
+   * @param portfolioIds - The identifiers of the portfolios.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -103,6 +107,7 @@ export interface IPosition {
    * given funds. Returns an empty array for no matches.
    *
    * @param fundIds - The unique identifiers of the funds.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -128,6 +133,7 @@ export interface IPosition {
    *
    * @param portfolioId - The unique identifier of the portfolio.
    * @param fundId - The unique identifier of the fund.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -159,6 +165,7 @@ export interface IPosition {
    * version is bumped on every update.
    *
    * @param position - The position to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -182,6 +189,7 @@ export interface IPosition {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the position.
+   *
    * @returns Resolves when removed.
    *
    * @example

@@ -27,7 +27,7 @@ export interface WithdrawalProps {
  *
  * @explanation
  * Tracks withdrawal transactions with reversal support.
- * Links to position for FIFO allocation.
+ * Links to position for **FIFO** allocation.
  *
  * @author Moisés Reis
  *
@@ -37,6 +37,10 @@ export class Withdrawal {
   private readonly _id?: EntityId
   private readonly props: Required<WithdrawalProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the withdrawal.
@@ -45,7 +49,8 @@ export class Withdrawal {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare withdrawals.
    *
    * @returns EntityId or undefined.
    *
@@ -65,7 +70,7 @@ export class Withdrawal {
    * Valid EntityId.
    *
    * @explanation
-   * Use to associate withdrawal with position.
+   * Identifies the position the withdrawal is made against.
    *
    * @returns EntityId.
    *
@@ -85,7 +90,7 @@ export class Withdrawal {
    * Required Date.
    *
    * @explanation
-   * Use for time-series queries.
+   * Fixes the trading day of the withdrawal.
    *
    * @returns Withdrawal Date.
    *
@@ -105,7 +110,7 @@ export class Withdrawal {
    * PositiveMoney value.
    *
    * @explanation
-   * Use for cash flow tracking.
+   * Cash value paid out by the withdrawal.
    *
    * @returns PositiveMoney.
    *
@@ -125,7 +130,7 @@ export class Withdrawal {
    * QuotaQuantity value.
    *
    * @explanation
-   * Use for FIFO tax lot allocation.
+   * Quota count drawn for **FIFO** tax lot allocation.
    *
    * @returns QuotaQuantity.
    *
@@ -145,7 +150,7 @@ export class Withdrawal {
    * Nullable Date.
    *
    * @explanation
-   * Use to check if withdrawal was reversed.
+   * When set, marks the withdrawal as reversed.
    *
    * @returns Reversal Date or null.
    *
@@ -165,7 +170,7 @@ export class Withdrawal {
    * Nullable EntityId.
    *
    * @explanation
-   * Use for audit trail.
+   * Identifies the user who reversed the withdrawal.
    *
    * @returns EntityId or null.
    *
@@ -185,9 +190,9 @@ export class Withdrawal {
    * Required number, defaults to zero.
    *
    * @explanation
-   * Use to guard concurrent updates in the repository.
+   * Guards concurrent updates in the repository.
    *
-   * @returns The current version number.
+   * @returns Current version number.
    *
    * @author Moisés Reis
    *
@@ -205,7 +210,7 @@ export class Withdrawal {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -225,7 +230,7 @@ export class Withdrawal {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and cache invalidation.
+   * Shows when the withdrawal last changed.
    *
    * @returns Last update Date.
    *
@@ -236,6 +241,10 @@ export class Withdrawal {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -265,6 +274,10 @@ export class Withdrawal {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid Withdrawal from the provided properties.
@@ -280,11 +293,13 @@ export class Withdrawal {
    * @param props - Properties required to create the withdrawal.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid Withdrawal instance.
+   * @returns Valid Withdrawal.
    *
    * @example
    * const WITHDRAWAL = Withdrawal.create({
-   *   positionId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   positionId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
    *   date: new Date("2026-01-01T00:00:00.000Z"),
    *   amount: PositiveMoney.create("500.00"),
    *   quotas: QuotaQuantity.create("6.123"),
@@ -322,6 +337,10 @@ export class Withdrawal {
     return new Withdrawal(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Reverses this withdrawal.
@@ -331,16 +350,17 @@ export class Withdrawal {
    * Cannot reverse already reversed withdrawal.
    *
    * @explanation
-   * Use to cancel a withdrawal.
-   * Records reversal timestamp and user.
+   * Cancels the withdrawal and records who reversed it.
    *
    * @param userId - Reversing user EntityId.
    * @param now - Reversal timestamp (optional, defaults to now).
    *
-   * @returns New reversed Withdrawal instance.
+   * @returns Reversed Withdrawal.
    *
    * @example
-   * const REVERSED = withdrawal.reverse(EntityId.create("user-id"));
+   * const REVERSED = withdrawal.reverse(
+   *   EntityId.create("user-id")
+   * );
    *
    * @author Moisés Reis
    *
@@ -371,6 +391,10 @@ export class Withdrawal {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Withdrawal with another for equality.
@@ -379,11 +403,11 @@ export class Withdrawal {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two withdrawals by their persisted identity.
    *
    * @param object - The Withdrawal to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Withdrawal.create(PROPS, ID);

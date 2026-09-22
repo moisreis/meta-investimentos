@@ -12,10 +12,11 @@ export interface CheckingAccountProps {
  * Represents a checking account transaction of a bank account.
  *
  * @remarks
- * Must have bankAccountId, date, value. Instances immutable after creation.
+ * Must have bankAccountId, date, value.
+ * Instances immutable after creation.
  *
  * @explanation
- * Stores bank account transaction history.
+ * Records deposits and withdrawals of a bank account.
  * Supports value updates.
  *
  * @author Moisés Reis
@@ -26,6 +27,10 @@ export class CheckingAccount {
   private readonly _id?: EntityId
   private readonly props: Required<CheckingAccountProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the checking account.
@@ -34,7 +39,8 @@ export class CheckingAccount {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare checking accounts.
    *
    * @returns EntityId or undefined.
    *
@@ -54,7 +60,7 @@ export class CheckingAccount {
    * Valid EntityId.
    *
    * @explanation
-   * Use to associate transaction with bank account.
+   * Identifies the bank account this transaction belongs to.
    *
    * @returns EntityId.
    *
@@ -74,7 +80,7 @@ export class CheckingAccount {
    * Required Date.
    *
    * @explanation
-   * Use for time-series queries.
+   * Orders transactions for time-series queries.
    *
    * @returns Transaction Date.
    *
@@ -94,7 +100,7 @@ export class CheckingAccount {
    * SignedMoney value.
    *
    * @explanation
-   * Use for cash flow tracking.
+   * Signed values track credits and debits on the account.
    *
    * @returns SignedMoney.
    *
@@ -105,6 +111,10 @@ export class CheckingAccount {
   get value(): SignedMoney {
     return this.props.value
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -128,9 +138,13 @@ export class CheckingAccount {
     this.props = Object.freeze(props)
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
-   * Creates a valid CheckingAccount from the provided properties.
+   * Creates a valid CheckingAccount from the props.
    *
    * @remarks
    * Validates bankAccountId, date, value.
@@ -139,14 +153,16 @@ export class CheckingAccount {
    * Factory method to construct a valid CheckingAccount.
    * Throws ValidationError if validation fails.
    *
-   * @param props - Properties required to create the transaction.
+   * @param props - Properties required to create the account.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid CheckingAccount instance.
+   * @returns Valid CheckingAccount.
    *
    * @example
    * const TX = CheckingAccount.create({
-   *   bankAccountId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   bankAccountId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
    *   date: new Date("2026-01-01T00:00:00.000Z"),
    *   value: SignedMoney.create("-123.45"),
    * });
@@ -178,6 +194,10 @@ export class CheckingAccount {
     return new CheckingAccount(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Updates the value of this checking account transaction.
@@ -186,15 +206,17 @@ export class CheckingAccount {
    * Returns new CheckingAccount instance with updated value.
    *
    * @explanation
-   * Use to correct transaction amounts.
+   * Corrects a posted amount without touching other fields.
    * Original instance unchanged.
    *
    * @param value - New SignedMoney value.
    *
-   * @returns New CheckingAccount instance with updated value.
+   * @returns Updated CheckingAccount.
    *
    * @example
-   * const UPDATED = tx.updateValue(SignedMoney.create("-150.00"));
+   * const UPDATED = tx.updateValue(
+   *   SignedMoney.create("-150.00")
+   * );
    *
    * @author Moisés Reis
    *
@@ -214,6 +236,10 @@ export class CheckingAccount {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this CheckingAccount with another for equality.
@@ -222,11 +248,11 @@ export class CheckingAccount {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two transactions by their persisted identity.
    *
    * @param object - The CheckingAccount to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = CheckingAccount.create(PROPS, ID);

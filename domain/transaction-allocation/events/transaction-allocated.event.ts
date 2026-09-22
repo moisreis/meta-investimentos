@@ -1,7 +1,4 @@
-import {
-  EntityId,
-  type QuotaQuantity,
-} from "@/value-objects"
+import { EntityId, type QuotaQuantity } from "@/value-objects"
 import { ValidationError } from "@/errors"
 
 export interface TransactionAllocatedProps {
@@ -21,7 +18,7 @@ export interface TransactionAllocatedProps {
  * Carries consumed quotas from application to withdrawal.
  *
  * @explanation
- * Use this event to react to FIFO quota allocation.
+ * Use this event to react to **FIFO** quota allocation.
  * It links applications to withdrawals for tax
  * purposes.
  *
@@ -63,10 +60,7 @@ export class TransactionAllocated {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(
-    props: Required<TransactionAllocatedProps>,
-    id?: string
-  ) {
+  private constructor(props: Required<TransactionAllocatedProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,

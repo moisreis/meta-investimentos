@@ -10,7 +10,8 @@ interface CalculatePortfolioMarketSpreadProps {
  * Calculates the market spread for a Portfolio.
  *
  * @remarks
- * Subtracts monthly market index (Ibovespa) from portfolio return.
+ * Subtracts the monthly **Ibovespa** market index from
+ * the portfolio return.
  * Result is rounded to 2 decimal places.
  *
  * @explanation
@@ -19,8 +20,9 @@ interface CalculatePortfolioMarketSpreadProps {
  * the market index.
  *
  * @param portfolioReturn - Portfolio return for period (%).
- * @param marketRate - Monthly market index Ibovespa (%).
- * @returns SignedPercentage instance.
+ * @param marketRate - Monthly market index **Ibovespa** (%).
+ *
+ * @returns The market spread.
  *
  * @example
  * const RESULT = calculatePortfolioMarketSpread({

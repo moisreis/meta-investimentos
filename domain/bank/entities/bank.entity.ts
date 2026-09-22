@@ -27,6 +27,10 @@ export class Bank {
   private readonly _id?: EntityId
   private readonly props: Required<BankProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the bank.
@@ -35,7 +39,8 @@ export class Bank {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the identity used by the repository
+   * and by `equals` to compare banks.
    *
    * @returns EntityId or undefined.
    *
@@ -55,7 +60,7 @@ export class Bank {
    * Required string (e.g., "001").
    *
    * @explanation
-   * Use for bank identification in transactions.
+   * Identifies the bank in financial transactions.
    *
    * @returns Code string.
    *
@@ -75,7 +80,7 @@ export class Bank {
    * Required string.
    *
    * @explanation
-   * Use for display and identification.
+   * Shown in dropdowns and bank identifiers.
    *
    * @returns Name string.
    *
@@ -95,7 +100,7 @@ export class Bank {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -115,7 +120,7 @@ export class Bank {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and cache invalidation.
+   * Shows when the bank last changed.
    *
    * @returns Last update Date.
    *
@@ -126,6 +131,10 @@ export class Bank {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -152,6 +161,10 @@ export class Bank {
       updatedAt: new Date(props.updatedAt),
     })
   }
+
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
 
   /**
    * @summary
@@ -198,6 +211,10 @@ export class Bank {
     return new Bank(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Renames this bank.
@@ -212,7 +229,7 @@ export class Bank {
    * @param name - New bank name.
    * @param now - Update timestamp (optional, defaults to now).
    *
-   * @returns New Bank instance with updated name.
+   * @returns Bank with updated name.
    *
    * @example
    * const RENAMED = bank.rename("Banco do Brasil S.A.");
@@ -252,7 +269,7 @@ export class Bank {
    * @param code - New bank code.
    * @param now - Update timestamp (optional, defaults to now).
    *
-   * @returns New Bank instance with updated code.
+   * @returns Bank with updated code.
    *
    * @example
    * const RECODED = bank.changeCode("002");
@@ -278,6 +295,10 @@ export class Bank {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Bank with another for equality.
@@ -286,11 +307,11 @@ export class Bank {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two banks by their persisted identity.
    *
    * @param object - The Bank to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Bank.create(PROPS, ID);

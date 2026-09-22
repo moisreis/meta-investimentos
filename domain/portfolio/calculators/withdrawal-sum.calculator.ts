@@ -18,6 +18,7 @@ interface CalculatePortfolioWithdrawalSumProps {
  * one position's withdrawal amount.
  *
  * @param withdrawal - Array of position withdrawal amounts.
+ *
  * @returns PositiveMoney instance.
  *
  * @example

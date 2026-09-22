@@ -6,7 +6,7 @@ interface CalculatePortfolioApplicationQuotasSumProps {
 
 /**
  * @summary
- * Calculates total portfolio application quotas across positions.
+ * Calculates the portfolio's total application quotas.
  *
  * @remarks
  * Sums application quota quantities from every position.
@@ -17,7 +17,8 @@ interface CalculatePortfolioApplicationQuotasSumProps {
  * through applications in a portfolio at period end. Each
  * entry represents one position's application quota quantity.
  *
- * @param quotaQuantity - Array of position application quota quantities.
+ * @param quotaQuantity - Application quotas per position.
+ *
  * @returns QuotaQuantity instance.
  *
  * @example

@@ -14,9 +14,10 @@ interface CalculateApplicationSumProps {
  *
  * @explanation
  * Use this function to aggregate all applications made to a
- * position during a period. Each entry represents one application.
+ * position during a period. Each entry is one application.
  *
  * @param application - Array of application amounts.
+ *
  * @returns PositiveMoney instance.
  *
  * @example

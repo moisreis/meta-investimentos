@@ -20,9 +20,10 @@ interface CalculatePortfolioDailyFactorProps {
  * portfolio growth factor that feeds into Time-Weighted
  * Return. It adjusts the current day value by cash flow.
  *
- * @param currentDayPortfolioValue - Current day total portfolio value.
+ * @param currentDayPortfolioValue - Current portfolio value.
  * @param currentDayCashFlow - Current day net cash flow.
- * @param previousDayPortfolioValue - Previous day total portfolio value.
+ * @param previousDayPortfolioValue - Previous portfolio value.
+ *
  * @returns GrowthFactor instance.
  *
  * @example

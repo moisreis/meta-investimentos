@@ -3,8 +3,7 @@ import type { EntityId } from "@/value-objects"
 
 /**
  * @summary
- * Defines the repository contract for `PortfolioPerformance`
- * entities.
+ * Defines the repository contract for `PortfolioPerformance`.
  *
  * @remarks
  * An `IPortfolioPerformance` persists, retrieves, and removes
@@ -36,6 +35,7 @@ export interface IPortfolioPerformance {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the performance.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -59,6 +59,7 @@ export interface IPortfolioPerformance {
    * portfolio. Returns an empty array for no matches.
    *
    * @param portfolioId - The unique identifier of the portfolio.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -81,7 +82,8 @@ export interface IPortfolioPerformance {
    * Use this method to list performances linked to several
    * portfolios. Returns an empty array for no matches.
    *
-   * @param portfolioIds - The unique identifiers of the portfolios.
+   * @param portfolioIds - The identifiers of the portfolios.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -98,8 +100,7 @@ export interface IPortfolioPerformance {
 
   /**
    * @summary
-   * Retrieves the performance of the portfolio on the
-   * provided date.
+   * Retrieves the portfolio's performance on a date.
    *
    * @remarks
    * Returns null when no performance matches.
@@ -110,6 +111,7 @@ export interface IPortfolioPerformance {
    *
    * @param portfolioId - The unique identifier of the portfolio.
    * @param date - The date of the performance.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -137,6 +139,7 @@ export interface IPortfolioPerformance {
    * a portfolio. Callers check null for no data.
    *
    * @param portfolioId - The unique identifier of the portfolio.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -164,7 +167,8 @@ export interface IPortfolioPerformance {
    * Use this method to get the most recent performance of
    * every given portfolio. Returns an empty array for none.
    *
-   * @param portfolioIds - The unique identifiers of the portfolios.
+   * @param portfolioIds - The identifiers of the portfolios.
+   *
    * @returns The latest snapshots.
    *
    * @example
@@ -192,6 +196,7 @@ export interface IPortfolioPerformance {
    * The persisted entity with its id is returned.
    *
    * @param portfolioPerformance - The performance to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -217,6 +222,7 @@ export interface IPortfolioPerformance {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the performance.
+   *
    * @returns Resolves when removed.
    *
    * @example

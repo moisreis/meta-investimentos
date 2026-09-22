@@ -13,7 +13,8 @@ export interface QuotaProps {
  * Represents the unit price of a fund on a given date.
  *
  * @remarks
- * Must have fundId, date, price. Instances immutable after creation.
+ * Must have fundId, date, price.
+ * Instances immutable after creation.
  *
  * @explanation
  * Stores daily fund quota prices for valuation and returns.
@@ -27,6 +28,10 @@ export class Quota {
   private readonly _id?: EntityId
   private readonly props: Required<QuotaProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the quota.
@@ -35,7 +40,8 @@ export class Quota {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare quotas.
    *
    * @returns EntityId or undefined.
    *
@@ -55,7 +61,7 @@ export class Quota {
    * Valid EntityId.
    *
    * @explanation
-   * Use to associate quota with fund.
+   * Identifies the fund the quota price belongs to.
    *
    * @returns EntityId.
    *
@@ -75,7 +81,7 @@ export class Quota {
    * Required Date.
    *
    * @explanation
-   * Use for time-series queries.
+   * Fixes the trading day of the quoted price.
    *
    * @returns Quota Date.
    *
@@ -95,7 +101,7 @@ export class Quota {
    * QuotaPrice value.
    *
    * @explanation
-   * Use for valuation and return calculations.
+   * Unit value used for valuation and returns.
    *
    * @returns QuotaPrice.
    *
@@ -115,7 +121,7 @@ export class Quota {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -126,6 +132,10 @@ export class Quota {
   get createdAt(): Date {
     return new Date(this.props.createdAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -153,6 +163,10 @@ export class Quota {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid Quota from the provided properties.
@@ -167,11 +181,13 @@ export class Quota {
    * @param props - Properties required to create the quota.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid Quota instance.
+   * @returns Valid Quota.
    *
    * @example
    * const QUOTA = Quota.create({
-   *   fundId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   fundId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
    *   date: new Date("2026-01-01"),
    *   price: QuotaPrice.create("4.50"),
    * });
@@ -201,6 +217,10 @@ export class Quota {
     return new Quota(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Updates the price of this quota.
@@ -209,15 +229,17 @@ export class Quota {
    * Returns new Quota instance with updated price.
    *
    * @explanation
-   * Use to correct or update quota prices.
+   * Corrects or updates the quoted unit price.
    * Original instance unchanged.
    *
    * @param price - New QuotaPrice.
    *
-   * @returns New Quota instance with updated price.
+   * @returns Updated Quota.
    *
    * @example
-   * const UPDATED = quota.updatePrice(QuotaPrice.create("4.55"));
+   * const UPDATED = quota.updatePrice(
+   *   QuotaPrice.create("4.55")
+   * );
    *
    * @author Moisés Reis
    *
@@ -237,6 +259,10 @@ export class Quota {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Quota with another for equality.
@@ -245,11 +271,11 @@ export class Quota {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two quotas by their persisted identity.
    *
    * @param object - The Quota to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Quota.create(PROPS, ID);

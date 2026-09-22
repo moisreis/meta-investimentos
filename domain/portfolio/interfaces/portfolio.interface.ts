@@ -33,6 +33,7 @@ export interface IPortfolio {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the portfolio.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -56,6 +57,7 @@ export interface IPortfolio {
    * identifiers. Returns an empty array for no matches.
    *
    * @param ids - The unique identifiers of the portfolios.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -79,6 +81,7 @@ export interface IPortfolio {
    * user. Returns an empty array for no matches.
    *
    * @param userId - The unique identifier of the user.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -104,6 +107,7 @@ export interface IPortfolio {
    * @param options - The pagination options.
    * @param options.limit - Maximum portfolios to return.
    * @param options.offset - Starting offset.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -128,6 +132,7 @@ export interface IPortfolio {
    * The persisted entity with its id is returned.
    *
    * @param portfolio - The portfolio to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -151,6 +156,7 @@ export interface IPortfolio {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the portfolio.
+   *
    * @returns Resolves when removed.
    *
    * @example

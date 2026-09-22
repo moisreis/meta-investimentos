@@ -22,6 +22,7 @@ interface CalculateEarningsProps {
  * @param currentBalance - Balance at period end.
  * @param initialBalance - Balance at period start.
  * @param cashFlow - Net cash flow during period.
+ *
  * @returns SignedMoney instance.
  *
  * @example

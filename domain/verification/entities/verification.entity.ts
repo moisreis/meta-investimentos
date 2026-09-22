@@ -11,7 +11,7 @@ interface VerificationProps {
 
 /**
  * @summary
- * Represents a one-time verification value tied to an identifier.
+ * Represents a one-time verification value for an identifier.
  *
  * @remarks
  * Must have identifier, value, and expiration date.
@@ -30,15 +30,20 @@ export class Verification {
   private readonly _id?: EntityId
   private readonly props: Required<VerificationProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the verification.
    *
    * @remarks
-   * Returns undefined if not yet persisted.
+   * Undefined if not yet persisted.
    *
    * @explanation
-   * Use this to get the EntityId for persistence or comparison.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare verifications.
    *
    * @returns EntityId or undefined.
    *
@@ -58,9 +63,9 @@ export class Verification {
    * The identifier string (e.g., "reset-password:email").
    *
    * @explanation
-   * Use this to look up verifications by their target.
+   * Keys the verification to its target, such as a user email.
    *
-   * @returns The identifier string.
+   * @returns Identifier string.
    *
    * @author Moisés Reis
    *
@@ -78,9 +83,9 @@ export class Verification {
    * The raw token or code value.
    *
    * @explanation
-   * Use this to verify user-provided tokens.
+   * Expected value compared against user-provided tokens.
    *
-   * @returns The verification value string.
+   * @returns Verification value.
    *
    * @author Moisés Reis
    *
@@ -98,7 +103,7 @@ export class Verification {
    * The Date after which the verification is invalid.
    *
    * @explanation
-   * Use this to check if a verification is still valid.
+   * Instant after which the verification is rejected.
    *
    * @returns Expiration Date.
    *
@@ -118,7 +123,7 @@ export class Verification {
    * Defaults to current time if not provided.
    *
    * @explanation
-   * Use this for audit trails and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -138,7 +143,7 @@ export class Verification {
    * Defaults to current time if not provided.
    *
    * @explanation
-   * Use this for audit trails.
+   * Shows when the verification last changed.
    *
    * @returns Last update Date.
    *
@@ -149,6 +154,10 @@ export class Verification {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -177,6 +186,10 @@ export class Verification {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid Verification from the provided properties.
@@ -187,12 +200,12 @@ export class Verification {
    *
    * @explanation
    * Factory method to construct a valid Verification.
-   * Throws ValidationError if required fields are missing or blank.
+   * Throws ValidationError if required fields are missing.
    *
-   * @param props - Properties required to create the verification.
+   * @param props - Properties to create the verification.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid Verification instance.
+   * @returns Valid Verification.
    *
    * @example
    * const VERIFICATION = Verification.create({
@@ -227,6 +240,10 @@ export class Verification {
     return new Verification(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Verification with another for equality.
@@ -235,12 +252,11 @@ export class Verification {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use this to check if two Verification instances represent
-   * the same persisted entity.
+   * Compares two verifications by their persisted identity.
    *
    * @param object - The Verification to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Verification.create(PROPS, ID);

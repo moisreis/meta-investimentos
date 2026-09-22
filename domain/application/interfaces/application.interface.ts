@@ -33,12 +33,14 @@ export interface ApplicationTotals {
  * Defines the repository contract for `Application` entities.
  *
  * @remarks
- * An `IApplication` persists, retrieves, and removes applications.
- * Supports lookup by id, position id, and date period.
+ * An `IApplication` persists, retrieves, and
+ * removes applications. Supports lookup by id,
+ * position id, and date period.
  *
  * @explanation
  * Use this interface to implement data access for applications.
- * Persistence implementations map rows to `Application` entities.
+ * Persistence implementations map rows to
+ * `Application` entities.
  *
  * @example
  * const APP = await APP_REPO.findById(ID);
@@ -60,6 +62,7 @@ export interface IApplication {
    * its unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the application.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -83,6 +86,7 @@ export interface IApplication {
    * position. Returns an empty array for no matches.
    *
    * @param positionId - The unique identifier of the position.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -96,8 +100,7 @@ export interface IApplication {
 
   /**
    * @summary
-   * Retrieves all applications of the position dated within
-   * the provided period.
+   * Retrieves the position's applications in the period.
    *
    * @remarks
    * The period is inclusive of both dates. Returns an
@@ -110,6 +113,7 @@ export interface IApplication {
    * @param positionId - The unique identifier of the position.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -128,8 +132,7 @@ export interface IApplication {
 
   /**
    * @summary
-   * Retrieves all applications of the provided positions
-   * dated within the given period.
+   * Retrieves the positions' applications in the period.
    *
    * @remarks
    * The period is inclusive of both dates. Returns an
@@ -142,6 +145,7 @@ export interface IApplication {
    * @param positionIds - The identifiers of the positions.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -173,7 +177,8 @@ export interface IApplication {
    * @param positionId - The identifier of the position.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
-   * @returns The summed totals or `null` fields.
+   *
+   * @returns Summed totals or `null`.
    *
    * @example
    * const TOTALS = await APP_REPO
@@ -202,6 +207,7 @@ export interface IApplication {
    * The persisted entity with its id is returned.
    *
    * @param application - The application to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -225,6 +231,7 @@ export interface IApplication {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the application.
+   *
    * @returns Resolves when removed.
    *
    * @example

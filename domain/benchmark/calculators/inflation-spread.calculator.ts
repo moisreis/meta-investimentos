@@ -10,7 +10,8 @@ interface CalculatePortfolioInflationSpreadProps {
  * Calculates the inflation spread for a Portfolio.
  *
  * @remarks
- * Subtracts monthly inflation index (IPCA) from portfolio return.
+ * Subtracts the monthly **IPCA** inflation index from
+ * the portfolio return.
  * Result is rounded to 2 decimal places.
  *
  * @explanation
@@ -18,8 +19,9 @@ interface CalculatePortfolioInflationSpreadProps {
  * inflation. Positive means portfolio outperformed inflation.
  *
  * @param portfolioReturn - Portfolio return for period (%).
- * @param inflationRate - Monthly inflation index IPCA (%).
- * @returns SignedPercentage instance.
+ * @param inflationRate - Monthly inflation index **IPCA** (%).
+ *
+ * @returns The inflation spread.
  *
  * @example
  * const RESULT = calculatePortfolioInflationSpread({

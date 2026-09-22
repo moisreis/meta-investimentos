@@ -32,15 +32,18 @@ interface CalculateDailyFactorProps {
  * @param currentDayCashFlow - Current day net cash flow.
  * @param previousDayQuotaValue - Previous day quota price.
  * @param previousDayQuotaQuantity - Previous day quota quantity.
+ *
  * @returns GrowthFactor instance.
  *
  * @example
  * const RESULT = calculateDailyFactor({
  *   currentDayQuotaValue: QuotaPrice.create("4.424818"),
- *   currentDayQuotaQuantity: QuotaQuantity.create("342021.111191"),
+ *   currentDayQuotaQuantity:
+ *     QuotaQuantity.create("342021.111191"),
  *   currentDayCashFlow: SignedMoney.create("0"),
  *   previousDayQuotaValue: QuotaPrice.create("4.423720"),
- *   previousDayQuotaQuantity: QuotaQuantity.create("342021.111191"),
+ *   previousDayQuotaQuantity:
+ *     QuotaQuantity.create("342021.111191"),
  * });
  *
  * @author Moisés Reis

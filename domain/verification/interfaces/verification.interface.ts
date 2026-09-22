@@ -11,7 +11,8 @@ import type { EntityId } from "@/value-objects"
  *
  * @explanation
  * Use this interface to implement data access for verifications.
- * Persistence implementations map rows to `Verification` entities.
+ * Persistence implementations map rows to
+ * `Verification` entities.
  *
  * @example
  * const VER = await VERIFICATION_REPO.findById(ID);
@@ -33,6 +34,7 @@ export interface IVerification {
    * its unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the verification.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -56,6 +58,7 @@ export interface IVerification {
    * identifier. Returns an empty array for no matches.
    *
    * @param identifier - The identifier of the verifications.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -80,6 +83,7 @@ export interface IVerification {
    * several identifiers. Returns an empty array for no matches.
    *
    * @param identifiers - The identifiers of the verifications.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -105,6 +109,7 @@ export interface IVerification {
    * The persisted entity with its id is returned.
    *
    * @param verification - The verification to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -128,6 +133,7 @@ export interface IVerification {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the verification.
+   *
    * @returns Resolves when removed.
    *
    * @example

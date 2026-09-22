@@ -17,20 +17,7 @@ import { ValidationError } from "@/errors"
  */
 export type UserRole = "USER" | "MANAGER"
 
-/**
- * @summary
- * Email validation pattern.
- *
- * @remarks
- * Requires local part, @, and domain with at least one dot.
- *
- * @explanation
- * Internal regex for email format validation.
- *
- * @author Moisés Reis
- *
- * @date 2026-09-13
- */
+// Matches a valid email format for user validation.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export interface UserProps {
@@ -51,12 +38,13 @@ export interface UserProps {
  * Represents an application user.
  *
  * @remarks
- * Must have name, valid email, first/last name, CPF.
+ * Must have name, valid email, first/last name, **CPF**.
  * Instances are immutable after creation.
  *
  * @explanation
  * Core user entity for authentication and profiles.
- * Provides masked CPF for privacy and role-based access.
+ * It holds registration data and role-based access.
+ * Provides a masked **CPF** to protect personal data.
  *
  * @author Moisés Reis
  *
@@ -66,6 +54,10 @@ export class User {
   private readonly _id?: EntityId
   private readonly props: Required<UserProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the user.
@@ -74,7 +66,8 @@ export class User {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare users.
    *
    * @returns EntityId or undefined.
    *
@@ -94,7 +87,7 @@ export class User {
    * The complete display name.
    *
    * @explanation
-   * Use for display and identification.
+   * Identifies the user in lists and profile views.
    *
    * @returns Full name string.
    *
@@ -114,7 +107,7 @@ export class User {
    * Validated email address.
    *
    * @explanation
-   * Use for communication and login.
+   * Used for login and notification delivery.
    *
    * @returns Email string.
    *
@@ -168,15 +161,15 @@ export class User {
 
   /**
    * @summary
-   * Returns the CPF of the user.
+   * Returns the **CPF** of the user.
    *
    * @remarks
-   * Validated CPF value object.
+   * Validated **CPF** value object.
    *
    * @explanation
-   * Use for Brazilian tax identification.
+   * Used for Brazilian tax identification.
    *
-   * @returns CPF value object.
+   * @returns **CPF** value object.
    *
    * @author Moisés Reis
    *
@@ -188,15 +181,15 @@ export class User {
 
   /**
    * @summary
-   * Returns a masked representation of the user's CPF.
+   * Returns a masked representation of the user's **CPF**.
    *
    * @remarks
    * Shows first 3 and last 2 digits only.
    *
    * @explanation
-   * Use for display while protecting PII.
+   * Use for display while protecting personal data.
    *
-   * @returns Masked CPF string.
+   * @returns Masked **CPF** string.
    *
    * @author Moisés Reis
    *
@@ -275,7 +268,7 @@ export class User {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -295,7 +288,7 @@ export class User {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and cache invalidation.
+   * Shows when the profile last changed.
    *
    * @returns Last update Date.
    *
@@ -306,6 +299,10 @@ export class User {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -333,12 +330,16 @@ export class User {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid User from the provided properties.
    *
    * @remarks
-   * Validates name, email, firstName, lastName, CPF, role.
+   * Validates name, email, firstName, lastName, **CPF**, role.
    * Defaults applied for optional fields.
    *
    * @explanation
@@ -401,6 +402,10 @@ export class User {
     return new User(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Updates the profile fields of this user.
@@ -415,7 +420,7 @@ export class User {
    * @param props - Profile fields to update.
    * @param now - Update timestamp (optional, defaults to now).
    *
-   * @returns New User instance with updated profile.
+   * @returns Updated User instance.
    *
    * @example
    * const UPDATED = user.updateProfile({
@@ -466,6 +471,10 @@ export class User {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this User with another for equality.
@@ -474,11 +483,11 @@ export class User {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two User instances represent same entity.
+   * Compares two users by their persisted identity.
    *
    * @param object - The User to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = User.create(PROPS, ID);

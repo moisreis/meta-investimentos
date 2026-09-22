@@ -84,10 +84,7 @@ export class PortfolioRegistered {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(
-    props: Required<PortfolioRegisteredProps>,
-    id?: string
-  ) {
+  private constructor(props: Required<PortfolioRegisteredProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -178,14 +175,10 @@ export class PortfolioRegistered {
     const MAX = props.maxAllocation.value
 
     if (MIN.gt(TARGET)) {
-      throw new ValidationError(
-        "`PortfolioRegistered` min is above target."
-      )
+      throw new ValidationError("`PortfolioRegistered` min is above target.")
     }
     if (TARGET.gt(MAX)) {
-      throw new ValidationError(
-        "`PortfolioRegistered` target is above max."
-      )
+      throw new ValidationError("`PortfolioRegistered` target is above max.")
     }
 
     const NOW = new Date()

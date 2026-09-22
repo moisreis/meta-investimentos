@@ -32,6 +32,10 @@ export class Position {
   private readonly _id?: EntityId
   private readonly props: Required<PositionProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the position.
@@ -40,7 +44,8 @@ export class Position {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare positions.
    *
    * @returns EntityId or undefined.
    *
@@ -60,7 +65,7 @@ export class Position {
    * Valid EntityId.
    *
    * @explanation
-   * Use to associate position with portfolio.
+   * Identifies the portfolio that holds the fund.
    *
    * @returns EntityId.
    *
@@ -80,7 +85,7 @@ export class Position {
    * Valid EntityId.
    *
    * @explanation
-   * Use to identify the fund.
+   * Identifies the fund held by the position.
    *
    * @returns EntityId.
    *
@@ -100,7 +105,7 @@ export class Position {
    * Nullable PositiveMoney.
    *
    * @explanation
-   * Use for performance baseline.
+   * Starting value used as the performance baseline.
    *
    * @returns PositiveMoney or null.
    *
@@ -120,9 +125,9 @@ export class Position {
    * Nullable Date.
    *
    * @explanation
-   * Use for performance period start.
+   * Marks the start of the performance period.
    *
-   * @returns Initial balance Date or null.
+   * @returns Initial balance or null.
    *
    * @author Moisés Reis
    *
@@ -142,7 +147,7 @@ export class Position {
    * Number, defaults to 0.
    *
    * @explanation
-   * Use for concurrent update detection.
+   * Guards concurrent updates in the repository.
    *
    * @returns Version number.
    *
@@ -162,7 +167,7 @@ export class Position {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -182,7 +187,7 @@ export class Position {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and cache invalidation.
+   * Shows when the position last changed.
    *
    * @returns Last update Date.
    *
@@ -193,6 +198,10 @@ export class Position {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -223,13 +232,18 @@ export class Position {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid Position from the provided properties.
    *
    * @remarks
    * Validates portfolioId and fundId.
-   * Optional fields default; version defaults to 0; timestamps to now.
+   * Optional fields default; version defaults to 0;
+   * timestamps to now.
    *
    * @explanation
    * Factory method to construct a valid Position.
@@ -238,12 +252,16 @@ export class Position {
    * @param props - Properties required to create the position.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid Position instance.
+   * @returns Valid Position.
    *
    * @example
    * const POSITION = Position.create({
-   *   portfolioId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
-   *   fundId: EntityId.create("f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"),
+   *   portfolioId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
+   *   fundId: EntityId.create(
+   *     "f8d4d5e9-1c2b-4a3b-8c1d-2e4f6a8b0c1d"
+   *   ),
    * });
    *
    * @author Moisés Reis
@@ -272,6 +290,10 @@ export class Position {
     return new Position(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Sets the initial balance of this position.
@@ -281,14 +303,14 @@ export class Position {
    * Version unchanged (bumped by repository on persist).
    *
    * @explanation
-   * Use to record starting balance for performance.
-   * Requires persisted position (has ID).
+   * Records the starting balance for performance.
+   * Requires a persisted position (has an ID).
    *
    * @param initialBalance - New initial PositiveMoney.
    * @param date - Effective date of initial balance.
    * @param now - Update timestamp (optional, defaults to now).
    *
-   * @returns New Position instance with updated initial balance.
+   * @returns Updated Position.
    *
    * @example
    * const UPDATED = position.setInitialBalance(
@@ -332,6 +354,10 @@ export class Position {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Position with another for equality.
@@ -340,11 +366,11 @@ export class Position {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two positions by their persisted identity.
    *
    * @param object - The Position to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Position.create(PROPS, ID);

@@ -33,6 +33,7 @@ export interface ISession {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the session.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -56,6 +57,7 @@ export interface ISession {
    * authentication token. Callers check null for existence.
    *
    * @param token - The token of the session.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -79,6 +81,7 @@ export interface ISession {
    * user. Returns an empty array for no matches.
    *
    * @param userId - The id of the user.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -102,6 +105,7 @@ export interface ISession {
    * users. Returns an empty array for no matches.
    *
    * @param userIds - The ids of the users.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -127,6 +131,7 @@ export interface ISession {
    * The persisted entity with its id is returned.
    *
    * @param session - The session to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -150,6 +155,7 @@ export interface ISession {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the session.
+   *
    * @returns Resolves when removed.
    *
    * @example

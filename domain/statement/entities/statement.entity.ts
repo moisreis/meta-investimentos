@@ -30,6 +30,10 @@ export class Statement {
   private readonly _id?: EntityId
   private readonly props: Required<StatementProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the statement.
@@ -38,7 +42,8 @@ export class Statement {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare statements.
    *
    * @returns EntityId or undefined.
    *
@@ -58,7 +63,7 @@ export class Statement {
    * Nullable EntityId.
    *
    * @explanation
-   * Use to associate statement with portfolio.
+   * Identifies the portfolio the statement reports on.
    *
    * @returns EntityId or null.
    *
@@ -78,7 +83,7 @@ export class Statement {
    * Required Date.
    *
    * @explanation
-   * Use for period filtering.
+   * Earliest date of the reported period.
    *
    * @returns Period start Date.
    *
@@ -98,7 +103,7 @@ export class Statement {
    * Required Date.
    *
    * @explanation
-   * Use for period filtering.
+   * Latest date of the reported period.
    *
    * @returns Period end Date.
    *
@@ -118,7 +123,7 @@ export class Statement {
    * Required string URL.
    *
    * @explanation
-   * Use to download or view statement.
+   * Location of the generated statement document.
    *
    * @returns File URL string.
    *
@@ -138,7 +143,7 @@ export class Statement {
    * Nullable EntityId.
    *
    * @explanation
-   * Use for audit trail.
+   * Tracks who requested the statement.
    *
    * @returns EntityId or null.
    *
@@ -158,7 +163,7 @@ export class Statement {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -169,6 +174,10 @@ export class Statement {
   get createdAt(): Date {
     return new Date(this.props.createdAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -197,6 +206,10 @@ export class Statement {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid Statement from the provided properties.
@@ -212,7 +225,7 @@ export class Statement {
    * @param props - Properties required to create the statement.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid Statement instance.
+   * @returns Valid Statement.
    *
    * @example
    * const STATEMENT = Statement.create({
@@ -253,6 +266,10 @@ export class Statement {
     return new Statement(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Statement with another for equality.
@@ -261,11 +278,11 @@ export class Statement {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two Statement instances represent same entity.
+   * Compares two statements by their persisted identity.
    *
    * @param object - The Statement to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Statement.create(PROPS, ID);

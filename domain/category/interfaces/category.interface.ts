@@ -33,6 +33,7 @@ export interface ICategory {
    * unique identifier. Callers check null for existence.
    *
    * @param id - The unique identifier of the category.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -56,6 +57,7 @@ export interface ICategory {
    * display name. Callers check null for existence.
    *
    * @param name - The name of the category.
+   *
    * @returns The entry or `null`.
    *
    * @example
@@ -81,6 +83,7 @@ export interface ICategory {
    * @param options - The pagination options.
    * @param options.limit - Maximum categories to return.
    * @param options.offset - Starting offset.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -105,6 +108,7 @@ export interface ICategory {
    * no matches.
    *
    * @param ids - The unique identifiers of the categories.
+   *
    * @returns The matching entries.
    *
    * @example
@@ -129,6 +133,7 @@ export interface ICategory {
    * The persisted entity with its id is returned.
    *
    * @param category - The category to persist.
+   *
    * @returns The persisted entry.
    *
    * @example
@@ -152,6 +157,7 @@ export interface ICategory {
    * The promise resolves once the operation completes.
    *
    * @param id - The unique identifier of the category.
+   *
    * @returns Resolves when removed.
    *
    * @example

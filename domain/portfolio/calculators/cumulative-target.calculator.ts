@@ -19,8 +19,9 @@ interface CalculatePortfolioCumulativeTargetProps {
  * target return over multiple months. It compounds each
  * monthly target factor in chronological order.
  *
- * @param monthlyTargets - Monthly Target factors in chronological order.
- * @returns SignedPercentage instance.
+ * @param monthlyTargets - Monthly Target factors in
+ *   chronological order.
+ * @returns The cumulative target.
  *
  * @example
  * const RESULT = calculatePortfolioCumulativeTarget({

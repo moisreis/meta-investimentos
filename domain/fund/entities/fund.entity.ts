@@ -18,11 +18,12 @@ export interface FundProps {
  * Represents an investment fund.
  *
  * @remarks
- * Must have CNPJ, name, bankId. Instances immutable after creation.
+ * Must have **CNPJ**, name, bankId.
+ * Instances immutable after creation.
  *
  * @explanation
- * Core fund entity with fees, bank, benchmark, category links.
- * Supports profile updates.
+ * Core fund entity with fees, bank, benchmark, category
+ * links. Supports profile updates.
  *
  * @author Moisés Reis
  *
@@ -32,6 +33,10 @@ export class Fund {
   private readonly _id?: EntityId
   private readonly props: Required<FundProps>
 
+  // ---------------------------------
+  // PROPERTIES
+  // ---------------------------------
+
   /**
    * @summary
    * Returns the unique identifier of the fund.
@@ -40,7 +45,8 @@ export class Fund {
    * Undefined if not yet persisted.
    *
    * @explanation
-   * Use for persistence and equality checks.
+   * Provides the stable identity used by the repository
+   * and by `equals` to compare funds.
    *
    * @returns EntityId or undefined.
    *
@@ -54,15 +60,15 @@ export class Fund {
 
   /**
    * @summary
-   * Returns the CNPJ of the fund.
+   * Returns the **CNPJ** of the fund.
    *
    * @remarks
-   * Valid CNPJ value object.
+   * Valid **CNPJ** value object.
    *
    * @explanation
-   * Use for regulatory identification.
+   * Legal identifier used for regulatory compliance.
    *
-   * @returns CNPJ.
+   * @returns The **CNPJ**.
    *
    * @author Moisés Reis
    *
@@ -80,7 +86,7 @@ export class Fund {
    * Required string.
    *
    * @explanation
-   * Use for display and identification.
+   * Human-readable name shown in lists and reports.
    *
    * @returns Name string.
    *
@@ -100,7 +106,7 @@ export class Fund {
    * Nullable SignedPercentage.
    *
    * @explanation
-   * Use for fee disclosure.
+   * Fee charged annually as a percentage of assets.
    *
    * @returns SignedPercentage or null.
    *
@@ -120,7 +126,7 @@ export class Fund {
    * Nullable SignedPercentage.
    *
    * @explanation
-   * Use for fee disclosure.
+   * Fee charged on gains above the benchmark.
    *
    * @returns SignedPercentage or null.
    *
@@ -140,7 +146,7 @@ export class Fund {
    * Valid EntityId.
    *
    * @explanation
-   * Use to associate fund with custodian bank.
+   * Identifies the custodian bank of the fund.
    *
    * @returns EntityId.
    *
@@ -160,7 +166,7 @@ export class Fund {
    * Nullable EntityId.
    *
    * @explanation
-   * Use for performance comparison.
+   * Reference index for measuring fund performance.
    *
    * @returns EntityId or null.
    *
@@ -180,7 +186,7 @@ export class Fund {
    * Nullable EntityId.
    *
    * @explanation
-   * Use for classification and norms.
+   * Groups the fund for classification and norms.
    *
    * @returns EntityId or null.
    *
@@ -200,7 +206,7 @@ export class Fund {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and ordering.
+   * Orders records and supports audit trails.
    *
    * @returns Creation Date.
    *
@@ -220,7 +226,7 @@ export class Fund {
    * Defaults to current time.
    *
    * @explanation
-   * Use for audit and cache invalidation.
+   * Shows when the fund last changed.
    *
    * @returns Last update Date.
    *
@@ -231,6 +237,10 @@ export class Fund {
   get updatedAt(): Date {
     return new Date(this.props.updatedAt)
   }
+
+  // ---------------------------------
+  // CONSTRUCTION
+  // ---------------------------------
 
   /**
    * @summary
@@ -258,12 +268,17 @@ export class Fund {
     })
   }
 
+  // ---------------------------------
+  // FACTORY
+  // ---------------------------------
+
   /**
    * @summary
    * Creates a valid Fund from the provided properties.
    *
    * @remarks
-   * Validates CNPJ, name, bankId. Optional fields default to null.
+   * Validates **CNPJ**, name, bankId.
+   * Optional fields default to null.
    * Timestamps default to current time.
    *
    * @explanation
@@ -273,13 +288,15 @@ export class Fund {
    * @param props - Properties required to create the fund.
    * @param id - Optional unique identifier.
    *
-   * @returns Valid Fund instance.
+   * @returns Valid Fund.
    *
    * @example
    * const FUND = Fund.create({
    *   cnpj: CNPJ.create("00.000.000/0001-91"),
    *   name: "Fundo Exemplo",
-   *   bankId: EntityId.create("ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"),
+   *   bankId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
    * });
    *
    * @author Moisés Reis
@@ -312,12 +329,17 @@ export class Fund {
     return new Fund(NORMALIZED_PROPS, id)
   }
 
+  // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
   /**
    * @summary
    * Updates the mutable profile fields of this fund.
    *
    * @remarks
-   * Only provided fields changed; undefined leaves existing; null clears.
+   * Only provided fields changed. Undefined keeps the
+   * current value; null clears the field.
    *
    * @explanation
    * Returns new Fund instance with updated fields.
@@ -326,7 +348,7 @@ export class Fund {
    * @param options - Fields to update.
    * @param now - Update timestamp (optional, defaults to now).
    *
-   * @returns New Fund instance with updated fields.
+   * @returns Updated Fund.
    *
    * @example
    * const UPDATED = fund.update({
@@ -381,6 +403,10 @@ export class Fund {
     )
   }
 
+  // ---------------------------------
+  // COMPARISON
+  // ---------------------------------
+
   /**
    * @summary
    * Compares this Fund with another for equality.
@@ -389,11 +415,11 @@ export class Fund {
    * Based on referential equality and unique ID.
    *
    * @explanation
-   * Use to check if two instances represent same entity.
+   * Compares two funds by their persisted identity.
    *
    * @param object - The Fund to compare against.
    *
-   * @returns True if both share the same ID.
+   * @returns True when both IDs match.
    *
    * @example
    * const A = Fund.create(PROPS, ID);

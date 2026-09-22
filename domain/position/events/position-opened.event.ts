@@ -54,10 +54,7 @@ export class PositionOpened {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(
-    props: Required<PositionOpenedProps>,
-    id?: string
-  ) {
+  private constructor(props: Required<PositionOpenedProps>, id?: string) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
