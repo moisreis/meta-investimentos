@@ -1,4 +1,6 @@
-# dependencies
+# ----------------------------------
+# DEPENDENCIES
+# ----------------------------------
 /node_modules
 /.pnp
 .pnp.*
@@ -8,29 +10,43 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
+# ----------------------------------
+# TESTING
+# ----------------------------------
 /coverage
 
-# next.js
+# ----------------------------------
+# NEXT.JS
+# ----------------------------------
 /.next/
 /out/
 
-# production
+# ----------------------------------
+# PRODUCTION
+# ----------------------------------
 /build
 
-# misc
+# ----------------------------------
+# MISCELLANEOUS
+# ----------------------------------
 .DS_Store
 *.pem
 
-# debug
+# ----------------------------------
+# DEBUGGING
+# ----------------------------------
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# ----------------------------------
+# .ENV
+# ----------------------------------
 .env*
 
-# typescript
+# ----------------------------------
+# TYPESCRIPT
+# ----------------------------------
 *.tsbuildinfo
 next-env.d.ts
