@@ -10,8 +10,22 @@ import { checkingAccount } from "@db-schemas/checking-account.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `CheckingAccount` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `CheckingAccount` entity from a row of the
+ * `checking_account` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const BALANCE = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(
   row: typeof checkingAccount.$inferSelect
@@ -34,8 +48,21 @@ export function toDomain(
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `checking_account` table.
+ *
  * @param entity - Checking account domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const BALANCE = toInsert(BALANCE);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(
   entity: CheckingAccount
@@ -60,9 +87,14 @@ export function toInsert(
  * pattern across all mappers.
  *
  * @param entity - Checking account domain entity.
- * @returns Update values for the row.
+ *
+ * @returns Row update values.
+ *
+ * @example
+ * const BALANCE = toUpdate(BALANCE);
  *
  * @author Moisés Reis
+ *
  * @date 2026-09-15
  */
 export function toUpdate(

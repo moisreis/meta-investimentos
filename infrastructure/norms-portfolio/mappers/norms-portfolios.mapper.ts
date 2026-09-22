@@ -10,8 +10,22 @@ import { normsPortfolios } from "@db-schemas/norms-portfolios.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `NormsPortfolios` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `NormsPortfolios` entity from a row of the
+ * `norms_portfolios` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const REL = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(
   row: typeof normsPortfolios.$inferSelect
@@ -35,8 +49,21 @@ export function toDomain(
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `norms_portfolios` table.
+ *
  * @param entity - Norms portfolio domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const REL = toInsert(REL);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(
   entity: NormsPortfolios

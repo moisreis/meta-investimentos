@@ -69,6 +69,7 @@ export class BenchmarkRepository implements IBenchmark {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the benchmark.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -101,6 +102,7 @@ export class BenchmarkRepository implements IBenchmark {
    * pagination.
    *
    * @param options - Optional pagination parameters.
+   *
    * @returns The matching benchmarks.
    *
    * @example
@@ -140,6 +142,7 @@ export class BenchmarkRepository implements IBenchmark {
    * query instead of one query per benchmark.
    *
    * @param ids - The ids of the benchmarks.
+   *
    * @returns The matching benchmarks.
    *
    * @example
@@ -177,6 +180,7 @@ export class BenchmarkRepository implements IBenchmark {
    * The result is null when no row matches.
    *
    * @param acronym - The acronym of the benchmark.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -211,6 +215,7 @@ export class BenchmarkRepository implements IBenchmark {
    * the persisted entity with its id.
    *
    * @param persisted - The benchmark to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

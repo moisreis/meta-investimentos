@@ -1,4 +1,4 @@
-﻿import { and, asc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm"
+import { and, asc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { Withdrawal } from "@domain/withdrawal/entities/withdrawal.entity"
@@ -75,6 +75,7 @@ export class WithdrawalRepository implements IWithdrawal {
    * primary key. Callers must handle the null result.
    *
    * @param id - The unique identifier of the withdrawal.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -106,6 +107,7 @@ export class WithdrawalRepository implements IWithdrawal {
    * position without a date filter.
    *
    * @param positionId - The id of the position.
+   *
    * @returns The matching withdrawals.
    *
    * @example
@@ -140,6 +142,7 @@ export class WithdrawalRepository implements IWithdrawal {
    * @param positionId - The id of the position.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The matching withdrawals.
    *
    * @example
@@ -187,6 +190,7 @@ export class WithdrawalRepository implements IWithdrawal {
    * @param positionIds - The ids of the positions.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The matching withdrawals.
    *
    * @example
@@ -243,6 +247,7 @@ export class WithdrawalRepository implements IWithdrawal {
    * @param positionId - The id of the position.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The period totals.
    *
    * @example
@@ -295,6 +300,7 @@ export class WithdrawalRepository implements IWithdrawal {
    * with optimistic locking. Returns the persisted entity.
    *
    * @param persisted - The withdrawal to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

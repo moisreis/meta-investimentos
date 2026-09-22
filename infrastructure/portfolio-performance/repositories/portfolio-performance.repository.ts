@@ -1,4 +1,4 @@
-﻿import { and, desc, eq, inArray } from "drizzle-orm"
+import { and, desc, eq, inArray } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { PortfolioPerformance } from "@domain/portfolio-performance/entities/portfolio-performance.entity"
@@ -89,6 +89,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the snapshot.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -120,6 +121,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    * of a single portfolio.
    *
    * @param portfolioId - The portfolio to filter by.
+   *
    * @returns The matching snapshots.
    *
    * @example
@@ -154,6 +156,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    * across multiple portfolios in a single query.
    *
    * @param portfolioIds - The ids of the portfolios.
+   *
    * @returns The matching snapshots.
    *
    * @example
@@ -192,6 +195,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    *
    * @param portfolioId - The portfolio identifier.
    * @param date - The snapshot date.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -233,6 +237,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    * snapshot of a single portfolio.
    *
    * @param portfolioId - The portfolio identifier.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -270,6 +275,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    * portfolios without issuing one query per portfolio.
    *
    * @param portfolioIds - The ids of the portfolios.
+   *
    * @returns The latest snapshot.
    *
    * @example
@@ -313,6 +319,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    * snapshot. Returns the persisted entity with its id.
    *
    * @param persisted - The snapshot to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

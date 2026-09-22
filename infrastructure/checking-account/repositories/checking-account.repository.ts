@@ -1,4 +1,4 @@
-﻿import { and, asc, eq, gte, inArray, lte } from "drizzle-orm"
+import { and, asc, eq, gte, inArray, lte } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { CheckingAccount } from "@domain/checking-account/entities/checking-account.entity"
@@ -74,6 +74,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
    * primary key. Callers must handle the null result.
    *
    * @param id - The unique identifier of the balance.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -106,6 +107,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
    * single bank account.
    *
    * @param bankAccountId - The id of the bank account.
+   *
    * @returns The matching balances.
    *
    * @example
@@ -141,6 +143,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
    * bank accounts in one query instead of one per account.
    *
    * @param bankAccountIds - The ids of the bank accounts.
+   *
    * @returns The matching balances.
    *
    * @example
@@ -183,6 +186,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
    * @param bankAccountIds - The ids of the bank accounts.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The matching balances.
    *
    * @example
@@ -231,6 +235,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
    *
    * @param bankAccountId - The id of the bank account.
    * @param date - The date of the balance.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -272,6 +277,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
    * balance. Returns the persisted entity with its id.
    *
    * @param persisted - The balance to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

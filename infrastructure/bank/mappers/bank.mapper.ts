@@ -9,8 +9,21 @@ import { bank } from "@db-schemas/bank.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `Bank` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `Bank` entity from a row of the `bank` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const BANK = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(row: typeof bank.$inferSelect): Bank {
   return Bank.create(
@@ -32,8 +45,21 @@ export function toDomain(row: typeof bank.$inferSelect): Bank {
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `bank` table.
+ *
  * @param entity - Bank domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const BANK = toInsert(BANK);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(entity: Bank): typeof bank.$inferInsert {
   return {
@@ -53,13 +79,18 @@ export function toInsert(entity: Bank): typeof bank.$inferInsert {
  * changes; the second refreshes via `$onUpdate`.
  *
  * @explanation
- * Use for updates where Drizzle should only touch mutable
+ * Use for updates where **Drizzle** should only touch mutable
  * columns. Timestamps are managed at the database layer.
  *
  * @param entity - Bank domain entity.
- * @returns Update values for the row.
+ *
+ * @returns Row update values.
+ *
+ * @example
+ * const BANK = toUpdate(BANK);
  *
  * @author Moisés Reis
+ *
  * @date 2026-09-15
  */
 export function toUpdate(entity: Bank): Partial<typeof bank.$inferInsert> {

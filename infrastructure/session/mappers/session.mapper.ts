@@ -10,8 +10,21 @@ import { session } from "@db-schemas/session.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `Session` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `Session` entity from a row of the `session` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const SESSION = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(row: typeof session.$inferSelect): Session {
   return Session.create(
@@ -36,8 +49,21 @@ export function toDomain(row: typeof session.$inferSelect): Session {
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `session` table.
+ *
  * @param entity - Session domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const SESSION = toInsert(SESSION);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(entity: Session): typeof session.$inferInsert {
   return {
@@ -52,7 +78,8 @@ export function toInsert(entity: Session): typeof session.$inferInsert {
 }
 
 /**
- * @summary Maps an entity into update values.
+ * @summary
+ * Maps an entity into update values.
  *
  * @remarks
  * Omits `createdAt` and `updatedAt`. The first never changes;
@@ -60,12 +87,18 @@ export function toInsert(entity: Session): typeof session.$inferInsert {
  *
  * @explanation
  * `createdAt` is set once at insertion and never mutated.
- * `updatedAt` is auto-refreshed by Drizzle's `$onUpdate`,
+ * `updatedAt` is auto-refreshed by **Drizzle**'s `$onUpdate`,
  * so passing it explicitly is unnecessary.
  *
  * @param entity - Session domain entity.
- * @returns Update values for the row.
+ *
+ * @returns Row update values.
+ *
+ * @example
+ * const SESSION = toUpdate(SESSION);
+ *
  * @author Moisés Reis
+ *
  * @date 2026-09-15
  */
 export function toUpdate(

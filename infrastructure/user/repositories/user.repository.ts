@@ -1,4 +1,4 @@
-﻿import { asc, eq, inArray } from "drizzle-orm"
+import { asc, eq, inArray } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { User } from "@domain/user/entities/user.entity"
@@ -71,6 +71,7 @@ export class UserRepository implements IUser {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the user.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -103,6 +104,7 @@ export class UserRepository implements IUser {
    * result.
    *
    * @param email - The email address to search for.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -134,6 +136,7 @@ export class UserRepository implements IUser {
    * cpf. Callers must handle the null result.
    *
    * @param cpf - The cpf to search for.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -166,6 +169,7 @@ export class UserRepository implements IUser {
    * query instead of one query per id.
    *
    * @param ids - The ids of the users to retrieve.
+   *
    * @returns The matching users.
    *
    * @example
@@ -198,6 +202,7 @@ export class UserRepository implements IUser {
    * `limit` and `offset` to control pagination.
    *
    * @param options - Optional pagination parameters.
+   *
    * @returns The matching users.
    *
    * @example
@@ -236,6 +241,7 @@ export class UserRepository implements IUser {
    * Returns the persisted entity with its id.
    *
    * @param persisted - The user to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

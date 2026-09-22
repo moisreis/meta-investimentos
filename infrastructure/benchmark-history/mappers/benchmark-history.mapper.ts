@@ -10,8 +10,22 @@ import { benchmarkHistory } from "@db-schemas/benchmark-history.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `BenchmarkHistory` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `BenchmarkHistory` entity from a row of the
+ * `benchmark_history` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const RECORD = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(
   row: typeof benchmarkHistory.$inferSelect
@@ -35,8 +49,21 @@ export function toDomain(
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `benchmark_history` table.
+ *
  * @param entity - Benchmark history domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const RECORD = toInsert(RECORD);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(
   entity: BenchmarkHistory
@@ -57,13 +84,18 @@ export function toInsert(
  * Omits `createdAt`. It never changes after creation.
  *
  * @explanation
- * Use for updates where Drizzle should only touch mutable
+ * Use for updates where **Drizzle** should only touch mutable
  * columns. The timestamp is managed at the database layer.
  *
  * @param entity - Benchmark history domain entity.
- * @returns Update values for the row.
+ *
+ * @returns Row update values.
+ *
+ * @example
+ * const RECORD = toUpdate(RECORD);
  *
  * @author Moisés Reis
+ *
  * @date 2026-09-15
  */
 export function toUpdate(

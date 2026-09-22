@@ -1,4 +1,4 @@
-﻿import { and, eq, inArray } from "drizzle-orm"
+import { and, eq, inArray } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { Position } from "@domain/position/entities/position.entity"
@@ -82,6 +82,7 @@ export class PositionRepository implements IPosition {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the position.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -113,6 +114,7 @@ export class PositionRepository implements IPosition {
    * to a single portfolio.
    *
    * @param portfolioId - The portfolio to filter by.
+   *
    * @returns The matching positions.
    *
    * @example
@@ -145,6 +147,7 @@ export class PositionRepository implements IPosition {
    * multiple portfolios in a single query.
    *
    * @param portfolioIds - The ids of the portfolios.
+   *
    * @returns The matching positions.
    *
    * @example
@@ -180,6 +183,7 @@ export class PositionRepository implements IPosition {
    * of the given fund ids, across all portfolios.
    *
    * @param fundIds - The fund ids to search for.
+   *
    * @returns The matching positions.
    *
    * @example
@@ -216,6 +220,7 @@ export class PositionRepository implements IPosition {
    *
    * @param portfolioId - The portfolio identifier.
    * @param fundId - The fund identifier.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -257,6 +262,7 @@ export class PositionRepository implements IPosition {
    * optimistic locking. Returns the persisted entity.
    *
    * @param persisted - The position to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

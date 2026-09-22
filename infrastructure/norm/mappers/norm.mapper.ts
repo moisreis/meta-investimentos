@@ -10,8 +10,21 @@ import { norm } from "@db-schemas/norm.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `Norm` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `Norm` entity from a row of the `norm` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const NORM = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(row: typeof norm.$inferSelect): Norm {
   return Norm.create(
@@ -38,8 +51,21 @@ export function toDomain(row: typeof norm.$inferSelect): Norm {
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `norm` table.
+ *
  * @param entity - Norm domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const NORM = toInsert(NORM);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(entity: Norm): typeof norm.$inferInsert {
   return {
@@ -66,13 +92,18 @@ export function toInsert(entity: Norm): typeof norm.$inferInsert {
  * optimistic locking.
  *
  * @explanation
- * Use for updates where Drizzle should only touch mutable
+ * Use for updates where **Drizzle** should only touch mutable
  * columns. Timestamps are managed at the database layer.
  *
  * @param entity - Norm domain entity.
- * @returns Update values for the row.
+ *
+ * @returns Row update values.
+ *
+ * @example
+ * const NORM = toUpdate(NORM);
  *
  * @author Moisés Reis
+ *
  * @date 2026-09-15
  */
 export function toUpdate(entity: Norm): Partial<typeof norm.$inferInsert> {

@@ -70,6 +70,7 @@ export class AccountRepository implements IAccount {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the account.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -103,6 +104,7 @@ export class AccountRepository implements IAccount {
    *
    * @param providerId - The provider of the account.
    * @param accountId - The external account identifier.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -143,6 +145,7 @@ export class AccountRepository implements IAccount {
    * Use this method to load all accounts of a single user.
    *
    * @param userId - The id of the user.
+   *
    * @returns The matching accounts.
    *
    * @example
@@ -175,6 +178,7 @@ export class AccountRepository implements IAccount {
    * in one query instead of one query per user.
    *
    * @param userIds - The ids of the users.
+   *
    * @returns The matching accounts.
    *
    * @example
@@ -211,6 +215,7 @@ export class AccountRepository implements IAccount {
    * the persisted entity with its id.
    *
    * @param persisted - The account to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

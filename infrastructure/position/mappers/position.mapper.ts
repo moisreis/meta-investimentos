@@ -10,8 +10,21 @@ import { position } from "@db-schemas/position.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `Position` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `Position` entity from a row of the `position` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const POS = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(row: typeof position.$inferSelect): Position {
   return Position.create(
@@ -38,8 +51,21 @@ export function toDomain(row: typeof position.$inferSelect): Position {
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `position` table.
+ *
  * @param entity - Position domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const POS = toInsert(POS);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(entity: Position): typeof position.$inferInsert {
   return {
@@ -54,7 +80,8 @@ export function toInsert(entity: Position): typeof position.$inferInsert {
 }
 
 /**
- * @summary Maps an entity into update values.
+ * @summary
+ * Maps an entity into update values.
  *
  * @remarks
  * Omits `createdAt`, `updatedAt`, and `version`. The first
@@ -63,15 +90,21 @@ export function toInsert(entity: Position): typeof position.$inferInsert {
  *
  * @explanation
  * `createdAt` is set once at insertion and never mutated.
- * `updatedAt` is auto-refreshed by Drizzle's `$onUpdate`,
+ * `updatedAt` is auto-refreshed by **Drizzle**'s `$onUpdate`,
  * so passing it explicitly is unnecessary. `version` drives
  * optimistic locking: the repository reads the persisted
  * row and bumps the version on a successful update, so it
  * is omitted here to avoid racing the stored counter.
  *
  * @param entity - Position domain entity.
- * @returns Update values for the row.
+ *
+ * @returns Row update values.
+ *
+ * @example
+ * const POS = toUpdate(POS);
+ *
  * @author Moisés Reis
+ *
  * @date 2026-09-15
  */
 export function toUpdate(

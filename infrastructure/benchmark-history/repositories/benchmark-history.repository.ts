@@ -1,4 +1,4 @@
-﻿import { and, asc, eq, gte, inArray, lte } from "drizzle-orm"
+import { and, asc, eq, gte, inArray, lte } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { BenchmarkHistory } from "@domain/benchmark-history/entities/benchmark-history.entity"
@@ -75,6 +75,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    * key. Callers must handle the null result.
    *
    * @param id - The unique identifier of the record.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -107,6 +108,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    * single benchmark.
    *
    * @param benchmarkId - The id of the benchmark.
+   *
    * @returns The matching records.
    *
    * @example
@@ -142,6 +144,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    * benchmarks in one query instead of one per benchmark.
    *
    * @param benchmarkIds - The ids of the benchmarks.
+   *
    * @returns The matching records.
    *
    * @example
@@ -186,6 +189,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    * @param benchmarkIds - The ids of the benchmarks.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The matching records.
    *
    * @example
@@ -234,6 +238,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    *
    * @param benchmarkId - The id of the benchmark.
    * @param date - The date of the record.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -275,6 +280,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    * record. Returns the persisted entity with its id.
    *
    * @param persisted - The record to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

@@ -69,6 +69,7 @@ export class BankRepository implements IBank {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the bank.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -100,6 +101,7 @@ export class BankRepository implements IBank {
    * Callers must handle the null result.
    *
    * @param code - The unique code of the bank.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -132,6 +134,7 @@ export class BankRepository implements IBank {
    * options to control the window of results.
    *
    * @param options - Optional pagination parameters.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -171,6 +174,7 @@ export class BankRepository implements IBank {
    * instead of one query per id.
    *
    * @param ids - The ids of the banks to retrieve.
+   *
    * @returns The matching banks.
    *
    * @example
@@ -203,6 +207,7 @@ export class BankRepository implements IBank {
    * the persisted entity with its id.
    *
    * @param persisted - The bank to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

@@ -1,4 +1,4 @@
-﻿import { asc, eq, inArray } from "drizzle-orm"
+import { asc, eq, inArray } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { Fund } from "@domain/fund/entities/fund.entity"
@@ -16,7 +16,7 @@ export type DbClient = PgAsyncDatabase<PgQueryResultHKT>
  *
  * @remarks
  * Maps `fund` rows to `Fund` entities and back. Lookups
- * rely on the primary key, the CNPJ unique constraint,
+ * rely on the primary key, the **CNPJ** unique constraint,
  * and the indexes on bank, benchmark, and category.
  *
  * @explanation
@@ -70,6 +70,7 @@ export class FundRepository implements IFund {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the fund.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -102,6 +103,7 @@ export class FundRepository implements IFund {
    * instead of one query per id.
    *
    * @param ids - The ids of the funds to retrieve.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -123,16 +125,17 @@ export class FundRepository implements IFund {
 
   /**
    * @summary
-   * Retrieves the fund with the provided CNPJ.
+   * Retrieves the fund with the provided **CNPJ**.
    *
    * @remarks
-   * Returns null when no row matches the CNPJ.
+   * Returns null when no row matches the **CNPJ**.
    *
    * @explanation
-   * Use this method to load a fund by its unique CNPJ.
+   * Use this method to load a fund by its unique **CNPJ**.
    * Callers must handle the null result.
    *
-   * @param cnpj - The unique CNPJ of the fund.
+   * @param cnpj - The unique **CNPJ** of the fund.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -167,6 +170,7 @@ export class FundRepository implements IFund {
    * options to control the window of results.
    *
    * @param options - Optional pagination parameters.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -205,6 +209,7 @@ export class FundRepository implements IFund {
    * given bank.
    *
    * @param bankId - The id of the bank.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -236,6 +241,7 @@ export class FundRepository implements IFund {
    * a given benchmark.
    *
    * @param benchmarkId - The id of the benchmark.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -267,6 +273,7 @@ export class FundRepository implements IFund {
    * category.
    *
    * @param categoryId - The id of the category.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -299,6 +306,7 @@ export class FundRepository implements IFund {
    * the persisted entity with its id.
    *
    * @param persisted - The fund to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

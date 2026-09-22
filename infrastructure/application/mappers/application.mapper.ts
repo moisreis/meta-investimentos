@@ -10,8 +10,22 @@ import { application } from "@db-schemas/application.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `Application` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `Application` entity from a row of the `application`
+ * table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const APP = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(row: typeof application.$inferSelect): Application {
   return Application.create(
@@ -40,8 +54,21 @@ export function toDomain(row: typeof application.$inferSelect): Application {
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `application` table.
+ *
  * @param entity - Application domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const APP = toInsert(APP);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(entity: Application): typeof application.$inferInsert {
   return {
@@ -68,7 +95,8 @@ export function toInsert(entity: Application): typeof application.$inferInsert {
  * optimistic locking.
  *
  * @param entity - Application domain entity.
- * @returns Update values for the row.
+ *
+ * @returns Row update values.
  */
 export function toUpdate(
   entity: Application

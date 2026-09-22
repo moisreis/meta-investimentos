@@ -70,6 +70,7 @@ export class BankAccountRepository implements IBankAccount {
    * key. Callers must handle the null result.
    *
    * @param id - The unique identifier of the bank account.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -101,6 +102,7 @@ export class BankAccountRepository implements IBankAccount {
    * to a given portfolio.
    *
    * @param portfolioId - The id of the portfolio.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -133,6 +135,7 @@ export class BankAccountRepository implements IBankAccount {
    * portfolios in one query instead of one per id.
    *
    * @param portfolioIds - The ids of the portfolios.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -170,6 +173,7 @@ export class BankAccountRepository implements IBankAccount {
    * to a given bank.
    *
    * @param bankId - The id of the bank.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -202,6 +206,7 @@ export class BankAccountRepository implements IBankAccount {
    * banks in one query instead of one per id.
    *
    * @param bankIds - The ids of the banks.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -238,6 +243,7 @@ export class BankAccountRepository implements IBankAccount {
    * Returns the persisted entity with its id.
    *
    * @param persisted - The bank account to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

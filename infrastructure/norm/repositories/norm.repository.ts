@@ -1,4 +1,4 @@
-﻿import { and, eq, inArray } from "drizzle-orm"
+import { and, eq, inArray } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { Norm } from "@domain/norm/entities/norm.entity"
@@ -77,6 +77,7 @@ export class NormRepository implements INorm {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the norm.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -108,6 +109,7 @@ export class NormRepository implements INorm {
    * single category.
    *
    * @param categoryId - The category to filter by.
+   *
    * @returns The matching norms.
    *
    * @example
@@ -140,6 +142,7 @@ export class NormRepository implements INorm {
    * categories in a single query.
    *
    * @param categoryIds - The ids of the categories.
+   *
    * @returns The matching norms.
    *
    * @example
@@ -179,6 +182,7 @@ export class NormRepository implements INorm {
    * optimistic locking. Returns the persisted entity.
    *
    * @param persisted - The norm to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

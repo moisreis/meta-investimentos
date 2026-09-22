@@ -10,8 +10,21 @@ import { auditLog } from "@db-schemas/audit-log.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `AuditLog` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `AuditLog` entity from a row of the `audit_log` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const LOG = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(row: typeof auditLog.$inferSelect): AuditLog {
   return AuditLog.create(
@@ -35,8 +48,21 @@ export function toDomain(row: typeof auditLog.$inferSelect): AuditLog {
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `audit_log` table.
+ *
  * @param entity - Audit log domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const LOG = toInsert(LOG);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(entity: AuditLog): typeof auditLog.$inferInsert {
   return {

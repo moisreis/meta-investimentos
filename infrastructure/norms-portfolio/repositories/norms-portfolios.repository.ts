@@ -1,4 +1,4 @@
-﻿import { and, eq, inArray } from "drizzle-orm"
+import { and, eq, inArray } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { NormsPortfolios } from "@domain/norms-portfolio/entities/norms-portfolios.entity"
@@ -79,6 +79,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    *
    * @param normId - The norm identifier.
    * @param portfolioId - The portfolio identifier.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -119,6 +120,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    * belongs to a single portfolio.
    *
    * @param portfolioId - The portfolio to filter by.
+   *
    * @returns The matching relations.
    *
    * @example
@@ -153,6 +155,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    * multiple portfolios in a single query.
    *
    * @param portfolioIds - The ids of the portfolios.
+   *
    * @returns The matching relations.
    *
    * @example
@@ -190,6 +193,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    * belongs to a single norm.
    *
    * @param normId - The norm to filter by.
+   *
    * @returns The matching relations.
    *
    * @example
@@ -224,6 +228,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    * relation. Returns the persisted entity.
    *
    * @param persisted - The relation to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

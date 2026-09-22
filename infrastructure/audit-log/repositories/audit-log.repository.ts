@@ -69,6 +69,7 @@ export class AuditLogRepository implements IAuditLog {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the audit log.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -100,6 +101,7 @@ export class AuditLogRepository implements IAuditLog {
    * audited entity type.
    *
    * @param entity - The name of the audited entity.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -132,6 +134,7 @@ export class AuditLogRepository implements IAuditLog {
    *
    * @param entity - The name of the audited entity.
    * @param entityId - The id of the audited instance.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -168,6 +171,7 @@ export class AuditLogRepository implements IAuditLog {
    *
    * @param entity - The name of the audited entity.
    * @param entityIds - The ids of the audited entities.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -208,6 +212,7 @@ export class AuditLogRepository implements IAuditLog {
    * acting user across all audited entity types.
    *
    * @param userId - The id of the acting user.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -240,6 +245,7 @@ export class AuditLogRepository implements IAuditLog {
    * users in one query instead of one query per id.
    *
    * @param userIds - The ids of the acting users.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -276,6 +282,7 @@ export class AuditLogRepository implements IAuditLog {
    * returned entity includes the database-generated id.
    *
    * @param persisted - The audit log to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

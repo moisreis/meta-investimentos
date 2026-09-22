@@ -17,8 +17,22 @@ import { portfolioPerformance } from "@db-schemas/portfolio-performance.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `PortfolioPerformance` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `PortfolioPerformance` entity from a row of the
+ * `portfolio_performance` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const SNAP = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(
   row: typeof portfolioPerformance.$inferSelect
@@ -71,8 +85,21 @@ export function toDomain(
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `portfolio_performance` table.
+ *
  * @param entity - Portfolio performance domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const SNAP = toInsert(SNAP);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(
   entity: PortfolioPerformance
@@ -100,7 +127,8 @@ export function toInsert(
 }
 
 /**
- * @summary Maps an entity into update values.
+ * @summary
+ * Maps an entity into update values.
  *
  * @remarks
  * Omits `createdAt` and `updatedAt`. The first never changes;
@@ -108,12 +136,18 @@ export function toInsert(
  *
  * @explanation
  * `createdAt` is set once at insertion and never mutated.
- * `updatedAt` is auto-refreshed by Drizzle's `$onUpdate`,
+ * `updatedAt` is auto-refreshed by **Drizzle**'s `$onUpdate`,
  * so passing it explicitly is unnecessary.
  *
  * @param entity - Portfolio performance domain entity.
- * @returns Update values for the row.
+ *
+ * @returns Row update values.
+ *
+ * @example
+ * const SNAP = toUpdate(SNAP);
+ *
  * @author Moisés Reis
+ *
  * @date 2026-09-15
  */
 export function toUpdate(

@@ -71,6 +71,7 @@ export class StatementRepository implements IStatement {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the statement.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -102,6 +103,7 @@ export class StatementRepository implements IStatement {
    * portfolio.
    *
    * @param portfolioId - The id of the portfolio.
+   *
    * @returns The matching statements.
    *
    * @example
@@ -134,6 +136,7 @@ export class StatementRepository implements IStatement {
    * portfolios in one query instead of one per portfolio.
    *
    * @param portfolioIds - The ids of the portfolios.
+   *
    * @returns The matching statements.
    *
    * @example
@@ -169,6 +172,7 @@ export class StatementRepository implements IStatement {
    * single user.
    *
    * @param userId - The id of the generating user.
+   *
    * @returns The matching statements.
    *
    * @example
@@ -201,6 +205,7 @@ export class StatementRepository implements IStatement {
    * generating users in one query instead of one per user.
    *
    * @param userIds - The ids of the generating users.
+   *
    * @returns The matching statements.
    *
    * @example
@@ -237,6 +242,7 @@ export class StatementRepository implements IStatement {
    * the persisted entity with its id.
    *
    * @param persisted - The statement to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

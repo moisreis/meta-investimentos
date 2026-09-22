@@ -71,6 +71,7 @@ export class VerificationRepository implements IVerification {
    * primary key. Callers must handle the null result.
    *
    * @param id - The unique identifier.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -102,6 +103,7 @@ export class VerificationRepository implements IVerification {
    * tied to a specific identifier string.
    *
    * @param identifier - The identifier to search for.
+   *
    * @returns The matching records.
    *
    * @example
@@ -134,6 +136,7 @@ export class VerificationRepository implements IVerification {
    * one query instead of one query per identifier.
    *
    * @param identifiers - The identifiers to search.
+   *
    * @returns The matching records.
    *
    * @example
@@ -170,6 +173,7 @@ export class VerificationRepository implements IVerification {
    * Returns the persisted entity with its id.
    *
    * @param persisted - The verification to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

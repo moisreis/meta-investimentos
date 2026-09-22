@@ -11,8 +11,22 @@ import { transactionAllocation } from "@db-schemas/transaction-allocation.schema
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `TransactionAllocation` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `TransactionAllocation` entity from a row of the
+ * `transaction_allocation` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const ALLOC = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(
   row: typeof transactionAllocation.$inferSelect
@@ -38,8 +52,21 @@ export function toDomain(
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `transaction_allocation` table.
+ *
  * @param entity - Transaction allocation domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const ALLOC = toInsert(ALLOC);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(
   entity: TransactionAllocation
@@ -54,7 +81,8 @@ export function toInsert(
 }
 
 /**
- * @summary Maps an entity into update values.
+ * @summary
+ * Maps an entity into update values.
  *
  * @remarks
  * Omits `createdAt`, `updatedAt` and `version`. The first
@@ -64,13 +92,19 @@ export function toInsert(
  *
  * @explanation
  * `createdAt` is set once at insertion and never mutated.
- * `updatedAt` is auto-refreshed by Drizzle's `$onUpdate`,
+ * `updatedAt` is auto-refreshed by **Drizzle**'s `$onUpdate`,
  * so passing it explicitly is unnecessary. `version`
  * increments inside the repository's compare-and-swap.
  *
  * @param entity - Transaction allocation domain entity.
- * @returns Update values for the row.
+ *
+ * @returns Row update values.
+ *
+ * @example
+ * const ALLOC = toUpdate(ALLOC);
+ *
  * @author Moisés Reis
+ *
  * @date 2026-09-15
  */
 export function toUpdate(

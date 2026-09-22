@@ -9,8 +9,21 @@ import { benchmark } from "@db-schemas/benchmark.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `Benchmark` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `Benchmark` entity from a row of the `benchmark` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const BENCH = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(row: typeof benchmark.$inferSelect): Benchmark {
   return Benchmark.create(
@@ -31,8 +44,21 @@ export function toDomain(row: typeof benchmark.$inferSelect): Benchmark {
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `benchmark` table.
+ *
  * @param entity - Benchmark domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const BENCH = toInsert(BENCH);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(entity: Benchmark): typeof benchmark.$inferInsert {
   return {
@@ -50,13 +76,18 @@ export function toInsert(entity: Benchmark): typeof benchmark.$inferInsert {
  * Omits `createdAt`. It never changes after creation.
  *
  * @explanation
- * Use for updates where Drizzle should only touch mutable
+ * Use for updates where **Drizzle** should only touch mutable
  * columns. The timestamp is managed at the database layer.
  *
  * @param entity - Benchmark domain entity.
- * @returns Update values for the row.
+ *
+ * @returns Row update values.
+ *
+ * @example
+ * const BENCH = toUpdate(BENCH);
  *
  * @author Moisés Reis
+ *
  * @date 2026-09-15
  */
 export function toUpdate(

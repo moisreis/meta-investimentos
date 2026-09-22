@@ -1,4 +1,4 @@
-﻿import { and, asc, desc, eq, gte, inArray, lte, or, sql } from "drizzle-orm"
+import { and, asc, desc, eq, gte, inArray, lte, or, sql } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { Quota } from "@domain/quota/entities/quota.entity"
@@ -76,6 +76,7 @@ export class QuotaRepository implements IQuota {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the quota.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -107,6 +108,7 @@ export class QuotaRepository implements IQuota {
    * single fund.
    *
    * @param fundId - The id of the fund.
+   *
    * @returns The matching quotas.
    *
    * @example
@@ -138,6 +140,7 @@ export class QuotaRepository implements IQuota {
    * funds in one query instead of one query per fund.
    *
    * @param fundIds - The ids of the funds.
+   *
    * @returns The matching quotas.
    *
    * @example
@@ -173,6 +176,7 @@ export class QuotaRepository implements IQuota {
    *
    * @param fundId - The id of the fund.
    * @param date - The quota date to match.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -212,6 +216,7 @@ export class QuotaRepository implements IQuota {
    * @param fundIds - The ids of the funds.
    * @param startDate - The start of the period.
    * @param endDate - The end of the period.
+   *
    * @returns The matching quotas.
    *
    * @example
@@ -259,6 +264,7 @@ export class QuotaRepository implements IQuota {
    * single fund in one query.
    *
    * @param fundId - The id of the fund.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -294,6 +300,7 @@ export class QuotaRepository implements IQuota {
    * funds instead of one query per fund.
    *
    * @param fundIds - The ids of the funds.
+   *
    * @returns The latest quotas.
    *
    * @example
@@ -333,6 +340,7 @@ export class QuotaRepository implements IQuota {
    * `UPDATE`.
    *
    * @param records - The quotas to upsert.
+   *
    * @returns The upsert results.
    *
    * @example
@@ -397,6 +405,7 @@ export class QuotaRepository implements IQuota {
    * persisted entity with its id.
    *
    * @param persisted - The quota to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

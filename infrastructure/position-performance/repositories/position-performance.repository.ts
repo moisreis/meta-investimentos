@@ -1,4 +1,4 @@
-﻿import { and, desc, eq, inArray } from "drizzle-orm"
+import { and, desc, eq, inArray } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { PositionPerformance } from "@domain/position-performance/entities/position-performance.entity"
@@ -85,6 +85,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the snapshot.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -116,6 +117,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * a single position.
    *
    * @param positionId - The id of the position.
+   *
    * @returns The matching snapshots.
    *
    * @example
@@ -151,6 +153,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * position.
    *
    * @param positionIds - The ids of the positions.
+   *
    * @returns The matching snapshots.
    *
    * @example
@@ -189,6 +192,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    *
    * @param positionId - The id of the position.
    * @param date - The snapshot date to match.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -230,6 +234,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * single position in one query.
    *
    * @param positionId - The id of the position.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -267,6 +272,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * many positions instead of one query per position.
    *
    * @param positionIds - The ids of the positions.
+   *
    * @returns The latest snapshots.
    *
    * @example
@@ -306,6 +312,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * the persisted entity with its id.
    *
    * @param persisted - The snapshot to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

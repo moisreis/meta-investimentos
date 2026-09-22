@@ -10,8 +10,21 @@ import { statement } from "@db-schemas/statement.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `Statement` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `Statement` entity from a row of the `statement` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const STATEMENT = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(row: typeof statement.$inferSelect): Statement {
   return Statement.create(
@@ -37,8 +50,21 @@ export function toDomain(row: typeof statement.$inferSelect): Statement {
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `statement` table.
+ *
  * @param entity - Statement domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const STATEMENT = toInsert(STATEMENT);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(entity: Statement): typeof statement.$inferInsert {
   return {
@@ -52,7 +78,8 @@ export function toInsert(entity: Statement): typeof statement.$inferInsert {
 }
 
 /**
- * @summary Maps an entity into update values.
+ * @summary
+ * Maps an entity into update values.
  *
  * @remarks
  * Omits `createdAt` and `updatedAt`. The first never changes;
@@ -60,12 +87,18 @@ export function toInsert(entity: Statement): typeof statement.$inferInsert {
  *
  * @explanation
  * `createdAt` is set once at insertion and never mutated.
- * `updatedAt` is auto-refreshed by Drizzle's `$onUpdate`,
+ * `updatedAt` is auto-refreshed by **Drizzle**'s `$onUpdate`,
  * so passing it explicitly is unnecessary.
  *
  * @param entity - Statement domain entity.
- * @returns Update values for the row.
+ *
+ * @returns Row update values.
+ *
+ * @example
+ * const STATEMENT = toUpdate(STATEMENT);
+ *
  * @author Moisés Reis
+ *
  * @date 2026-09-15
  */
 export function toUpdate(

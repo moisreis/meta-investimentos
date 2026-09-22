@@ -70,6 +70,7 @@ export class CategoryRepository implements ICategory {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the category.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -101,6 +102,7 @@ export class CategoryRepository implements ICategory {
    * Callers must handle the null result.
    *
    * @param name - The unique name of the category.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -134,6 +136,7 @@ export class CategoryRepository implements ICategory {
    * options to control the window of results.
    *
    * @param options - Optional pagination parameters.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -173,6 +176,7 @@ export class CategoryRepository implements ICategory {
    * query instead of one query per id.
    *
    * @param ids - The ids of the categories to retrieve.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -209,6 +213,7 @@ export class CategoryRepository implements ICategory {
    * Returns the persisted entity with its id.
    *
    * @param persisted - The category to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

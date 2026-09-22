@@ -70,6 +70,7 @@ export class SessionRepository implements ISession {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the session.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -101,6 +102,7 @@ export class SessionRepository implements ISession {
    * Callers must handle the null result.
    *
    * @param token - The unique session token.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -131,6 +133,7 @@ export class SessionRepository implements ISession {
    * Use this method to load all sessions of a single user.
    *
    * @param userId - The id of the user.
+   *
    * @returns The matching sessions.
    *
    * @example
@@ -163,6 +166,7 @@ export class SessionRepository implements ISession {
    * in one query instead of one query per user.
    *
    * @param userIds - The ids of the users.
+   *
    * @returns The matching sessions.
    *
    * @example
@@ -199,6 +203,7 @@ export class SessionRepository implements ISession {
    * the persisted entity with its id.
    *
    * @param persisted - The session to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

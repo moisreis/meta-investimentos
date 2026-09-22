@@ -1,4 +1,4 @@
-﻿import { and, asc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm"
+import { and, asc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { Application } from "@domain/application/entities/application.entity"
@@ -72,6 +72,7 @@ export class ApplicationRepository implements IApplication {
    * key. Callers must handle the null result.
    *
    * @param id - The unique identifier of the application.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -96,7 +97,7 @@ export class ApplicationRepository implements IApplication {
    * Retrieves all applications of a position.
    *
    * @remarks
-   * Rows are ordered oldest-first so FIFO consumption is
+   * Rows are ordered oldest-first so **FIFO** consumption is
    * deterministic.
    *
    * @explanation
@@ -104,6 +105,7 @@ export class ApplicationRepository implements IApplication {
    * a position.
    *
    * @param positionId - The id of the position.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -130,7 +132,7 @@ export class ApplicationRepository implements IApplication {
    *
    * @remarks
    * The period is inclusive of both dates. Rows are ordered
-   * oldest-first so FIFO consumption is deterministic.
+   * oldest-first so **FIFO** consumption is deterministic.
    *
    * @explanation
    * Use this method to list the applications of a position
@@ -139,6 +141,7 @@ export class ApplicationRepository implements IApplication {
    * @param positionId - The id of the position.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -185,6 +188,7 @@ export class ApplicationRepository implements IApplication {
    * @param positionIds - The ids of the positions.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The matching entities.
    *
    * @example
@@ -235,6 +239,7 @@ export class ApplicationRepository implements IApplication {
    * @param positionId - The id of the position to total.
    * @param startDate - The start of the period, inclusive.
    * @param endDate - The end of the period, inclusive.
+   *
    * @returns The position totals.
    *
    * @example
@@ -287,6 +292,7 @@ export class ApplicationRepository implements IApplication {
    * with optimistic locking. Returns the persisted entity.
    *
    * @param persisted - The application to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

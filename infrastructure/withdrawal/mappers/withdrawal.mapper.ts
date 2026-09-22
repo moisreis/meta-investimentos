@@ -10,8 +10,21 @@ import { withdrawal } from "@db-schemas/withdrawal.schema"
  * Reconstructs domain value objects from their persisted
  * primitive representations.
  *
- * @param row - Database row returned by Drizzle.
- * @returns A hydrated `Withdrawal` domain entity.
+ * @explanation
+ * Use this function in the repository layer to build the
+ * `Withdrawal` entity from a row of the `withdrawal` table.
+ * It keeps database details out of the domain layer.
+ *
+ * @param row - Database row returned by **Drizzle**.
+ *
+ * @returns The hydrated entity.
+ *
+ * @example
+ * const WD = toDomain(ROW);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toDomain(row: typeof withdrawal.$inferSelect): Withdrawal {
   return Withdrawal.create(
@@ -40,8 +53,21 @@ export function toDomain(row: typeof withdrawal.$inferSelect): Withdrawal {
  * Unwraps domain value objects into their primitive
  * database representations.
  *
+ * @explanation
+ * Use this function in the insert path of the repository.
+ * It prepares the entity as plain column values for the
+ * `withdrawal` table.
+ *
  * @param entity - Withdrawal domain entity.
- * @returns Values compatible with the Drizzle insert schema.
+ *
+ * @returns Row insert values.
+ *
+ * @example
+ * const WD = toInsert(WD);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toInsert(entity: Withdrawal): typeof withdrawal.$inferInsert {
   return {
@@ -58,7 +84,8 @@ export function toInsert(entity: Withdrawal): typeof withdrawal.$inferInsert {
 }
 
 /**
- * @summary Maps an entity into update values.
+ * @summary
+ * Maps an entity into update values.
  *
  * @remarks
  * Omits `createdAt`, `updatedAt` and `version`. The first
@@ -68,13 +95,19 @@ export function toInsert(entity: Withdrawal): typeof withdrawal.$inferInsert {
  *
  * @explanation
  * `createdAt` is set once at insertion and never mutated.
- * `updatedAt` is auto-refreshed by Drizzle's `$onUpdate`,
+ * `updatedAt` is auto-refreshed by **Drizzle**'s `$onUpdate`,
  * so passing it explicitly is unnecessary. `version`
  * increments inside the repository's compare-and-swap.
  *
  * @param entity - Withdrawal domain entity.
- * @returns Update values for the row.
+ *
+ * @returns Row update values.
+ *
+ * @example
+ * const WD = toUpdate(WD);
+ *
  * @author Moisés Reis
+ *
  * @date 2026-09-15
  */
 export function toUpdate(

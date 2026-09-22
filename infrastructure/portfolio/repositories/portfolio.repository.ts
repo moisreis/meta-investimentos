@@ -1,4 +1,4 @@
-﻿import { and, asc, eq, inArray } from "drizzle-orm"
+import { and, asc, eq, inArray } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { Portfolio } from "@domain/portfolio/entities/portfolio.entity"
@@ -81,6 +81,7 @@ export class PortfolioRepository implements IPortfolio {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the portfolio.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -113,6 +114,7 @@ export class PortfolioRepository implements IPortfolio {
    * to a single user.
    *
    * @param userId - The user to filter by.
+   *
    * @returns The matching portfolios.
    *
    * @example
@@ -144,6 +146,7 @@ export class PortfolioRepository implements IPortfolio {
    * limited and offset for pagination.
    *
    * @param options - Optional limit and offset values.
+   *
    * @returns The matching portfolios.
    *
    * @example
@@ -180,6 +183,7 @@ export class PortfolioRepository implements IPortfolio {
    * query instead of one query per id.
    *
    * @param ids - The ids of the portfolios to retrieve.
+   *
    * @returns The matching portfolios.
    *
    * @example
@@ -219,6 +223,7 @@ export class PortfolioRepository implements IPortfolio {
    * optimistic locking. Returns the persisted entity.
    *
    * @param persisted - The portfolio to persist.
+   *
    * @returns The persisted entity.
    *
    * @example

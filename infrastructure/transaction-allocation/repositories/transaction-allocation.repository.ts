@@ -1,4 +1,4 @@
-﻿import { and, eq, inArray, sql } from "drizzle-orm"
+import { and, eq, inArray, sql } from "drizzle-orm"
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import { TransactionAllocation } from "@domain/transaction-allocation/entities/transaction-allocation.entity"
@@ -77,6 +77,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    * Callers must handle the null result.
    *
    * @param id - The unique identifier of the allocation.
+   *
    * @returns The entity or `null`.
    *
    * @example
@@ -108,6 +109,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    * quotas from one application.
    *
    * @param applicationId - The id of the application.
+   *
    * @returns The matching allocations.
    *
    * @example
@@ -142,6 +144,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    * applications in one query instead of one per application.
    *
    * @param applicationIds - The ids of the applications.
+   *
    * @returns The matching allocations.
    *
    * @example
@@ -179,6 +182,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    * withdrawal.
    *
    * @param withdrawId - The id of the withdrawal.
+   *
    * @returns The matching allocations.
    *
    * @example
@@ -213,6 +217,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    * withdrawals in one query instead of one per withdrawal.
    *
    * @param withdrawIds - The ids of the withdrawals.
+   *
    * @returns The matching allocations.
    *
    * @example
@@ -252,6 +257,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    * already consumed from the fund.
    *
    * @param applicationId - The id of the application.
+   *
    * @returns Quotas sum or null.
    *
    * @example
@@ -291,6 +297,7 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    * with optimistic locking. Returns the persisted entity.
    *
    * @param persisted - The allocation to persist.
+   *
    * @returns The persisted entity.
    *
    * @example
