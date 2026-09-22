@@ -1,7 +1,7 @@
-import { pgSchema, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pgSchema, text, timestamp, uuid } from "drizzle-orm/pg-core"
 
-// Defines the `category` table in the `fund` database schema.
-// Stores fund categories, each with a unique name.
+// Stores the fund categories on the platform.
+// Each category has a unique name used to group funds.
 export const category = pgSchema("fund").table("category", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull().unique(),
@@ -12,4 +12,4 @@ export const category = pgSchema("fund").table("category", {
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
-});
+})

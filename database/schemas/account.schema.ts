@@ -1,19 +1,21 @@
-import { sql } from "drizzle-orm";
+import { sql } from "drizzle-orm"
 import {
   index,
   pgSchema,
   text,
   timestamp,
   uniqueIndex,
-} from "drizzle-orm/pg-core";
-import { user } from "@db-schemas/user.schema";
+} from "drizzle-orm/pg-core"
+import { user } from "@db-schemas/user.schema"
 
-// Defines the `account` table in the `user` database schema.
 // Stores the authentication accounts linked to a user.
+// Keeps the credentials and tokens per authentication provider.
 export const account = pgSchema("user").table(
   "account",
   {
-    id: text("id").primaryKey().default(sql`gen_random_uuid()::text`),
+    id: text("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()::text`),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
     userId: text("user_id")
@@ -42,10 +44,10 @@ export const account = pgSchema("user").table(
     // at most once.
     uniqueIndex("account_providerId_accountId_uidx").on(
       table.providerId,
-      table.accountId,
+      table.accountId
     ),
 
     // Speeds up lookups of accounts by their owning user.
     index("account_userId_idx").on(table.userId),
-  ],
-);
+  ]
+)

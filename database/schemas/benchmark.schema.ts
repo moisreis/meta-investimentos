@@ -5,10 +5,10 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/pg-core"
 
-// Defines the `benchmark` table in the `benchmark`
-// database schema. Stores benchmarks with unique acronyms.
+// Stores the benchmarks used to gauge fund performance.
+// Each benchmark carries a unique acronym and a name.
 export const benchmark = pgSchema("benchmark").table(
   "benchmark",
   {
@@ -26,5 +26,5 @@ export const benchmark = pgSchema("benchmark").table(
 
     // Speeds up lookups of benchmarks by their acronym.
     index("benchmark_acronym_idx").on(table.acronym),
-  ],
-);
+  ]
+)

@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql } from "drizzle-orm"
 import {
   check,
   index,
@@ -8,12 +8,12 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-} from "drizzle-orm/pg-core";
-import { application } from "@db-schemas/application.schema";
-import { withdrawal } from "@db-schemas/withdrawal.schema";
+} from "drizzle-orm/pg-core"
+import { application } from "@db-schemas/application.schema"
+import { withdrawal } from "@db-schemas/withdrawal.schema"
 
-// Defines the `transaction_allocation` table in the `portfolio`
-// database schema. Stores quota consumption by withdrawals.
+// Stores the quota consumption of withdrawals.
+// Tracks the quotas taken from each application.
 export const transactionAllocation = pgSchema("portfolio").table(
   "transaction_allocation",
   {
@@ -37,14 +37,14 @@ export const transactionAllocation = pgSchema("portfolio").table(
     // Enforces that the consumed quotas are non-negative.
     check(
       "transaction_allocation_quotas_consumed_nonneg",
-      sql`${table.quotasConsumed} >= 0`,
+      sql`${table.quotasConsumed} >= 0`
     ),
 
     // Enforces that an application/withdrawal pair is allocated
     // at most once.
     uniqueIndex("transaction_allocation_application_withdraw_uidx").on(
       table.applicationId,
-      table.withdrawId,
+      table.withdrawId
     ),
 
     // Speeds up lookups of allocations by their application.
@@ -52,5 +52,5 @@ export const transactionAllocation = pgSchema("portfolio").table(
 
     // Speeds up lookups of allocations by their withdrawal.
     index("transaction_allocation_withdraw_id_idx").on(table.withdrawId),
-  ],
-);
+  ]
+)

@@ -1,12 +1,14 @@
-import { sql } from "drizzle-orm";
-import { index, pgSchema, text, timestamp } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm"
+import { index, pgSchema, text, timestamp } from "drizzle-orm/pg-core"
 
-// Defines the `verification` table in the `user`
-// database schema. Stores verification requests for users.
+// Stores the verification requests for a user.
+// Holds the identifier, the value, and the expiry.
 export const verification = pgSchema("user").table(
   "verification",
   {
-    id: text("id").primaryKey().default(sql`gen_random_uuid()::text`),
+    id: text("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()::text`),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
@@ -21,5 +23,5 @@ export const verification = pgSchema("user").table(
   (table) => [
     // Speeds up lookups of verifications by their identifier.
     index("verification_identifier_idx").on(table.identifier),
-  ],
-);
+  ]
+)

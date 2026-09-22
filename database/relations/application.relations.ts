@@ -1,8 +1,7 @@
-import { defineRelations } from "drizzle-orm";
-import { application, position, transactionAllocation } from "@db-schemas";
+import { defineRelations } from "drizzle-orm"
+import { application, position, transactionAllocation } from "@db-schemas"
 
-// Defines the relations applicable to the `application` table.
-// Links an application to its position and allocations.
+// Connects an application to its position and allocations.
 export const applicationRelations = defineRelations(
   { position, application, transactionAllocation },
   (r) => ({
@@ -16,5 +15,5 @@ export const applicationRelations = defineRelations(
         to: r.transactionAllocation.applicationId,
       }),
     },
-  }),
-);
+  })
+)

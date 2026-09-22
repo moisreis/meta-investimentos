@@ -1,15 +1,8 @@
-import { defineRelations } from "drizzle-orm";
-import {
-  bank,
-  benchmark,
-  category,
-  fund,
-  position,
-  quota,
-} from "@db-schemas";
+import { defineRelations } from "drizzle-orm"
+import { bank, benchmark, category, fund, position, quota } from "@db-schemas"
 
-// Defines the relations applicable to the `fund` table.
-// Links a fund to its bank, benchmark, category, and positions.
+// Connects a fund to its bank, benchmark, and category.
+// Also connects the fund to its quotas and positions.
 export const fundRelations = defineRelations(
   { fund, bank, benchmark, category, quota, position },
   (r) => ({
@@ -35,5 +28,5 @@ export const fundRelations = defineRelations(
         to: r.position.fundId,
       }),
     },
-  }),
-);
+  })
+)

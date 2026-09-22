@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql } from "drizzle-orm"
 import {
   check,
   index,
@@ -8,12 +8,12 @@ import {
   primaryKey,
   timestamp,
   uuid,
-} from "drizzle-orm/pg-core";
-import { norm } from "@db-schemas/norm.schema";
-import { portfolio } from "@db-schemas/portfolio.schema";
+} from "drizzle-orm/pg-core"
+import { norm } from "@db-schemas/norm.schema"
+import { portfolio } from "@db-schemas/portfolio.schema"
 
-// Defines the `norms_portfolios` table in the `portfolio`
-// database schema. Links portfolios and their applicable norms.
+// Links a portfolio with its applicable norms.
+// Overrides the allocation range for each linked pair.
 export const normsPortfolios = pgSchema("portfolio").table(
   "norms_portfolios",
   {
@@ -48,7 +48,7 @@ export const normsPortfolios = pgSchema("portfolio").table(
     // Enforces the ordering: min ≤ target ≤ max.
     check(
       "norms_portfolios_allocation_order",
-      sql`${table.minAllocation} <= ${table.targetAllocation} AND ${table.targetAllocation} <= ${table.maxAllocation}`,
+      sql`${table.minAllocation} <= ${table.targetAllocation} AND ${table.targetAllocation} <= ${table.maxAllocation}`
     ),
 
     // Speeds up lookups of norm/portfolio links by portfolio.
@@ -56,5 +56,5 @@ export const normsPortfolios = pgSchema("portfolio").table(
 
     // Speeds up lookups of norm/portfolio links by their norm.
     index("norms_portfolios_norm_id_idx").on(table.normId),
-  ],
-);
+  ]
+)

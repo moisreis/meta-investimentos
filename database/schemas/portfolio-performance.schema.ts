@@ -5,11 +5,11 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-} from "drizzle-orm/pg-core";
-import { portfolio } from "@db-schemas/portfolio.schema";
+} from "drizzle-orm/pg-core"
+import { portfolio } from "@db-schemas/portfolio.schema"
 
-// Defines the `portfolio_performance` table in the `performance`
-// database schema. Stores a daily performance snapshot.
+// Stores the daily performance snapshot of a portfolio.
+// Holds quotas, returns, and spread metrics for the day.
 export const portfolioPerformance = pgSchema("performance").table(
   "portfolio_performance",
   {
@@ -51,13 +51,13 @@ export const portfolioPerformance = pgSchema("performance").table(
     // per date.
     uniqueIndex("portfolio_performance_portfolio_date_uidx").on(
       table.portfolioId,
-      table.date,
+      table.date
     ),
 
     // Speeds up lookups of performance records by the full key.
     index("portfolio_performance_portfolio_date_idx").on(
       table.portfolioId,
-      table.date,
+      table.date
     ),
-  ],
-);
+  ]
+)

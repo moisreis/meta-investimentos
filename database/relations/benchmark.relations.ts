@@ -1,8 +1,7 @@
-import { defineRelations } from "drizzle-orm";
-import { benchmark, benchmarkHistory, fund } from "@db-schemas";
+import { defineRelations } from "drizzle-orm"
+import { benchmark, benchmarkHistory, fund } from "@db-schemas"
 
-// Defines the relations applicable to the `benchmark` table.
-// Links a benchmark to its history records and funds.
+// Connects a benchmark to its history records and funds.
 export const benchmarkRelations = defineRelations(
   { benchmark, benchmarkHistory, fund },
   (r) => ({
@@ -16,5 +15,5 @@ export const benchmarkRelations = defineRelations(
         to: r.fund.benchmarkId,
       }),
     },
-  }),
-);
+  })
+)

@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql } from "drizzle-orm"
 import {
   check,
   index,
@@ -8,11 +8,11 @@ import {
   text,
   timestamp,
   uuid,
-} from "drizzle-orm/pg-core";
-import { user } from "@db-schemas/user.schema";
+} from "drizzle-orm/pg-core"
+import { user } from "@db-schemas/user.schema"
 
-// Defines the `portfolio` table in the `portfolio`
-// database schema. Stores user portfolios with target values.
+// Stores the portfolios owned by a user.
+// Carries the interest rate and the allocation limits.
 export const portfolio = pgSchema("portfolio").table(
   "portfolio",
   {
@@ -50,10 +50,10 @@ export const portfolio = pgSchema("portfolio").table(
     // Enforces the ordering: min ≤ target ≤ max.
     check(
       "portfolio_allocation_order",
-      sql`${table.minAllocation} <= ${table.targetAllocation} AND ${table.targetAllocation} <= ${table.maxAllocation}`,
+      sql`${table.minAllocation} <= ${table.targetAllocation} AND ${table.targetAllocation} <= ${table.maxAllocation}`
     ),
 
     // Speeds up lookups of portfolios by their owning user.
     index("portfolio_user_id_idx").on(table.userId),
-  ],
-);
+  ]
+)

@@ -1,8 +1,7 @@
-import { defineRelations } from "drizzle-orm";
-import { position, positionPerformance } from "@db-schemas";
+import { defineRelations } from "drizzle-orm"
+import { position, positionPerformance } from "@db-schemas"
 
-// Defines the relations for the `position_performance` table.
-// Links a performance record to its position.
+// Connects a performance record to its position.
 export const positionPerformanceRelations = defineRelations(
   { position, positionPerformance },
   (r) => ({
@@ -12,5 +11,5 @@ export const positionPerformanceRelations = defineRelations(
         to: r.position.id,
       }),
     },
-  }),
-);
+  })
+)

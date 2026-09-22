@@ -5,11 +5,11 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-} from "drizzle-orm/pg-core";
-import { position } from "@db-schemas/position.schema";
+} from "drizzle-orm/pg-core"
+import { position } from "@db-schemas/position.schema"
 
-// Defines the `position_performance` table in the `performance`
-// database schema. Stores a daily performance snapshot.
+// Stores the daily performance snapshot of a position.
+// Holds quotas, returns, and the allocation share for the day.
 export const positionPerformance = pgSchema("performance").table(
   "position_performance",
   {
@@ -47,13 +47,13 @@ export const positionPerformance = pgSchema("performance").table(
     // per date.
     uniqueIndex("position_performance_position_date_uidx").on(
       table.positionId,
-      table.date,
+      table.date
     ),
 
     // Speeds up lookups of performance records by the full key.
     index("position_performance_position_date_idx").on(
       table.positionId,
-      table.date,
+      table.date
     ),
-  ],
-);
+  ]
+)

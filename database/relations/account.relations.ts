@@ -1,8 +1,7 @@
-import { defineRelations } from "drizzle-orm";
-import { account, session, user, verification } from "@db-schemas";
+import { defineRelations } from "drizzle-orm"
+import { account, session, user, verification } from "@db-schemas"
 
-// Defines the relations applicable to the `account` table.
-// Links an account to its user.
+// Connects an account to its owning user.
 export const accountRelations = defineRelations(
   { user, account, session, verification },
   (r) => ({
@@ -12,5 +11,5 @@ export const accountRelations = defineRelations(
         to: r.user.id,
       }),
     },
-  }),
-);
+  })
+)

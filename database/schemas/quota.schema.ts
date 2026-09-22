@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql } from "drizzle-orm"
 import {
   check,
   index,
@@ -7,11 +7,11 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-} from "drizzle-orm/pg-core";
-import { fund } from "@db-schemas/fund.schema";
+} from "drizzle-orm/pg-core"
+import { fund } from "@db-schemas/fund.schema"
 
-// Defines the `quota` table in the `fund` database schema.
-// Stores the daily quota price of a fund, one per date.
+// Stores the daily quota price of a fund.
+// Holds one price per fund and date.
 export const quota = pgSchema("fund").table(
   "quota",
   {
@@ -34,5 +34,5 @@ export const quota = pgSchema("fund").table(
 
     // Speeds up lookups of quota records by their full key.
     index("quota_fund_date_idx").on(table.fundId, table.date),
-  ],
-);
+  ]
+)

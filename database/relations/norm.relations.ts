@@ -1,8 +1,7 @@
-import { defineRelations } from "drizzle-orm";
-import { category, norm, normsPortfolios } from "@db-schemas";
+import { defineRelations } from "drizzle-orm"
+import { category, norm, normsPortfolios } from "@db-schemas"
 
-// Defines the relations applicable to the `norm` table.
-// Links a norm to its category and portfolio links.
+// Connects a norm to its category and portfolio links.
 export const normRelations = defineRelations(
   { category, norm, normsPortfolios },
   (r) => ({
@@ -16,5 +15,5 @@ export const normRelations = defineRelations(
         to: r.normsPortfolios.normId,
       }),
     },
-  }),
-);
+  })
+)

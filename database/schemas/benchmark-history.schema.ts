@@ -5,11 +5,11 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-} from "drizzle-orm/pg-core";
-import { benchmark } from "@db-schemas/benchmark.schema";
+} from "drizzle-orm/pg-core"
+import { benchmark } from "@db-schemas/benchmark.schema"
 
-// Defines the `benchmark_history` table in the `benchmark`
-// database schema. Stores the daily rate of a benchmark.
+// Stores the daily rate records of a benchmark.
+// Holds one rate per benchmark and date.
 export const benchmarkHistory = pgSchema("benchmark").table(
   "benchmark_history",
   {
@@ -27,10 +27,10 @@ export const benchmarkHistory = pgSchema("benchmark").table(
     // Enforces that a benchmark holds a single rate per date.
     uniqueIndex("benchmark_history_benchmark_date_uidx").on(
       table.benchmarkId,
-      table.date,
+      table.date
     ),
 
     // Speeds up lookups of history records by their benchmark.
     index("benchmark_history_benchmark_id_idx").on(table.benchmarkId),
-  ],
-);
+  ]
+)

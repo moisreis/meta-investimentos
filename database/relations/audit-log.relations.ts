@@ -1,8 +1,7 @@
-import { defineRelations } from "drizzle-orm";
-import { auditLog, user } from "@db-schemas";
+import { defineRelations } from "drizzle-orm"
+import { auditLog, user } from "@db-schemas"
 
-// Defines the relations applicable to the `audit_log` table.
-// Links an audit entry to its user.
+// Connects an audit entry to its acting user.
 export const auditLogRelations = defineRelations({ user, auditLog }, (r) => ({
   auditLog: {
     user: r.one.user({
@@ -10,4 +9,4 @@ export const auditLogRelations = defineRelations({ user, auditLog }, (r) => ({
       to: r.user.id,
     }),
   },
-}));
+}))

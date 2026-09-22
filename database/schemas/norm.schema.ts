@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql } from "drizzle-orm"
 import {
   check,
   index,
@@ -8,11 +8,11 @@ import {
   text,
   timestamp,
   uuid,
-} from "drizzle-orm/pg-core";
-import { category } from "@db-schemas/category.schema";
+} from "drizzle-orm/pg-core"
+import { category } from "@db-schemas/category.schema"
 
-// Defines the `norm` table in the `portfolio` database schema.
-// Stores allocation norms per fund category.
+// Stores the allocation norms per fund category.
+// Sets the minimum, target, and maximum share allowed.
 export const norm = pgSchema("portfolio").table(
   "norm",
   {
@@ -46,10 +46,10 @@ export const norm = pgSchema("portfolio").table(
     // Enforces the ordering: min ≤ target ≤ max.
     check(
       "norm_allocation_order",
-      sql`${table.minAllocation} <= ${table.targetAllocation} AND ${table.targetAllocation} <= ${table.maxAllocation}`,
+      sql`${table.minAllocation} <= ${table.targetAllocation} AND ${table.targetAllocation} <= ${table.maxAllocation}`
     ),
 
     // Speeds up lookups of norms by their category.
     index("norm_category_id_idx").on(table.categoryId),
-  ],
-);
+  ]
+)

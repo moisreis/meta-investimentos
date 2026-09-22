@@ -1,4 +1,4 @@
-import { defineRelations } from "drizzle-orm";
+import { defineRelations } from "drizzle-orm"
 import {
   application,
   fund,
@@ -6,10 +6,10 @@ import {
   position,
   positionPerformance,
   withdrawal,
-} from "@db-schemas";
+} from "@db-schemas"
 
-// Defines the relations applicable to the `position` table.
-// Links a position to its portfolio, fund, and applications.
+// Connects a position to its portfolio and fund.
+// Also links its applications, withdrawals, and performance.
 export const positionRelations = defineRelations(
   {
     portfolio,
@@ -42,5 +42,5 @@ export const positionRelations = defineRelations(
         to: r.positionPerformance.positionId,
       }),
     },
-  }),
-);
+  })
+)

@@ -1,8 +1,7 @@
-import { defineRelations } from "drizzle-orm";
-import { bankAccount, checkingAccount } from "@db-schemas";
+import { defineRelations } from "drizzle-orm"
+import { bankAccount, checkingAccount } from "@db-schemas"
 
-// Defines the relations for the `checking_account` table.
-// Links a checking account to its bank account.
+// Connects a checking account to its bank account.
 export const checkingAccountRelations = defineRelations(
   { bankAccount, checkingAccount },
   (r) => ({
@@ -12,5 +11,5 @@ export const checkingAccountRelations = defineRelations(
         to: r.bankAccount.id,
       }),
     },
-  }),
-);
+  })
+)

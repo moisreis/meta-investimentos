@@ -1,8 +1,8 @@
-import { defineRelations } from "drizzle-orm";
-import { bank, bankAccount, checkingAccount, portfolio } from "@db-schemas";
+import { defineRelations } from "drizzle-orm"
+import { bank, bankAccount, checkingAccount, portfolio } from "@db-schemas"
 
-// Defines the relations applicable to the `bank_account` table.
-// Links a bank account's portfolio, bank, and checking accounts.
+// Connects a bank account to its bank and portfolio.
+// Also links the daily checking balances of the account.
 export const bankAccountRelations = defineRelations(
   { bankAccount, portfolio, bank, checkingAccount },
   (r) => ({
@@ -20,5 +20,5 @@ export const bankAccountRelations = defineRelations(
         to: r.checkingAccount.bankAccountId,
       }),
     },
-  }),
-);
+  })
+)

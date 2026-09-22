@@ -5,12 +5,12 @@ import {
   text,
   timestamp,
   uuid,
-} from "drizzle-orm/pg-core";
-import { portfolio } from "@db-schemas/portfolio.schema";
-import { user } from "@db-schemas/user.schema";
+} from "drizzle-orm/pg-core"
+import { portfolio } from "@db-schemas/portfolio.schema"
+import { user } from "@db-schemas/user.schema"
 
-// Defines the `statement` table in the `report` database schema.
-// Stores the reporting statements generated for a portfolio.
+// Stores the reporting statements of a portfolio.
+// Records the covered period and the generated file.
 export const statement = pgSchema("report").table(
   "statement",
   {
@@ -29,10 +29,10 @@ export const statement = pgSchema("report").table(
     index("statement_portfolio_period_idx").on(
       table.portfolioId,
       table.periodStart,
-      table.periodEnd,
+      table.periodEnd
     ),
 
     // Speeds up lookups of statements by the generating user.
     index("statement_generated_by_user_id_idx").on(table.generatedByUserId),
-  ],
-);
+  ]
+)

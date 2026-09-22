@@ -5,11 +5,11 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-} from "drizzle-orm/pg-core";
-import { bankAccount } from "@db-schemas/bank-account.schema";
+} from "drizzle-orm/pg-core"
+import { bankAccount } from "@db-schemas/bank-account.schema"
 
-// Defines the `checking_account` table in the `bank`
-// database schema. Stores the daily balance of a bank account.
+// Stores the daily balance of a bank account.
+// Holds one balance per bank account and date.
 export const checkingAccount = pgSchema("bank").table(
   "checking_account",
   {
@@ -24,13 +24,13 @@ export const checkingAccount = pgSchema("bank").table(
     // Enforces that a bank account holds one balance per date.
     uniqueIndex("checking_account_bank_account_date_uidx").on(
       table.bankAccountId,
-      table.date,
+      table.date
     ),
 
     // Speeds up lookups of checking records by their full key.
     index("checking_account_bank_account_date_idx").on(
       table.bankAccountId,
-      table.date,
+      table.date
     ),
-  ],
-);
+  ]
+)

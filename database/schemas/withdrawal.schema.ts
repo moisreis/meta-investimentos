@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql } from "drizzle-orm"
 import {
   check,
   index,
@@ -8,12 +8,12 @@ import {
   text,
   timestamp,
   uuid,
-} from "drizzle-orm/pg-core";
-import { user } from "@db-schemas/user.schema";
-import { position } from "@db-schemas/position.schema";
+} from "drizzle-orm/pg-core"
+import { user } from "@db-schemas/user.schema"
+import { position } from "@db-schemas/position.schema"
 
-// Defines the `withdrawal` table in the `portfolio`
-// database schema. Stores monetary redemptions from a position.
+// Stores a monetary redemption from a position.
+// Carries the redeemed amount and the quotas taken.
 export const withdrawal = pgSchema("portfolio").table(
   "withdrawal",
   {
@@ -43,5 +43,5 @@ export const withdrawal = pgSchema("portfolio").table(
 
     // Speeds up lookups of withdrawals by position and date.
     index("withdrawal_position_date_idx").on(table.positionId, table.date),
-  ],
-);
+  ]
+)

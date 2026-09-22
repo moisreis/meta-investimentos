@@ -1,8 +1,7 @@
-import { defineRelations } from "drizzle-orm";
-import { portfolio, portfolioPerformance } from "@db-schemas";
+import { defineRelations } from "drizzle-orm"
+import { portfolio, portfolioPerformance } from "@db-schemas"
 
-// Defines the relations for the `portfolio_performance` table.
-// Links a performance record to its portfolio.
+// Connects a performance record to its portfolio.
 export const portfolioPerformanceRelations = defineRelations(
   { portfolio, portfolioPerformance },
   (r) => ({
@@ -12,5 +11,5 @@ export const portfolioPerformanceRelations = defineRelations(
         to: r.portfolio.id,
       }),
     },
-  }),
-);
+  })
+)

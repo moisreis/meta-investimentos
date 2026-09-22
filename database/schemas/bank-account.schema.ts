@@ -5,12 +5,12 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-} from "drizzle-orm/pg-core";
-import { portfolio } from "@db-schemas/portfolio.schema";
-import { bank } from "@db-schemas/bank.schema";
+} from "drizzle-orm/pg-core"
+import { portfolio } from "@db-schemas/portfolio.schema"
+import { bank } from "@db-schemas/bank.schema"
 
-// Defines the `bank_account` table in the `bank`
-// database schema. Stores bank accounts linked to a portfolio.
+// Stores the bank accounts linked to a portfolio.
+// Carries the agency, the account number, and the bank.
 export const bankAccount = pgSchema("bank").table(
   "bank_account",
   {
@@ -37,7 +37,7 @@ export const bankAccount = pgSchema("bank").table(
       table.portfolioId,
       table.bankId,
       table.agency,
-      table.accountNumber,
+      table.accountNumber
     ),
 
     // Speeds up lookups of bank accounts by their full key.
@@ -45,10 +45,10 @@ export const bankAccount = pgSchema("bank").table(
       table.portfolioId,
       table.bankId,
       table.agency,
-      table.accountNumber,
+      table.accountNumber
     ),
 
     // Speeds up lookups of bank accounts by their bank.
     index("bank_account_bank_id_idx").on(table.bankId),
-  ],
-);
+  ]
+)

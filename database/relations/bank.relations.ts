@@ -1,8 +1,7 @@
-import { defineRelations } from "drizzle-orm";
-import { bank, bankAccount, fund } from "@db-schemas";
+import { defineRelations } from "drizzle-orm"
+import { bank, bankAccount, fund } from "@db-schemas"
 
-// Defines the relations applicable to the `bank` table.
-// Links a bank to its bank accounts and funds.
+// Connects a bank to its bank accounts and funds.
 export const bankRelations = defineRelations(
   { bank, bankAccount, fund },
   (r) => ({
@@ -16,5 +15,5 @@ export const bankRelations = defineRelations(
         to: r.fund.bankId,
       }),
     },
-  }),
-);
+  })
+)

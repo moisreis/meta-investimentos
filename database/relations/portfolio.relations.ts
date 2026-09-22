@@ -1,4 +1,4 @@
-import { defineRelations } from "drizzle-orm";
+import { defineRelations } from "drizzle-orm"
 import {
   bankAccount,
   normsPortfolios,
@@ -7,10 +7,10 @@ import {
   position,
   statement,
   user,
-} from "@db-schemas";
+} from "@db-schemas"
 
-// Defines the relations applicable to the `portfolio` table.
-// Links a portfolio to its user, accounts, positions, and norms.
+// Connects a portfolio to its owner, accounts, and positions.
+// Also links performances, statements, and applicable norms.
 export const portfolioRelations = defineRelations(
   {
     user,
@@ -48,5 +48,5 @@ export const portfolioRelations = defineRelations(
         to: r.normsPortfolios.portfolioId,
       }),
     },
-  }),
-);
+  })
+)

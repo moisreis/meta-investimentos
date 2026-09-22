@@ -5,13 +5,13 @@ import {
   text,
   timestamp,
   uuid,
-} from "drizzle-orm/pg-core";
-import { bank } from "@db-schemas/bank.schema";
-import { benchmark } from "@db-schemas/benchmark.schema";
-import { category } from "@db-schemas/category.schema";
+} from "drizzle-orm/pg-core"
+import { bank } from "@db-schemas/bank.schema"
+import { benchmark } from "@db-schemas/benchmark.schema"
+import { category } from "@db-schemas/category.schema"
 
-// Defines the `fund` table in the `fund` database schema.
 // Stores the investment funds available on the platform.
+// Carries the **CNPJ**, the fees, and the benchmark links.
 export const fund = pgSchema("fund").table(
   "fund",
   {
@@ -47,5 +47,5 @@ export const fund = pgSchema("fund").table(
 
     // Speeds up lookups of funds by their category.
     index("fund_category_id_idx").on(table.categoryId),
-  ],
-);
+  ]
+)

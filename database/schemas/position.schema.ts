@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql } from "drizzle-orm"
 import {
   check,
   index,
@@ -8,12 +8,12 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-} from "drizzle-orm/pg-core";
-import { fund } from "@db-schemas/fund.schema";
-import { portfolio } from "@db-schemas/portfolio.schema";
+} from "drizzle-orm/pg-core"
+import { fund } from "@db-schemas/fund.schema"
+import { portfolio } from "@db-schemas/portfolio.schema"
 
-// Defines the `position` table in the `portfolio`
-// database schema. Stores a fund's holdings in a portfolio.
+// Stores the holdings of a fund inside a portfolio.
+// Keeps the initial balance and its reference date.
 export const position = pgSchema("portfolio").table(
   "position",
   {
@@ -43,7 +43,7 @@ export const position = pgSchema("portfolio").table(
     // Enforces that a portfolio holds one position per fund.
     uniqueIndex("position_portfolio_fund_uidx").on(
       table.portfolioId,
-      table.fundId,
+      table.fundId
     ),
 
     // Speeds up lookups of positions by their owning portfolio.
@@ -51,5 +51,5 @@ export const position = pgSchema("portfolio").table(
 
     // Speeds up lookups of positions by their fund.
     index("position_fund_id_idx").on(table.fundId),
-  ],
-);
+  ]
+)

@@ -1,4 +1,4 @@
-import { defineRelations } from "drizzle-orm";
+import { defineRelations } from "drizzle-orm"
 import {
   account,
   auditLog,
@@ -7,10 +7,10 @@ import {
   statement,
   user,
   verification,
-} from "@db-schemas";
+} from "@db-schemas"
 
-// Defines the relations applicable to the `user` table.
-// Links users to their accounts, sessions, and portfolios.
+// Connects a user to its accounts, sessions, and portfolios.
+// Also connects the user to its statements and audit logs.
 export const userRelations = defineRelations(
   { user, account, session, verification, portfolio, statement, auditLog },
   (r) => ({
@@ -36,5 +36,5 @@ export const userRelations = defineRelations(
         to: r.auditLog.userId,
       }),
     },
-  }),
-);
+  })
+)

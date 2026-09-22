@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql } from "drizzle-orm"
 import {
   check,
   index,
@@ -8,12 +8,12 @@ import {
   text,
   timestamp,
   uuid,
-} from "drizzle-orm/pg-core";
-import { user } from "@db-schemas/user.schema";
-import { position } from "@db-schemas/position.schema";
+} from "drizzle-orm/pg-core"
+import { user } from "@db-schemas/user.schema"
+import { position } from "@db-schemas/position.schema"
 
-// Defines the `application` table in the `portfolio`
-// database schema. Stores monetary applications with quotas.
+// Stores a monetary application into a position.
+// Carries the invested amount and the quotas acquired.
 export const application = pgSchema("portfolio").table(
   "application",
   {
@@ -43,5 +43,5 @@ export const application = pgSchema("portfolio").table(
 
     // Speeds up lookups of applications by position and date.
     index("application_position_date_idx").on(table.positionId, table.date),
-  ],
-);
+  ]
+)
