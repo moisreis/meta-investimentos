@@ -40,9 +40,25 @@ export class UpdateBenchmarkUseCase {
    * @summary
    * Updates and persists a benchmark.
    *
+   * @remarks
+   * Fetches the benchmark, applies `rename` and
+   * `changeAcronym` for the provided fields, and persists
+   * the updated entity.
+   *
+   * @explanation
+   * Use this method to edit the editable fields of an
+   * existing benchmark through the service layer.
+   *
    * @param input - Payload with the target benchmark id
    *                and field updates.
-   * @returns The updated benchmark response.
+   *
+   * @returns The updated benchmark.
+   *
+   * @example
+   * const BENCHMARK = await UPDATE_BENCHMARK_USE_CASE.execute({
+   *   benchmarkId: "benchmark-1",
+   *   name: "Certificado de Depósito Interbancário",
+   * });
    *
    * @author Moisés Reis
    *

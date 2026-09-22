@@ -1,6 +1,4 @@
-import {
-  ICheckingAccount,
-} from "@domain/checking-account/interfaces/checking-account.interface"
+import { ICheckingAccount } from "@domain/checking-account/interfaces/checking-account.interface"
 import { EntityId } from "@/value-objects"
 import type { CheckingAccountResponseDTO } from "../dto/checking-account-response.dto"
 import { toResponseDTO } from "../mappers/checking-account.mapper"
@@ -22,9 +20,10 @@ export interface ListCheckingAccountHistoryInput {
  * bank account through the service layer.
  *
  * @example
- * const ENTRIES = await LIST_CHECKING_ACCOUNT_HISTORY_USE_CASE.execute({
- *   bankAccountId: "bank-account-1",
- * });
+ * const ENTRIES = await LIST_CHECKING_ACCOUNT_HISTORY_USE_CASE
+ *   .execute({
+ *     bankAccountId: "bank-account-1",
+ *   });
  *
  * @author Moisés Reis
  *
@@ -37,9 +36,23 @@ export class ListCheckingAccountHistoryUseCase {
    * @summary
    * Fetches all entries of the provided bank account.
    *
+   * @remarks
+   * Uses the bank account id to scope the entry query.
+   *
+   * @explanation
+   * Use this method to list the entries of a given
+   * bank account through the service layer.
+   *
    * @param input - Payload with the target bank account
    *                id.
-   * @returns The matching entry responses.
+   *
+   * @returns The matching entries.
+   *
+   * @example
+   * const ENTRIES = await LIST_CHECKING_ACCOUNT_HISTORY_USE_CASE
+   *   .execute({
+   *     bankAccountId: "bank-account-1",
+   *   });
    *
    * @author Moisés Reis
    *
@@ -49,9 +62,10 @@ export class ListCheckingAccountHistoryUseCase {
     input: ListCheckingAccountHistoryInput
   ): Promise<CheckingAccountResponseDTO[]> {
     const BANK_ACCOUNT_ID = EntityId.create(input.bankAccountId)
-    const ENTRIES = await this.checkingAccountRepository.findAllByBankAccountId(
-      BANK_ACCOUNT_ID
-    )
+    const ENTRIES =
+      await this.checkingAccountRepository.findAllByBankAccountId(
+        BANK_ACCOUNT_ID
+      )
     return ENTRIES.map(toResponseDTO)
   }
 }

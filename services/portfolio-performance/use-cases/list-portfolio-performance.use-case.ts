@@ -35,8 +35,22 @@ export class ListPortfolioPerformanceUseCase {
    * @summary
    * Lists and maps the portfolio performances.
    *
+   * @remarks
+   * Fetches all daily records for the provided portfolio
+   * and maps each one to the response DTO in order.
+   *
+   * @explanation
+   * Use this method to retrieve the performance history
+   * of a single portfolio from the service layer.
+   *
    * @param input - The portfolio identifier.
-   * @returns The mapped performance responses.
+   *
+   * @returns The mapped performance.
+   *
+   * @example
+   * const RESULT = await USE_CASE.execute({
+   *   portfolioId: "portfolio-1",
+   * });
    *
    * @author Moisés Reis
    *

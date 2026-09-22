@@ -34,8 +34,22 @@ export class ListWithdrawalsUseCase {
    * @summary
    * Fetches all withdrawals of the provided position.
    *
+   * @remarks
+   * Uses the position id to scope the withdrawal query.
+   *
+   * @explanation
+   * Use this method to list the withdrawals of a given
+   * position through the service layer.
+   *
    * @param input - Payload with the target position id.
-   * @returns The matching withdrawal responses.
+   *
+   * @returns The matching withdrawals.
+   *
+   * @example
+   * const WITHDRAWALS = await LIST_WITHDRAWALS_USE_CASE
+   *   .execute({
+   *     positionId: "position-1",
+   *   });
    *
    * @author Moisés Reis
    *
@@ -43,9 +57,8 @@ export class ListWithdrawalsUseCase {
    */
   async execute(input: ListWithdrawalsInput): Promise<WithdrawalResponseDTO[]> {
     const POSITION_ID = EntityId.create(input.positionId)
-    const WITHDRAWALS = await this.withdrawalRepository.findAllByPositionId(
-      POSITION_ID
-    )
+    const WITHDRAWALS =
+      await this.withdrawalRepository.findAllByPositionId(POSITION_ID)
     return WITHDRAWALS.map(toResponseDTO)
   }
 }

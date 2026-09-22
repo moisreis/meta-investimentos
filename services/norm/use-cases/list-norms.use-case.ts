@@ -34,8 +34,21 @@ export class ListNormsUseCase {
    * @summary
    * Fetches all norms of the provided category.
    *
+   * @remarks
+   * Uses the category id to scope the norm query.
+   *
+   * @explanation
+   * Use this method to list the norms of a given
+   * category through the service layer.
+   *
    * @param input - Payload with the target category id.
-   * @returns The matching norm responses.
+   *
+   * @returns The matching norms.
+   *
+   * @example
+   * const NORMS = await LIST_NORMS_USE_CASE.execute({
+   *   categoryId: "category-1",
+   * });
    *
    * @author Moisés Reis
    *

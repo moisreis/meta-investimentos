@@ -35,9 +35,24 @@ export class DeleteBankAccountUseCase {
    * @summary
    * Deletes the bank account with the provided id.
    *
+   * @remarks
+   * Fetches the bank account and removes it when it
+   * exists. Throws **NotFoundError** when no bank account
+   * matches the provided id.
+   *
+   * @explanation
+   * Use this method to remove a bank account through
+   * the service layer.
+   *
    * @param input - Payload with the target bank account
    *                id.
-   * @returns Resolves when the bank account is removed.
+   *
+   * @returns Resolves when removed.
+   *
+   * @example
+   * await DELETE_BANK_ACCOUNT_USE_CASE.execute({
+   *   bankAccountId: "bank-account-1",
+   * });
    *
    * @author Moisés Reis
    *

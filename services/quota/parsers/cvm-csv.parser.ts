@@ -6,7 +6,27 @@ import { CvmSourceError } from "@/errors"
 // ---------------------------------
 
 /**
+ * @summary
  * A normalized row from a **CVM** `INF_DIARIO` CSV file.
+ *
+ * @remarks
+ * Maps the `CNPJ_FUNDO`, `DT_COMPTC`, and `VL_QUOTA` columns
+ * into typed fields. The price keeps its decimal string form.
+ *
+ * @explanation
+ * Use this interface to represent one parsed line before it
+ * becomes a quota upsert. The date is **UTC** midnight.
+ *
+ * @example
+ * const ROW: CvmCsvRow = {
+ *   cnpj: "12345678000199",
+ *   date: new Date("2026-01-15T00:00:00.000Z"),
+ *   price: "12.3456",
+ * };
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export interface CvmCsvRow {
   cnpj: string
@@ -34,6 +54,7 @@ export interface CvmCsvRow {
  * the date resolves to **UTC** midnight.
  *
  * @param bytes - Raw **CVM** file bytes to parse.
+ *
  * @returns The parsed quota rows.
  *
  * @example
@@ -53,10 +74,7 @@ export function parseCvmCsvBytes(bytes: Uint8Array): CvmCsvRow[] {
 
   const HEADER = LINES[0].split(";").map((h) => h.trim())
 
-  const CNPJ_INDEX = headerIndex(HEADER, [
-    "CNPJ_FUNDO",
-    "CNPJ_FUNDO_CLASSE",
-  ])
+  const CNPJ_INDEX = headerIndex(HEADER, ["CNPJ_FUNDO", "CNPJ_FUNDO_CLASSE"])
   const DATE_INDEX = headerIndex(HEADER, ["DT_COMPTC"])
   const PRICE_INDEX = headerIndex(HEADER, ["VL_QUOTA"])
 
@@ -83,8 +101,7 @@ export function parseCvmCsvBytes(bytes: Uint8Array): CvmCsvRow[] {
     }
 
     const DATE_RAW = safeGet(CELLS, DATE_INDEX)
-    const DATE =
-      DATE_RAW !== null ? parseUtcDate(DATE_RAW) : null
+    const DATE = DATE_RAW !== null ? parseUtcDate(DATE_RAW) : null
 
     if (DATE === null) {
       continue
@@ -96,9 +113,7 @@ export function parseCvmCsvBytes(bytes: Uint8Array): CvmCsvRow[] {
       continue
     }
 
-    const PRICE_CLEANED = PRICE_RAW
-      .replace(/\s/g, "")
-      .replace(/,/g, ".")
+    const PRICE_CLEANED = PRICE_RAW.replace(/\s/g, "").replace(/,/g, ".")
 
     let DECIMAL: Decimal
 
@@ -133,7 +148,7 @@ function headerIndex(header: string[], names: string[]): number {
   }
 
   throw new CvmSourceError(
-    `Missing column "${names[0]}" in **CVM** CSV header.`,
+    `Missing column "${names[0]}" in **CVM** CSV header.`
   )
 }
 

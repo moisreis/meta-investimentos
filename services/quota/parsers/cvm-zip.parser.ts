@@ -19,8 +19,9 @@ const CSV_ENTRY = /\.csv$/i
  * constrained serverless runtimes.
  *
  * @param bytes - The raw monthly archive bytes.
- * @param cnpjs - The target fund CNPJ digit strings.
- * @returns The matching CSV file bytes.
+ * @param cnpjs - The target fund **CNPJ** digit strings.
+ *
+ * @returns The matching CSV bytes.
  *
  * @example
  * const FILES = extractCvmFundFiles(ZIP, CNPJS);
@@ -31,7 +32,7 @@ const CSV_ENTRY = /\.csv$/i
  */
 export function extractCvmFundFiles(
   bytes: Uint8Array,
-  cnpjs: Set<string>,
+  cnpjs: Set<string>
 ): Uint8Array[] {
   const FILES = unzipSync(bytes, {
     filter: (file) =>

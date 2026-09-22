@@ -25,7 +25,7 @@ export interface CreateBenchmarkInput {
  *
  * @example
  * const BENCHMARK = await CREATE_BENCHMARK_USE_CASE.execute({
- *   acronym: "CDI",
+ *   acronym: "**CDI**",
  *   name: "Certificado de Depósito Interbancário",
  * });
  *
@@ -40,8 +40,23 @@ export class CreateBenchmarkUseCase {
    * @summary
    * Creates and persists a new benchmark.
    *
+   * @remarks
+   * Builds entity props through the create mapper and
+   * saves the benchmark with the benchmark repository.
+   *
+   * @explanation
+   * Use this method to register a new benchmark through
+   * the service layer.
+   *
    * @param input - The benchmark creation payload.
-   * @returns The persisted benchmark response.
+   *
+   * @returns The persisted benchmark.
+   *
+   * @example
+   * const BENCHMARK = await CREATE_BENCHMARK_USE_CASE.execute({
+   *   acronym: "**CDI**",
+   *   name: "Certificado de Depósito Interbancário",
+   * });
    *
    * @author Moisés Reis
    *

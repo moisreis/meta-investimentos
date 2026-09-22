@@ -85,8 +85,26 @@ export class CalculatePortfolioPerformanceUseCase {
    * @summary
    * Calculates and persists the portfolio performance.
    *
+   * @remarks
+   * Orchestrates positions, quotas, applications, withdrawals
+   * and previous snapshots to produce a fresh daily portfolio
+   * performance record using the domain calculators.
+   *
+   * @explanation
+   * Patrimony aggregates the position values for the date.
+   * The optional rates feed the target and the benchmark
+   * spreads, remaining null when not provided.
+   *
    * @param input - Portfolio id, target date and optional rates.
-   * @returns The persisted performance response.
+   *
+   * @returns The saved performance.
+   *
+   * @example
+   * const RESULT = await USE_CASE.execute({
+   *   portfolioId: "portfolio-1",
+   *   date: "2026-09-15T00:00:00.000Z",
+   *   inflationRate: "0.44",
+   * });
    *
    * @author Moisés Reis
    *

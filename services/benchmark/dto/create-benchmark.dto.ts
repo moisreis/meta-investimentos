@@ -11,7 +11,7 @@
  *
  * @example
  * const DTO: CreateBenchmarkDTO = {
- *   acronym: "CDI",
+ *   acronym: "**CDI**",
  *   name: "Certificado de Depósito Interbancário",
  * };
  *

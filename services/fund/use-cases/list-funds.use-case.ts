@@ -33,8 +33,20 @@ export class ListFundsUseCase {
    * @summary
    * Fetches all funds, optionally paginated.
    *
+   * @remarks
+   * Supports optional pagination through limit and
+   * offset.
+   *
+   * @explanation
+   * Use this method to list funds through the service
+   * layer.
+   *
    * @param input - Pagination options.
-   * @returns The matching fund responses.
+   *
+   * @returns The matching funds.
+   *
+   * @example
+   * const FUNDS = await LIST_FUNDS_USE_CASE.execute({});
    *
    * @author Moisés Reis
    *

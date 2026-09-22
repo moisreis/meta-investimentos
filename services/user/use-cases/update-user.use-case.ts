@@ -44,9 +44,26 @@ export class UpdateUserUseCase {
    * @summary
    * Updates and persists a user profile.
    *
+   * @remarks
+   * Fetches the user, applies `updateProfile` with the
+   * provided fields, and persists the updated entity.
+   *
+   * @explanation
+   * Use this method to edit the editable profile
+   * fields of an existing user through the service
+   * layer.
+   *
    * @param input - Payload with the target user id
    *                and field updates.
-   * @returns The updated user response.
+   *
+   * @returns The updated user.
+   *
+   * @example
+   * const USER = await UPDATE_USER_USE_CASE.execute({
+   *   userId: "user-1",
+   *   name: "Maria Souza",
+   *   lastName: "Souza",
+   * });
    *
    * @author Moisés Reis
    *

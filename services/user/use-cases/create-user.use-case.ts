@@ -49,8 +49,28 @@ export class CreateUserUseCase {
    * @summary
    * Creates and persists a new user.
    *
+   * @remarks
+   * Builds entity props through the create mapper and
+   * saves the user with the user repository.
+   *
+   * @explanation
+   * Use this method to register a new user through
+   * the service layer.
+   *
    * @param input - The user creation payload.
-   * @returns The persisted user response.
+   *
+   * @returns The persisted user.
+   *
+   * @example
+   * const USER = await CREATE_USER_USE_CASE.execute({
+   *   name: "Maria Silva",
+   *   email: "maria@example.com",
+   *   firstName: "Maria",
+   *   lastName: "Silva",
+   *   cpf: "123.456.789-09",
+   *   role: "MANAGER",
+   *   image: null,
+   * });
    *
    * @author Moisés Reis
    *

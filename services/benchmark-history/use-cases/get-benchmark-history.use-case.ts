@@ -1,6 +1,4 @@
-import {
-  IBenchmarkHistory,
-} from "@domain/benchmark-history/interfaces/benchmark-history.interface"
+import { IBenchmarkHistory } from "@domain/benchmark-history/interfaces/benchmark-history.interface"
 import { NotFoundError } from "@errors/not-found.error"
 import { EntityId } from "@/value-objects"
 import type { BenchmarkHistoryResponseDTO } from "../dto/benchmark-history-response.dto"
@@ -38,8 +36,22 @@ export class GetBenchmarkHistoryUseCase {
    * @summary
    * Fetches the entry with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no entry matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single benchmark history
+   * entry through the service layer.
+   *
    * @param input - Payload with the target entry id.
-   * @returns The matching entry response.
+   *
+   * @returns The matching entry.
+   *
+   * @example
+   * const ENTRY = await GET_BENCHMARK_HISTORY_USE_CASE.execute({
+   *   benchmarkHistoryId: "entry-1",
+   * });
    *
    * @author Moisés Reis
    *

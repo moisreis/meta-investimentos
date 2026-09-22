@@ -1,6 +1,4 @@
-import {
-  ITransactionAllocation,
-} from "@domain/transaction-allocation/interfaces/transaction-allocation.interface"
+import { ITransactionAllocation } from "@domain/transaction-allocation/interfaces/transaction-allocation.interface"
 import { NotFoundError } from "@errors/not-found.error"
 import { EntityId } from "@/value-objects"
 import type { TransactionAllocationResponseDTO } from "../dto/transaction-allocation-response.dto"
@@ -24,9 +22,10 @@ export interface GetTransactionAllocationInput {
  * through the service layer.
  *
  * @example
- * const ALLOCATION = await GET_TRANSACTION_ALLOCATION_USE_CASE.execute({
- *   transactionAllocationId: "allocation-1",
- * });
+ * const ALLOCATION = await GET_TRANSACTION_ALLOCATION_USE_CASE
+ *   .execute({
+ *     transactionAllocationId: "allocation-1",
+ *   });
  *
  * @author Moisés Reis
  *
@@ -41,8 +40,23 @@ export class GetTransactionAllocationUseCase {
    * @summary
    * Fetches the allocation with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no allocation matches
+   * the provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single allocation
+   * through the service layer.
+   *
    * @param input - Payload with the target allocation id.
-   * @returns The matching allocation response.
+   *
+   * @returns The matching allocation.
+   *
+   * @example
+   * const ALLOCATION = await GET_TRANSACTION_ALLOCATION_USE_CASE
+   *   .execute({
+   *     transactionAllocationId: "allocation-1",
+   *   });
    *
    * @author Moisés Reis
    *

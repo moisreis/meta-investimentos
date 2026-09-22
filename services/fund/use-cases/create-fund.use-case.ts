@@ -47,8 +47,28 @@ export class CreateFundUseCase {
    * @summary
    * Creates and persists a new fund.
    *
+   * @remarks
+   * Builds entity props through the create mapper and
+   * saves the fund with the fund repository.
+   *
+   * @explanation
+   * Use this method to register a new fund through
+   * the service layer.
+   *
    * @param input - The fund creation payload.
-   * @returns The persisted fund response.
+   *
+   * @returns The persisted fund.
+   *
+   * @example
+   * const FUND = await CREATE_FUND_USE_CASE.execute({
+   *   cnpj: "12.345.678/0001-90",
+   *   name: "Fundo Multi Mercado",
+   *   administrationFee: "1.5",
+   *   performanceFee: "20",
+   *   bankId: "bank-1",
+   *   benchmarkId: "benchmark-1",
+   *   categoryId: "category-1",
+   * });
    *
    * @author Moisés Reis
    *

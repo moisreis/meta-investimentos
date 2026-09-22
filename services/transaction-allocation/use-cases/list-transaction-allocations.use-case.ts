@@ -1,6 +1,4 @@
-import {
-  ITransactionAllocation,
-} from "@domain/transaction-allocation/interfaces/transaction-allocation.interface"
+import { ITransactionAllocation } from "@domain/transaction-allocation/interfaces/transaction-allocation.interface"
 import { EntityId } from "@/value-objects"
 import type { TransactionAllocationResponseDTO } from "../dto/transaction-allocation-response.dto"
 import { toResponseDTO } from "../mappers/transaction-allocation.mapper"
@@ -22,9 +20,11 @@ export interface ListTransactionAllocationsInput {
  * withdrawal through the service layer.
  *
  * @example
- * const ALLOCATIONS = await LIST_TRANSACTION_ALLOCATIONS_USE_CASE.execute({
- *   withdrawalId: "withdrawal-1",
- * });
+ * const ALLOCATIONS = await
+ *   LIST_TRANSACTION_ALLOCATIONS_USE_CASE
+ *   .execute({
+ *     withdrawalId: "withdrawal-1",
+ *   });
  *
  * @author Moisés Reis
  *
@@ -39,8 +39,23 @@ export class ListTransactionAllocationsUseCase {
    * @summary
    * Fetches all allocations of the provided withdrawal.
    *
+   * @remarks
+   * Uses the withdrawal id to scope the allocation query.
+   *
+   * @explanation
+   * Use this method to list the allocations of a given
+   * withdrawal through the service layer.
+   *
    * @param input - Payload with the target withdrawal id.
-   * @returns The matching allocation responses.
+   *
+   * @returns The matching allocations.
+   *
+   * @example
+   * const ALLOCATIONS = await
+   *   LIST_TRANSACTION_ALLOCATIONS_USE_CASE
+   *   .execute({
+   *     withdrawalId: "withdrawal-1",
+   *   });
    *
    * @author Moisés Reis
    *

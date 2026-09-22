@@ -77,8 +77,26 @@ export class CalculatePositionPerformanceUseCase {
    * @summary
    * Calculates and persists the position performance.
    *
+   * @remarks
+   * Orchestrates quota prices, applications, withdrawals,
+   * previous snapshots and norms to produce a fresh daily
+   * performance record using the domain calculators.
+   *
+   * @explanation
+   * Patrimony multiplies the held quotas by the quota price
+   * of the target date. Earnings track the balance change
+   * after inflows and outflows. Longer horizons chain the
+   * fund NAV growth factors when enough history exists.
+   *
    * @param input - Position id and target date.
-   * @returns The persisted performance response.
+   *
+   * @returns The saved performance.
+   *
+   * @example
+   * const RESULT = await USE_CASE.execute({
+   *   positionId: "position-1",
+   *   date: "2026-09-15T00:00:00.000Z",
+   * });
    *
    * @author Moisés Reis
    *

@@ -40,9 +40,25 @@ export class UpdateBankUseCase {
    * @summary
    * Updates and persists a bank.
    *
+   * @remarks
+   * Fetches the bank, applies `rename` and `changeCode`
+   * for the provided fields, and persists the updated
+   * entity.
+   *
+   * @explanation
+   * Use this method to edit the editable fields of an
+   * existing bank through the service layer.
+   *
    * @param input - Payload with the target bank id and
    *                field updates.
-   * @returns The updated bank response.
+   *
+   * @returns The updated bank.
+   *
+   * @example
+   * const BANK = await UPDATE_BANK_USE_CASE.execute({
+   *   bankId: "bank-1",
+   *   name: "Banco Bradesco",
+   * });
    *
    * @author Moisés Reis
    *

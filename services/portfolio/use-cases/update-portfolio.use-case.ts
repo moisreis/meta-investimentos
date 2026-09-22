@@ -42,9 +42,25 @@ export class UpdatePortfolioUseCase {
    * @summary
    * Updates and persists a portfolio.
    *
+   * @remarks
+   * Fetches the portfolio, applies `updateAnnualInterestRate`
+   * and `updateAllocation` for the provided fields, and
+   * persists the updated entity.
+   *
+   * @explanation
+   * Use this method to edit the editable fields of an
+   * existing portfolio through the service layer.
+   *
    * @param input - Payload with the target portfolio id
    *                and field updates.
-   * @returns The updated portfolio response.
+   *
+   * @returns The updated portfolio.
+   *
+   * @example
+   * const PORTFOLIO = await UPDATE_PORTFOLIO_USE_CASE.execute({
+   *   portfolioId: "portfolio-1",
+   *   annualInterestRate: "10.5",
+   * });
    *
    * @author Moisés Reis
    *

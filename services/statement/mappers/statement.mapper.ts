@@ -15,8 +15,20 @@ import type { StatementResponseDTO } from "../dto/statement-response.dto"
  * objects required by the entity factory. The file URL
  * is omitted because the file is produced downstream.
  *
+ * @explanation
+ * Use this function to translate the service payload
+ * into valid entity props.
+ *
  * @param dto - Transport payload from the service layer.
- * @returns Statement props without the file URL.
+ *
+ * @returns Props minus the file URL.
+ *
+ * @example
+ * const PROPS = toCreateStatementProps(DTO);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toCreateStatementProps(
   dto: GenerateStatementDTO
@@ -39,8 +51,19 @@ export function toCreateStatementProps(
  * Serializes dates to ISO 8601 strings and keeps null
  * ids for portfolio-wide statements.
  *
+ * @explanation
+ * Use this function to expose an entity as the response DTO.
+ *
  * @param entity - The statement domain entity.
- * @returns The transport response payload.
+ *
+ * @returns The response payload.
+ *
+ * @example
+ * const RESPONSE = toResponseDTO(ENTITY);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toResponseDTO(entity: Statement): StatementResponseDTO {
   return {

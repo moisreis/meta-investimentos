@@ -34,8 +34,21 @@ export class ListPortfoliosUseCase {
    * @summary
    * Fetches all portfolios of the provided user.
    *
+   * @remarks
+   * Uses the user id to scope the portfolio query.
+   *
+   * @explanation
+   * Use this method to list the portfolios of a given
+   * user through the service layer.
+   *
    * @param input - Payload with the target user id.
-   * @returns The matching portfolio responses.
+   *
+   * @returns The matching portfolios.
+   *
+   * @example
+   * const PORTFOLIOS = await LIST_PORTFOLIOS_USE_CASE.execute({
+   *   userId: "user-1",
+   * });
    *
    * @author Moisés Reis
    *

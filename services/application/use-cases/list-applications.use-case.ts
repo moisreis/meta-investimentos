@@ -19,9 +19,10 @@ export interface ListApplicationsInput {
  * position through the service layer.
  *
  * @example
- * const APPLICATIONS = await LIST_APPLICATIONS_USE_CASE.execute({
- *   positionId: "position-1",
- * });
+ * const APPLICATIONS = await LIST_APPLICATIONS_USE_CASE
+ *   .execute({
+ *     positionId: "position-1",
+ *   });
  *
  * @author Moisés Reis
  *
@@ -34,18 +35,33 @@ export class ListApplicationsUseCase {
    * @summary
    * Fetches all applications of the provided position.
    *
+   * @remarks
+   * Uses the position id to scope the application query.
+   *
+   * @explanation
+   * Use this method to list the applications of a given
+   * position through the service layer.
+   *
    * @param input - Payload with the target position id.
-   * @returns The matching application responses.
+   *
+   * @returns The matched applications.
+   *
+   * @example
+   * const APPLICATIONS = await LIST_APPLICATIONS_USE_CASE
+   *   .execute({
+   *     positionId: "position-1",
+   *   });
    *
    * @author Moisés Reis
    *
    * @date 2026-09-15
    */
-  async execute(input: ListApplicationsInput): Promise<ApplicationResponseDTO[]> {
+  async execute(
+    input: ListApplicationsInput
+  ): Promise<ApplicationResponseDTO[]> {
     const POSITION_ID = EntityId.create(input.positionId)
-    const APPLICATIONS = await this.applicationRepository.findAllByPositionId(
-      POSITION_ID
-    )
+    const APPLICATIONS =
+      await this.applicationRepository.findAllByPositionId(POSITION_ID)
     return APPLICATIONS.map(toResponseDTO)
   }
 }

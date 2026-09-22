@@ -43,9 +43,25 @@ export class UpdateFundUseCase {
    * @summary
    * Updates and persists a fund.
    *
+   * @remarks
+   * Fetches the fund, applies `update` with the provided
+   * fields, and persists the updated entity. Undefined
+   * fields are kept; null fields are cleared.
+   *
+   * @explanation
+   * Use this method to edit the editable fields of an
+   * existing fund through the service layer.
+   *
    * @param input - Payload with the target fund id and
    *                field updates.
-   * @returns The updated fund response.
+   *
+   * @returns The updated fund.
+   *
+   * @example
+   * const FUND = await UPDATE_FUND_USE_CASE.execute({
+   *   fundId: "fund-1",
+   *   name: "Fundo Multi Mercado II",
+   * });
    *
    * @author Moisés Reis
    *

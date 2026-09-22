@@ -36,8 +36,22 @@ export class GetBankUseCase {
    * @summary
    * Fetches the bank with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no bank matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single bank through
+   * the service layer.
+   *
    * @param input - Payload with the target bank id.
-   * @returns The matching bank response.
+   *
+   * @returns The matching bank.
+   *
+   * @example
+   * const BANK = await GET_BANK_USE_CASE.execute({
+   *   bankId: "bank-1",
+   * });
    *
    * @author Moisés Reis
    *

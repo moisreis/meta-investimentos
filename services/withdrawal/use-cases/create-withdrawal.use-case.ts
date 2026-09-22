@@ -51,8 +51,27 @@ export class CreateWithdrawalUseCase {
    * @summary
    * Creates and persists a new withdrawal.
    *
+   * @remarks
+   * Verifies the target position exists, builds entity
+   * props through the create mapper, and saves the
+   * withdrawal with the withdrawal repository.
+   *
+   * @explanation
+   * Use this method to register a new withdrawal
+   * through the service layer.
+   *
    * @param input - The withdrawal creation payload.
-   * @returns The persisted withdrawal response.
+   *
+   * @returns The persisted withdrawal.
+   *
+   * @example
+   * const WITHDRAWAL = await CREATE_WITHDRAWAL_USE_CASE
+   *   .execute({
+   *     positionId: "position-1",
+   *     date: "2026-02-10T00:00:00.000Z",
+   *     amount: "500",
+   *     quotas: "40",
+   *   });
    *
    * @author Moisés Reis
    *

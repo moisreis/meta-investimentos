@@ -1,7 +1,10 @@
 import { Statement } from "@domain/statement/entities/statement.entity"
 import { IStatement } from "@domain/statement/interfaces/statement.interface"
 import type { StatementResponseDTO } from "../dto/statement-response.dto"
-import { toCreateStatementProps, toResponseDTO } from "../mappers/statement.mapper"
+import {
+  toCreateStatementProps,
+  toResponseDTO,
+} from "../mappers/statement.mapper"
 
 export interface GenerateStatementInput {
   portfolioId?: string | null
@@ -44,8 +47,28 @@ export class GenerateStatementUseCase {
    * @summary
    * Generates and persists the statement.
    *
+   * @remarks
+   * Builds entity props through the create mapper, adds
+   * the file url produced downstream, and saves the
+   * statement with the statement repository.
+   *
+   * @explanation
+   * Use this method to register a generated statement
+   * through the service layer.
+   *
    * @param input - The statement generation payload.
-   * @returns The persisted statement response.
+   *
+   * @returns The persisted statement.
+   *
+   * @example
+   * const STATEMENT = await GENERATE_STATEMENT_USE_CASE
+   *   .execute({
+   *     portfolioId: "portfolio-1",
+   *     periodStart: "2026-01-01T00:00:00.000Z",
+   *     periodEnd: "2026-01-31T00:00:00.000Z",
+   *     generatedByUserId: "user-1",
+   *     fileUrl: "https://storage.example.com/s1.pdf",
+   *   });
    *
    * @author Moisés Reis
    *

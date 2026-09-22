@@ -37,8 +37,23 @@ export class CreateBankUseCase {
    * @summary
    * Creates and persists a new bank.
    *
+   * @remarks
+   * Builds entity props through the create mapper and
+   * saves the bank with the bank repository.
+   *
+   * @explanation
+   * Use this method to register a new bank through
+   * the service layer.
+   *
    * @param input - The bank creation payload.
-   * @returns The persisted bank response.
+   *
+   * @returns The persisted bank.
+   *
+   * @example
+   * const BANK = await CREATE_BANK_USE_CASE.execute({
+   *   code: "237",
+   *   name: "Banco Bradesco",
+   * });
    *
    * @author Moisés Reis
    *

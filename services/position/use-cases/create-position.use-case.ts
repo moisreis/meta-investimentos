@@ -1,7 +1,10 @@
 import { Position } from "@domain/position/entities/position.entity"
 import { IPosition } from "@domain/position/interfaces/position.interface"
 import type { PositionResponseDTO } from "../dto/position-response.dto"
-import { toCreatePositionProps, toResponseDTO } from "../mappers/position.mapper"
+import {
+  toCreatePositionProps,
+  toResponseDTO,
+} from "../mappers/position.mapper"
 
 export interface CreatePositionInput {
   portfolioId: string
@@ -41,8 +44,25 @@ export class CreatePositionUseCase {
    * @summary
    * Creates and persists a new position.
    *
+   * @remarks
+   * Builds entity props through the create mapper and
+   * saves the position with the position repository.
+   *
+   * @explanation
+   * Use this method to register a new position through
+   * the service layer.
+   *
    * @param input - The position creation payload.
-   * @returns The persisted position response.
+   *
+   * @returns The persisted position.
+   *
+   * @example
+   * const POSITION = await CREATE_POSITION_USE_CASE.execute({
+   *   portfolioId: "portfolio-1",
+   *   fundId: "fund-1",
+   *   initialBalance: "1000",
+   *   initialBalanceDate: "2026-01-01T00:00:00.000Z",
+   * });
    *
    * @author Moisés Reis
    *

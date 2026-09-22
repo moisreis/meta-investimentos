@@ -11,8 +11,20 @@ import type { UserResponseDTO } from "../dto/user-response.dto"
  * Parses the primitive DTO values into domain value
  * objects required by the entity factory.
  *
+ * @explanation
+ * Use this function to translate the service payload
+ * into valid entity props.
+ *
  * @param dto - Transport payload from the service layer.
- * @returns Props accepted by `User.create`.
+ *
+ * @returns Entity creation props.
+ *
+ * @example
+ * const PROPS = toCreateUserProps(DTO);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toCreateUserProps(dto: CreateUserDTO): UserProps {
   return {
@@ -31,11 +43,22 @@ export function toCreateUserProps(dto: CreateUserDTO): UserProps {
  * Maps a `User` entity into a response DTO.
  *
  * @remarks
- * Serializes the CPF to a string and timestamps to ISO
+ * Serializes the **CPF** to a string and timestamps to ISO
  * 8601 strings.
  *
+ * @explanation
+ * Use this function to expose an entity as the response DTO.
+ *
  * @param entity - The user domain entity.
- * @returns The transport response payload.
+ *
+ * @returns The response payload.
+ *
+ * @example
+ * const RESPONSE = toResponseDTO(ENTITY);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toResponseDTO(entity: User): UserResponseDTO {
   return {

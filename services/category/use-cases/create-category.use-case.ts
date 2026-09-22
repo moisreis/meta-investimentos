@@ -1,7 +1,10 @@
 import { Category } from "@domain/category/entities/category.entity"
 import { ICategory } from "@domain/category/interfaces/category.interface"
 import type { CategoryResponseDTO } from "../dto/category-response.dto"
-import { toCreateCategoryProps, toResponseDTO } from "../mappers/category.mapper"
+import {
+  toCreateCategoryProps,
+  toResponseDTO,
+} from "../mappers/category.mapper"
 
 export interface CreateCategoryInput {
   name: string
@@ -35,8 +38,22 @@ export class CreateCategoryUseCase {
    * @summary
    * Creates and persists a new category.
    *
+   * @remarks
+   * Builds entity props through the create mapper and
+   * saves the category with the category repository.
+   *
+   * @explanation
+   * Use this method to register a new category through
+   * the service layer.
+   *
    * @param input - The category creation payload.
-   * @returns The persisted category response.
+   *
+   * @returns The persisted category.
+   *
+   * @example
+   * const CATEGORY = await CREATE_CATEGORY_USE_CASE.execute({
+   *   name: "Renda Fixa",
+   * });
    *
    * @author Moisés Reis
    *

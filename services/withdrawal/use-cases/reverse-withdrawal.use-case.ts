@@ -38,9 +38,25 @@ export class ReverseWithdrawalUseCase {
    * @summary
    * Reverses and persists the withdrawal.
    *
+   * @remarks
+   * Fetches the withdrawal and applies `reverse` with
+   * the provided user, then persists the updated entity.
+   *
+   * @explanation
+   * Use this method to cancel a withdrawal through
+   * the service layer.
+   *
    * @param input - Payload with the target withdrawal id
    *                and the reversing user id.
-   * @returns The reversed withdrawal response.
+   *
+   * @returns The reversed withdrawal.
+   *
+   * @example
+   * const WITHDRAWAL = await REVERSE_WITHDRAWAL_USE_CASE
+   *   .execute({
+   *     withdrawalId: "withdrawal-1",
+   *     reversedByUserId: "user-1",
+   *   });
    *
    * @author Moisés Reis
    *

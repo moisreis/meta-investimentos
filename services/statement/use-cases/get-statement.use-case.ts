@@ -36,8 +36,22 @@ export class GetStatementUseCase {
    * @summary
    * Fetches the statement with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no statement matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single statement through
+   * the service layer.
+   *
    * @param input - Payload with the target statement id.
-   * @returns The matching statement response.
+   *
+   * @returns The matching statement.
+   *
+   * @example
+   * const STATEMENT = await GET_STATEMENT_USE_CASE.execute({
+   *   statementId: "statement-1",
+   * });
    *
    * @author Moisés Reis
    *

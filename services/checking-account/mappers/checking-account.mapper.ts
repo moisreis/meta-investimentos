@@ -14,8 +14,20 @@ import type { CheckingAccountResponseDTO } from "../dto/checking-account-respons
  * Parses the primitive DTO values into domain value
  * objects required by the entity factory.
  *
+ * @explanation
+ * Use this function to translate the service payload
+ * into valid entity props.
+ *
  * @param dto - Transport payload from the service layer.
- * @returns Props for `CheckingAccount`.create.
+ *
+ * @returns Entity creation props.
+ *
+ * @example
+ * const PROPS = toCreateCheckingAccountProps(DTO);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toCreateCheckingAccountProps(
   dto: CreateCheckingAccountDTO
@@ -35,8 +47,19 @@ export function toCreateCheckingAccountProps(
  * Serializes value objects to decimal strings and dates
  * to ISO 8601 strings.
  *
+ * @explanation
+ * Use this function to expose an entity as the response DTO.
+ *
  * @param entity - The checking account domain entity.
- * @returns The transport response payload.
+ *
+ * @returns The response payload.
+ *
+ * @example
+ * const RESPONSE = toResponseDTO(ENTITY);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toResponseDTO(
   entity: CheckingAccount

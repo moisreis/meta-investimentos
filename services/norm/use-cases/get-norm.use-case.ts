@@ -36,8 +36,22 @@ export class GetNormUseCase {
    * @summary
    * Fetches the norm with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no norm matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single norm through
+   * the service layer.
+   *
    * @param input - Payload with the target norm id.
-   * @returns The matching norm response.
+   *
+   * @returns The matching norm.
+   *
+   * @example
+   * const NORM = await GET_NORM_USE_CASE.execute({
+   *   normId: "norm-1",
+   * });
    *
    * @author Moisés Reis
    *

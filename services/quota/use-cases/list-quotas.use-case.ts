@@ -34,8 +34,21 @@ export class ListQuotasUseCase {
    * @summary
    * Fetches all quotas of the provided fund.
    *
+   * @remarks
+   * Uses the fund id to scope the quota query.
+   *
+   * @explanation
+   * Use this method to list the quotas of a given fund
+   * through the service layer.
+   *
    * @param input - Payload with the target fund id.
-   * @returns The matching quota responses.
+   *
+   * @returns The matching quotas.
+   *
+   * @example
+   * const QUOTAS = await LIST_QUOTAS_USE_CASE.execute({
+   *   fundId: "fund-1",
+   * });
    *
    * @author Moisés Reis
    *

@@ -44,9 +44,25 @@ export class UpdateNormUseCase {
    * @summary
    * Updates and persists a norm.
    *
+   * @remarks
+   * Fetches the norm, applies `update` with the provided
+   * fields, and persists the updated entity.
+   *
+   * @explanation
+   * Use this method to edit the editable fields of an
+   * existing norm through the service layer.
+   *
    * @param input - Payload with the target norm id and
    *                field updates.
-   * @returns The updated norm response.
+   *
+   * @returns The updated norm.
+   *
+   * @example
+   * const NORM = await UPDATE_NORM_USE_CASE.execute({
+   *   normId: "norm-1",
+   *   name: "Renda Variável",
+   *   targetAllocation: "15",
+   * });
    *
    * @author Moisés Reis
    *

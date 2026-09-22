@@ -13,8 +13,20 @@ import type { BenchmarkResponseDTO } from "../dto/benchmark-response.dto"
  * Both acronym and name are plain strings, so the DTO
  * values are carried over unchanged.
  *
+ * @explanation
+ * Use this function to translate the service payload
+ * into valid entity props.
+ *
  * @param dto - Transport payload from the service layer.
- * @returns Props accepted by `Benchmark.create`.
+ *
+ * @returns Entity creation props.
+ *
+ * @example
+ * const PROPS = toCreateBenchmarkProps(DTO);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toCreateBenchmarkProps(
   dto: CreateBenchmarkDTO
@@ -33,8 +45,19 @@ export function toCreateBenchmarkProps(
  * Serializes the id to a string and the creation date
  * to an ISO 8601 string.
  *
+ * @explanation
+ * Use this function to expose an entity as the response DTO.
+ *
  * @param entity - The benchmark domain entity.
- * @returns The transport response payload.
+ *
+ * @returns The response payload.
+ *
+ * @example
+ * const RESPONSE = toResponseDTO(ENTITY);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toResponseDTO(entity: Benchmark): BenchmarkResponseDTO {
   return {

@@ -29,7 +29,25 @@ export type CvmImportWindow =
   | "last-6-months"
 
 /**
+ * @summary
  * A half-open date range resolved for a given import window.
+ *
+ * @remarks
+ * The start is inclusive and the end is exclusive.
+ *
+ * @explanation
+ * Use this interface to carry the resolved bounds returned
+ * by `resolveCvmWindow`.
+ *
+ * @example
+ * const RANGE: ImportWindowRange = {
+ *   start: new Date("2026-01-01T00:00:00.000Z"),
+ *   end: new Date("2026-01-31T23:59:59.999Z"),
+ * };
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export interface ImportWindowRange {
   start: Date
@@ -37,7 +55,30 @@ export interface ImportWindowRange {
 }
 
 /**
+ * @summary
  * Input for processing a single month inside a fund slice.
+ *
+ * @remarks
+ * Carries the year, month, resolved date range, and the slice
+ * offsets used by one import call.
+ *
+ * @explanation
+ * Use this interface to describe one unit of work handled by
+ * `ImportFundValuationsUseCase.importMonth`.
+ *
+ * @example
+ * const INPUT: ImportMonthInput = {
+ *   year: 2026,
+ *   month: 0,
+ *   start: RANGE.start,
+ *   end: RANGE.end,
+ *   offset: 0,
+ *   limit: 200,
+ * };
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export interface ImportMonthInput {
   year: number
@@ -49,7 +90,29 @@ export interface ImportMonthInput {
 }
 
 /**
+ * @summary
  * Result returned by the single-month worker.
+ *
+ * @remarks
+ * Reports scanned, imported, and skipped counts plus the
+ * pagination state for the next slice.
+ *
+ * @explanation
+ * Use this interface to inspect one month of import progress
+ * and decide whether more slices are needed.
+ *
+ * @example
+ * const RESULT: ImportMonthResult = {
+ *   fundsScanned: 10,
+ *   hasMore: false,
+ *   nextOffset: 0,
+ *   rowsImported: 420,
+ *   skipped: 3,
+ * };
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export interface ImportMonthResult {
   fundsScanned: number
@@ -79,7 +142,8 @@ export interface ImportMonthResult {
  *
  * @param window - The window option to resolve.
  * @param now - The current reference time.
- * @returns The resolved start and end dates.
+ *
+ * @returns The resolved date range.
  *
  * @example
  * const RANGE = resolveCvmWindow("month");
@@ -163,6 +227,10 @@ function computeRawRange(
  * once per month and offset. It never holds more data than
  * the current slice.
  *
+ * @example
+ * const RESULT = await IMPORT_FUND_VALUATIONS_USE_CASE
+ *   .importMonth(INPUT);
+ *
  * @author Moisés Reis
  *
  * @date 2026-09-17
@@ -178,12 +246,25 @@ export class ImportFundValuationsUseCase {
    * @summary
    * Fetches and persists one month of quota data.
    *
+   * @remarks
+   * Downloads the monthly **CVM** archive, extracts only the
+   * fund files that belong to the current slice, and upserts
+   * rows in small batches.
+   *
+   * @explanation
+   * Use this method inside an **Inngest** function. The
+   * caller owns the fund-slice loop and calls this method
+   * once per month and offset. It never holds more data than
+   * the current slice.
+   *
    * @param input - The month, window dates, and slice
    *                parameters.
-   * @returns Aggregated statistics for this slice.
+   *
+   * @returns The slice statistics.
    *
    * @example
-   * const RESULT = await USE_CASE.importMonth(INPUT);
+   * const RESULT = await IMPORT_FUND_VALUATIONS_USE_CASE
+   *   .importMonth(INPUT);
    *
    * @author Moisés Reis
    *

@@ -9,8 +9,19 @@ import type { PortfolioPerformanceResponseDTO } from "../dto/portfolio-performan
  * Serializes value objects to decimal strings and dates
  * to ISO 8601 strings.
  *
+ * @explanation
+ * Use this function to expose an entity as the response DTO.
+ *
  * @param entity - The portfolio performance domain entity.
+ *
  * @returns Transport response DTO.
+ *
+ * @example
+ * const RESPONSE = toResponseDTO(ENTITY);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toResponseDTO(
   entity: PortfolioPerformance

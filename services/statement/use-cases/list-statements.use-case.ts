@@ -34,8 +34,21 @@ export class ListStatementsUseCase {
    * @summary
    * Fetches all statements of the provided portfolio.
    *
+   * @remarks
+   * Uses the portfolio id to scope the statement query.
+   *
+   * @explanation
+   * Use this method to list the statements of a given
+   * portfolio through the service layer.
+   *
    * @param input - Payload with the target portfolio id.
-   * @returns The matching statement responses.
+   *
+   * @returns The matching statements.
+   *
+   * @example
+   * const STATEMENTS = await LIST_STATEMENTS_USE_CASE.execute({
+   *   portfolioId: "portfolio-1",
+   * });
    *
    * @author Moisés Reis
    *
@@ -43,9 +56,8 @@ export class ListStatementsUseCase {
    */
   async execute(input: ListStatementsInput): Promise<StatementResponseDTO[]> {
     const PORTFOLIO_ID = EntityId.create(input.portfolioId)
-    const STATEMENTS = await this.statementRepository.findAllByPortfolioId(
-      PORTFOLIO_ID
-    )
+    const STATEMENTS =
+      await this.statementRepository.findAllByPortfolioId(PORTFOLIO_ID)
     return STATEMENTS.map(toResponseDTO)
   }
 }

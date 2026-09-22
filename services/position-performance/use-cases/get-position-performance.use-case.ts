@@ -36,8 +36,22 @@ export class GetPositionPerformanceUseCase {
    * @summary
    * Retrieves and maps the position performance.
    *
+   * @remarks
+   * Looks up the performance by its id and maps the entity
+   * to the response DTO through the service mapper.
+   *
+   * @explanation
+   * Use this method to fetch one daily performance record
+   * from the service layer.
+   *
    * @param input - The performance identifier.
-   * @returns The mapped performance response.
+   *
+   * @returns The mapped performance.
+   *
+   * @example
+   * const RESULT = await USE_CASE.execute({
+   *   id: "performance-1",
+   * });
    *
    * @author Moisés Reis
    *

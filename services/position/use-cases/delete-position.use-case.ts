@@ -35,8 +35,23 @@ export class DeletePositionUseCase {
    * @summary
    * Deletes the position with the provided id.
    *
+   * @remarks
+   * Fetches the position and removes it when it exists.
+   * Throws **NotFoundError** when no position matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to remove a position through the
+   * service layer.
+   *
    * @param input - Payload with the target position id.
-   * @returns Resolves when the position is removed.
+   *
+   * @returns Resolves when removed.
+   *
+   * @example
+   * await DELETE_POSITION_USE_CASE.execute({
+   *   positionId: "position-1",
+   * });
    *
    * @author Moisés Reis
    *

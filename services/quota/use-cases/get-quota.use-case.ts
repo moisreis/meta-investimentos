@@ -36,8 +36,22 @@ export class GetQuotaUseCase {
    * @summary
    * Fetches the quota with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no quota matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single quota through
+   * the service layer.
+   *
    * @param input - Payload with the target quota id.
-   * @returns The matching quota response.
+   *
+   * @returns The matching quota.
+   *
+   * @example
+   * const QUOTA = await GET_QUOTA_USE_CASE.execute({
+   *   quotaId: "quota-1",
+   * });
    *
    * @author Moisés Reis
    *

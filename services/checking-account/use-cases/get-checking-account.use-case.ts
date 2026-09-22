@@ -1,6 +1,4 @@
-import {
-  ICheckingAccount,
-} from "@domain/checking-account/interfaces/checking-account.interface"
+import { ICheckingAccount } from "@domain/checking-account/interfaces/checking-account.interface"
 import { NotFoundError } from "@errors/not-found.error"
 import { EntityId } from "@/value-objects"
 import type { CheckingAccountResponseDTO } from "../dto/checking-account-response.dto"
@@ -38,8 +36,22 @@ export class GetCheckingAccountUseCase {
    * @summary
    * Fetches the entry with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no entry matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single checking account
+   * entry through the service layer.
+   *
    * @param input - Payload with the target entry id.
-   * @returns The matching entry response.
+   *
+   * @returns The matching entry.
+   *
+   * @example
+   * const ENTRY = await GET_CHECKING_ACCOUNT_USE_CASE.execute({
+   *   checkingAccountId: "entry-1",
+   * });
    *
    * @author Moisés Reis
    *

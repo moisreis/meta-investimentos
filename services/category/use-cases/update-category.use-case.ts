@@ -38,9 +38,24 @@ export class UpdateCategoryUseCase {
    * @summary
    * Updates and persists a category.
    *
+   * @remarks
+   * Fetches the category, applies `rename` with the new
+   * name, and persists the updated entity.
+   *
+   * @explanation
+   * Use this method to rename an existing category
+   * through the service layer.
+   *
    * @param input - Payload with the target category id
    *                and the new name.
-   * @returns The updated category response.
+   *
+   * @returns The updated category.
+   *
+   * @example
+   * const CATEGORY = await UPDATE_CATEGORY_USE_CASE.execute({
+   *   categoryId: "category-1",
+   *   name: "Renda Variável",
+   * });
    *
    * @author Moisés Reis
    *

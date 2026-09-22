@@ -35,8 +35,23 @@ export class DeleteUserUseCase {
    * @summary
    * Deletes the user with the provided id.
    *
+   * @remarks
+   * Fetches the user and removes it when it exists.
+   * Throws **NotFoundError** when no user matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to remove a user through the
+   * service layer.
+   *
    * @param input - Payload with the target user id.
-   * @returns Resolves when the user is removed.
+   *
+   * @returns Resolves when removed.
+   *
+   * @example
+   * await DELETE_USER_USE_CASE.execute({
+   *   userId: "user-1",
+   * });
    *
    * @author Moisés Reis
    *

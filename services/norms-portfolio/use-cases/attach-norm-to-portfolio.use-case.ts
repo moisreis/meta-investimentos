@@ -1,9 +1,5 @@
-import {
-  NormsPortfolios,
-} from "@domain/norms-portfolio/entities/norms-portfolios.entity"
-import {
-  INormsPortfolios,
-} from "@domain/norms-portfolio/interfaces/norms-portfolios.interface"
+import { NormsPortfolios } from "@domain/norms-portfolio/entities/norms-portfolios.entity"
+import { INormsPortfolios } from "@domain/norms-portfolio/interfaces/norms-portfolios.interface"
 import { ValidationError } from "@errors/validation.error"
 import { NotFoundError } from "@errors/not-found.error"
 import { INorm } from "@domain/norm/interfaces/norm.interface"
@@ -36,13 +32,14 @@ export interface AttachNormToPortfolioInput {
  * allocation limits through the service layer.
  *
  * @example
- * const RELATION = await ATTACH_NORM_TO_PORTFOLIO_USE_CASE.execute({
- *   normId: "norm-1",
- *   portfolioId: "portfolio-1",
- *   minAllocation: "5",
- *   maxAllocation: "20",
- *   targetAllocation: "12",
- * });
+ * const RELATION = await ATTACH_NORM_TO_PORTFOLIO_USE_CASE
+ *   .execute({
+ *     normId: "norm-1",
+ *     portfolioId: "portfolio-1",
+ *     minAllocation: "5",
+ *     maxAllocation: "20",
+ *     targetAllocation: "12",
+ *   });
  *
  * @author Moisés Reis
  *
@@ -59,8 +56,27 @@ export class AttachNormToPortfolioUseCase {
    * @summary
    * Attaches and persists the norm-portfolio relation.
    *
+   * @remarks
+   * Verifies the norm and the portfolio exist, rejects
+   * duplicate relations, and persists the new relation.
+   *
+   * @explanation
+   * Use this method to bind a norm to a portfolio with
+   * allocation limits through the service layer.
+   *
    * @param input - The relation creation payload.
-   * @returns The persisted relation response.
+   *
+   * @returns The persisted relation.
+   *
+   * @example
+   * const RELATION = await ATTACH_NORM_TO_PORTFOLIO_USE_CASE
+   *   .execute({
+   *     normId: "norm-1",
+   *     portfolioId: "portfolio-1",
+   *     minAllocation: "5",
+   *     maxAllocation: "20",
+   *     targetAllocation: "12",
+   *   });
    *
    * @author Moisés Reis
    *
@@ -79,8 +95,11 @@ export class AttachNormToPortfolioUseCase {
     if (!PORTFOLIO) {
       throw new NotFoundError("`Portfolio` not found.")
     }
-    const EXISTING = await this.normsPortfoliosRepository
-      .findByNormIdAndPortfolioId(NORM_ID, PORTFOLIO_ID)
+    const EXISTING =
+      await this.normsPortfoliosRepository.findByNormIdAndPortfolioId(
+        NORM_ID,
+        PORTFOLIO_ID
+      )
     if (EXISTING) {
       throw new ValidationError(
         "`Norm` is already attached to the `Portfolio`."

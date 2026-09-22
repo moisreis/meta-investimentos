@@ -11,8 +11,20 @@ import type { NormResponseDTO } from "../dto/norm-response.dto"
  * Parses the primitive DTO values into domain value
  * objects required by the entity factory.
  *
+ * @explanation
+ * Use this function to translate the service payload
+ * into valid entity props.
+ *
  * @param dto - Transport payload from the service layer.
- * @returns Props for `Norm.create`.
+ *
+ * @returns Entity creation props.
+ *
+ * @example
+ * const PROPS = toCreateNormProps(DTO);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toCreateNormProps(dto: CreateNormDTO): NormProps {
   return {
@@ -33,8 +45,19 @@ export function toCreateNormProps(dto: CreateNormDTO): NormProps {
  * Serializes value objects to decimal strings and dates
  * to ISO 8601 strings.
  *
+ * @explanation
+ * Use this function to expose an entity as the response DTO.
+ *
  * @param entity - The norm domain entity.
+ *
  * @returns Transport response DTO.
+ *
+ * @example
+ * const RESPONSE = toResponseDTO(ENTITY);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toResponseDTO(entity: Norm): NormResponseDTO {
   return {

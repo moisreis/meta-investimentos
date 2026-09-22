@@ -33,8 +33,20 @@ export class ListBanksUseCase {
    * @summary
    * Fetches all banks, optionally paginated.
    *
+   * @remarks
+   * Supports optional pagination through limit and
+   * offset.
+   *
+   * @explanation
+   * Use this method to list banks through the service
+   * layer.
+   *
    * @param input - Pagination options.
-   * @returns The matching bank responses.
+   *
+   * @returns The matching banks.
+   *
+   * @example
+   * const BANKS = await LIST_BANKS_USE_CASE.execute({});
    *
    * @author Moisés Reis
    *

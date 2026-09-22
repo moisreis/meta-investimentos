@@ -1,6 +1,4 @@
-import {
-  INormsPortfolios,
-} from "@domain/norms-portfolio/interfaces/norms-portfolios.interface"
+import { INormsPortfolios } from "@domain/norms-portfolio/interfaces/norms-portfolios.interface"
 import { NotFoundError } from "@errors/not-found.error"
 import { EntityId } from "@/value-objects"
 
@@ -38,8 +36,23 @@ export class DetachNormFromPortfolioUseCase {
    * @summary
    * Detaches the relation with the provided keys.
    *
+   * @remarks
+   * Fetches the relation and removes it when it exists.
+   * Throws **NotFoundError** when the relation is missing.
+   *
+   * @explanation
+   * Use this method to remove a norm-portfolio relation
+   * through the service layer.
+   *
    * @param input - Payload with the relation keys.
-   * @returns Resolves when the relation is removed.
+   *
+   * @returns Resolves when removed.
+   *
+   * @example
+   * await DETACH_NORM_FROM_PORTFOLIO_USE_CASE.execute({
+   *   normId: "norm-1",
+   *   portfolioId: "portfolio-1",
+   * });
    *
    * @author Moisés Reis
    *
@@ -48,8 +61,11 @@ export class DetachNormFromPortfolioUseCase {
   async execute(input: DetachNormFromPortfolioInput): Promise<void> {
     const NORM_ID = EntityId.create(input.normId)
     const PORTFOLIO_ID = EntityId.create(input.portfolioId)
-    const EXISTING = await this.normsPortfoliosRepository
-      .findByNormIdAndPortfolioId(NORM_ID, PORTFOLIO_ID)
+    const EXISTING =
+      await this.normsPortfoliosRepository.findByNormIdAndPortfolioId(
+        NORM_ID,
+        PORTFOLIO_ID
+      )
     if (!EXISTING) {
       throw new NotFoundError("`NormPortfolio` relation not found.")
     }

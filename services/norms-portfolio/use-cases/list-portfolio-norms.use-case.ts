@@ -1,6 +1,4 @@
-import {
-  INormsPortfolios,
-} from "@domain/norms-portfolio/interfaces/norms-portfolios.interface"
+import { INormsPortfolios } from "@domain/norms-portfolio/interfaces/norms-portfolios.interface"
 import { EntityId } from "@/value-objects"
 import type { NormPortfolioResponseDTO } from "../dto/norm-portfolio-response.dto"
 import { toResponseDTO } from "../mappers/norms-portfolio.mapper"
@@ -21,9 +19,10 @@ export interface ListPortfolioNormsInput {
  * given portfolio through the service layer.
  *
  * @example
- * const RELATIONS = await LIST_PORTFOLIO_NORMS_USE_CASE.execute({
- *   portfolioId: "portfolio-1",
- * });
+ * const RELATIONS = await LIST_PORTFOLIO_NORMS_USE_CASE
+ *   .execute({
+ *     portfolioId: "portfolio-1",
+ *   });
  *
  * @author Moisés Reis
  *
@@ -36,8 +35,22 @@ export class ListPortfolioNormsUseCase {
    * @summary
    * Fetches all relations of the provided portfolio.
    *
+   * @remarks
+   * Uses the portfolio id to scope the relation query.
+   *
+   * @explanation
+   * Use this method to list the norm relations of a
+   * given portfolio through the service layer.
+   *
    * @param input - Payload with the target portfolio id.
-   * @returns The matching relation responses.
+   *
+   * @returns The matching relations.
+   *
+   * @example
+   * const RELATIONS = await LIST_PORTFOLIO_NORMS_USE_CASE
+   *   .execute({
+   *     portfolioId: "portfolio-1",
+   *   });
    *
    * @author Moisés Reis
    *
@@ -47,8 +60,8 @@ export class ListPortfolioNormsUseCase {
     input: ListPortfolioNormsInput
   ): Promise<NormPortfolioResponseDTO[]> {
     const PORTFOLIO_ID = EntityId.create(input.portfolioId)
-    const RELATIONS = await this.normsPortfoliosRepository
-      .findAllByPortfolioId(PORTFOLIO_ID)
+    const RELATIONS =
+      await this.normsPortfoliosRepository.findAllByPortfolioId(PORTFOLIO_ID)
     return RELATIONS.map(toResponseDTO)
   }
 }

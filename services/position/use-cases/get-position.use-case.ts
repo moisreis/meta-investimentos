@@ -36,8 +36,22 @@ export class GetPositionUseCase {
    * @summary
    * Fetches the position with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no position matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single position through
+   * the service layer.
+   *
    * @param input - Payload with the target position id.
-   * @returns The matching position response.
+   *
+   * @returns The matching position.
+   *
+   * @example
+   * const POSITION = await GET_POSITION_USE_CASE.execute({
+   *   positionId: "position-1",
+   * });
    *
    * @author Moisés Reis
    *

@@ -14,8 +14,20 @@ import type { PortfolioResponseDTO } from "../dto/portfolio-response.dto"
  * Parses the primitive DTO values into domain value
  * objects required by the entity factory.
  *
+ * @explanation
+ * Use this function to translate the service payload
+ * into valid entity props.
+ *
  * @param dto - Transport payload from the service layer.
- * @returns Props accepted by `Portfolio.create`.
+ *
+ * @returns Entity creation props.
+ *
+ * @example
+ * const PROPS = toCreatePortfolioProps(DTO);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toCreatePortfolioProps(
   dto: CreatePortfolioDTO
@@ -39,8 +51,19 @@ export function toCreatePortfolioProps(
  * Serializes value objects to decimal strings and dates
  * to ISO 8601 strings.
  *
+ * @explanation
+ * Use this function to expose an entity as the response DTO.
+ *
  * @param entity - The portfolio domain entity.
- * @returns The transport response payload.
+ *
+ * @returns The response payload.
+ *
+ * @example
+ * const RESPONSE = toResponseDTO(ENTITY);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toResponseDTO(entity: Portfolio): PortfolioResponseDTO {
   return {

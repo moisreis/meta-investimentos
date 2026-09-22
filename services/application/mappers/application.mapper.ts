@@ -15,8 +15,20 @@ import type { ReverseApplicationDTO } from "../dto/reverse-application.dto"
  * Parses the primitive DTO values into domain value
  * objects required by the entity factory.
  *
+ * @explanation
+ * Use this function to translate the service payload
+ * into valid entity props.
+ *
  * @param dto - Transport payload from the service layer.
- * @returns Props accepted by `Application.create`.
+ *
+ * @returns Entity creation props.
+ *
+ * @example
+ * const PROPS = toCreateApplicationProps(DTO);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toCreateApplicationProps(
   dto: CreateApplicationDTO
@@ -36,8 +48,20 @@ export function toCreateApplicationProps(
  * @remarks
  * Only the reversing user is carried by the payload.
  *
+ * @explanation
+ * Use this function to translate the service payload
+ * into valid entity props.
+ *
  * @param dto - Transport payload from the service layer.
- * @returns Props accepted by `Application.reverse`.
+ *
+ * @returns Entity reversal props.
+ *
+ * @example
+ * const PROPS = toReverseApplicationProps(DTO);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toReverseApplicationProps(
   dto: ReverseApplicationDTO
@@ -55,8 +79,19 @@ export function toReverseApplicationProps(
  * Serializes value objects to decimal strings and dates
  * to ISO 8601 strings.
  *
+ * @explanation
+ * Use this function to expose an entity as the response DTO.
+ *
  * @param entity - The application domain entity.
- * @returns The transport response payload.
+ *
+ * @returns The response payload.
+ *
+ * @example
+ * const RESPONSE = toResponseDTO(ENTITY);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toResponseDTO(entity: Application): ApplicationResponseDTO {
   return {

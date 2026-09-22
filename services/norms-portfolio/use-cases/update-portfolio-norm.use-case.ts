@@ -1,9 +1,5 @@
-import {
-  NormsPortfolios,
-} from "@domain/norms-portfolio/entities/norms-portfolios.entity"
-import {
-  INormsPortfolios,
-} from "@domain/norms-portfolio/interfaces/norms-portfolios.interface"
+import { NormsPortfolios } from "@domain/norms-portfolio/entities/norms-portfolios.entity"
+import { INormsPortfolios } from "@domain/norms-portfolio/interfaces/norms-portfolios.interface"
 import { NotFoundError } from "@errors/not-found.error"
 import { EntityId, SignedPercentage } from "@/value-objects"
 import type { NormPortfolioResponseDTO } from "../dto/norm-portfolio-response.dto"
@@ -32,11 +28,12 @@ export interface UpdatePortfolioNormInput {
  * service layer.
  *
  * @example
- * const RELATION = await UPDATE_PORTFOLIO_NORM_USE_CASE.execute({
- *   normId: "norm-1",
- *   portfolioId: "portfolio-1",
- *   targetAllocation: "15",
- * });
+ * const RELATION = await UPDATE_PORTFOLIO_NORM_USE_CASE
+ *   .execute({
+ *     normId: "norm-1",
+ *     portfolioId: "portfolio-1",
+ *     targetAllocation: "15",
+ *   });
  *
  * @author Moisés Reis
  *
@@ -49,9 +46,28 @@ export class UpdatePortfolioNormUseCase {
    * @summary
    * Updates and upserts the norm-portfolio relation.
    *
+   * @remarks
+   * Fetches the existing relation, rebuilds it with the
+   * merged allocation fields, and upserts the updated
+   * entity.
+   *
+   * @explanation
+   * Use this method to adjust the allocation limits of
+   * an existing norm-portfolio relation through the
+   * service layer.
+   *
    * @param input - Payload with the relation keys and
    *                allocation updates.
-   * @returns The updated relation response.
+   *
+   * @returns The updated relation.
+   *
+   * @example
+   * const RELATION = await UPDATE_PORTFOLIO_NORM_USE_CASE
+   *   .execute({
+   *     normId: "norm-1",
+   *     portfolioId: "portfolio-1",
+   *     targetAllocation: "15",
+   *   });
    *
    * @author Moisés Reis
    *
@@ -62,8 +78,11 @@ export class UpdatePortfolioNormUseCase {
   ): Promise<NormPortfolioResponseDTO> {
     const NORM_ID = EntityId.create(input.normId)
     const PORTFOLIO_ID = EntityId.create(input.portfolioId)
-    const EXISTING = await this.normsPortfoliosRepository
-      .findByNormIdAndPortfolioId(NORM_ID, PORTFOLIO_ID)
+    const EXISTING =
+      await this.normsPortfoliosRepository.findByNormIdAndPortfolioId(
+        NORM_ID,
+        PORTFOLIO_ID
+      )
     if (!EXISTING) {
       throw new NotFoundError("`NormPortfolio` relation not found.")
     }

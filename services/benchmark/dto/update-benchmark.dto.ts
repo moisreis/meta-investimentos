@@ -11,7 +11,7 @@
  *
  * @example
  * const DTO: UpdateBenchmarkDTO = {
- *   name: "CDI Cetip",
+ *   name: "**CDI** Cetip",
  * };
  *
  * @author Moisés Reis

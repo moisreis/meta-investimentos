@@ -36,8 +36,22 @@ export class GetPortfolioUseCase {
    * @summary
    * Fetches the portfolio with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no portfolio matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single portfolio through
+   * the service layer.
+   *
    * @param input - Payload with the target portfolio id.
-   * @returns The matching portfolio response.
+   *
+   * @returns The matching portfolio.
+   *
+   * @example
+   * const PORTFOLIO = await GET_PORTFOLIO_USE_CASE.execute({
+   *   portfolioId: "portfolio-1",
+   * });
    *
    * @author Moisés Reis
    *

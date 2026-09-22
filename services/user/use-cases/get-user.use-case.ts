@@ -36,8 +36,22 @@ export class GetUserUseCase {
    * @summary
    * Fetches the user with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no user matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single user through
+   * the service layer.
+   *
    * @param input - Payload with the target user id.
-   * @returns The matching user response.
+   *
+   * @returns The matching user.
+   *
+   * @example
+   * const USER = await GET_USER_USE_CASE.execute({
+   *   userId: "user-1",
+   * });
    *
    * @author Moisés Reis
    *

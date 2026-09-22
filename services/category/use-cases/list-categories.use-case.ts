@@ -33,8 +33,21 @@ export class ListCategoriesUseCase {
    * @summary
    * Fetches all categories, optionally paginated.
    *
+   * @remarks
+   * Supports optional pagination through limit and
+   * offset.
+   *
+   * @explanation
+   * Use this method to list categories through the
+   * service layer.
+   *
    * @param input - Pagination options.
-   * @returns The matching category responses.
+   *
+   * @returns The matching categories.
+   *
+   * @example
+   * const CATEGORIES = await LIST_CATEGORIES_USE_CASE
+   *   .execute();
    *
    * @author Moisés Reis
    *

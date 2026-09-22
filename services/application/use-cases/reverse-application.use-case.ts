@@ -22,10 +22,11 @@ export interface ReverseApplicationInput {
  * the service layer.
  *
  * @example
- * const APPLICATION = await REVERSE_APPLICATION_USE_CASE.execute({
- *   applicationId: "application-1",
- *   reversedByUserId: "user-1",
- * });
+ * const APPLICATION = await REVERSE_APPLICATION_USE_CASE
+ *   .execute({
+ *     applicationId: "application-1",
+ *     reversedByUserId: "user-1",
+ *   });
  *
  * @author Moisés Reis
  *
@@ -38,15 +39,33 @@ export class ReverseApplicationUseCase {
    * @summary
    * Reverses and persists the application.
    *
+   * @remarks
+   * Fetches the application and applies `reverse` with
+   * the provided user, then persists the updated entity.
+   *
+   * @explanation
+   * Use this method to cancel an application through
+   * the service layer.
+   *
    * @param input - Payload with the target application
    *                id and the reversing user id.
-   * @returns The reversed application response.
+   *
+   * @returns The reversed application.
+   *
+   * @example
+   * const APPLICATION = await REVERSE_APPLICATION_USE_CASE
+   *   .execute({
+   *     applicationId: "application-1",
+   *     reversedByUserId: "user-1",
+   *   });
    *
    * @author Moisés Reis
    *
    * @date 2026-09-15
    */
-  async execute(input: ReverseApplicationInput): Promise<ApplicationResponseDTO> {
+  async execute(
+    input: ReverseApplicationInput
+  ): Promise<ApplicationResponseDTO> {
     const ID = EntityId.create(input.applicationId)
     const APPLICATION = await this.applicationRepository.findById(ID)
     if (!APPLICATION) {

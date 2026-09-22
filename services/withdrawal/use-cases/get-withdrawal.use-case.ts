@@ -36,8 +36,22 @@ export class GetWithdrawalUseCase {
    * @summary
    * Fetches the withdrawal with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no withdrawal matches
+   * the provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single withdrawal
+   * through the service layer.
+   *
    * @param input - Payload with the target withdrawal id.
-   * @returns The matching withdrawal response.
+   *
+   * @returns The matching withdrawal.
+   *
+   * @example
+   * const WITHDRAWAL = await GET_WITHDRAWAL_USE_CASE.execute({
+   *   withdrawalId: "withdrawal-1",
+   * });
    *
    * @author Moisés Reis
    *

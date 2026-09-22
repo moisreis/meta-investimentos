@@ -14,8 +14,20 @@ import type { PositionResponseDTO } from "../dto/position-response.dto"
  * Parses the primitive DTO values into domain value
  * objects required by the entity factory.
  *
+ * @explanation
+ * Use this function to translate the service payload
+ * into valid entity props.
+ *
  * @param dto - Transport payload from the service layer.
- * @returns Props accepted by `Position.create`.
+ *
+ * @returns Entity creation props.
+ *
+ * @example
+ * const PROPS = toCreatePositionProps(DTO);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toCreatePositionProps(dto: CreatePositionDTO): PositionProps {
   return {
@@ -38,8 +50,19 @@ export function toCreatePositionProps(dto: CreatePositionDTO): PositionProps {
  * Serializes value objects to decimal strings and dates
  * to ISO 8601 strings. Null fields are preserved.
  *
+ * @explanation
+ * Use this function to expose an entity as the response DTO.
+ *
  * @param entity - The position domain entity.
- * @returns The transport response payload.
+ *
+ * @returns The response payload.
+ *
+ * @example
+ * const RESPONSE = toResponseDTO(ENTITY);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toResponseDTO(entity: Position): PositionResponseDTO {
   return {

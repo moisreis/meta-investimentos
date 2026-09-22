@@ -36,9 +36,23 @@ export class GetApplicationUseCase {
    * @summary
    * Fetches the application with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no application matches
+   * the provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single application
+   * through the service layer.
+   *
    * @param input - Payload with the target application
    *                id.
-   * @returns The matching application response.
+   *
+   * @returns The matching application.
+   *
+   * @example
+   * const APPLICATION = await GET_APPLICATION_USE_CASE.execute({
+   *   applicationId: "application-1",
+   * });
    *
    * @author Moisés Reis
    *

@@ -36,8 +36,22 @@ export class GetCategoryUseCase {
    * @summary
    * Fetches the category with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no category matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single category through
+   * the service layer.
+   *
    * @param input - Payload with the target category id.
-   * @returns The matching category response.
+   *
+   * @returns The matching category.
+   *
+   * @example
+   * const CATEGORY = await GET_CATEGORY_USE_CASE.execute({
+   *   categoryId: "category-1",
+   * });
    *
    * @author Moisés Reis
    *

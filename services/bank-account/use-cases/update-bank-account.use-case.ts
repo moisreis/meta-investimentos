@@ -23,10 +23,11 @@ export interface UpdateBankAccountInput {
  * existing bank account through the service layer.
  *
  * @example
- * const BANK_ACCOUNT = await UPDATE_BANK_ACCOUNT_USE_CASE.execute({
- *   bankAccountId: "bank-account-1",
- *   accountNumber: "54321-6",
- * });
+ * const BANK_ACCOUNT = await UPDATE_BANK_ACCOUNT_USE_CASE
+ *   .execute({
+ *     bankAccountId: "bank-account-1",
+ *     accountNumber: "54321-6",
+ *   });
  *
  * @author Moisés Reis
  *
@@ -39,15 +40,33 @@ export class UpdateBankAccountUseCase {
    * @summary
    * Updates and persists a bank account.
    *
+   * @remarks
+   * Fetches the bank account, applies `update` with the
+   * provided fields, and persists the updated entity.
+   *
+   * @explanation
+   * Use this method to edit the editable fields of an
+   * existing bank account through the service layer.
+   *
    * @param input - Payload with the target bank account
    *                id and field updates.
-   * @returns The updated bank account response.
+   *
+   * @returns The updated bank account.
+   *
+   * @example
+   * const BANK_ACCOUNT = await UPDATE_BANK_ACCOUNT_USE_CASE
+   *   .execute({
+   *     bankAccountId: "bank-account-1",
+   *     accountNumber: "54321-6",
+   *   });
    *
    * @author Moisés Reis
    *
    * @date 2026-09-15
    */
-  async execute(input: UpdateBankAccountInput): Promise<BankAccountResponseDTO> {
+  async execute(
+    input: UpdateBankAccountInput
+  ): Promise<BankAccountResponseDTO> {
     const ID = EntityId.create(input.bankAccountId)
     const BANK_ACCOUNT = await this.bankAccountRepository.findById(ID)
     if (!BANK_ACCOUNT) {

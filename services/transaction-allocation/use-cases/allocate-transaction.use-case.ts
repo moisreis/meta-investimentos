@@ -1,9 +1,5 @@
-import {
-  TransactionAllocation,
-} from "@domain/transaction-allocation/entities/transaction-allocation.entity"
-import {
-  ITransactionAllocation,
-} from "@domain/transaction-allocation/interfaces/transaction-allocation.interface"
+import { TransactionAllocation } from "@domain/transaction-allocation/entities/transaction-allocation.entity"
+import { ITransactionAllocation } from "@domain/transaction-allocation/interfaces/transaction-allocation.interface"
 import { NotFoundError } from "@errors/not-found.error"
 import { IApplication } from "@domain/application/interfaces/application.interface"
 import { IWithdrawal } from "@domain/withdrawal/interfaces/withdrawal.interface"
@@ -35,11 +31,12 @@ export interface AllocateTransactionInput {
  * layer.
  *
  * @example
- * const ALLOCATION = await ALLOCATE_TRANSACTION_USE_CASE.execute({
- *   applicationId: "application-1",
- *   withdrawId: "withdrawal-1",
- *   quotasConsumed: "250",
- * });
+ * const ALLOCATION = await ALLOCATE_TRANSACTION_USE_CASE
+ *   .execute({
+ *     applicationId: "application-1",
+ *     withdrawId: "withdrawal-1",
+ *     quotasConsumed: "250",
+ *   });
  *
  * @author Moisés Reis
  *
@@ -56,8 +53,27 @@ export class AllocateTransactionUseCase {
    * @summary
    * Records and persists the transaction allocation.
    *
+   * @remarks
+   * Verifies the application and the withdrawal exist,
+   * then builds the allocation via the create mapper and
+   * saves it with the allocation repository.
+   *
+   * @explanation
+   * Use this method to record quota consumption between
+   * an application and a withdrawal through the service
+   * layer.
+   *
    * @param input - The allocation payload.
-   * @returns The persisted allocation response.
+   *
+   * @returns The persisted allocation.
+   *
+   * @example
+   * const ALLOCATION = await ALLOCATE_TRANSACTION_USE_CASE
+   *   .execute({
+   *     applicationId: "application-1",
+   *     withdrawId: "withdrawal-1",
+   *     quotasConsumed: "250",
+   *   });
    *
    * @author Moisés Reis
    *
@@ -68,9 +84,8 @@ export class AllocateTransactionUseCase {
   ): Promise<TransactionAllocationResponseDTO> {
     const APPLICATION_ID = EntityId.create(input.applicationId)
     const WITHDRAW_ID = EntityId.create(input.withdrawId)
-    const APPLICATION = await this.applicationRepository.findById(
-      APPLICATION_ID
-    )
+    const APPLICATION =
+      await this.applicationRepository.findById(APPLICATION_ID)
     if (!APPLICATION) {
       throw new NotFoundError("`Application` not found.")
     }

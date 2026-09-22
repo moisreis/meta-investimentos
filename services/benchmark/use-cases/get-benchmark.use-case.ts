@@ -36,8 +36,22 @@ export class GetBenchmarkUseCase {
    * @summary
    * Fetches the benchmark with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no benchmark matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single benchmark through
+   * the service layer.
+   *
    * @param input - Payload with the target benchmark id.
-   * @returns The matching benchmark response.
+   *
+   * @returns The matching benchmark.
+   *
+   * @example
+   * const BENCHMARK = await GET_BENCHMARK_USE_CASE.execute({
+   *   benchmarkId: "benchmark-1",
+   * });
    *
    * @author Moisés Reis
    *

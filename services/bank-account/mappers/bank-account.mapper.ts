@@ -14,8 +14,20 @@ import type { BankAccountResponseDTO } from "../dto/bank-account-response.dto"
  * Parses the primitive DTO values into domain value
  * objects required by the entity factory.
  *
+ * @explanation
+ * Use this function to translate the service payload
+ * into valid entity props.
+ *
  * @param dto - Transport payload from the service layer.
- * @returns Props for `BankAccount.create`.
+ *
+ * @returns Entity creation props.
+ *
+ * @example
+ * const PROPS = toCreateBankAccountProps(DTO);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toCreateBankAccountProps(
   dto: CreateBankAccountDTO
@@ -36,8 +48,19 @@ export function toCreateBankAccountProps(
  * Serializes ids to strings and timestamps to ISO
  * 8601 strings.
  *
+ * @explanation
+ * Use this function to expose an entity as the response DTO.
+ *
  * @param entity - The bank account domain entity.
+ *
  * @returns Response DTO payload.
+ *
+ * @example
+ * const RESPONSE = toResponseDTO(ENTITY);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toResponseDTO(entity: BankAccount): BankAccountResponseDTO {
   return {

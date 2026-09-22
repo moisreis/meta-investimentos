@@ -33,8 +33,21 @@ export class ListBenchmarksUseCase {
    * @summary
    * Fetches all benchmarks, optionally paginated.
    *
+   * @remarks
+   * Supports optional pagination through limit and
+   * offset.
+   *
+   * @explanation
+   * Use this method to list benchmarks through the
+   * service layer.
+   *
    * @param input - Pagination options.
-   * @returns The matching benchmark responses.
+   *
+   * @returns The matching benchmarks.
+   *
+   * @example
+   * const BENCHMARKS = await LIST_BENCHMARKS_USE_CASE
+   *   .execute();
    *
    * @author Moisés Reis
    *

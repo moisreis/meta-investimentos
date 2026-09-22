@@ -35,8 +35,22 @@ export class ListPositionPerformanceUseCase {
    * @summary
    * Lists and maps the position performances.
    *
+   * @remarks
+   * Fetches all daily records for the provided position
+   * and maps each one to the response DTO in order.
+   *
+   * @explanation
+   * Use this method to retrieve the performance history
+   * of a single position from the service layer.
+   *
    * @param input - The position identifier.
-   * @returns The mapped performance responses.
+   *
+   * @returns The mapped performance.
+   *
+   * @example
+   * const RESULT = await USE_CASE.execute({
+   *   positionId: "position-1",
+   * });
    *
    * @author Moisés Reis
    *

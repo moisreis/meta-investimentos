@@ -40,9 +40,25 @@ export class UpdatePositionUseCase {
    * @summary
    * Updates and persists a position.
    *
+   * @remarks
+   * Fetches the position, applies `setInitialBalance` with
+   * the provided values, and persists the updated entity.
+   *
+   * @explanation
+   * Use this method to set the initial balance of an
+   * existing position through the service layer.
+   *
    * @param input - Payload with the target position id
    *                and the new initial balance.
-   * @returns The updated position response.
+   *
+   * @returns The updated position.
+   *
+   * @example
+   * const POSITION = await UPDATE_POSITION_USE_CASE.execute({
+   *   positionId: "position-1",
+   *   initialBalance: "1500",
+   *   initialBalanceDate: "2026-01-01T00:00:00.000Z",
+   * });
    *
    * @author Moisés Reis
    *

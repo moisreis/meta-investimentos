@@ -15,8 +15,20 @@ import type { ReverseWithdrawalDTO } from "../dto/reverse-withdrawal.dto"
  * Parses the primitive DTO values into domain value
  * objects required by the entity factory.
  *
+ * @explanation
+ * Use this function to translate the service payload
+ * into valid entity props.
+ *
  * @param dto - Transport payload from the service layer.
- * @returns Props accepted by `Withdrawal.create`.
+ *
+ * @returns Entity creation props.
+ *
+ * @example
+ * const PROPS = toCreateWithdrawalProps(DTO);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toCreateWithdrawalProps(
   dto: CreateWithdrawalDTO
@@ -36,8 +48,20 @@ export function toCreateWithdrawalProps(
  * @remarks
  * Only the reversing user is carried by the payload.
  *
+ * @explanation
+ * Use this function to translate the service payload
+ * into valid entity props.
+ *
  * @param dto - Transport payload from the service layer.
- * @returns Props accepted by `Withdrawal.reverse`.
+ *
+ * @returns Entity reversal props.
+ *
+ * @example
+ * const PROPS = toReverseWithdrawalProps(DTO);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toReverseWithdrawalProps(
   dto: ReverseWithdrawalDTO
@@ -55,8 +79,19 @@ export function toReverseWithdrawalProps(
  * Serializes value objects to decimal strings and dates
  * to ISO 8601 strings.
  *
+ * @explanation
+ * Use this function to expose an entity as the response DTO.
+ *
  * @param entity - The withdrawal domain entity.
- * @returns The transport response payload.
+ *
+ * @returns The response payload.
+ *
+ * @example
+ * const RESPONSE = toResponseDTO(ENTITY);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
  */
 export function toResponseDTO(entity: Withdrawal): WithdrawalResponseDTO {
   return {

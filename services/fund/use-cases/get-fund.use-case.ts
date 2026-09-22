@@ -36,8 +36,22 @@ export class GetFundUseCase {
    * @summary
    * Fetches the fund with the provided id.
    *
+   * @remarks
+   * Throws **NotFoundError** when no fund matches the
+   * provided id.
+   *
+   * @explanation
+   * Use this method to fetch a single fund through
+   * the service layer.
+   *
    * @param input - Payload with the target fund id.
-   * @returns The matching fund response.
+   *
+   * @returns The matching fund.
+   *
+   * @example
+   * const FUND = await GET_FUND_USE_CASE.execute({
+   *   fundId: "fund-1",
+   * });
    *
    * @author Moisés Reis
    *
