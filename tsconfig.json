@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -23,36 +19,16 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@errors/*": [
-        "./errors/*"
-      ],
-      "@constants/*": [
-        "./constants/*"
-      ],
-      "@domain/*": [
-        "./domain/*"
-      ],
-      "@clients/*": [
-        "./clients/*"
-      ],
-      "@database/*": [
-        "./database/*"
-      ],
-      "@db-schemas": [
-        "./database/schemas/index.ts"
-      ],
-      "@db-schemas/*": [
-        "./database/schemas/*"
-      ],
-      "@db-relations": [
-        "./database/relations/index.ts"
-      ],
-      "@db-relations/*": [
-        "./database/relations/*"
-      ]
+      "@/*": ["./*"],
+      "@errors/*": ["./errors/*"],
+      "@constants/*": ["./constants/*"],
+      "@domain/*": ["./domain/*"],
+      "@clients/*": ["./clients/*"],
+      "@database/*": ["./database/*"],
+      "@db-schemas": ["./database/schemas/index.ts"],
+      "@db-schemas/*": ["./database/schemas/*"],
+      "@db-relations": ["./database/relations/index.ts"],
+      "@db-relations/*": ["./database/relations/*"]
     }
   },
   "include": [
@@ -64,7 +40,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
