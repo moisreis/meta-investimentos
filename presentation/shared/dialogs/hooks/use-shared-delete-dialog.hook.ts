@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-interface UseSharedConfirmDeleteDialogParams<TItem> {
+interface UseSharedDeleteDialogParams<TItem> {
   /** Removes the entity when the user confirms. */
   onDelete: (item: TItem) => void | Promise<void>
   /** Called when the dialog open state changes. */
@@ -11,7 +11,7 @@ interface UseSharedConfirmDeleteDialogParams<TItem> {
 
 /**
  * @summary
- * Orchestrates the shared delete-confirmation dialog flow.
+ * Orchestrates the shared delete-dialog flow.
  *
  * @remarks
  * Owns the submission flag and the success/error toast flags.
@@ -34,16 +34,16 @@ interface UseSharedConfirmDeleteDialogParams<TItem> {
  *
  * @example
  * const { isSubmitting, hasRemoved, handleConfirm } =
- *   useSharedConfirmDeleteDialog({ onDelete, onOpenChange })
+ *   useSharedDeleteDialog({ onDelete, onOpenChange })
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-function useSharedConfirmDeleteDialog<TItem>({
+function useSharedDeleteDialog<TItem>({
   onDelete,
   onOpenChange,
-}: UseSharedConfirmDeleteDialogParams<TItem>) {
+}: UseSharedDeleteDialogParams<TItem>) {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [hasRemoved, setHasRemoved] = React.useState(false)
   const [hasError, setHasError] = React.useState(false)
@@ -98,4 +98,4 @@ function useSharedConfirmDeleteDialog<TItem>({
   }
 }
 
-export { useSharedConfirmDeleteDialog }
+export { useSharedDeleteDialog }

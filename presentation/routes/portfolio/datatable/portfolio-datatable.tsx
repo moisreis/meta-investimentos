@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import { SharedAddDialog } from "@/presentation/shared/dialogs/shared-add-dialog"
-import { SharedConfirmDeleteDialog } from "@/presentation/shared/dialogs/shared-confirm-delete-dialog"
+import { SharedDeleteDialog } from "@/presentation/shared/dialogs/shared-delete-dialog"
 import { SharedEditDialog } from "@/presentation/shared/dialogs/shared-edit-dialog"
 import { SharedEditTableButton } from "@/presentation/shared/components/shared-edit-table-button"
 import { SharedToolbar } from "@/presentation/shared/components/shared-toolbar"
@@ -117,7 +117,7 @@ function PortfolioDataTable({ data }: PortfolioDataTableProps) {
         onEdit={(item, values) => updatePortfolio(item.id, values)}
       />
 
-      <SharedConfirmDeleteDialog<PortfolioResponseDTO>
+      <SharedDeleteDialog<PortfolioResponseDTO>
         open={Boolean(deletingPortfolio)}
         onOpenChange={handleDeleteDialogOpenChange}
         item={deletingPortfolio}
