@@ -22,12 +22,14 @@ interface PositiveMoneyProps {
  * Use this domain value object to model positive monetary
  * amounts such as prices, balances, or payments. It ensures
  * all monetary values are valid and consistently formatted.
+ * Apply it in financial domains where only non-negative
+ * amounts are valid.
  *
  * @param props - Internal properties container.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-13
+ * @date 2026-09-23
  */
 export class PositiveMoney {
   private readonly props: PositiveMoneyProps
@@ -53,10 +55,10 @@ export class PositiveMoney {
    * @explanation
    * Factory method to construct a valid **PositiveMoney**.
    * Throws a **ValidationError** if the provided input is
-   * missing, non-finite, or less than zero.
+   * missing, non-finite, or less than zero. Call it when
+   * converting raw numeric amounts to domain values.
    *
    * @param value - Numerical value to construct the amount.
-   *
    * @returns Validated PositiveMoney instance.
    *
    * @example
@@ -64,7 +66,7 @@ export class PositiveMoney {
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static create(value: Decimal.Value): PositiveMoney {
     if (value === undefined || value === null) {
@@ -103,19 +105,19 @@ export class PositiveMoney {
    *
    * @explanation
    * Use this method to check whether two positive money amounts
-   * carry equivalent mathematical values.
+   * carry equivalent mathematical values. Call it when comparing
+   * amounts in domain logic or tests.
    *
    * @param a - First **PositiveMoney** instance to compare.
    * @param b - Second **PositiveMoney** instance to compare.
-   *
-   * @returns True if both instances are mathematically equal.
+   * @returns True if values are equal.
    *
    * @example
    * const IS_SAME = PositiveMoney.equals(moneyA, moneyB);
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static equals(a: PositiveMoney, b: PositiveMoney): boolean {
     return a.value.equals(b.value)

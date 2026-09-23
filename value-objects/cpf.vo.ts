@@ -24,16 +24,15 @@ interface CPFProps {
  * **CPF** instance in the system represents a valid
  * individual registration number. It strips non-numeric
  * characters upon creation and enforces immutability.
+ * Apply it in domain layers where personal identity
+ * validation is required.
  *
  * @param props - Object containing the sanitized **CPF**
  *                digits string.
  *
- * @example
- * const CPF = CPF.create("529.982.247-25");
- *
  * @author Moisés Reis
  *
- * @date 2026-09-13
+ * @date 2026-09-23
  */
 export class CPF {
   private readonly props: CPFProps
@@ -59,16 +58,18 @@ export class CPF {
    * @explanation
    * Use this factory method to construct a valid **CPF**
    * instance. Throws a **ValidationError** if the raw
-   * input string fails validation constraints.
+   * input string fails validation constraints. Call it
+   * when receiving **CPF** data from external sources.
    *
    * @param value - Raw **CPF** string to parse and validate.
+   * @returns Validated CPF instance.
    *
    * @example
    * const INSTANCE = CPF.create("52998224725");
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static create(value: string): CPF {
     if (value === undefined || value === null) {
@@ -110,18 +111,18 @@ export class CPF {
    * @explanation
    * Use this method to check whether two **CPF** value
    * objects refer to the same individual registration.
+   * Call it when comparing identities in domain logic.
    *
    * @param a - First **CPF** instance to compare.
    * @param b - Second **CPF** instance to compare.
-   *
-   * @returns True if both instances hold equal values.
+   * @returns True if both values match.
    *
    * @example
    * const IS_SAME = CPF.equals(cpfA, cpfB);
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static equals(a: CPF, b: CPF): boolean {
     return a.value === b.value
@@ -137,18 +138,19 @@ export class CPF {
    *
    * @explanation
    * Internal helper method that executes the standard
-   * Brazilian **CPF** verification algorithm.
+   * Brazilian **CPF** verification algorithm. It uses
+   * decreasing weight factors to compute both check digits
+   * and validates them against the input string.
    *
    * @param digits - Sanitized 11-digit **CPF** string.
-   *
-   * @returns True if the check digits match.
+   * @returns True if check digits match.
    *
    * @example
    * const VALID = CPF.isValid("52998224725");
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   private static isValid(digits: string): boolean {
     // Extracts the first nine digits for initial check computation.
@@ -180,11 +182,10 @@ export class CPF {
    * @explanation
    * Helper algorithm that returns the expected check
    * digit character based on partial **CPF** input and
-   * initial weight.
+   * initial weight. Used internally by the validator.
    *
    * @param partial - Partial digit string to compute against.
    * @param weight - Starting numerical weight factor.
-   *
    * @returns Computed check digit character.
    *
    * @example
@@ -192,7 +193,7 @@ export class CPF {
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   private static computeCheckDigit(partial: string, weight: number): string {
     // Accumulates the weighted sum of partial digits.

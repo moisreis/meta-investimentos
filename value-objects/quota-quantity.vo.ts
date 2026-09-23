@@ -21,13 +21,14 @@ interface QuotaQuantityProps {
  * @explanation
  * Use this domain value object to model quota quantities in
  * financial calculations. It ensures all quota quantity values
- * are valid and consistently formatted.
+ * are valid and consistently formatted. Apply it in investment
+ * domains where quota holdings require specific precision.
  *
  * @param props - Internal properties container.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-13
+ * @date 2026-09-23
  */
 export class QuotaQuantity {
   private readonly props: QuotaQuantityProps
@@ -53,10 +54,10 @@ export class QuotaQuantity {
    * @explanation
    * Factory method to construct a valid **QuotaQuantity**.
    * Throws a **ValidationError** if the provided input is
-   * missing, non-finite, or less than zero.
+   * missing, non-finite, or less than zero. Call it when
+   * converting raw numeric quantities to domain values.
    *
    * @param value - Numerical value to construct the quantity.
-   *
    * @returns Validated QuotaQuantity instance.
    *
    * @example
@@ -64,7 +65,7 @@ export class QuotaQuantity {
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static create(value: Decimal.Value): QuotaQuantity {
     if (value === undefined || value === null) {
@@ -106,19 +107,19 @@ export class QuotaQuantity {
    *
    * @explanation
    * Use this method to check whether two quota quantities carry
-   * equivalent mathematical values.
+   * equivalent mathematical values. Call it when comparing
+   * quantities in domain logic or tests.
    *
    * @param a - First **QuotaQuantity** instance to compare.
    * @param b - Second **QuotaQuantity** instance to compare.
-   *
-   * @returns True if both instances are mathematically equal.
+   * @returns True if values are equal.
    *
    * @example
    * const IS_SAME = QuotaQuantity.equals(quantityA, quantityB);
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static equals(a: QuotaQuantity, b: QuotaQuantity): boolean {
     return a.value.equals(b.value)

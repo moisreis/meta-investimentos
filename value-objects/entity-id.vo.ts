@@ -23,10 +23,12 @@ export type EntityId = string & {
  * **EntityId** values and test equality. Accepts opaque
  * identifiers, matching the non-UUID ids persisted by
  * **Better Auth** for users, sessions and accounts.
+ * Use it when domain logic requires type-safe entity
+ * references aligned with persistence layer.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-13
+ * @date 2026-09-23
  */
 export const EntityId = {
   /**
@@ -42,10 +44,11 @@ export const EntityId = {
    * Use this factory method to safely instantiate an
    * **EntityId** from a raw string. Throws a
    * **ValidationError** if the value is missing or blank.
+   * Call it when converting persistence identifiers to
+   * domain value objects.
    *
    * @param value - Raw identifier string to parse and validate.
-   *
-   * @returns The trimmed branded EntityId string.
+   * @returns Branded EntityId string.
    *
    * @example
    * const ID = EntityId.create(
@@ -54,7 +57,7 @@ export const EntityId = {
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   create(value: string): EntityId {
     if (value === undefined || value === null) {
@@ -82,18 +85,18 @@ export const EntityId = {
    * @explanation
    * Use this method to check whether two nominal entity
    * identifier values refer to the same domain entity.
+   * Call it when comparing entity references in domain logic.
    *
    * @param a - First **EntityId** instance to compare.
    * @param b - Second **EntityId** instance to compare.
-   *
-   * @returns True if both identifiers are identical.
+   * @returns True if both ids match.
    *
    * @example
    * const IS_SAME = EntityId.equals(idA, idB);
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   equals(a: EntityId, b: EntityId): boolean {
     return a === b

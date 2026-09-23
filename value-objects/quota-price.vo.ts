@@ -21,13 +21,14 @@ interface QuotaPriceProps {
  * @explanation
  * Use this domain value object to model quota prices in
  * financial calculations. It ensures all quota price values
- * are valid and consistently formatted.
+ * are valid and consistently formatted. Apply it in investment
+ * domains where quota pricing requires specific precision.
  *
  * @param props - Internal properties container.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-13
+ * @date 2026-09-23
  */
 export class QuotaPrice {
   private readonly props: QuotaPriceProps
@@ -53,10 +54,10 @@ export class QuotaPrice {
    * @explanation
    * Factory method to construct a valid **QuotaPrice**.
    * Throws a **ValidationError** if the provided input is
-   * missing, non-finite, or less than zero.
+   * missing, non-finite, or less than zero. Call it when
+   * converting raw numeric prices to domain values.
    *
    * @param value - Numerical value to construct the price.
-   *
    * @returns Validated QuotaPrice instance.
    *
    * @example
@@ -64,7 +65,7 @@ export class QuotaPrice {
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static create(value: Decimal.Value): QuotaPrice {
     if (value === undefined || value === null) {
@@ -101,19 +102,19 @@ export class QuotaPrice {
    *
    * @explanation
    * Use this method to check whether two quota prices carry
-   * equivalent mathematical values.
+   * equivalent mathematical values. Call it when comparing
+   * prices in domain logic or tests.
    *
    * @param a - First **QuotaPrice** instance to compare.
    * @param b - Second **QuotaPrice** instance to compare.
-   *
-   * @returns True if both instances are mathematically equal.
+   * @returns True if values are equal.
    *
    * @example
    * const IS_SAME = QuotaPrice.equals(priceA, priceB);
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static equals(a: QuotaPrice, b: QuotaPrice): boolean {
     return a.value.equals(b.value)

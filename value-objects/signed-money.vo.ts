@@ -21,13 +21,14 @@ interface SignedMoneyProps {
  * @explanation
  * Use this domain value object to model signed monetary amounts
  * such as profits, losses, or balance changes. It ensures all
- * monetary values are valid and consistently formatted.
+ * monetary values are valid and consistently formatted. Apply it
+ * in financial domains where amounts can be negative.
  *
  * @param props - Internal properties container.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-13
+ * @date 2026-09-23
  */
 export class SignedMoney {
   private readonly props: SignedMoneyProps
@@ -69,10 +70,10 @@ export class SignedMoney {
    * @explanation
    * Factory method to construct a valid **SignedMoney**.
    * Throws a **ValidationError** if the provided input is
-   * missing or non-finite.
+   * missing or non-finite. Call it when converting raw numeric
+   * amounts to domain values where sign matters.
    *
    * @param value - Numerical value to construct the amount.
-   *
    * @returns Validated SignedMoney instance.
    *
    * @example
@@ -80,7 +81,7 @@ export class SignedMoney {
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static create(value: Decimal.Value): SignedMoney {
     if (value === undefined || value === null) {
@@ -113,19 +114,19 @@ export class SignedMoney {
    *
    * @explanation
    * Use this method to check whether two signed money amounts
-   * carry equivalent mathematical values.
+   * carry equivalent mathematical values. Call it when comparing
+   * amounts in domain logic or tests.
    *
    * @param a - First **SignedMoney** instance to compare.
    * @param b - Second **SignedMoney** instance to compare.
-   *
-   * @returns True if both instances are mathematically equal.
+   * @returns True if values are equal.
    *
    * @example
    * const IS_SAME = SignedMoney.equals(moneyA, moneyB);
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static equals(a: SignedMoney, b: SignedMoney): boolean {
     return a.value.equals(b.value)

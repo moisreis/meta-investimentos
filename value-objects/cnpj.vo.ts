@@ -28,18 +28,17 @@ interface CNPJProps {
  * @explanation
  * Use this domain value object to guarantee that any
  * **CNPJ** instance in the system represents a valid
- * corporate registration number. It strip non-numeric
+ * corporate registration number. It strips non-numeric
  * characters upon creation and enforces immutability.
+ * Apply it in domain layers where corporate identity
+ * validation is required.
  *
  * @param props - Object containing the sanitized **CNPJ**
  *                digits string.
  *
- * @example
- * const CNPJ = CNPJ.create("00.000.000/0001-91");
- *
  * @author Moisés Reis
  *
- * @date 2026-09-13
+ * @date 2026-09-23
  */
 export class CNPJ {
   private readonly props: CNPJProps
@@ -65,16 +64,18 @@ export class CNPJ {
    * @explanation
    * Use this factory method to construct a valid **CNPJ**
    * instance. Throws a **ValidationError** if the raw
-   * input string fails validation constraints.
+   * input string fails validation constraints. Call it
+   * when receiving **CNPJ** data from external sources.
    *
    * @param value - Raw **CNPJ** string to parse and validate.
+   * @returns Validated CNPJ instance.
    *
    * @example
    * const INSTANCE = CNPJ.create("00000000000191");
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static create(value: string): CNPJ {
     if (value === undefined || value === null) {
@@ -116,18 +117,18 @@ export class CNPJ {
    * @explanation
    * Use this method to check whether two **CNPJ** value
    * objects refer to the same corporate registration.
+   * Call it when comparing identities in domain logic.
    *
    * @param a - First **CNPJ** instance to compare.
    * @param b - Second **CNPJ** instance to compare.
-   *
-   * @returns True if both instances hold equal values.
+   * @returns True if both values match.
    *
    * @example
    * const IS_SAME = CNPJ.equals(cnpjA, cnpjB);
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static equals(a: CNPJ, b: CNPJ): boolean {
     return a.value === b.value
@@ -143,18 +144,19 @@ export class CNPJ {
    *
    * @explanation
    * Internal helper method that executes the standard
-   * Brazilian **CNPJ** verification algorithm.
+   * Brazilian **CNPJ** verification algorithm. It uses
+   * weight arrays to compute both check digits and
+   * validates them against the input string.
    *
    * @param digits - Sanitized 14-digit **CNPJ** string.
-   *
-   * @returns True if the check digits match.
+   * @returns True if check digits match.
    *
    * @example
    * const VALID = CNPJ.isValid("00000000000191");
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   private static isValid(digits: string): boolean {
     // Extracts the first twelve digits for initial check computation.
@@ -186,11 +188,10 @@ export class CNPJ {
    * @explanation
    * Helper algorithm that returns the expected check
    * digit character based on partial **CNPJ** input and
-   * weight sequences.
+   * weight sequences. Used internally by the validator.
    *
    * @param partial - Partial digit string to compute against.
    * @param weights - Array of numerical weights.
-   *
    * @returns Computed check digit character.
    *
    * @example
@@ -198,7 +199,7 @@ export class CNPJ {
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   private static computeCheckDigit(partial: string, weights: number[]): string {
     // Accumulates the weighted sum of partial digits.

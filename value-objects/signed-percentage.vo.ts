@@ -21,13 +21,14 @@ interface SignedPercentageProps {
  * @explanation
  * Use this domain value object to model signed percentages
  * such as returns, variations, or rates. It ensures all
- * percentage values are valid and consistently formatted.
+ * percentage values are valid and consistently formatted. Apply
+ * it in financial domains where percentages can be negative.
  *
  * @param props - Internal properties container.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-13
+ * @date 2026-09-23
  */
 export class SignedPercentage {
   private readonly props: SignedPercentageProps
@@ -69,10 +70,10 @@ export class SignedPercentage {
    * @explanation
    * Factory method to construct a valid **SignedPercentage**.
    * Throws a **ValidationError** if the provided input is
-   * missing or non-finite.
+   * missing or non-finite. Call it when converting raw numeric
+   * percentages to domain values where sign matters.
    *
    * @param value - Numerical value to construct the percentage.
-   *
    * @returns Validated SignedPercentage instance.
    *
    * @example
@@ -80,7 +81,7 @@ export class SignedPercentage {
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static create(value: Decimal.Value): SignedPercentage {
     if (value === undefined || value === null) {
@@ -116,19 +117,19 @@ export class SignedPercentage {
    *
    * @explanation
    * Use this method to check whether two signed percentages
-   * carry equivalent mathematical values.
+   * carry equivalent mathematical values. Call it when comparing
+   * percentages in domain logic or tests.
    *
    * @param a - First **SignedPercentage** instance to compare.
    * @param b - Second **SignedPercentage** instance to compare.
-   *
-   * @returns True if both instances are mathematically equal.
+   * @returns True if values are equal.
    *
    * @example
    * const IS_SAME = SignedPercentage.equals(percentA, percentB);
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static equals(a: SignedPercentage, b: SignedPercentage): boolean {
     return a.value.equals(b.value)

@@ -21,12 +21,15 @@ interface GrowthFactorProps {
  * @explanation
  * Use this domain value object to model compound growth,
  * financial multipliers, or percentage variation bases.
+ * It ensures mathematical precision in financial calculations
+ * where growth ratios are applied. Apply it in portfolio
+ * analytics and performance tracking domains.
  *
  * @param props - Internal properties container.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-13
+ * @date 2026-09-23
  */
 export class GrowthFactor {
   private readonly props: GrowthFactorProps
@@ -67,10 +70,10 @@ export class GrowthFactor {
    * @explanation
    * Factory method to construct a valid **GrowthFactor**.
    * Throws a **ValidationError** if the provided input is
-   * missing, non-finite, or less than zero.
+   * missing, non-finite, or less than zero. Call it when
+   * converting raw numeric growth data to domain values.
    *
    * @param value - Numerical value to construct the factor.
-   *
    * @returns Validated GrowthFactor instance.
    *
    * @example
@@ -78,7 +81,7 @@ export class GrowthFactor {
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static create(value: Decimal.Value): GrowthFactor {
     if (value === undefined || value === null) {
@@ -120,19 +123,19 @@ export class GrowthFactor {
    *
    * @explanation
    * Use this method to check whether two growth factors carry
-   * equivalent mathematical values.
+   * equivalent mathematical values. Call it when comparing
+   * growth rates in domain logic or tests.
    *
    * @param a - First **GrowthFactor** instance to compare.
    * @param b - Second **GrowthFactor** instance to compare.
-   *
-   * @returns True if both instances are mathematically equal.
+   * @returns True if values are equal.
    *
    * @example
    * const isSame = GrowthFactor.equals(factorA, factorB);
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   public static equals(a: GrowthFactor, b: GrowthFactor): boolean {
     return a.value.equals(b.value)
@@ -148,6 +151,8 @@ export class GrowthFactor {
    * @explanation
    * Converts the growth factor ratio into a relative percent
    * change value suitable for display or financial reports.
+   * Use it when presenting growth data to users or external
+   * systems that expect percentage format.
    *
    * @returns Calculated percentage Decimal value.
    *
@@ -156,7 +161,7 @@ export class GrowthFactor {
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-09-23
    */
   toPercentage(): Decimal {
     return this.props.value.minus(1).times(100)
