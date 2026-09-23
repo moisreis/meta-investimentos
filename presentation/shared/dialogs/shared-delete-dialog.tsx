@@ -26,8 +26,8 @@ export interface SharedDeleteDialogProps<TItem> {
   item: TItem | null
   /** Removes the entity when the user confirms. */
   onDelete: (item: TItem) => void | Promise<void>
-  /** Item label used in the confirmation header. */
-  itemLabel?: string
+  /** Resolves the item display name used in the confirmation header. */
+  getItemName: (item: TItem) => string
 }
 
 /**
@@ -50,7 +50,7 @@ export interface SharedDeleteDialogProps<TItem> {
  * @param props.onOpenChange - Called when the open state changes.
  * @param props.item - Item pending deletion, or null when closed.
  * @param props.onDelete - Removal callback with the item.
- * @param props.itemLabel - Item label used in the dialog header.
+ * @param props.getItemName - Resolves the item display name.
  *
  * @returns The delete dialog and the success/error toasts.
  *
@@ -60,7 +60,7 @@ export interface SharedDeleteDialogProps<TItem> {
  *   onOpenChange={handleOpenChange}
  *   item={item}
  *   onDelete={removePortfolio}
- *   itemLabel="carteira"
+ *   getItemName={(item) => item.name}
  * />
  *
  * @author Moisés Reis
@@ -72,7 +72,7 @@ function SharedDeleteDialog<TItem>({
   onOpenChange,
   item,
   onDelete,
-  itemLabel = "item",
+  getItemName,
 }: SharedDeleteDialogProps<TItem>) {
   const {
     isSubmitting,
@@ -99,7 +99,7 @@ function SharedDeleteDialog<TItem>({
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent showCloseButton={false}>
           <DialogHeader>
-            <DialogTitle>Excluir {itemLabel}?</DialogTitle>
+            <DialogTitle>Excluir {getItemName(item)}?</DialogTitle>
             <DialogDescription>
               Esta ação não pode ser desfeita. O item será removido
               permanentemente.

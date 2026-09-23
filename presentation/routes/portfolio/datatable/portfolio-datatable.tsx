@@ -122,7 +122,7 @@ function PortfolioDataTable({ data }: PortfolioDataTableProps) {
         onOpenChange={handleDeleteDialogOpenChange}
         item={deletingPortfolio}
         onDelete={(item) => deletePortfolio(item.id)}
-        itemLabel="carteira"
+        getItemName={(item) => item.name}
       />
     </>
   )
