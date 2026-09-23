@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { SharedAddDialog } from "@/presentation/shared/dialogs/shared-add-dialog"
+import { SharedConfirmDeleteDialog } from "@/presentation/shared/dialogs/shared-confirm-delete-dialog"
 import { SharedEditDialog } from "@/presentation/shared/dialogs/shared-edit-dialog"
 import { SharedEditTableButton } from "@/presentation/shared/components/shared-edit-table-button"
 import { SharedToolbar } from "@/presentation/shared/components/shared-toolbar"
@@ -14,6 +15,7 @@ import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-re
 
 import { PortfolioForm } from "../forms/portfolio-form"
 import { useCreatePortfolio } from "../hooks/use-create-portfolio.hook"
+import { useDeletePortfolio } from "../hooks/use-delete-portfolio.hook"
 import { useUpdatePortfolio } from "../hooks/use-update-portfolio.hook"
 import { toPortfolioFormInitialValues } from "../mappers/portfolio-form.mapper"
 import type { PortfolioFormValues } from "../validations/portfolio-form.validations"
@@ -31,20 +33,32 @@ interface PortfolioDataTableProps {
 function PortfolioDataTable({ data }: PortfolioDataTableProps) {
   const [editingPortfolio, setEditingPortfolio] =
     React.useState<PortfolioResponseDTO | null>(null)
+  const [deletingPortfolio, setDeletingPortfolio] =
+    React.useState<PortfolioResponseDTO | null>(null)
 
   const { createPortfolio } = useCreatePortfolio()
   const { updatePortfolio } = useUpdatePortfolio()
+  const { deletePortfolio } = useDeletePortfolio()
 
   const columns = useEntityColumns({
     columns: portfolioDataTableColumns,
-    actions: portfolioDataTableActions.map((action) =>
-      action.key === "edit"
-        ? {
-            ...action,
-            onClick: (row: PortfolioResponseDTO) => setEditingPortfolio(row),
-          }
-        : action
-    ),
+    actions: portfolioDataTableActions.map((action) => {
+      if (action.key === "edit") {
+        return {
+          ...action,
+          onClick: (row: PortfolioResponseDTO) => setEditingPortfolio(row),
+        }
+      }
+
+      if (action.key === "delete") {
+        return {
+          ...action,
+          onClick: (row: PortfolioResponseDTO) => setDeletingPortfolio(row),
+        }
+      }
+
+      return action
+    }),
   })
 
   const table = useEntityDataTable({
@@ -58,6 +72,12 @@ function PortfolioDataTable({ data }: PortfolioDataTableProps) {
   const handleEditDialogOpenChange = React.useCallback((open: boolean) => {
     if (!open) {
       setEditingPortfolio(null)
+    }
+  }, [])
+
+  const handleDeleteDialogOpenChange = React.useCallback((open: boolean) => {
+    if (!open) {
+      setDeletingPortfolio(null)
     }
   }, [])
 
@@ -95,6 +115,14 @@ function PortfolioDataTable({ data }: PortfolioDataTableProps) {
           />
         )}
         onEdit={(item, values) => updatePortfolio(item.id, values)}
+      />
+
+      <SharedConfirmDeleteDialog<PortfolioResponseDTO>
+        open={Boolean(deletingPortfolio)}
+        onOpenChange={handleDeleteDialogOpenChange}
+        item={deletingPortfolio}
+        onDelete={(item) => deletePortfolio(item.id)}
+        itemLabel="carteira"
       />
     </>
   )

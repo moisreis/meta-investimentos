@@ -6,6 +6,7 @@ import { db } from "@/clients/database.client"
 import { auth } from "@/clients/better-auth.client"
 import { ConcurrencyError, NotFoundError, ValidationError } from "@/errors"
 import { PortfolioRepository } from "@/infrastructure/portfolio/repositories/portfolio.repository"
+import { DeletePortfolioUseCase } from "@/services/portfolio/use-cases/delete-portfolio.use-case"
 import { UpdatePortfolioUseCase } from "@/services/portfolio/use-cases/update-portfolio.use-case"
 
 import { portfolioPayloadSchema } from "../schemas"
@@ -102,6 +103,63 @@ export async function PATCH(
 
     return NextResponse.json(
       { error: "Não foi possível editar a carteira." },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * @summary
+ * Deletes a portfolio owned by the authenticated user.
+ *
+ * @remarks
+ * Requires a valid session and validates the route id. Ownership
+ * is enforced: rows of other users are not found.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-22
+ */
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
+
+  if (!session) {
+    return NextResponse.json({ error: "Não autenticado." }, { status: 401 })
+  }
+
+  const { id } = await context.params
+
+  if (!portfolioIdSchema.safeParse(id).success) {
+    return NextResponse.json(
+      { error: "Identificador inválido." },
+      { status: 400 }
+    )
+  }
+
+  const useCase = new DeletePortfolioUseCase(new PortfolioRepository(db))
+
+  try {
+    await useCase.execute({
+      portfolioId: id,
+      userId: session.user.id,
+    })
+
+    return NextResponse.json({ ok: true })
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      return NextResponse.json(
+        { error: "Carteira não encontrada." },
+        { status: 404 }
+      )
+    }
+
+    return NextResponse.json(
+      { error: "Não foi possível excluir a carteira." },
       { status: 500 }
     )
   }

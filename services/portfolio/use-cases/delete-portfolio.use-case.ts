@@ -4,6 +4,8 @@ import { EntityId } from "@/value-objects"
 
 export interface DeletePortfolioInput {
   portfolioId: string
+  /** Owning user id; when provided, ownership is enforced. */
+  userId?: string
 }
 
 /**
@@ -61,6 +63,9 @@ export class DeletePortfolioUseCase {
     const ID = EntityId.create(input.portfolioId)
     const PORTFOLIO = await this.portfolioRepository.findById(ID)
     if (!PORTFOLIO) {
+      throw new NotFoundError("`Portfolio` not found.")
+    }
+    if (input.userId && PORTFOLIO.userId !== input.userId) {
       throw new NotFoundError("`Portfolio` not found.")
     }
     await this.portfolioRepository.delete(ID)
