@@ -64,6 +64,19 @@ export function PortfolioForm({
       formDescription={formDescription}
       onSubmit={handleSubmit}
       className={className}
+      footer={
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          aria-label={isSubmitting ? "Salvando" : undefined}
+        >
+          {isSubmitting ? (
+            <IconLoader className="animate-spin" aria-hidden="true" />
+          ) : (
+            submitButtonLabel
+          )}
+        </Button>
+      }
     >
       <FieldGroup>
         <Field>
@@ -234,20 +247,6 @@ export function PortfolioForm({
           </FieldContent>
         </Field>
       </FieldGroup>
-
-      <div className="flex justify-end gap-2 pt-1">
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          aria-label={isSubmitting ? "Salvando" : undefined}
-        >
-          {isSubmitting ? (
-            <IconLoader className="animate-spin" aria-hidden="true" />
-          ) : (
-            submitButtonLabel
-          )}
-        </Button>
-      </div>
     </SharedFormWrapper>
   )
 }

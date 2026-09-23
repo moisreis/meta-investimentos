@@ -6,6 +6,8 @@ import { cn } from "cn"
 export interface SharedFormWrapperProps extends React.ComponentProps<"form"> {
   formTitle: string
   formDescription?: string
+  /** Sticky action row rendered below the scrollable field area. */
+  footer?: ReactNode
   children: ReactNode
 }
 
@@ -14,13 +16,18 @@ export interface SharedFormWrapperProps extends React.ComponentProps<"form"> {
  * Shared form shell for dialogs.
  *
  * @remarks
- * Wraps the form fields with a title and an optional
- * description header. Renders a native `<form>` element so
- * consumers can submit it from a dialog footer via the
- * `form` attribute, pass `onSubmit`, or render their own
- * submit button as a child.
+ * Renders the form title and optional description header, the
+ * field area as a scrollable region capped at half the viewport
+ * height, and an optional sticky footer for the action buttons.
+ * Renders a native `<form>` element so consumers can submit it
+ * from a dialog footer via the `form` attribute or pass
+ * `onSubmit`.
  *
  * @param props - Component configuration props.
+ * @param props.formTitle - Title rendered in the form header.
+ * @param props.formDescription - Optional description header text.
+ * @param props.footer - Sticky action row below the scroll area.
+ * @param props.children - Form fields rendered in the scroll area.
  *
  * @returns Form element.
  *
@@ -31,6 +38,7 @@ export interface SharedFormWrapperProps extends React.ComponentProps<"form"> {
 export function SharedFormWrapper({
   formTitle,
   formDescription,
+  footer,
   children,
   className,
   ...props
@@ -47,7 +55,17 @@ export function SharedFormWrapper({
           <p className="text-sm text-muted-foreground">{formDescription}</p>
         ) : null}
       </header>
-      {children}
+
+      {/* Scrollable field area capped at half the viewport height. */}
+      <div className="-mx-4 no-scrollbar max-h-[50vh] overflow-y-auto px-4">
+        {children}
+      </div>
+
+      {footer ? (
+        <footer data-slot="shared-form-footer" className="flex justify-end gap-2 pt-1">
+          {footer}
+        </footer>
+      ) : null}
     </form>
   )
 }
