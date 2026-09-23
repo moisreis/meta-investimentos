@@ -1,6 +1,9 @@
 "use client"
 
+import * as React from "react"
+
 import { SharedAddDialog } from "@/presentation/shared/dialogs/shared-add-dialog"
+import { SharedEditDialog } from "@/presentation/shared/dialogs/shared-edit-dialog"
 import { SharedEditTableButton } from "@/presentation/shared/components/shared-edit-table-button"
 import { SharedToolbar } from "@/presentation/shared/components/shared-toolbar"
 import { SharedToolbarSeparator } from "@/presentation/shared/components/shared-toolbar-separator"
@@ -11,6 +14,9 @@ import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-re
 
 import { PortfolioForm } from "../forms/portfolio-form"
 import { useCreatePortfolio } from "../hooks/use-create-portfolio.hook"
+import { useUpdatePortfolio } from "../hooks/use-update-portfolio.hook"
+import { toPortfolioFormInitialValues } from "../mappers/portfolio-form.mapper"
+import type { PortfolioFormValues } from "../validations/portfolio-form.validations"
 import {
   portfolioDataTableActions,
   portfolioDataTableColumnLabels,
@@ -23,9 +29,22 @@ interface PortfolioDataTableProps {
 }
 
 function PortfolioDataTable({ data }: PortfolioDataTableProps) {
+  const [editingPortfolio, setEditingPortfolio] =
+    React.useState<PortfolioResponseDTO | null>(null)
+
+  const { createPortfolio } = useCreatePortfolio()
+  const { updatePortfolio } = useUpdatePortfolio()
+
   const columns = useEntityColumns({
     columns: portfolioDataTableColumns,
-    actions: portfolioDataTableActions,
+    actions: portfolioDataTableActions.map((action) =>
+      action.key === "edit"
+        ? {
+            ...action,
+            onClick: (row: PortfolioResponseDTO) => setEditingPortfolio(row),
+          }
+        : action
+    ),
   })
 
   const table = useEntityDataTable({
@@ -36,7 +55,11 @@ function PortfolioDataTable({ data }: PortfolioDataTableProps) {
     pinnedEnd: portfolioDataTablePinning.end,
   })
 
-  const { createPortfolio } = useCreatePortfolio()
+  const handleEditDialogOpenChange = React.useCallback((open: boolean) => {
+    if (!open) {
+      setEditingPortfolio(null)
+    }
+  }, [])
 
   return (
     <>
@@ -60,6 +83,19 @@ function PortfolioDataTable({ data }: PortfolioDataTableProps) {
         }
       />
       <SharedDataTable table={table} />
+
+      <SharedEditDialog<PortfolioResponseDTO, PortfolioFormValues>
+        open={Boolean(editingPortfolio)}
+        onOpenChange={handleEditDialogOpenChange}
+        item={editingPortfolio}
+        renderForm={(item) => (
+          <PortfolioForm
+            initialValues={toPortfolioFormInitialValues(item)}
+            submitButtonLabel="Salvar alterações"
+          />
+        )}
+        onEdit={(item, values) => updatePortfolio(item.id, values)}
+      />
     </>
   )
 }

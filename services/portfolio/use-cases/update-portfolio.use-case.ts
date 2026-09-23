@@ -6,6 +6,10 @@ import { toResponseDTO } from "../mappers/portfolio.mapper"
 
 export interface UpdatePortfolioInput {
   portfolioId: string
+  /** Owning user id; when provided, ownership is enforced. */
+  userId?: string
+  acronym?: string
+  name?: string
   annualInterestRate?: string
   minAllocation?: string
   maxAllocation?: string
@@ -72,7 +76,16 @@ export class UpdatePortfolioUseCase {
     if (!PORTFOLIO) {
       throw new NotFoundError("`Portfolio` not found.")
     }
+    if (input.userId && PORTFOLIO.userId !== input.userId) {
+      throw new NotFoundError("`Portfolio` not found.")
+    }
     let UPDATED = PORTFOLIO
+    if (input.acronym !== undefined) {
+      UPDATED = UPDATED.updateAcronym(input.acronym)
+    }
+    if (input.name !== undefined) {
+      UPDATED = UPDATED.updateName(input.name)
+    }
     if (input.annualInterestRate !== undefined) {
       UPDATED = UPDATED.updateAnnualInterestRate(
         SignedPercentage.create(input.annualInterestRate)

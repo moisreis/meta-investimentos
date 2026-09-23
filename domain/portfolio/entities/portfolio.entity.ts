@@ -506,6 +506,88 @@ export class Portfolio {
     )
   }
 
+  /**
+   * @summary
+   * Updates the acronym of this portfolio.
+   *
+   * @remarks
+   * Returns new Portfolio with updated acronym.
+   * Acronym must not be blank.
+   *
+   * @explanation
+   * Use to change the portfolio acronym.
+   * Original instance unchanged.
+   *
+   * @param acronym - New acronym string.
+   * @param now - Update timestamp (optional, defaults to now).
+   *
+   * @returns Portfolio with new acronym.
+   *
+   * @example
+   * const UPDATED = portfolio.updateAcronym("IPCA+");
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-22
+   */
+  public updateAcronym(acronym: string, now?: Date): Portfolio {
+    if (!acronym || acronym.trim() === "") {
+      throw new ValidationError("`Portfolio` must have an acronym.")
+    }
+
+    const NOW = now ?? new Date()
+
+    return new Portfolio(
+      {
+        ...this.props,
+        acronym,
+        updatedAt: NOW,
+      },
+      this._id
+    )
+  }
+
+  /**
+   * @summary
+   * Updates the name of this portfolio.
+   *
+   * @remarks
+   * Returns new Portfolio with updated name.
+   * Name must not be blank.
+   *
+   * @explanation
+   * Use to change the portfolio display name.
+   * Original instance unchanged.
+   *
+   * @param name - New name string.
+   * @param now - Update timestamp (optional, defaults to now).
+   *
+   * @returns Portfolio with new name.
+   *
+   * @example
+   * const UPDATED = portfolio.updateName("Renda Fixa IPCA");
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-22
+   */
+  public updateName(name: string, now?: Date): Portfolio {
+    if (!name || name.trim() === "") {
+      throw new ValidationError("`Portfolio` must have a name.")
+    }
+
+    const NOW = now ?? new Date()
+
+    return new Portfolio(
+      {
+        ...this.props,
+        name,
+        updatedAt: NOW,
+      },
+      this._id
+    )
+  }
+
   // ---------------------------------
   // COMPARISON
   // ---------------------------------
