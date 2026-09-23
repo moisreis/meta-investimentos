@@ -1,9 +1,7 @@
 "use client"
 
 import type { ButtonHTMLAttributes, JSX } from "react"
-
 import { IconSettings } from "@tabler/icons-react"
-
 import { Button } from "@/presentation/ui/button"
 import {
   DropdownMenu,
@@ -11,10 +9,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/presentation/ui/dropdown-menu"
-
-// ---------------------------------
-// TYPES
-// ---------------------------------
 
 /**
  * Minimal shape of a column that supports visibility toggling.
@@ -131,7 +125,7 @@ export function SharedEditTableButton({
       >
         {content}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-56">
         {table
           .getAllColumns()
           .filter((column) => column.getCanHide())

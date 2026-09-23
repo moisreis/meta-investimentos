@@ -2,30 +2,9 @@ import { IconPlus } from "@tabler/icons-react";
 import { Button } from "@/presentation/ui/button";
 import type { JSX } from "react";
 
-/**
- * @summary
- * Defines component props.
- *
- * @remarks
- * Extends standard button element properties.
- *
- * @explanation
- * Provides type definitions for the extracted
- * button component.
- *
- * @param onClick - Handler for click events.
- *
- * @author Moisés Reis
- *
- * @date 2026-09-18
- */
 export interface SharedAddItemButtonProps {
   onClick?: () => void;
 }
-
-// ---------------------------------
-// COMPONENTS
-// ---------------------------------
 
 /**
  * @summary

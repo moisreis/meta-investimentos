@@ -57,6 +57,6 @@ export class ListPortfoliosUseCase {
   async execute(input: ListPortfoliosInput): Promise<PortfolioResponseDTO[]> {
     const USER_ID = EntityId.create(input.userId)
     const PORTFOLIOS = await this.portfolioRepository.findAllByUserId(USER_ID)
-    return PORTFOLIOS.map(toResponseDTO)
+    return PORTFOLIOS.map((entity) => toResponseDTO(entity))
   }
 }

@@ -5,7 +5,8 @@
  * @remarks
  * This DTO is the format of the response for portfolio
  * queries and mutations. Ids are strings, dates are ISO
- * 8601, and percentages are decimal strings.
+ * 8601, percentages are decimal strings, and `ownerName`
+ * carries the display name of the owning user.
  *
  * @explanation
  * Use this DTO when exposing a portfolio to the
@@ -23,6 +24,7 @@ export interface PortfolioResponseDTO {
   acronym: string
   name: string
   userId: string
+  ownerName: string
   annualInterestRate: string
   minAllocation: string
   maxAllocation: string

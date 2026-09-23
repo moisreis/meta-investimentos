@@ -1,5 +1,3 @@
-import { IconEye, IconPencil, IconTrash } from "@tabler/icons-react"
-
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 import {
   SHARED_ACTIONS_COLUMN_ID,
@@ -20,6 +18,13 @@ export const portfolioDataTableColumns: SharedDataTableColumnConfig<PortfolioRes
       id: "name",
       accessorKey: "name",
       label: "Nome",
+      width: 280,
+    },
+    {
+      id: "ownerName",
+      accessorKey: "ownerName",
+      label: "Proprietário",
+      cellFormat: "user",
       width: 280,
     },
     {
@@ -55,11 +60,28 @@ export const portfolioDataTableColumns: SharedDataTableColumnConfig<PortfolioRes
       width: 150,
     },
     {
-      id: "createdAt",
-      accessorKey: "createdAt",
-      label: "Criado em",
-      cellFormat: "date",
-      width: 170,
+      id: "totalPatrimony",
+      accessorKey: "totalPatrimony",
+      label: "Patrimônio Total",
+      cellFormat: "percentage",
+      align: "end",
+      width: 150,
+    },
+    {
+      id: "earnings",
+      accessorKey: "earnings",
+      label: "Ganhos Totais",
+      cellFormat: "text",
+      align: "end",
+      width: 150,
+    },
+    {
+      id: "return",
+      accessorKey: "return",
+      label: "Rendimento",
+      cellFormat: "text",
+      align: "end",
+      width: 150,
     },
   ]
 
@@ -68,18 +90,15 @@ export const portfolioDataTableActions: SharedDataTableRowAction<PortfolioRespon
     {
       key: "view",
       label: "Ver",
-      icon: IconEye,
       href: (row) => `/portfolio/${row.id}`,
     },
     {
       key: "edit",
       label: "Editar",
-      icon: IconPencil,
     },
     {
       key: "delete",
       label: "Excluir",
-      icon: IconTrash,
       variant: "destructive",
       separatorBefore: true,
     },

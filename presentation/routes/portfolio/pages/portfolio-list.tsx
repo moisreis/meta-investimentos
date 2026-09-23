@@ -1,6 +1,6 @@
 "use client"
 
-import { IconTrendingUp } from "@tabler/icons-react"
+import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
 
 import { SharedKpiCard } from "@/presentation/shared/components/shared-kpi-card"
 import { SharedKpiCardGroup } from "@/presentation/shared/components/shared-kpi-card-group"
@@ -20,15 +20,17 @@ function PortfolioList({ data }: PortfolioListProps) {
           title="Patrimônio Total"
           value="R$ 1.901.910,00"
           trend="+ 12%"
+          dotIndicator="success"
           comparison="vs. mês anterior"
           icon={IconTrendingUp}
         />
         <SharedKpiCard
           title="Rendimento Mensal"
           value="R$ 18.450,20"
-          trend="+ 2.4%"
+          trend="- 2.4%"
+          dotIndicator="negative"
           comparison="vs. mês anterior"
-          icon={IconTrendingUp}
+          icon={IconTrendingDown}
         />
         <SharedKpiCard
           title="Ativos Custodiados"

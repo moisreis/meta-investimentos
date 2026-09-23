@@ -9,12 +9,13 @@ import { formatText } from "@/presentation/presenters/text.presenter"
 import {
   SharedDateValue,
   SharedPercentageValue,
-  SharedRowActionsMenu,
-  SharedRowSelectCell,
-  SharedRowSelectHeader,
-  SharedScreenReaderLabel,
   SharedTextValue,
-} from "@/presentation/shared/datatable/shared-column"
+  SharedUserAvatar,
+} from "@/presentation/shared/datatable/values/shared-cell-value"
+import { SharedRowActionsMenu } from "@/presentation/shared/datatable/rows/shared-row-actions-menu"
+import { SharedRowSelectCell } from "@/presentation/shared/datatable/cells/shared-row-select-cell"
+import { SharedRowSelectHeader } from "@/presentation/shared/datatable/header/shared-row-select-header"
+import { SharedScreenReaderLabel } from "@/presentation/shared/datatable/others/shared-screen-reader-label"
 import {
   SHARED_ACTIONS_COLUMN_ID,
   SHARED_ACTIONS_COLUMN_WIDTH,
@@ -35,6 +36,24 @@ function formatDate(iso: string): string {
   }).format(new Date(iso))
 }
 
+/**
+ * Resolves a possibly nested dot-path key (e.g. `"user.name"`) against
+ * a row, or `undefined` when the path does not exist.
+ */
+function getValueByPath<TData extends RowData>(
+  row: TData,
+  path: string | number | symbol
+): unknown {
+  const keys = String(path).split(".")
+
+  return keys.reduce<unknown>((value, key) => {
+    if (value === null || value === undefined) return undefined
+    if (typeof value !== "object") return undefined
+
+    return (value as Record<string, unknown>)[key]
+  }, row)
+}
+
 function renderSharedValue(value: unknown, format?: SharedDataTableCellFormat) {
   switch (format ?? "text") {
     case "percentage":
@@ -43,6 +62,8 @@ function renderSharedValue(value: unknown, format?: SharedDataTableCellFormat) {
       })
     case "date":
       return SharedDateValue({ text: formatDate(value as string) })
+    case "user":
+      return SharedUserAvatar({ name: formatText(value as string) })
     default:
       return SharedTextValue({ text: formatText(value as string | number) })
   }
@@ -73,7 +94,7 @@ export function useEntityColumns<TData extends RowData>(
   const columnHelper = createColumnHelper<SharedDataTableFeatures, TData>()
 
   const dataColumns = columns.map((column) =>
-    columnHelper.accessor((row) => row[column.accessorKey], {
+    columnHelper.accessor((row) => getValueByPath(row, column.accessorKey), {
       id: column.id,
       header: column.label,
       cell: ({ getValue }) => renderSharedValue(getValue(), column.cellFormat),
@@ -115,7 +136,6 @@ export function useEntityColumns<TData extends RowData>(
         actions: actions.map((action) => ({
           key: action.key,
           label: action.label,
-          icon: action.icon,
           variant: action.variant,
           separatorBefore: action.separatorBefore,
           onSelect: action.href

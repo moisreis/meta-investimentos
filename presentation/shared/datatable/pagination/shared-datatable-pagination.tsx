@@ -1,10 +1,21 @@
 "use client"
 
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react"
+import {
+  IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
+} from "@tabler/icons-react"
 import type { ReactTable, RowData } from "@tanstack/react-table"
 
 import { useEntityDataTablePagination } from "@/presentation/shared/hooks/use-entity-datatable-pagination.hook"
 import { Button } from "@/presentation/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/presentation/ui/dropdown-menu"
 
 import type { SharedDataTableFeatures } from "@/presentation/shared/settings/shared-datatable-features.settings"
 
@@ -24,26 +35,29 @@ export function SharedDataTablePagination<TData extends RowData>({
         selecionada(s).
       </div>
 
-      <div className="flex items-center gap-2">
-        <label
-          htmlFor="rows-per-page"
-          className="text-sm text-muted-foreground"
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="outline" size="sm" data-icon="inline-end">
+              {pagination.pageSize} linhas
+            </Button>
+          }
         >
-          Linhas por página
-        </label>
-        <select
-          id="rows-per-page"
-          value={pagination.pageSize}
-          onChange={(event) => table.setPageSize(Number(event.target.value))}
-          className="h-8 rounded-md border border-input bg-transparent px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          {pagination.pageSizes.map((size) => (
-            <option key={size} value={size}>
-              {size}
-            </option>
-          ))}
-        </select>
-      </div>
+          <IconChevronDown className="size-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-52">
+          <DropdownMenuRadioGroup
+            value={String(pagination.pageSize)}
+            onValueChange={(value) => table.setPageSize(Number(value))}
+          >
+            {pagination.pageSizes.map((size) => (
+              <DropdownMenuRadioItem key={size} value={String(size)}>
+                {size} por página
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <div className="text-sm text-muted-foreground">
         Página {pagination.pageIndex + 1} de {pagination.pageCount}
