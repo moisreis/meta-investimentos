@@ -13,11 +13,14 @@ import { SharedDataTableRows } from "./rows/shared-row"
 export interface SharedDataTableProps<TData extends RowData> {
   table: ReactTable<SharedDataTableFeatures, TData>
   className?: string
+  /** Enables the bulk delete confirm flow for the selected rows. */
+  onBulkDelete?: (items: TData[]) => void | Promise<void>
 }
 
 export function SharedDataTable<TData extends RowData>({
   table,
   className,
+  onBulkDelete,
 }: SharedDataTableProps<TData>) {
   const body = useEntityRows(table)
 
@@ -31,7 +34,7 @@ export function SharedDataTable<TData extends RowData>({
         </div>
       </div>
 
-      <SharedDataTablePagination table={table} />
+      <SharedDataTablePagination table={table} onBulkDelete={onBulkDelete} />
     </div>
   )
 }

@@ -18,3 +18,8 @@ export const portfolioPayloadSchema = z
     message: "A alocação alvo deve ser menor ou igual à alocação máxima.",
     path: ["maxAllocation"],
   })
+
+// Body schema for the bulk delete handler.
+export const bulkDeleteSchema = z.object({
+  ids: z.array(z.string().trim().min(1)).min(1).max(100),
+})

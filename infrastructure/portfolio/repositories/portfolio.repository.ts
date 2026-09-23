@@ -299,4 +299,32 @@ export class PortfolioRepository implements IPortfolio {
   async delete(id: EntityId): Promise<void> {
     await this.db.delete(portfolio).where(eq(portfolio.id, id))
   }
+
+  /**
+   * @summary
+   * Removes the portfolios with the provided ids.
+   *
+   * @remarks
+   * A batched delete avoids an N+1 query pattern. Resolves
+   * when the rows are removed; a no-op for an empty input.
+   *
+   * @explanation
+   * Use this method to delete many portfolios in one query.
+   *
+   * @param ids - The ids of the portfolios to remove.
+   *
+   * @example
+   * await PORTFOLIO_REPO.deleteByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-22
+   */
+  async deleteByIds(ids: EntityId[]): Promise<void> {
+    if (ids.length === 0) {
+      return
+    }
+
+    await this.db.delete(portfolio).where(inArray(portfolio.id, ids))
+  }
 }

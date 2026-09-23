@@ -14,6 +14,7 @@ import { useEntityDataTable } from "@/presentation/shared/hooks/use-entity-datat
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
 import { PortfolioForm } from "../forms/portfolio-form"
+import { useBulkDeletePortfolio } from "../hooks/use-bulk-delete-portfolio.hook"
 import { useCreatePortfolio } from "../hooks/use-create-portfolio.hook"
 import { useDeletePortfolio } from "../hooks/use-delete-portfolio.hook"
 import { useUpdatePortfolio } from "../hooks/use-update-portfolio.hook"
@@ -39,6 +40,7 @@ function PortfolioDataTable({ data }: PortfolioDataTableProps) {
   const { createPortfolio } = useCreatePortfolio()
   const { updatePortfolio } = useUpdatePortfolio()
   const { deletePortfolio } = useDeletePortfolio()
+  const { bulkDeletePortfolios } = useBulkDeletePortfolio()
 
   const columns = useEntityColumns({
     columns: portfolioDataTableColumns,
@@ -102,7 +104,12 @@ function PortfolioDataTable({ data }: PortfolioDataTableProps) {
           </>
         }
       />
-      <SharedDataTable table={table} />
+      <SharedDataTable
+        table={table}
+        onBulkDelete={(items) =>
+          bulkDeletePortfolios(items.map((item) => item.id))
+        }
+      />
 
       <SharedEditDialog<PortfolioResponseDTO, PortfolioFormValues>
         open={Boolean(editingPortfolio)}

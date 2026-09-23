@@ -167,4 +167,28 @@ export interface IPortfolio {
    * @date 2026-09-13
    */
   delete(id: EntityId): Promise<void>
+
+  /**
+   * @summary
+   * Removes the portfolios with the provided ids.
+   *
+   * @remarks
+   * Resolves when the portfolios are removed.
+   *
+   * @explanation
+   * Use this method to delete multiple portfolio records
+   * in one operation.
+   *
+   * @param ids - The unique identifiers of the portfolios.
+   *
+   * @returns Resolves when removed.
+   *
+   * @example
+   * await PORTFOLIO_REPO.deleteByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-22
+   */
+  deleteByIds(ids: EntityId[]): Promise<void>
 }
