@@ -133,7 +133,9 @@ function ThemeHotkey() {
       }
 
       // Accepts only the lowercase `D` key.
-      if (event.key.toLowerCase() !== "d") {
+      // Some events (e.g. media key shortcuts) omit the key.
+      const key = event.key?.toLowerCase()
+      if (key !== "d") {
         return
       }
 

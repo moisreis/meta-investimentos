@@ -1,14 +1,10 @@
 import { ValidationError } from "@/errors"
 
-// Regular expression to validate RFC 4122 UUID v4 strings.
-const UUID_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-
 // Unique symbol branding key for nominal type safety.
 declare const __ENTITY_ID: unique symbol
 
 /**
- * Nominal type alias representing a validated UUID **EntityId**.
+ * Nominal type alias representing a validated opaque **EntityId**.
  */
 export type EntityId = string & {
   readonly [__ENTITY_ID]: never
@@ -24,9 +20,9 @@ export type EntityId = string & {
  *
  * @explanation
  * Provides static utility methods to construct valid
- * **EntityId** values and test equality. Ensures all
- * entity identifiers across the domain adhere to UUID
- * formatting standards.
+ * **EntityId** values and test equality. Accepts opaque
+ * identifiers, matching the non-UUID ids persisted by
+ * **Better Auth** for users, sessions and accounts.
  *
  * @author Moisés Reis
  *
@@ -38,22 +34,22 @@ export const EntityId = {
    * Creates and validates a new nominal **EntityId**.
    *
    * @remarks
-   * Trims whitespace and converts valid UUID strings to
-   * lowercase before applying the nominal type brand.
+   * Trims whitespace before applying the nominal type brand.
+   * Opaque identifiers such as **Better Auth** ids pass
+   * validation, keeping the domain aligned with persistence.
    *
    * @explanation
    * Use this factory method to safely instantiate an
    * **EntityId** from a raw string. Throws a
-   * **ValidationError** if the value is missing, empty,
-   * or not a valid UUID.
+   * **ValidationError** if the value is missing or blank.
    *
-   * @param value - Raw UUID string to parse and validate.
+   * @param value - Raw identifier string to parse and validate.
    *
-   * @returns Validated lowercase EntityId.
+   * @returns The trimmed branded EntityId string.
    *
    * @example
    * const ID = EntityId.create(
-   *   "123e4567-e89b-42d3-a456-426614174000"
+   *   "a3f6c9d2e0b14a2f9c6e7a1b2c3d4e5f"
    * );
    *
    * @author Moisés Reis
@@ -65,17 +61,15 @@ export const EntityId = {
       throw new ValidationError("`EntityId` must be defined.")
     }
 
-    if (value.trim() === "") {
+    // Trims the raw identifier before validation.
+    const trimmed = value.trim()
+
+    if (trimmed === "") {
       throw new ValidationError("`EntityId` must not be blank.")
     }
 
-    // Validates trimmed UUID string against RFC pattern.
-    if (!UUID_REGEX.test(value.trim())) {
-      throw new ValidationError("`EntityId` must be a valid UUID.")
-    }
-
-    // Returns normalized lowercase branded EntityId string.
-    return value.trim().toLowerCase() as EntityId
+    // Returns the trimmed branded EntityId string.
+    return trimmed as EntityId
   },
 
   /**

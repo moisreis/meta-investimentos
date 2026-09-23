@@ -38,7 +38,7 @@ export function SharedRowActionsMenu({
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="ghost" size="icon-sm" className="size-8 p-0" />
+          <Button variant="ghost" size="icon-sm" className="size-7 p-0" />
         }
       >
         <span className="sr-only">{label}</span>

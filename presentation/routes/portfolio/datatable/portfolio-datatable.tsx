@@ -1,6 +1,6 @@
 "use client"
 
-import { SharedAddItemButton } from "@/presentation/shared/components/shared-add-item-button"
+import { SharedAddDialog } from "@/presentation/shared/dialogs/shared-add-dialog"
 import { SharedEditTableButton } from "@/presentation/shared/components/shared-edit-table-button"
 import { SharedToolbar } from "@/presentation/shared/components/shared-toolbar"
 import { SharedToolbarSeparator } from "@/presentation/shared/components/shared-toolbar-separator"
@@ -9,6 +9,8 @@ import { useEntityColumns } from "@/presentation/shared/hooks/use-entity-columns
 import { useEntityDataTable } from "@/presentation/shared/hooks/use-entity-datatable.hook"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
+import { PortfolioForm } from "../forms/portfolio-form"
+import { useCreatePortfolio } from "../hooks/use-create-portfolio.hook"
 import {
   portfolioDataTableActions,
   portfolioDataTableColumnLabels,
@@ -34,6 +36,8 @@ function PortfolioDataTable({ data }: PortfolioDataTableProps) {
     pinnedEnd: portfolioDataTablePinning.end,
   })
 
+  const { createPortfolio } = useCreatePortfolio()
+
   return (
     <>
       <SharedToolbar
@@ -47,7 +51,11 @@ function PortfolioDataTable({ data }: PortfolioDataTableProps) {
               }
             />
             <SharedToolbarSeparator />
-            <SharedAddItemButton />
+            <SharedAddDialog
+              form={<PortfolioForm />}
+              onAdd={createPortfolio}
+              itemLabel="carteira"
+            />
           </>
         }
       />
