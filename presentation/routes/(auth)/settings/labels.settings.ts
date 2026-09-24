@@ -27,7 +27,8 @@ export const SIGN_UP = {
 
   // Short description of the sign-up screen.
   SIGN_UP_DESCRIPTION:
-    "Crie sua conta para começar a gerenciar seus investimentos.",
+    "Crie sua conta para " +
+    "começar a gerenciar seus investimentos.",
 
   // Invitation text for users with an existing account.
   ALREADY_HAVE_AN_ACCOUNT_TEXT: "Já possui uma conta?",

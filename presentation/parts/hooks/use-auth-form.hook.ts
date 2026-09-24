@@ -17,7 +17,9 @@ interface UseAuthFormOptions<
   schema: TSchema
   initialValues: TValues
   errorMessages: Record<string, string>
-  submit: (values: TValues) => Promise<{ error?: AuthError | null }>
+  submit: (
+    values: TValues
+  ) => Promise<{ error?: AuthError | null }>
 }
 
 /**
@@ -38,18 +40,18 @@ interface UseAuthFormOptions<
  * @returns The redirect target.
  *
  * @example
- * const TARGET = getRedirectTarget()
+ * const TARGET = GetRedirectTarget()
  *
  * @author Moisés Reis
  *
  * @date 2026-09-23
  */
-function getRedirectTarget(): string {
-  const params = new URLSearchParams(window.location.search)
-  const redirect = params.get("redirect")
+function GetRedirectTarget(): string {
+  const PARAMS = new URLSearchParams(window.location.search)
+  const REDIRECT = PARAMS.get("redirect")
 
-  return redirect?.startsWith("/") && !redirect.startsWith("//")
-    ? redirect
+  return REDIRECT?.startsWith("/") && !REDIRECT.startsWith("//")
+    ? REDIRECT
     : "/"
 }
 
@@ -67,25 +69,33 @@ function getRedirectTarget(): string {
  * Use when a sign-in/sign-up request fails. It makes
  * errors understandable for the final user.
  *
- * @param authError - Authentication error returned by the client.
+ * @param authError - Authentication error returned by
+ *   the client.
  * @param messages - Error-code-to-message map for the form.
  *
  * @returns A readable error message.
  *
  * @example
- * const MESSAGE = translateAuthError(authError, SIGN_IN_ERROR_MESSAGES)
+ * const MESSAGE = TranslateAuthError(
+ *   authError,
+ *   SIGN_IN_ERROR_MESSAGES
+ * )
  *
  * @author Moisés Reis
  *
  * @date 2026-09-23
  */
-function translateAuthError(
+function TranslateAuthError(
   authError: AuthError,
   messages: Record<string, string>
 ): string {
-  const codeMessage = authError.code && messages[authError.code]
+  const CODE_MESSAGE = authError.code && messages[authError.code]
 
-  return codeMessage ?? authError.message ?? "Erro de autenticação."
+  return (
+    CODE_MESSAGE ??
+    authError.message ??
+    "Erro de autenticação."
+  )
 }
 
 /**
@@ -98,7 +108,8 @@ function translateAuthError(
  * status and per-field error state. Validates with **Zod**
  * before calling the given submit function. Re-validates a
  * field as it changes after an invalid attempt. On success,
- * redirects to the `redirect` query target or the dashboard (`/`).
+ * redirects to the `redirect` query target or the
+ * dashboard (`/`).
  *
  * @explanation
  * Use as the base for `useSignIn`/`useSignUp` (and any future
@@ -106,14 +117,15 @@ function translateAuthError(
  * redirect logic across hooks. Each caller supplies its own
  * schema, initial values, error-code map, and submit function.
  *
- * @param options - Schema, initial values, error map and submit fn.
+ * @param options - Schema, initial values, error map
+ *   and submit fn.
  *
  * @returns Field values, an updater, and submit state/handlers.
  *
  * @example
- * const { values, updateField, fieldErrors, status, handleSubmit } =
- *   useAuthForm({
- *     schema: signInFormSchema,
+ * const { values, updateField, fieldErrors, status,
+ *   handleSubmit } = useAuthForm({
+ *     schema: SIGN_IN_FORM_SCHEMA,
  *     initialValues: { email: "", password: "" },
  *     errorMessages: SIGN_IN_ERROR_MESSAGES,
  *     submit: (values) => authClient.signIn.email(values),
@@ -132,11 +144,13 @@ function useAuthForm<
   errorMessages,
   submit,
 }: UseAuthFormOptions<TSchema, TValues>) {
-  const [values, setValues] = React.useState<TValues>(initialValues)
-  const [error, setError] = React.useState<string | null>(null)
-  const [pending, setPending] = React.useState(false)
-  const [status, setStatus] = React.useState<AuthFormStatus>("idle")
-  const [fieldErrors, setFieldErrors] = React.useState<
+  const [VALUES, setValues] =
+    React.useState<TValues>(initialValues)
+  const [ERROR, setError] = React.useState<string | null>(null)
+  const [PENDING, setPending] = React.useState(false)
+  const [STATUS, setStatus] =
+    React.useState<AuthFormStatus>("idle")
+  const [FIELD_ERRORS, setFieldErrors] = React.useState<
     Partial<Record<keyof TValues, string>>
   >({})
 
@@ -159,18 +173,24 @@ function useAuthForm<
    *
    * @date 2026-09-23
    */
-  function validateField(key: keyof TValues, nextValues: TValues) {
-    const result = schema.safeParse(nextValues)
+  function ValidateField(
+    key: keyof TValues,
+    nextValues: TValues
+  ) {
+    const RESULT = schema.safeParse(nextValues)
 
-    const message = result.success
+    const MESSAGE = RESULT.success
       ? undefined
       : (
-          result.error.flatten().fieldErrors as Partial<
+          RESULT.error.flatten().fieldErrors as Partial<
             Record<keyof TValues, string[] | undefined>
           >
         )[key]?.[0]
 
-    setFieldErrors((previous) => ({ ...previous, [key]: message }))
+    setFieldErrors((previous) => ({
+      ...previous,
+      [key]: MESSAGE,
+    }))
   }
 
   /**
@@ -191,11 +211,11 @@ function useAuthForm<
    *
    * @date 2026-09-23
    */
-  function updateField(key: keyof TValues, value: string) {
-    const nextValues = { ...values, [key]: value }
+  function UpdateField(key: keyof TValues, value: string) {
+    const NEXT_VALUES = { ...VALUES, [key]: value }
 
-    setValues(nextValues)
-    validateField(key, nextValues)
+    setValues(NEXT_VALUES)
+    ValidateField(key, NEXT_VALUES)
   }
 
   /**
@@ -218,25 +238,32 @@ function useAuthForm<
    *
    * @date 2026-09-23
    */
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function HandleSubmit(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault()
     setError(null)
     setStatus("attempting")
     setPending(true)
 
-    const result = schema.safeParse(values)
+    const RESULT = schema.safeParse(VALUES)
 
-    if (!result.success) {
-      const flattened = result.error.flatten().fieldErrors as Partial<
+    if (!RESULT.success) {
+      const FLATTENED = RESULT.error.flatten()
+        .fieldErrors as Partial<
         Record<keyof TValues, string[] | undefined>
       >
-      const nextFieldErrors: Partial<Record<keyof TValues, string>> = {}
+      const NEXT_FIELD_ERRORS: Partial<
+        Record<keyof TValues, string>
+      > = {}
 
-      for (const key of Object.keys(values) as (keyof TValues)[]) {
-        nextFieldErrors[key] = flattened[key]?.[0]
+      for (const key of Object.keys(
+        VALUES
+      ) as (keyof TValues)[]) {
+        NEXT_FIELD_ERRORS[key] = FLATTENED[key]?.[0]
       }
 
-      setFieldErrors(nextFieldErrors)
+      setFieldErrors(NEXT_FIELD_ERRORS)
       setStatus("error")
       setPending(false)
 
@@ -246,14 +273,16 @@ function useAuthForm<
     setFieldErrors({})
 
     try {
-      const { error: authError } = await submit(result.data as TValues)
+      const { error: authError } = await submit(
+        RESULT.data as TValues
+      )
 
       if (authError) {
-        setError(translateAuthError(authError, errorMessages))
+        setError(TranslateAuthError(authError, errorMessages))
         setStatus("error")
       } else {
         setStatus("success")
-        window.location.href = getRedirectTarget()
+        window.location.href = GetRedirectTarget()
       }
     } catch {
       setError("Erro inesperado. Tente novamente.")
@@ -264,13 +293,13 @@ function useAuthForm<
   }
 
   return {
-    values,
-    updateField,
-    error,
-    pending,
-    status,
-    fieldErrors,
-    handleSubmit,
+    values: VALUES,
+    updateField: UpdateField,
+    error: ERROR,
+    pending: PENDING,
+    status: STATUS,
+    fieldErrors: FIELD_ERRORS,
+    handleSubmit: HandleSubmit,
   }
 }
 

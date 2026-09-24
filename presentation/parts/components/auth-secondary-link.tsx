@@ -2,7 +2,10 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { SIGN_IN, SIGN_UP } from "../../routes/(auth)/settings/labels.settings"
+import {
+  SIGN_IN,
+  SIGN_UP,
+} from "../../routes/(auth)/settings/labels.settings"
 
 /**
  * @summary
@@ -33,8 +36,10 @@ function AuthSecondaryLink() {
 
   // Renders the link that points back to sign-in.
   if (PATHNAME === "/sign-up") {
-    const { ALREADY_HAVE_AN_ACCOUNT_TEXT, ALREADY_HAVE_AN_ACCOUNT_LINK } =
-      SIGN_UP
+    const {
+      ALREADY_HAVE_AN_ACCOUNT_TEXT,
+      ALREADY_HAVE_AN_ACCOUNT_LINK,
+    } = SIGN_UP
 
     return (
       <p className="text-sm text-muted-foreground">
@@ -50,8 +55,10 @@ function AuthSecondaryLink() {
   }
 
   // Renders the link that points forward to sign-up.
-  const { DOES_NOT_HAVE_AN_ACCOUNT_TEXT, DOES_NOT_HAVE_AN_ACCOUNT_LINK } =
-    SIGN_IN
+  const {
+    DOES_NOT_HAVE_AN_ACCOUNT_TEXT,
+    DOES_NOT_HAVE_AN_ACCOUNT_LINK,
+  } = SIGN_IN
 
   return (
     <p className="text-sm text-muted-foreground">

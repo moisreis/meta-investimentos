@@ -12,10 +12,15 @@ function MainCommandTrigger() {
 
   return (
     <>
-    <Button variant="outline" className="rounded-full" size="xs" onClick={() => setOpen(true)}>
-      <IconSearch />
-      Buscar
-    </Button>
+      <Button
+        variant="outline"
+        className="rounded-full"
+        size="xs"
+        onClick={() => setOpen(true)}
+      >
+        <IconSearch />
+        Buscar
+      </Button>
       <MainCommandDialog open={open} onOpenChange={setOpen} />
     </>
   )

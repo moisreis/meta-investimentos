@@ -97,7 +97,9 @@ function SignUpForm() {
             value={firstName}
             onChange={(e) => updateFirstName(e.target.value)}
             disabled={pending}
-            aria-invalid={fieldErrors.firstName ? "true" : undefined}
+            aria-invalid={
+              fieldErrors.firstName ? "true" : undefined
+            }
           />
         </SharedFormField>
 
@@ -115,7 +117,9 @@ function SignUpForm() {
             value={lastName}
             onChange={(e) => updateLastName(e.target.value)}
             disabled={pending}
-            aria-invalid={fieldErrors.lastName ? "true" : undefined}
+            aria-invalid={
+              fieldErrors.lastName ? "true" : undefined
+            }
           />
         </SharedFormField>
 
@@ -138,7 +142,11 @@ function SignUpForm() {
           />
         </SharedFormField>
 
-        <SharedFormField label="CPF" error={fieldErrors.cpf} htmlFor="cpf">
+        <SharedFormField
+          label="CPF"
+          error={fieldErrors.cpf}
+          htmlFor="cpf"
+        >
           <AuthCpfInput
             id="cpf"
             value={cpf}
@@ -162,7 +170,9 @@ function SignUpForm() {
             value={password}
             onChange={(e) => updatePassword(e.target.value)}
             disabled={pending}
-            aria-invalid={fieldErrors.password ? "true" : undefined}
+            aria-invalid={
+              fieldErrors.password ? "true" : undefined
+            }
           />
         </SharedFormField>
       </FieldGroup>

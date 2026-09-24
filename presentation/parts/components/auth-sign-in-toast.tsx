@@ -10,7 +10,8 @@ interface SignInToastProps {
 }
 
 // Human-readable fallback shown when the fields fail validation.
-const VALIDATION_ERROR = "Revise os campos destacados no formulário."
+const VALIDATION_ERROR =
+  "Revise os campos destacados no formulário."
 
 /**
  * @summary
@@ -18,8 +19,8 @@ const VALIDATION_ERROR = "Revise os campos destacados no formulário."
  *
  * @remarks
  * Fires a toast once when the status becomes `success`
- * or `error` after the submit runs.
- * Uses **AuthSignInToast** callbacks with human-readable messages.
+ * or `error` after the submit runs. Uses
+ * **AuthSignInToast** callbacks with human-readable messages.
  *
  * @explanation
  * Render inside the sign-in form wiring the submit status.
@@ -40,7 +41,10 @@ const VALIDATION_ERROR = "Revise os campos destacados no formulário."
  *
  * @date 2026-09-23
  */
-function AuthSignInToast({ status, errorMessage }: SignInToastProps) {
+function AuthSignInToast({
+  status,
+  errorMessage,
+}: SignInToastProps) {
   const { showSuccess, showError } = useSignInToast()
 
   React.useEffect(() => {

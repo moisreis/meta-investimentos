@@ -86,7 +86,9 @@ function SignInForm() {
             value={password}
             onChange={(e) => updatePassword(e.target.value)}
             disabled={pending}
-            aria-invalid={fieldErrors.password ? "true" : undefined}
+            aria-invalid={
+              fieldErrors.password ? "true" : undefined
+            }
           />
         </SharedFormField>
       </FieldGroup>

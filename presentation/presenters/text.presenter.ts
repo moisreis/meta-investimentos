@@ -18,21 +18,23 @@ import { PRESENTER_FALLBACK } from "../constants/presenter.constants"
  * @returns Formatted text or fallback string.
  *
  * @example
- * const TEXT = formatText("Hello World");
+ * const TEXT = FormatText("Hello World");
  * // returns "Hello World"
  *
  * @author Moisés Reis
  *
  * @date 2026-09-23
  */
-export function formatText(
+export function FormatText(
   value: string | number | null | undefined
 ): string {
-  if (value === null || value === undefined) return PRESENTER_FALLBACK
+  if (value === null || value === undefined)
+    return PRESENTER_FALLBACK
 
-  const text = String(value)
+  const TEXT = String(value)
 
-  if (text.trim() === "" || text === "0") return PRESENTER_FALLBACK
+  if (TEXT.trim() === "" || TEXT === "0")
+    return PRESENTER_FALLBACK
 
-  return text
+  return TEXT
 }

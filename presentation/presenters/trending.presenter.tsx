@@ -1,8 +1,11 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+import {
+  IconTrendingDown,
+  IconTrendingUp,
+} from "@tabler/icons-react"
 import type { JSX } from "react"
 import { cn } from "cn"
-import { formatCurrency } from "./currency.presenter"
-import { formatPercentage } from "./percentage.presenter"
+import { FormatCurrency } from "./currency.presenter"
+import { FormatPercentage } from "./percentage.presenter"
 
 // Kind of value displayed by the trending presenter.
 export type TrendingKind = "currency" | "percentage"
@@ -62,15 +65,20 @@ export function TrendingValue({
   direction,
   className,
 }: TrendingValueProps): JSX.Element {
-  const isDown = (direction ?? deriveDirection(value)) === "down"
-  const Icon = isDown ? IconTrendingDown : IconTrendingUp
-  const text =
-    kind === "currency" ? formatCurrency(value) : formatPercentage(value)
+  const IS_DOWN =
+    (direction ?? DeriveDirection(value)) === "down"
+  const ICON = IS_DOWN ? IconTrendingDown : IconTrendingUp
+  const TEXT =
+    kind === "currency"
+      ? FormatCurrency(value)
+      : FormatPercentage(value)
 
   return (
-    <span className={cn("inline-flex items-center gap-1", className)}>
-      <Icon aria-hidden="true" className="size-4" />
-      <span>{text}</span>
+    <span
+      className={cn("inline-flex items-center gap-1", className)}
+    >
+      <ICON aria-hidden="true" className="size-4" />
+      <span>{TEXT}</span>
     </span>
   )
 }
@@ -93,9 +101,10 @@ export function TrendingValue({
  *
  * @date 2026-09-23
  */
-function deriveDirection(
+function DeriveDirection(
   value: string | number | null | undefined
 ): TrendingDirection {
-  const parsed = typeof value === "string" ? Number.parseFloat(value) : value
-  return typeof parsed === "number" && parsed < 0 ? "down" : "up"
+  const PARSED =
+    typeof value === "string" ? Number.parseFloat(value) : value
+  return typeof PARSED === "number" && PARSED < 0 ? "down" : "up"
 }

@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 // Validates the sign-in form fields.
-const signInFormSchema = z.object({
+const SIGN_IN_FORM_SCHEMA = z.object({
   email: z
     .string()
     .trim()
@@ -11,6 +11,6 @@ const signInFormSchema = z.object({
 })
 
 // Values of the sign-in form fields.
-type SignInFormValues = z.infer<typeof signInFormSchema>
+type SignInFormValues = z.infer<typeof SIGN_IN_FORM_SCHEMA>
 
-export { signInFormSchema, type SignInFormValues }
+export { SIGN_IN_FORM_SCHEMA, type SignInFormValues }

@@ -23,7 +23,10 @@ export function SharedSubmitButton({
       aria-label={pending ? pendingLabel : undefined}
     >
       {pending ? (
-        <IconLoader className="animate-spin" aria-hidden="true" />
+        <IconLoader
+          className="animate-spin"
+          aria-hidden="true"
+        />
       ) : (
         label
       )}

@@ -26,7 +26,9 @@ export function SharedFormField({
       <FieldLabel htmlFor={htmlFor}>{label}</FieldLabel>
       <FieldContent>
         {children}
-        {description && <FieldDescription>{description}</FieldDescription>}
+        {description && (
+          <FieldDescription>{description}</FieldDescription>
+        )}
         <FieldError>{error}</FieldError>
       </FieldContent>
     </Field>

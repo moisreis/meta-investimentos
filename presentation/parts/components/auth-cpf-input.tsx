@@ -38,12 +38,18 @@ function AuthCpfInput({
   onChange,
   disabled,
   ...props
-}: Omit<React.ComponentProps<typeof Input>, "defaultValue" | "onChange"> & {
+}: Omit<
+  React.ComponentProps<typeof Input>,
+  "defaultValue" | "onChange"
+> & {
   value?: string
   onChange?: (value: string) => void
   disabled?: boolean
 }) {
-  const { currentValue, handleChange } = useAuthCpfInput({ value, onChange })
+  const { currentValue, handleChange } = useAuthCpfInput({
+    value,
+    onChange,
+  })
 
   return (
     <Input

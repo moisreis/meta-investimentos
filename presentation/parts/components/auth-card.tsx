@@ -1,4 +1,4 @@
-import { cn } from "cn";
+import { cn } from "cn"
 import {
   Card,
   CardContent,
@@ -6,18 +6,23 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/presentation/ui/card";
-import { Separator } from "@/presentation/ui/separator";
-import { AuthSecondaryLink } from "./auth-secondary-link";
+} from "@/presentation/ui/card"
+import { Separator } from "@/presentation/ui/separator"
+import { AuthSecondaryLink } from "./auth-secondary-link"
 
 interface AuthCardProps {
-  title: React.ReactNode;
-  description: React.ReactNode;
-  children: React.ReactNode;
-  className?: string;
+  title: React.ReactNode
+  description: React.ReactNode
+  children: React.ReactNode
+  className?: string
 }
 
-export function AuthCard({ title, description, children, className }: AuthCardProps) {
+export function AuthCard({
+  title,
+  description,
+  children,
+  className,
+}: AuthCardProps) {
   return (
     <Card className={cn("relative z-10", className)}>
       <CardHeader>
@@ -30,5 +35,5 @@ export function AuthCard({ title, description, children, className }: AuthCardPr
         <AuthSecondaryLink />
       </CardFooter>
     </Card>
-  );
+  )
 }

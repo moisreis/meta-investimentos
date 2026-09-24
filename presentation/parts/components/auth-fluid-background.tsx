@@ -1,12 +1,12 @@
-import { cn } from "cn";
+import { cn } from "cn"
 
 import { AsciiFluid } from "@/presentation/ui/ascii-fluid"
 
 interface AuthFluidBackgroundProps {
-  backgroundColor?: string;
-  color?: string;
-  cellSize?: number;
-  className?: string;
+  backgroundColor?: string
+  color?: string
+  cellSize?: number
+  className?: string
 }
 
 export function AuthFluidBackground({
@@ -25,5 +25,5 @@ export function AuthFluidBackground({
         className
       )}
     />
-  );
+  )
 }

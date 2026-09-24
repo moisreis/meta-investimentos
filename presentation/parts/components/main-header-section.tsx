@@ -1,9 +1,9 @@
-import { cn } from "cn";
+import { cn } from "cn"
 
 interface MainHeaderSectionProps {
-  side?: "left" | "right";
-  children: React.ReactNode;
-  className?: string;
+  side?: "left" | "right"
+  children: React.ReactNode
+  className?: string
 }
 
 export function MainHeaderSection({
@@ -21,5 +21,5 @@ export function MainHeaderSection({
     >
       {children}
     </div>
-  );
+  )
 }

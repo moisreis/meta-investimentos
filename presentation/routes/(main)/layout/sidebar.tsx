@@ -1,7 +1,4 @@
-import {
-  Sidebar,
-  SidebarRail,
-} from "@/presentation/ui/sidebar"
+import { Sidebar, SidebarRail } from "@/presentation/ui/sidebar"
 
 import { MainSidebarGroup } from "@/presentation/parts/components/main-sidebar-group"
 import { MainUserActions } from "@/presentation/parts/components/main-user-actions"

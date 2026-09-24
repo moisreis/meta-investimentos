@@ -17,19 +17,20 @@ const CPF_DIGITS_LENGTH = 11
  * @returns The masked **CPF** string.
  *
  * @example
- * const MASKED = maskCPF("52998224725");
+ * const MASKED = MaskCPF("52998224725");
  *
  * @author Moisés Reis
  *
  * @date 2026-09-23
  */
-function maskCPF(value: string): string {
+function MaskCPF(value: string): string {
   // Keeps only the first 11 digit characters.
-  const digits = value.replace(/\D/g, "").slice(0, CPF_DIGITS_LENGTH)
+  const DIGITS = value
+    .replace(/\D/g, "")
+    .slice(0, CPF_DIGITS_LENGTH)
 
   // Groups the digits as `000.000.000-00`.
-  return digits
-    .replace(/^(\d{3})(\d)/, "$1.$2")
+  return DIGITS.replace(/^(\d{3})(\d)/, "$1.$2")
     .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
     .replace(/\.(\d{3})(\d)/, ".$1-$2")
 }
@@ -49,15 +50,15 @@ function maskCPF(value: string): string {
  * @returns The digits-only **CPF** string.
  *
  * @example
- * const DIGITS = unmaskCPF("529.982.247-25");
+ * const DIGITS = UnmaskCPF("529.982.247-25");
  *
  * @author Moisés Reis
  *
  * @date 2026-09-23
  */
-function unmaskCPF(value: string): string {
+function UnmaskCPF(value: string): string {
   // Keeps only the digit characters.
   return value.replace(/\D/g, "")
 }
 
-export { maskCPF, unmaskCPF }
+export { MaskCPF, UnmaskCPF }

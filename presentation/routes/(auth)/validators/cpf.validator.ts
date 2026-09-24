@@ -1,4 +1,4 @@
-import { unmaskCPF } from "@/presentation/masks/cpf.mask"
+import { UnmaskCPF } from "@/presentation/masks/cpf.mask"
 
 /**
  * @summary
@@ -17,41 +17,41 @@ import { unmaskCPF } from "@/presentation/masks/cpf.mask"
  * @returns Validity of the **CPF**.
  *
  * @example
- * const VALID = isValidCpf("529.982.247-25");
+ * const VALID = IsValidCpf("529.982.247-25");
  *
  * @author Moisés Reis
  *
  * @date 2026-09-17
  */
-function isValidCpf(value: string): boolean {
-  const digits = unmaskCPF(value)
+function IsValidCpf(value: string): boolean {
+  const DIGITS = UnmaskCPF(value)
 
-  if (!/^\d{11}$/.test(digits)) {
+  if (!/^\d{11}$/.test(DIGITS)) {
     return false
   }
 
-  if (new Set(digits).size === 1) {
+  if (new Set(DIGITS).size === 1) {
     return false
   }
 
-  function checkDigit(position: number): number {
-    const sum = digits
-      .slice(0, position - 1)
+  function CheckDigit(position: number): number {
+    const SUM = DIGITS.slice(0, position - 1)
       .split("")
       .reduce(
-        (total, digit, index) => total + Number(digit) * (position - index),
+        (total, digit, index) =>
+          total + Number(digit) * (position - index),
         0
       )
 
-    const remainder = sum % 11
+    const REMAINDER = SUM % 11
 
-    return remainder < 2 ? 0 : 11 - remainder
+    return REMAINDER < 2 ? 0 : 11 - REMAINDER
   }
 
   return (
-    Number(digits[9]) === checkDigit(10) &&
-    Number(digits[10]) === checkDigit(11)
+    Number(DIGITS[9]) === CheckDigit(10) &&
+    Number(DIGITS[10]) === CheckDigit(11)
   )
 }
 
-export { isValidCpf }
+export { IsValidCpf }

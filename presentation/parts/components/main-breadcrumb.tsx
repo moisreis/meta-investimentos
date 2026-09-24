@@ -23,7 +23,9 @@ export function MainBreadcrumb() {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>FUNDO PREVIDENCIÀRIO DE CAPELA</BreadcrumbPage>
+          <BreadcrumbPage>
+            FUNDO PREVIDENCIÀRIO DE CAPELA
+          </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

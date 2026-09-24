@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "../ui/avatar"
 import type { JSX } from "react"
 import { cn } from "cn"
 
@@ -53,8 +57,9 @@ export function UserAvatar({
   image,
   className,
 }: UserAvatarProps): JSX.Element {
-  const fullName = `${firstName} ${lastName}`.trim()
-  const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
+  const FULL_NAME = `${firstName} ${lastName}`.trim()
+  const INITIALS =
+    `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
@@ -64,12 +69,14 @@ export function UserAvatar({
         style={{ width: "1.25rem", height: "1.25rem" }}
       >
         {image ? (
-          <AvatarImage src={image} alt={fullName} />
+          <AvatarImage src={image} alt={FULL_NAME} />
         ) : (
-          <AvatarFallback>{initials || "?"}</AvatarFallback>
+          <AvatarFallback>{INITIALS || "?"}</AvatarFallback>
         )}
       </Avatar>
-      <span className="text-sm font-medium">{fullName || "-"}</span>
+      <span className="text-sm font-medium">
+        {FULL_NAME || "-"}
+      </span>
     </div>
   )
 }

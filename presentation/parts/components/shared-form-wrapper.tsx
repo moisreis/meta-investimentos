@@ -12,7 +12,11 @@ export function SharedFormWrapper({
   className,
 }: SharedFormWrapperProps) {
   return (
-    <form className={cn("space-y-4", className)} noValidate onSubmit={onSubmit}>
+    <form
+      className={cn("space-y-4", className)}
+      noValidate
+      onSubmit={onSubmit}
+    >
       {children}
     </form>
   )

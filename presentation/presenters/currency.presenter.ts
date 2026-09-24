@@ -19,19 +19,24 @@ import { PRESENTER_FALLBACK } from "../constants/presenter.constants"
  * @returns Formatted currency string or fallback.
  *
  * @example
- * const CURRENCY = formatCurrency(1234.5);
+ * const CURRENCY = FormatCurrency(1234.5);
  * // returns "R$ 1.234,50"
  *
  * @author Moisés Reis
  *
  * @date 2026-09-23
  */
-export function formatCurrency(
+export function FormatCurrency(
   value: string | number | null | undefined
 ): string {
-  const parsed = typeof value === "string" ? Number.parseFloat(value) : value
+  const PARSED =
+    typeof value === "string" ? Number.parseFloat(value) : value
 
-  if (parsed === null || parsed === undefined || !Number.isFinite(parsed)) {
+  if (
+    PARSED === null ||
+    PARSED === undefined ||
+    !Number.isFinite(PARSED)
+  ) {
     return PRESENTER_FALLBACK
   }
 
@@ -40,5 +45,5 @@ export function formatCurrency(
     currency: "BRL",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(parsed)
+  }).format(PARSED)
 }

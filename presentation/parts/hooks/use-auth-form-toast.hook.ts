@@ -26,7 +26,8 @@ interface AuthFormToastMessages {
  * success/error copy. The returned callbacks are stable
  * across renders.
  *
- * @param messages - Success/error titles and success description.
+ * @param messages - Success/error titles and success
+ *   description.
  *
  * @returns Toast trigger callbacks.
  *

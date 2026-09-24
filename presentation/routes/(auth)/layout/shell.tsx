@@ -46,7 +46,11 @@ interface AuthShellProps {
  *
  * @date 2026-09-23
  */
-function AuthShell({ children, description, title }: AuthShellProps) {
+function AuthShell({
+  children,
+  description,
+  title,
+}: AuthShellProps) {
   return (
     <AuthShellWrapper>
       <AuthBackgroundWrapper>

@@ -18,13 +18,18 @@ interface MainCommandDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function MainCommandDialog({ open, onOpenChange }: MainCommandDialogProps) {
+export function MainCommandDialog({
+  open,
+  onOpenChange,
+}: MainCommandDialogProps) {
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
       <Command>
         <CommandInput placeholder="Use um comando ou procure por carteiras" />
         <CommandList>
-          <CommandEmpty>Nenhum resultado foi encontrado.</CommandEmpty>
+          <CommandEmpty>
+            Nenhum resultado foi encontrado.
+          </CommandEmpty>
           <CommandGroup heading="Comandos principais">
             <CommandItem>
               <span>Registrar aplicação</span>

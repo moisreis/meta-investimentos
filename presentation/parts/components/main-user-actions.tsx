@@ -1,4 +1,8 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@/presentation/ui/avatar"
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/presentation/ui/avatar"
 
 import {
   DropdownMenu,
@@ -48,7 +52,9 @@ function MainUserActions() {
             Em breve
           </Badge>
         </DropdownMenuItem>
-        <DropdownMenuItem variant="destructive">Sair</DropdownMenuItem>
+        <DropdownMenuItem variant="destructive">
+          Sair
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

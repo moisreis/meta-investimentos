@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { maskCPF } from "@/presentation/masks/cpf.mask"
+import { MaskCPF } from "@/presentation/masks/cpf.mask"
 
 interface UseCpfInputParams {
   value?: string
@@ -35,23 +35,31 @@ interface UseCpfInputParams {
  *
  * @date 2026-09-23
  */
-function useAuthCpfInput({ value, onChange }: UseCpfInputParams) {
-  const [internalValue, setInternalValue] = React.useState("")
-  const isControlled = value !== undefined
+function useAuthCpfInput({
+  value,
+  onChange,
+}: UseCpfInputParams) {
+  const [INTERNAL_VALUE, setInternalValue] = React.useState("")
+  const IS_CONTROLLED = value !== undefined
 
-  const currentValue = isControlled ? value : internalValue
+  const CURRENT_VALUE = IS_CONTROLLED ? value : INTERNAL_VALUE
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const masked = maskCPF(event.target.value)
+  function HandleChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const MASKED = MaskCPF(event.target.value)
 
-    if (!isControlled) {
-      setInternalValue(masked)
+    if (!IS_CONTROLLED) {
+      setInternalValue(MASKED)
     }
 
-    onChange?.(masked)
+    onChange?.(MASKED)
   }
 
-  return { currentValue, handleChange }
+  return {
+    currentValue: CURRENT_VALUE,
+    handleChange: HandleChange,
+  }
 }
 
 export { useAuthCpfInput }
