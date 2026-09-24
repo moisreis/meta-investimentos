@@ -12,13 +12,17 @@ import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-re
 const editPortfolioRoute = (portfolioId: string): string =>
   `/portfolio/${portfolioId}/edit`
 
+// Builds the view portfolio screen route.
+const viewPortfolioRoute = (portfolioId: string): string =>
+  `/portfolio/${portfolioId}`
+
 /**
  * @summary
  * Manages the row actions of the portfolio datatable.
  *
  * @remarks
- * Exposes the edit navigation callback, the delete target
- * selection and the confirmed delete flow. The confirm
+ * Exposes the view and edit navigation callbacks, the delete
+ * target selection and the confirmed delete flow. The confirm
  * handler runs the server action, toasts the outcome and
  * refreshes the server data after a successful deletion.
  *
@@ -41,6 +45,13 @@ function usePortfolioRowActions() {
   const [deleteTarget, setDeleteTarget] =
     useState<PortfolioResponseDTO | null>(null)
   const [deletePending, setDeletePending] = useState(false)
+
+  const HandleView = useCallback(
+    (portfolio: PortfolioResponseDTO) => {
+      ROUTER.push(viewPortfolioRoute(portfolio.id))
+    },
+    [ROUTER]
+  )
 
   const HandleEdit = useCallback(
     (portfolio: PortfolioResponseDTO) => {
@@ -81,6 +92,7 @@ function usePortfolioRowActions() {
   }
 
   return {
+    handleView: HandleView,
     handleEdit: HandleEdit,
     handleDelete: HandleDelete,
     deleteTarget,

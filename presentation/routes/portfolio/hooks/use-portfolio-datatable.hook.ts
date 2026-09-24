@@ -28,6 +28,10 @@ const COLUMN_HELPER = createColumnHelper<
  * Creates the shared table instance used by the toolbar,
  * the datatable and the pagination, wiring the row actions
  * and the bulk delete flow into the column definitions.
+ * The pagination starts at ten rows per page; it is seeded
+ * through `initialState` so the slice stays mutable — the
+ * `state` option would treat it as controlled and ignore
+ * every page and page-size change.
  *
  * @param portfolios - The rows rendered by the datatable.
  *
@@ -46,10 +50,15 @@ function usePortfolioDatatable(
   const COLUMNS = useMemo(
     () =>
       CreatePortfolioTableColumns(COLUMN_HELPER, {
+        onView: rowActions.handleView,
         onEdit: rowActions.handleEdit,
         onDelete: rowActions.handleDelete,
       }),
-    [rowActions.handleDelete, rowActions.handleEdit]
+    [
+      rowActions.handleDelete,
+      rowActions.handleEdit,
+      rowActions.handleView,
+    ]
   )
 
   const TABLE = useTable({
@@ -57,7 +66,7 @@ function usePortfolioDatatable(
     columns: COLUMNS,
     data: portfolios,
     getRowId: (row) => row.id,
-    state: {
+    initialState: {
       pagination: { pageIndex: 0, pageSize: 10 },
     },
   })

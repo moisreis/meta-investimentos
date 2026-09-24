@@ -43,6 +43,7 @@ export function EntityTableSelectAllHeader({
       indeterminate={indeterminate}
       onCheckedChange={(value) => onCheckedChange(!!value)}
       aria-label={label}
+      className="mx-auto"
     />
   )
 }

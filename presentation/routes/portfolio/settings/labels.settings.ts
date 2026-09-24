@@ -38,10 +38,10 @@ export const PORTFOLIO_DATATABLE = {
   COLUMN_MIN_ALLOCATION: "Alocação Mín.",
   COLUMN_TARGET_ALLOCATION: "Alocação Alvo",
   COLUMN_MAX_ALLOCATION: "Alocação Máx.",
-  COLUMN_CREATED_AT: "Criado em",
-  COLUMN_UPDATED_AT: "Atualizado em",
 
   // Row actions menu.
+  ROW_ACTIONS_LABEL: "Ações",
+  ROW_VIEW_LABEL: "Ver",
   ROW_EDIT_LABEL: "Editar",
   ROW_DELETE_LABEL: "Excluir",
 
@@ -76,15 +76,6 @@ export const PORTFOLIO_DATATABLE_COLUMN_LABELS: Record<
   minAllocation: PORTFOLIO_DATATABLE.COLUMN_MIN_ALLOCATION,
   targetAllocation: PORTFOLIO_DATATABLE.COLUMN_TARGET_ALLOCATION,
   maxAllocation: PORTFOLIO_DATATABLE.COLUMN_MAX_ALLOCATION,
-  createdAt: PORTFOLIO_DATATABLE.COLUMN_CREATED_AT,
-  updatedAt: PORTFOLIO_DATATABLE.COLUMN_UPDATED_AT,
-}
-
-// Formats the row actions menu label with the acronym.
-function FormatPortfolioRowActionsLabel(
-  acronym: string
-): string {
-  return `Ações de ${acronym}`
 }
 
 // Formats the delete dialog description with the name.
@@ -95,7 +86,4 @@ function FormatDeletePortfolioDescription(name: string): string {
   )
 }
 
-export {
-  FormatDeletePortfolioDescription,
-  FormatPortfolioRowActionsLabel,
-}
+export { FormatDeletePortfolioDescription }

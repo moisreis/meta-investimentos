@@ -37,6 +37,7 @@ function EntityTableSelectableCell({
       checked={checked}
       onCheckedChange={(value) => onCheckedChange(!!value)}
       aria-label={label}
+      className="mx-auto"
     />
   )
 }

@@ -8,20 +8,14 @@ import type {
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import {
-  FormatDate,
-  FormatDateTime,
-} from "@/presentation/presenters/date.presenter"
 import { FormatPercentage } from "@/presentation/presenters/percentage.presenter"
-import {
-  PORTFOLIO_DATATABLE,
-  FormatPortfolioRowActionsLabel,
-} from "@/presentation/routes/portfolio/settings/labels.settings"
+import { PORTFOLIO_DATATABLE } from "@/presentation/routes/portfolio/settings/labels.settings"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
 export interface PortfolioTableColumnOptions {
   onEdit: (portfolio: PortfolioResponseDTO) => void
   onDelete: (portfolio: PortfolioResponseDTO) => void
+  onView: (portfolio: PortfolioResponseDTO) => void
 }
 
 /**
@@ -30,9 +24,12 @@ export interface PortfolioTableColumnOptions {
  *
  * @remarks
  * Pins the selection and acronym columns to the start and
- * the actions column to the end. Rate columns are rendered
- * by the percentage presenter and aligned to the end; date
- * columns use the date presenters.
+ * the actions column to the end. Data columns are fluid:
+ * they share the available width when columns are hidden
+ * and stop at a readable minimum when space runs out, so
+ * the table scrolls horizontally instead of collapsing.
+ * Rate columns render through the percentage presenter
+ * and align to the end.
  *
  * @param columnHelper - The entity column helper.
  * @param options - The row action callbacks.
@@ -68,41 +65,29 @@ export function CreatePortfolioTableColumns(
     columnHelper.accessor("annualInterestRate", {
       header: PORTFOLIO_DATATABLE.COLUMN_ANNUAL_INTEREST_RATE,
       size: 120,
-      meta: { align: "end" },
+      meta: { align: "end", fluid: true },
       cell: (info) => FormatPercentage(info.getValue()),
     }),
 
     columnHelper.accessor("minAllocation", {
       header: PORTFOLIO_DATATABLE.COLUMN_MIN_ALLOCATION,
       size: 120,
-      meta: { align: "end" },
+      meta: { align: "end", fluid: true },
       cell: (info) => FormatPercentage(info.getValue()),
     }),
 
     columnHelper.accessor("targetAllocation", {
       header: PORTFOLIO_DATATABLE.COLUMN_TARGET_ALLOCATION,
       size: 120,
-      meta: { align: "end" },
+      meta: { align: "end", fluid: true },
       cell: (info) => FormatPercentage(info.getValue()),
     }),
 
     columnHelper.accessor("maxAllocation", {
       header: PORTFOLIO_DATATABLE.COLUMN_MAX_ALLOCATION,
       size: 120,
-      meta: { align: "end" },
+      meta: { align: "end", fluid: true },
       cell: (info) => FormatPercentage(info.getValue()),
-    }),
-
-    columnHelper.accessor("createdAt", {
-      header: PORTFOLIO_DATATABLE.COLUMN_CREATED_AT,
-      size: 150,
-      cell: (info) => FormatDate(info.getValue()),
-    }),
-
-    columnHelper.accessor("updatedAt", {
-      header: PORTFOLIO_DATATABLE.COLUMN_UPDATED_AT,
-      size: 150,
-      cell: (info) => FormatDateTime(info.getValue()),
     }),
 
     columnHelper.display({
@@ -113,10 +98,13 @@ export function CreatePortfolioTableColumns(
       meta: { pinned: "end", align: "center" },
       cell: ({ row }) => (
         <EntityTableRowMenuDropdown
-          label={FormatPortfolioRowActionsLabel(
-            row.original.acronym
-          )}
+          label={PORTFOLIO_DATATABLE.ROW_ACTIONS_LABEL}
           actions={[
+            {
+              key: "view",
+              label: PORTFOLIO_DATATABLE.ROW_VIEW_LABEL,
+              onSelect: () => options.onView(row.original),
+            },
             {
               key: "edit",
               label: PORTFOLIO_DATATABLE.ROW_EDIT_LABEL,
