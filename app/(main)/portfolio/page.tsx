@@ -1,3 +1,4 @@
+import { PortfolioList } from "@/presentation/routes/portfolio/pages/list"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -5,5 +6,9 @@ export const metadata: Metadata = {
 }
 
 export default async function PortfoliosRoutePage() {
-  return null
+  return (
+    <>
+      <PortfolioList data={null} />
+    </>
+  )
 }

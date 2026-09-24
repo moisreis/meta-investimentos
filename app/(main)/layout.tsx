@@ -1,7 +1,11 @@
 import type { ReactNode } from "react"
 
-export default function MainRouteLayout({}: Readonly<{
+import { MainShell } from "@/presentation/routes/(main)/layout/shell"
+
+export default function MainRouteLayout({
+  children,
+}: Readonly<{
   children: ReactNode
 }>) {
-  return null
+  return <MainShell>{children}</MainShell>
 }

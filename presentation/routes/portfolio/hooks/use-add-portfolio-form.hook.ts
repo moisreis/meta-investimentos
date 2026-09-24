@@ -3,7 +3,7 @@
 import { UnmaskPercentage } from "@/presentation/masks/percentage.mask"
 import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
 import { createPortfolioAction } from "@/presentation/routes/portfolio/actions/create-portfolio.action"
-import { PORTFOLIO_FORM_SCHEMA } from "@/presentation/routes/portfolio/validations/portfolio-form.validation"
+import { PORTFOLIO_FORM_SCHEMA } from "@/presentation/routes/portfolio/validations/portfolio-form.validations"
 
 /**
  * @summary
