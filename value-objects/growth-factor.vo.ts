@@ -2,7 +2,7 @@ import Decimal from "decimal.js"
 import {
   FACTOR_DECIMAL_PLACES,
   ROUNDING_MODE,
-} from "@constants/value-objects/rounding.constant"
+} from "@/constants/value-objects/rounding.constants"
 import { ValidationError } from "@/errors"
 
 interface GrowthFactorProps {

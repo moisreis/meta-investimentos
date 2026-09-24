@@ -2,10 +2,10 @@
 
 import * as React from "react"
 import { useSignInToast } from "@/presentation/routes/(auth)/hooks/use-sign-in-toast.hook"
-import type { SignInFormStatus } from "@/presentation/routes/(auth)/hooks/use-sign-in.hook"
+import type { AuthFormStatus } from "@/presentation/parts/hooks/use-auth-form.hook"
 
 interface SignInToastProps {
-  status: SignInFormStatus
+  status: AuthFormStatus
   errorMessage?: string | null
 }
 
@@ -17,8 +17,9 @@ const VALIDATION_ERROR = "Revise os campos destacados no formulário."
  * Shows a sign-in result toast for success or error outcomes.
  *
  * @remarks
- * Fires a toast once when the form status becomes `success` or `error`.
- * Uses **SignInToast** callbacks with human-readable messages.
+ * Fires a toast once when the status becomes `success`
+ * or `error` after the submit runs.
+ * Uses **AuthSignInToast** callbacks with human-readable messages.
  *
  * @explanation
  * Render inside the sign-in form wiring the submit status.
@@ -27,17 +28,19 @@ const VALIDATION_ERROR = "Revise os campos destacados no formulário."
  *
  * @param props - Props of the sign-in toast.
  * @param props.status - Current sign-in form status.
- * @param props.errorMessage - Authentication error message, if any.
- * @returns A toast-triggering component without visible output.
+ * @param props.errorMessage - Authentication error
+ *                            message, if any.
+ *
+ * @returns Toast trigger, no output.
  *
  * @example
- * <SignInToast status={status} errorMessage={error} />
+ * <AuthSignInToast status={status} errorMessage={error} />
  *
  * @author Moisés Reis
  *
  * @date 2026-09-23
  */
-function SignInToast({ status, errorMessage }: SignInToastProps) {
+function AuthSignInToast({ status, errorMessage }: SignInToastProps) {
   const { showSuccess, showError } = useSignInToast()
 
   React.useEffect(() => {
@@ -54,4 +57,4 @@ function SignInToast({ status, errorMessage }: SignInToastProps) {
   return null
 }
 
-export { SignInToast }
+export { AuthSignInToast }

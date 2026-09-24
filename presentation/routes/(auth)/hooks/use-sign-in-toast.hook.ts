@@ -1,21 +1,20 @@
 "use client"
 
-import * as React from "react"
-import { toast } from "@/presentation/ui/toast"
+import { useAuthFormToast } from "@/presentation/parts/hooks/use-auth-form-toast.hook"
 
 /**
  * @summary
  * Manages the sign-in toast messages.
  *
  * @remarks
- * Builds the success and error toasts with human-readable messages.
- * Uses the global toast manager from the toast UI module.
+ * Wraps `useAuthFormToast` with sign-in-specific copy.
  *
  * @explanation
- * Use inside the sign-in toast component to keep messages centralized.
+ * Use in the sign-in toast component to keep
+ * the messages centralized.
  * The returned callbacks are stable across renders.
  *
- * @returns The sign-in toast trigger callbacks.
+ * @returns Toast trigger callbacks.
  *
  * @example
  * const { showSuccess, showError } = useSignInToast()
@@ -25,23 +24,11 @@ import { toast } from "@/presentation/ui/toast"
  * @date 2026-09-23
  */
 function useSignInToast() {
-  const showSuccess = React.useCallback(() => {
-    toast.add({
-      type: "success",
-      title: "Login realizado!",
-      description: "Bem-vindo de volta.",
-    })
-  }, [])
-
-  const showError = React.useCallback((message: string) => {
-    toast.add({
-      type: "error",
-      title: "Não foi possível entrar",
-      description: message,
-    })
-  }, [])
-
-  return { showSuccess, showError }
+  return useAuthFormToast({
+    successTitle: "Login realizado!",
+    successDescription: "Bem-vindo de volta.",
+    errorTitle: "Não foi possível entrar",
+  })
 }
 
 export { useSignInToast }

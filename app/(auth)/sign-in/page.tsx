@@ -20,7 +20,7 @@ export const metadata: Metadata = {
  * page component in the presentation layer. Use it to keep
  * route wiring separate from component code.
  *
- * @returns The sign-in page content.
+ * @returns The sign-in content.
  *
  * @example
  * <SignInRoutePage />

@@ -1,11 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { useSignUpToast } from "../hooks/use-sign-up-toast.hook"
-import type { SignUpFormStatus } from "@/presentation/routes/(auth)/hooks/use-sign-up.hook"
+import { useSignUpToast } from "../../routes/(auth)/hooks/use-sign-up-toast.hook"
+import type { AuthFormStatus } from "@/presentation/parts/hooks/use-auth-form.hook"
 
 interface SignUpToastProps {
-  status: SignUpFormStatus
+  status: AuthFormStatus
   errorMessage?: string | null
 }
 
@@ -17,8 +17,9 @@ const VALIDATION_ERROR = "Revise os campos destacados no formulário."
  * Shows a sign-up result toast for success or error outcomes.
  *
  * @remarks
- * Fires a toast once when the form status becomes `success` or `error`.
- * Uses **SignUpToast** callbacks with human-readable messages.
+ * Fires a toast once when the status becomes `success`
+ * or `error` after the submit runs.
+ * Uses **AuthSignUpToast** callbacks with human-readable messages.
  *
  * @explanation
  * Render inside the sign-up form wiring the submit status.
@@ -27,17 +28,19 @@ const VALIDATION_ERROR = "Revise os campos destacados no formulário."
  *
  * @param props - Props of the sign-up toast.
  * @param props.status - Current sign-up form status.
- * @param props.errorMessage - Authentication error message, if any.
- * @returns A toast-triggering component without visible output.
+ * @param props.errorMessage - Authentication error
+ *                            message, if any.
+ *
+ * @returns Toast trigger, no output.
  *
  * @example
- * <SignUpToast status={status} errorMessage={error} />
+ * <AuthSignUpToast status={status} errorMessage={error} />
  *
  * @author Moisés Reis
  *
  * @date 2026-09-23
  */
-function SignUpToast({ status, errorMessage }: SignUpToastProps) {
+function AuthSignUpToast({ status, errorMessage }: SignUpToastProps) {
   const { showSuccess, showError } = useSignUpToast()
 
   React.useEffect(() => {
@@ -54,4 +57,4 @@ function SignUpToast({ status, errorMessage }: SignUpToastProps) {
   return null
 }
 
-export { SignUpToast }
+export { AuthSignUpToast }

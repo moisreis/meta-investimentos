@@ -13,7 +13,7 @@ import { SignInForm } from "../forms/sign-in"
  * It renders the page title and the **SignInForm** component.
  * Use it as the content of the sign-in route.
  *
- * @returns The sign-in page content.
+ * @returns The sign-in content.
  *
  * @example
  * <SignInPage />

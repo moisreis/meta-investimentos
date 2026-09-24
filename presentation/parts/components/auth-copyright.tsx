@@ -16,13 +16,13 @@ import BRAND from "@/presentation/constants/brand.constants"
  * @returns The copyright notice.
  *
  * @example
- * <Copyright />
+ * <AuthCopyright />
  *
  * @author Moisés Reis
  *
  * @date 2026-09-23
  */
-function Copyright() {
+function AuthCopyright() {
   return (
     <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
       <p className="text-center text-xs text-muted-foreground">
@@ -32,4 +32,4 @@ function Copyright() {
   )
 }
 
-export { Copyright }
+export { AuthCopyright }

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { SIGN_IN, SIGN_UP } from "../settings/labels.settings"
+import { SIGN_IN, SIGN_UP } from "../../routes/(auth)/settings/labels.settings"
 
 /**
  * @summary
@@ -18,16 +18,16 @@ import { SIGN_IN, SIGN_UP } from "../settings/labels.settings"
  * layout. It keeps the routing logic presentational and free
  * of route-specific labels.
  *
- * @returns The invitation text with the navigation link.
+ * @returns The invitation and link.
  *
  * @example
- * <SecondaryLink />
+ * <AuthSecondaryLink />
  *
  * @author Moisés Reis
  *
  * @date 2026-09-23
  */
-function SecondaryLink() {
+function AuthSecondaryLink() {
   // Stores the current authentication route pathname.
   const PATHNAME = usePathname()
 
@@ -66,4 +66,4 @@ function SecondaryLink() {
   )
 }
 
-export { SecondaryLink }
+export { AuthSecondaryLink }

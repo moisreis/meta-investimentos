@@ -17,22 +17,25 @@ interface UseCpfInputParams {
  * Formats input as `000.000.000-00`.
  *
  * @explanation
- * Use inside the **CPF** input to keep the component presentational.
- * Pass `value` and `onChange` for controlled mode.
+ * Use inside the **CPF** input to keep the
+ * component presentational. Pass `value` and
+ * `onChange` for controlled mode.
  *
  * @param params - Hook arguments.
  * @param params.value - Controlled masked value.
  * @param params.onChange - Called with masked value on change.
- * @returns The current value and change handler.
+ *
+ * @returns Value and change handler.
  *
  * @example
- * const { currentValue, handleChange } = useCpfInput({ value, onChange })
+ * const { currentValue, handleChange } =
+ *   useAuthCpfInput({ value, onChange })
  *
  * @author Moisés Reis
  *
  * @date 2026-09-23
  */
-function useCpfInput({ value, onChange }: UseCpfInputParams) {
+function useAuthCpfInput({ value, onChange }: UseCpfInputParams) {
   const [internalValue, setInternalValue] = React.useState("")
   const isControlled = value !== undefined
 
@@ -51,4 +54,4 @@ function useCpfInput({ value, onChange }: UseCpfInputParams) {
   return { currentValue, handleChange }
 }
 
-export { useCpfInput }
+export { useAuthCpfInput }

@@ -1,21 +1,20 @@
 "use client"
 
-import * as React from "react"
-import { toast } from "@/presentation/ui/toast"
+import { useAuthFormToast } from "@/presentation/parts/hooks/use-auth-form-toast.hook"
 
 /**
  * @summary
  * Manages the sign-up toast messages.
  *
  * @remarks
- * Builds the success and error toasts with human-readable messages.
- * Uses the global toast manager from the toast UI module.
+ * Wraps `useAuthFormToast` with sign-up-specific copy.
  *
  * @explanation
- * Use inside the sign-up toast component to keep messages centralized.
+ * Use in the sign-up toast component to keep
+ * the messages centralized.
  * The returned callbacks are stable across renders.
  *
- * @returns The sign-up toast trigger callbacks.
+ * @returns Toast trigger callbacks.
  *
  * @example
  * const { showSuccess, showError } = useSignUpToast()
@@ -25,23 +24,11 @@ import { toast } from "@/presentation/ui/toast"
  * @date 2026-09-23
  */
 function useSignUpToast() {
-  const showSuccess = React.useCallback(() => {
-    toast.add({
-      type: "success",
-      title: "Conta criada com sucesso!",
-      description: "Bem-vindo à Meta Investimentos.",
-    })
-  }, [])
-
-  const showError = React.useCallback((message: string) => {
-    toast.add({
-      type: "error",
-      title: "Não foi possível criar sua conta",
-      description: message,
-    })
-  }, [])
-
-  return { showSuccess, showError }
+  return useAuthFormToast({
+    successTitle: "Conta criada com sucesso!",
+    successDescription: "Bem-vindo à Meta Investimentos.",
+    errorTitle: "Não foi possível criar sua conta",
+  })
 }
 
 export { useSignUpToast }

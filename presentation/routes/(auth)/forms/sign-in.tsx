@@ -1,17 +1,16 @@
 "use client"
 
-import { Button } from "@/presentation/ui/button"
-import {
-  Field,
-  FieldContent,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/presentation/ui/field"
+import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
-import { IconLoader } from "@tabler/icons-react"
+
+import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
+import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
+import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
+
+import { AuthSignInToast } from "@/presentation/parts/components/auth-sign-in-toast"
+
 import { useSignIn } from "@/presentation/routes/(auth)/hooks/use-sign-in.hook"
-import { SignInToast } from "@/presentation/routes/(auth)/components/sign-in-toast"
+
 import { SIGN_IN } from "@/presentation/routes/(auth)/settings/labels.settings"
 
 /**
@@ -19,13 +18,14 @@ import { SIGN_IN } from "@/presentation/routes/(auth)/settings/labels.settings"
  * Renders the sign-in form with **Better-Auth** integration.
  *
  * @remarks
- * Validates fields with Zod and shows human-readable error messages.
+ * Validates fields with **Zod** and shows
+ * human-readable error messages.
  * Submits credentials to the **Better-Auth**
  * email/password endpoint.
  * Shows loading state while submitting.
  *
  * @explanation
- * Use as the sign-in component inside AuthLayout.
+ * Use as the sign-in component inside **AuthLayout**.
  * On success, honors the `redirect` query parameter or
  * falls back to the dashboard (/).
  *
@@ -52,57 +52,51 @@ function SignInForm() {
   } = useSignIn()
 
   return (
-    <form className="space-y-4" noValidate onSubmit={handleSubmit}>
+    <SharedFormWrapper onSubmit={handleSubmit}>
       <FieldGroup>
-        <Field data-invalid={fieldErrors.email ? "true" : undefined}>
-          <FieldLabel>E-mail</FieldLabel>
-          <FieldContent>
-            <Input
-              type="email"
-              name="email"
-              autoComplete="email"
-              placeholder="seu@email.com"
-              required
-              value={email}
-              onChange={(e) => updateEmail(e.target.value)}
-              disabled={pending}
-              aria-invalid={fieldErrors.email ? "true" : undefined}
-            />
-            <FieldError>{fieldErrors.email}</FieldError>
-          </FieldContent>
-        </Field>
-        <Field data-invalid={fieldErrors.password ? "true" : undefined}>
-          <FieldLabel>Senha</FieldLabel>
-          <FieldContent>
-            <Input
-              type="password"
-              name="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => updatePassword(e.target.value)}
-              disabled={pending}
-              aria-invalid={fieldErrors.password ? "true" : undefined}
-            />
-            <FieldError>{fieldErrors.password}</FieldError>
-          </FieldContent>
-        </Field>
+        <SharedFormField
+          label="E-mail"
+          error={fieldErrors.email}
+          htmlFor="email"
+        >
+          <Input
+            id="email"
+            type="email"
+            name="email"
+            autoComplete="email"
+            placeholder="seu@email.com"
+            required
+            value={email}
+            onChange={(e) => updateEmail(e.target.value)}
+            disabled={pending}
+            aria-invalid={fieldErrors.email ? "true" : undefined}
+          />
+        </SharedFormField>
+        <SharedFormField
+          label="Senha"
+          error={fieldErrors.password}
+          htmlFor="password"
+        >
+          <Input
+            id="password"
+            type="password"
+            name="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => updatePassword(e.target.value)}
+            disabled={pending}
+            aria-invalid={fieldErrors.password ? "true" : undefined}
+          />
+        </SharedFormField>
       </FieldGroup>
-
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={pending}
-        aria-label={pending ? "Entrando" : undefined}
-      >
-        {pending ? (
-          <IconLoader className="animate-spin" aria-hidden="true" />
-        ) : (
-          SIGN_IN.SIGN_IN_BUTTON
-        )}
-      </Button>
-      <SignInToast status={status} errorMessage={error} />
-    </form>
+      <SharedSubmitButton
+        pending={pending}
+        label={SIGN_IN.SIGN_IN_BUTTON}
+        pendingLabel="Entrando"
+      />
+      <AuthSignInToast status={status} errorMessage={error} />
+    </SharedFormWrapper>
   )
 }
 

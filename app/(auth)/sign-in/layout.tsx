@@ -1,4 +1,4 @@
-import { AuthLayout } from "@/presentation/routes/(auth)/layout/layout"
+import { AuthShell } from "@/presentation/routes/(auth)/layout/shell"
 import { SIGN_IN } from "@/presentation/routes/(auth)/settings/labels.settings"
 
 /**
@@ -6,17 +6,18 @@ import { SIGN_IN } from "@/presentation/routes/(auth)/settings/labels.settings"
  * Renders the sign-in route layout.
  *
  * @remarks
- * The layout passes the sign-in description to **AuthLayout**.
+ * The layout passes the sign-in description to **AuthShell**.
  * The authentication pages render inside the card frame.
  *
  * @explanation
- * This layout wires the sign-in route to the shared authentication
- * layout component and its route-specific label settings.
+ * This layout wires the sign-in route to the shared
+ * authentication layout and its route-specific label settings.
  * Use it to keep route wiring separate from component code.
  *
  * @param props - Props of the sign-in layout.
  * @param props.children - Content rendered inside the frame.
- * @returns The sign-in layout frame.
+ *
+ * @returns The sign-in layout.
  *
  * @example
  * <SignInRouteLayout>
@@ -33,11 +34,11 @@ export default function SignInRouteLayout({
   children: React.ReactNode
 }>) {
   return (
-    <AuthLayout
+    <AuthShell
       description={SIGN_IN.SIGN_IN_DESCRIPTION}
       title={SIGN_IN.SIGN_IN_TITLE}
     >
       {children}
-    </AuthLayout>
+    </AuthShell>
   )
 }

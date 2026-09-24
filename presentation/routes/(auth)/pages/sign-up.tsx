@@ -13,7 +13,7 @@ import { SignUpForm } from "../forms/sign-up"
  * It renders the page title and the **SignUpForm** component.
  * Use it as the content of the sign-up route.
  *
- * @returns The sign-up page content.
+ * @returns The sign-up content.
  *
  * @example
  * <SignUpPage />

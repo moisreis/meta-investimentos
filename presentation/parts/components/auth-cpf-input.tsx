@@ -2,8 +2,7 @@
 
 import type * as React from "react"
 import { Input } from "@/presentation/ui/input"
-import { useCpfInput } from "@/presentation/routes/(auth)/hooks/use-cpf-input.hook"
-
+import { useAuthCpfInput } from "../hooks/use-auth-cpf-input.hook"
 /**
  * @summary
  * Renders a **CPF** input with live masking.
@@ -22,16 +21,17 @@ import { useCpfInput } from "@/presentation/routes/(auth)/hooks/use-cpf-input.ho
  * @param props.placeholder - Placeholder text of the field.
  * @param props.value - Controlled masked value.
  * @param props.onChange - Called with masked value on change.
+ *
  * @returns The masked **CPF** input.
  *
  * @example
- * <CpfInput value={cpf} onChange={setCpf} />
+ * <AuthCpfInput value={cpf} onChange={setCpf} />
  *
  * @author Moisés Reis
  *
  * @date 2026-09-23
  */
-function CpfInput({
+function AuthCpfInput({
   name = "cpf",
   placeholder = "000.000.000-00",
   value,
@@ -43,7 +43,7 @@ function CpfInput({
   onChange?: (value: string) => void
   disabled?: boolean
 }) {
-  const { currentValue, handleChange } = useCpfInput({ value, onChange })
+  const { currentValue, handleChange } = useAuthCpfInput({ value, onChange })
 
   return (
     <Input
@@ -60,4 +60,4 @@ function CpfInput({
   )
 }
 
-export { CpfInput }
+export { AuthCpfInput }

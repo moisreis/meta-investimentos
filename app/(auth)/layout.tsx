@@ -13,7 +13,8 @@
  *
  * @param props - Props of the authentication group layout.
  * @param props.children - Content rendered by the layout.
- * @returns The children rendered without a wrapper.
+ *
+ * @returns The children as provided.
  *
  * @example
  * <AuthRouteLayout>
