@@ -8,6 +8,7 @@ import {
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import { PortfolioDatatableToolbar } from "../datatable/toolbar"
 
 interface PortfolioListProps {
   data: PortfolioResponseDTO[] | null
@@ -44,6 +45,7 @@ function PortfolioList({ data }: PortfolioListProps) {
           comparison="45% da carteira"
         />
       </EntityDatatableKpiGroup>
+      <PortfolioDatatableToolbar />
     </>
   )
 }

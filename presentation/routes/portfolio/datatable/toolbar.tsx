@@ -38,11 +38,11 @@ function PortfolioDatatableToolbar() {
     <EntityDatatableToolbar
       actions={
         <>
+          <EntityDatatableEditColumnsButton />
+          <EntityDatatableToolbarSeparator />
           <EntityDatatableAddItemButton
             onClick={handleAddItem}
           />
-          <EntityDatatableToolbarSeparator />
-          <EntityDatatableEditColumnsButton />
         </>
       }
     />
