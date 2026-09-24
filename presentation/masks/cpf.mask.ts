@@ -14,7 +14,6 @@ const CPF_DIGITS_LENGTH = 11
  * It returns the formatted string without validation.
  *
  * @param value - Raw **CPF** input string.
- *
  * @returns The masked **CPF** string.
  *
  * @example
@@ -22,7 +21,7 @@ const CPF_DIGITS_LENGTH = 11
  *
  * @author Moisés Reis
  *
- * @date 2026-09-14
+ * @date 2026-09-23
  */
 function maskCPF(value: string): string {
   // Keeps only the first 11 digit characters.
@@ -47,7 +46,6 @@ function maskCPF(value: string): string {
  * It returns only digits without validation.
  *
  * @param value - Masked or raw **CPF** string.
- *
  * @returns The digits-only **CPF** string.
  *
  * @example
@@ -55,7 +53,7 @@ function maskCPF(value: string): string {
  *
  * @author Moisés Reis
  *
- * @date 2026-09-14
+ * @date 2026-09-23
  */
 function unmaskCPF(value: string): string {
   // Keeps only the digit characters.

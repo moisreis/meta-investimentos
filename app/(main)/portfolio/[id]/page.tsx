@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Carteiras",
+  title: "sigla da carteira",
 }
 
 export default function PortfoliosIdPage() {

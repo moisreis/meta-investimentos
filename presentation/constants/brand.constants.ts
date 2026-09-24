@@ -21,6 +21,6 @@ const BRAND = {
 
   // Official public corporate portal address.
   BRAND_SITE: "https://www.investingmeta.com.br/",
-} as const;
+} as const
 
-export default BRAND;
+export default BRAND

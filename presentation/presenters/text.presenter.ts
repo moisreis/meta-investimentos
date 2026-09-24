@@ -1,43 +1,38 @@
+import { PRESENTER_FALLBACK } from "../constants/presenter.constants"
+
 /**
  * @summary
- * Presentation helpers for plain text values.
+ * Formats a text value for display.
  *
  * @remarks
- * Collapses nil, blank and zero values to `-` and exports
- * the single-line clamp class used to truncate long text
- * to one line. The presenter performs no other
- * transformation on the text.
+ * Returns the fallback when the value is nil, blank, or `0`.
+ * Otherwise returns the untrimmed text.
  *
  * @explanation
- * Use this presenter in the presentation layer for text
- * cells and labels so truncated and empty text renders
- * consistently across the application.
+ * Use this function to safely display text values that may be
+ * missing or empty. It prevents showing empty strings or zeros
+ * in the UI. Call it in table cells, detail views, or any
+ * component rendering optional text data.
+ *
+ * @param value - The raw text value to format.
+ * @returns Formatted text or fallback string.
+ *
+ * @example
+ * const TEXT = formatText("Hello World");
+ * // returns "Hello World"
  *
  * @author Moisés Reis
  *
- * @date 2026-09-15
+ * @date 2026-09-23
  */
-
-const FALLBACK = "-"
-
-/**
- * Tailwind class that truncates text to a single line.
- */
-export const TEXT_LINE_CLAMP_CLASS = "line-clamp-1"
-
-/**
- * Formats a text value for display.
- *
- * @param value - The raw text value.
- * @returns `-` when the value is nil, blank or `0`;
- *          otherwise the untrimmed text.
- */
-export function formatText(value: string | number | null | undefined): string {
-  if (value === null || value === undefined) return FALLBACK
+export function formatText(
+  value: string | number | null | undefined
+): string {
+  if (value === null || value === undefined) return PRESENTER_FALLBACK
 
   const text = String(value)
 
-  if (text.trim() === "" || text === "0") return FALLBACK
+  if (text.trim() === "" || text === "0") return PRESENTER_FALLBACK
 
   return text
 }

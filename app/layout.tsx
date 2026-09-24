@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 import { Geist, Geist_Mono, Roboto_Slab } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from "@/presentation/components/theme-provider"
+import { ThemeProvider } from "@/presentation/theme/theme-provider"
 import { TooltipProvider } from "@/presentation/ui/tooltip"
 import { Toaster } from "@/presentation/ui/toast"
 import { cn } from "@/lib/utils"

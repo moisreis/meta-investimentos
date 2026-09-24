@@ -16,7 +16,6 @@ const PERCENTAGE_DECIMAL_LENGTH = 2
  * It returns the formatted string without validation.
  *
  * @param value - Raw percentage input string.
- *
  * @returns The masked percentage string.
  *
  * @example
@@ -24,7 +23,7 @@ const PERCENTAGE_DECIMAL_LENGTH = 2
  *
  * @author Moisés Reis
  *
- * @date 2026-09-22
+ * @date 2026-09-23
  */
 function maskPercentage(value: string): string {
   // Keeps only digits and decimal separators.
@@ -55,7 +54,6 @@ function maskPercentage(value: string): string {
  * It returns the canonical value without validation.
  *
  * @param value - Masked or raw percentage string.
- *
  * @returns The plain number string.
  *
  * @example
@@ -63,7 +61,7 @@ function maskPercentage(value: string): string {
  *
  * @author Moisés Reis
  *
- * @date 2026-09-22
+ * @date 2026-09-23
  */
 function unmaskPercentage(value: string): string {
   const parsed = Number.parseFloat(value.replace(",", "."))
