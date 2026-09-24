@@ -17,12 +17,13 @@ import { SIGN_UP } from "@/presentation/routes/(auth)/settings/labels.settings"
 
 /**
  * @summary
- * Renders the sign-up form with validation and better-auth integration.
+ * Renders the sign-up form with **Better-Auth** integration.
  *
  * @remarks
  * Collects all required fields including CPF and password.
  * Validates fields with Zod and shows human-readable error messages.
- * Submits to better-auth email/password endpoint with additionalFields.
+ * Submits to the **Better-Auth** email/password
+ * endpoint with additionalFields.
  * Shows loading state while submitting.
  *
  * @explanation

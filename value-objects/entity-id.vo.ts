@@ -22,7 +22,7 @@ export type EntityId = string & {
  * Provides static utility methods to construct valid
  * **EntityId** values and test equality. Accepts opaque
  * identifiers, matching the non-UUID ids persisted by
- * **Better Auth** for users, sessions and accounts.
+ * **Better-Auth** for users, sessions and accounts.
  * Use it when domain logic requires type-safe entity
  * references aligned with persistence layer.
  *
@@ -37,7 +37,7 @@ export const EntityId = {
    *
    * @remarks
    * Trims whitespace before applying the nominal type brand.
-   * Opaque identifiers such as **Better Auth** ids pass
+   * Opaque identifiers such as **Better-Auth** ids pass
    * validation, keeping the domain aligned with persistence.
    *
    * @explanation

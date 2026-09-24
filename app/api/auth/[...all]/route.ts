@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server"
 
 /**
  * @summary
- * Handles `GET` requests for the **Better Auth** API.
+ * Handles `GET` requests for the **Better-Auth** API.
  *
  * @remarks
  * Delegates every request to the shared `auth` instance so
@@ -12,11 +12,11 @@ import type { NextRequest } from "next/server"
  *
  * @explanation
  * Export this handler from the route file to expose the
- * **Better Auth** endpoints at `/api/auth/*`. Keep the route
+ * **Better-Auth** endpoints at `/api/auth/*`. Keep the route
  * as a thin wrapper around the configured client instance.
  *
  * @param request - The incoming server request.
- * @returns The **Better Auth** response.
+ * @returns The **Better-Auth** response.
  *
  * @example
  * <Routes GET handler for `/api/auth/*`>
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest): Promise<Response> {
 
 /**
  * @summary
- * Handles `POST` requests for the **Better Auth** API.
+ * Handles `POST` requests for the **Better-Auth** API.
  *
  * @remarks
  * Delegates every request to the shared `auth` instance so
@@ -40,11 +40,11 @@ export async function GET(request: NextRequest): Promise<Response> {
  *
  * @explanation
  * Export this handler from the route file to expose the
- * **Better Auth** endpoints at `/api/auth/*`. Keep the route
+ * **Better-Auth** endpoints at `/api/auth/*`. Keep the route
  * as a thin wrapper around the configured client instance.
  *
  * @param request - The incoming server request.
- * @returns The **Better Auth** response.
+ * @returns The **Better-Auth** response.
  *
  * @example
  * <Routes POST handler for `/api/auth/*`>

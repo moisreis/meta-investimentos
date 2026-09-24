@@ -5,7 +5,7 @@ import { userRole } from "@db-schemas/user-role.enum"
 // Stores the registered users of the platform.
 // Carries the identity data, the **CPF**, and the role.
 export const user = pgSchema("user").table("user", {
-  // **Better Auth** generated id, an opaque 32-character string
+  // **Better-Auth** generated id, an opaque 32-character string
   // rather than a UUID. Falls back to gen_random_uuid()::text.
   id: text("id")
     .primaryKey()

@@ -6,7 +6,7 @@ import { db } from "@/clients/database.client"
 
 /**
  * @summary
- * Better Auth instance configured for the application.
+ * **Better-Auth** instance configured for the application.
  *
  * @remarks
  * Uses the Drizzle adapter with PostgreSQL and the shared

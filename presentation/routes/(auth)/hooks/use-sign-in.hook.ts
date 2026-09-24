@@ -29,7 +29,7 @@ const SIGN_IN_ERROR_MESSAGES: Record<string, string> = {
  * Translates an authentication error into a human-readable message.
  *
  * @remarks
- * Maps known better-auth error codes to human-readable text.
+ * Maps known **Better-Auth** error codes to human-readable text.
  * Falls back to the server message or a generic hint.
  *
  * @param authError - Authentication error returned by the client.
@@ -57,7 +57,8 @@ function translateSignInError(authError: {
  *
  * @remarks
  * Holds the email, password, error, pending, status and per-field error state.
- * Validates with Zod before calling the better-auth email/password endpoint.
+ * Validates with Zod before calling the
+ * **Better-Auth** email/password endpoint.
  * Re-validates a field as it changes after an invalid attempt.
  * On success, redirects to the dashboard (`/`).
  *

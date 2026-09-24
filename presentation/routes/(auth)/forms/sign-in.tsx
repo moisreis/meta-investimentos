@@ -16,11 +16,12 @@ import { SIGN_IN } from "@/presentation/routes/(auth)/settings/labels.settings"
 
 /**
  * @summary
- * Renders the sign-in form with validation and better-auth integration.
+ * Renders the sign-in form with **Better-Auth** integration.
  *
  * @remarks
  * Validates fields with Zod and shows human-readable error messages.
- * Submits credentials to better-auth email/password endpoint.
+ * Submits credentials to the **Better-Auth**
+ * email/password endpoint.
  * Shows loading state while submitting.
  *
  * @explanation
