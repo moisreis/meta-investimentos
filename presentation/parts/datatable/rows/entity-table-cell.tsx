@@ -6,6 +6,7 @@ import { cn } from "cn"
 
 import { TableCell } from "@/presentation/ui/table"
 
+import { EntityTableFluidContent } from "../columns/entity-table-fluid-content"
 import type {
   EntityCell,
   EntityTable,
@@ -31,7 +32,8 @@ export interface EntityTableCellProps<TData extends RowData> {
  * @remarks
  * Applies the resolved column width, the declared alignment
  * and the selection highlight. Pinned cells are handled by
- * the pinned column wrapper.
+ * the pinned column wrapper, and fluid columns render inside
+ * a truncating wrapper with a content-level minimum width.
  *
  * @param props - The table, the cell and its layout.
  *
@@ -48,16 +50,25 @@ function EntityTableCell<TData extends RowData>({
   align,
   className,
 }: EntityTableCellProps<TData>) {
+  const IS_FLUID = cell.column.columnDef.meta?.fluid === true
+
   return (
     <TableCell
       style={style}
       className={cn(
-        "h-11 truncate border-r border-b border-border text-sm font-normal",
+        "h-11 border-r border-b border-border text-sm font-normal",
+        !IS_FLUID && "truncate",
         FormatEntityTableAlignClass(align),
         className
       )}
     >
-      <table.FlexRender cell={cell} />
+      {IS_FLUID ? (
+        <EntityTableFluidContent size={cell.column.getSize()}>
+          <table.FlexRender cell={cell} />
+        </EntityTableFluidContent>
+      ) : (
+        <table.FlexRender cell={cell} />
+      )}
     </TableCell>
   )
 }

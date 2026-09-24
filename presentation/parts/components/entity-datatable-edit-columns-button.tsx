@@ -100,11 +100,11 @@ export function EntityDatatableEditColumnsButton({
             variant="ghost"
             className="font-normal text-muted-foreground"
             {...props}
-          />
+          >
+            {content}
+          </Button>
         }
-      >
-        {content}
-      </DropdownMenuTrigger>
+      />
       <DropdownMenuContent align="end" className="w-56">
         {table
           .getAllColumns()

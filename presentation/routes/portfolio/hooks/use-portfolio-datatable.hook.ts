@@ -10,7 +10,7 @@ import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/e
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
-import { CreatePortfolioTableColumns } from "../datatable/columns/portfolio-table-column"
+import { CreatePortfolioTableColumns } from "../datatable/table-columns"
 import { usePortfolioBulkDelete } from "./use-portfolio-bulk-delete.hook"
 import { usePortfolioRowActions } from "./use-portfolio-row-actions.hook"
 

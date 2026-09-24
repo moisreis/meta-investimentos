@@ -62,6 +62,7 @@ export function CreatePortfolioTableColumns(
     columnHelper.accessor("name", {
       header: PORTFOLIO_DATATABLE.COLUMN_NAME,
       size: 220,
+      meta: { fluid: true },
     }),
 
     columnHelper.accessor("annualInterestRate", {

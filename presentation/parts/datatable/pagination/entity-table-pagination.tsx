@@ -96,11 +96,10 @@ function EntityTablePagination<TData extends RowData>({
               data-icon="inline-end"
             >
               {FormatPageSizeLabel(pagination.pageSize)}
+              <IconChevronDown />
             </Button>
           }
-        >
-          <IconChevronDown />
-        </DropdownMenuTrigger>
+        />
         <DropdownMenuContent align="end" className="w-52">
           <DropdownMenuRadioGroup
             value={String(pagination.pageSize)}

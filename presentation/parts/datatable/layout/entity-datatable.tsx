@@ -32,8 +32,13 @@ export interface EntityDatatableProps<TData extends RowData> {
  * UI primitive, because that primitive owns its own horizontal
  * scrollport: nesting it here would make it the vertical scroll
  * container too, detaching the sticky header from this screen's
- * scroll area. The structural table primitives (header, body,
- * rows and cells) are all reused from `presentation/ui/table`.
+ * scroll area. The table is sized `w-full min-w-max`: it never
+ * shrinks below the available width when columns are hidden,
+ * but grows wider than it when the visible columns overflow.
+ * Columns declared as fluid absorb the horizontal surplus, so
+ * the pinned columns keep their exact widths in every case.
+ * The structural table primitives (header, body, rows and cells)
+ * are all reused from `presentation/ui/table`.
  *
  * @param props - The table and the optional bulk delete flow.
  *
@@ -60,7 +65,7 @@ function EntityDatatable<TData extends RowData>({
       <div className="min-h-0 flex-1 overflow-auto">
         <table
           data-slot="table"
-          className="w-max table-fixed border-separate border-spacing-0 text-sm"
+          className="w-full min-w-max table-fixed border-separate border-spacing-0 text-sm"
         >
           <EntityTableHeader table={table} />
 

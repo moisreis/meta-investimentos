@@ -6,6 +6,7 @@ import { cn } from "cn"
 import { useEntityTableColumn } from "@/presentation/parts/hooks/use-entity-table-column.hook"
 import { TableHead } from "@/presentation/ui/table"
 
+import { EntityTableFluidContent } from "./entity-table-fluid-content"
 import { EntityTablePinnedColumn } from "../pinned-columns/entity-table-pinned-column"
 import { EntityTableCell } from "../rows/entity-table-cell"
 import type {
@@ -35,7 +36,8 @@ export interface EntityTableColumnProps<TData extends RowData> {
  * @remarks
  * Accepts either a header or a cell and resolves its sizing,
  * alignment and pin region. Pinned columns are routed through
- * the pinned column wrapper; headers keep the sticky header
+ * the pinned column wrapper, fluid columns through their
+ * truncating content wrapper; headers keep the sticky header
  * styling.
  *
  * @param props - The table plus a header or a cell.
@@ -57,6 +59,7 @@ function EntityTableColumn<TData extends RowData>({
     table,
     column
   )
+  const IS_FLUID = column.columnDef.meta?.fluid === true
 
   if (cell) {
     return pinned ? (
@@ -91,7 +94,11 @@ function EntityTableColumn<TData extends RowData>({
         className
       )}
     >
-      {header!.isPlaceholder ? null : (
+      {header!.isPlaceholder ? null : IS_FLUID ? (
+        <EntityTableFluidContent size={column.getSize()}>
+          <table.FlexRender header={header!} />
+        </EntityTableFluidContent>
+      ) : (
         <table.FlexRender header={header!} />
       )}
     </TableHead>
