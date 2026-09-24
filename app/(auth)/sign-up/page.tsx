@@ -1,5 +1,5 @@
-import { Metadata } from "next"
-import { SignUpPage } from "@/presentation/routes/auth/pages/sign-up-page"
+import type { Metadata } from "next"
+import { SignUpPage } from "@/presentation/routes/(auth)/pages/sign-up"
 
 // Stores page metadata for **Next.js**.
 // Configures title for the sign-up route.
@@ -27,8 +27,8 @@ export const metadata: Metadata = {
  *
  * @author Moisés Reis
  *
- * @date 2026-09-15
+ * @date 2026-09-23
  */
-export default function SignUpRoutePage(): React.JSX.Element {
+export default function SignUpRoutePage() {
   return <SignUpPage />
 }

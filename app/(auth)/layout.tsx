@@ -22,7 +22,7 @@
  *
  * @author Moisés Reis
  *
- * @date 2026-09-14
+ * @date 2026-09-23
  */
 export default function AuthRouteLayout({
   children,

@@ -1,5 +1,5 @@
-import { AuthLayout } from "@/presentation/routes/auth/layout/auth-layout"
-import { SIGN_UP } from "@/presentation/routes/auth/settings/form-labels.settings"
+import { AuthLayout } from "@/presentation/routes/(auth)/layout/layout"
+import { SIGN_UP } from "@/presentation/routes/(auth)/settings/labels.settings"
 
 /**
  * @summary
@@ -25,7 +25,7 @@ import { SIGN_UP } from "@/presentation/routes/auth/settings/form-labels.setting
  *
  * @author Moisés Reis
  *
- * @date 2026-09-14
+ * @date 2026-09-23
  */
 export default function SignUpRouteLayout({
   children,

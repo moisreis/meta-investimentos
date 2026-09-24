@@ -1,8 +1,8 @@
-import { Metadata } from "next"
-import { SignInPage } from "@/presentation/routes/auth/pages/sign-in-page"
+import type { Metadata } from "next"
+import { SignInPage } from "@/presentation/routes/(auth)/pages/sign-in"
 
 // Stores page metadata for **Next.js**.
-// Configures title for the sign-up route.
+// Configures title for the sign-in route.
 export const metadata: Metadata = {
   title: "Entrar",
 }
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
  *
  * @author Moisés Reis
  *
- * @date 2026-09-14
+ * @date 2026-09-23
  */
 export default function SignInRoutePage() {
   return <SignInPage />
