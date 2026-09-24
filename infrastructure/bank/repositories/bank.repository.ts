@@ -1,10 +1,17 @@
 import { asc, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Bank } from "@domain/bank/entities/bank.entity"
 import type { IBank } from "@domain/bank/interfaces/bank.interface"
 import type { EntityId } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/bank.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/bank.mapper"
 import { bank } from "@db-schemas/bank.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -80,13 +87,13 @@ export class BankRepository implements IBank {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Bank | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(bank)
       .where(eq(bank.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -112,13 +119,13 @@ export class BankRepository implements IBank {
    * @date 2026-09-15
    */
   async findByCode(code: string): Promise<Bank | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(bank)
       .where(eq(bank.code, code))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -151,14 +158,14 @@ export class BankRepository implements IBank {
     limit?: number
     offset?: number
   }): Promise<Bank[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(bank)
       .orderBy(asc(bank.code))
       .limit(options?.limit ?? 100)
       .offset(options?.offset ?? 0)
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -189,9 +196,12 @@ export class BankRepository implements IBank {
       return []
     }
 
-    const rows = await this.db.select().from(bank).where(inArray(bank.id, ids))
+    const ROWS = await this.db
+      .select()
+      .from(bank)
+      .where(inArray(bank.id, ids))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -219,25 +229,27 @@ export class BankRepository implements IBank {
    */
   async save(persisted: Bank): Promise<Bank> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(bank)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(bank.id, persisted.id))
         .returning()
 
-      if (!row) {
-        throw new NotFoundError(`Bank with id ${persisted.id} was not found.`)
+      if (!ROW) {
+        throw new NotFoundError(
+          `Bank with id ${persisted.id} was not found.`
+        )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(bank)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

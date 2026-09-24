@@ -20,13 +20,15 @@ import { session } from "@db-schemas/session.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const SESSION = toDomain(ROW);
+ * const SESSION = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof session.$inferSelect): Session {
+export function ToDomain(
+  row: typeof session.$inferSelect
+): Session {
   return Session.create(
     {
       userId: EntityId.create(row.userId),
@@ -59,13 +61,15 @@ export function toDomain(row: typeof session.$inferSelect): Session {
  * @returns Row insert values.
  *
  * @example
- * const SESSION = toInsert(SESSION);
+ * const SESSION = ToInsert(SESSION);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: Session): typeof session.$inferInsert {
+export function ToInsert(
+  entity: Session
+): typeof session.$inferInsert {
   return {
     userId: entity.userId,
     token: entity.token,
@@ -95,13 +99,13 @@ export function toInsert(entity: Session): typeof session.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const SESSION = toUpdate(SESSION);
+ * const SESSION = ToUpdate(SESSION);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: Session
 ): Partial<typeof session.$inferInsert> {
   return {

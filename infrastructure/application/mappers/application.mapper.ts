@@ -1,5 +1,9 @@
 import { Application } from "@domain/application/entities/application.entity"
-import { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
+import {
+  EntityId,
+  PositiveMoney,
+  QuotaQuantity,
+} from "@/value-objects"
 import { application } from "@db-schemas/application.schema"
 
 /**
@@ -21,13 +25,15 @@ import { application } from "@db-schemas/application.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const APP = toDomain(ROW);
+ * const APP = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof application.$inferSelect): Application {
+export function ToDomain(
+  row: typeof application.$inferSelect
+): Application {
   return Application.create(
     {
       positionId: EntityId.create(row.positionId),
@@ -64,13 +70,15 @@ export function toDomain(row: typeof application.$inferSelect): Application {
  * @returns Row insert values.
  *
  * @example
- * const APP = toInsert(APP);
+ * const APP = ToInsert(APP);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: Application): typeof application.$inferInsert {
+export function ToInsert(
+  entity: Application
+): typeof application.$inferInsert {
   return {
     positionId: entity.positionId,
     date: entity.date,
@@ -98,7 +106,7 @@ export function toInsert(entity: Application): typeof application.$inferInsert {
  *
  * @returns Row update values.
  */
-export function toUpdate(
+export function ToUpdate(
   entity: Application
 ): Partial<typeof application.$inferInsert> {
   return {

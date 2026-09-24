@@ -1,5 +1,9 @@
 import { Withdrawal } from "@domain/withdrawal/entities/withdrawal.entity"
-import { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
+import {
+  EntityId,
+  PositiveMoney,
+  QuotaQuantity,
+} from "@/value-objects"
 import { withdrawal } from "@db-schemas/withdrawal.schema"
 
 /**
@@ -20,13 +24,15 @@ import { withdrawal } from "@db-schemas/withdrawal.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const WD = toDomain(ROW);
+ * const WD = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof withdrawal.$inferSelect): Withdrawal {
+export function ToDomain(
+  row: typeof withdrawal.$inferSelect
+): Withdrawal {
   return Withdrawal.create(
     {
       positionId: EntityId.create(row.positionId),
@@ -63,13 +69,15 @@ export function toDomain(row: typeof withdrawal.$inferSelect): Withdrawal {
  * @returns Row insert values.
  *
  * @example
- * const WD = toInsert(WD);
+ * const WD = ToInsert(WD);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: Withdrawal): typeof withdrawal.$inferInsert {
+export function ToInsert(
+  entity: Withdrawal
+): typeof withdrawal.$inferInsert {
   return {
     positionId: entity.positionId,
     date: entity.date,
@@ -104,13 +112,13 @@ export function toInsert(entity: Withdrawal): typeof withdrawal.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const WD = toUpdate(WD);
+ * const WD = ToUpdate(WD);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: Withdrawal
 ): Partial<typeof withdrawal.$inferInsert> {
   return {

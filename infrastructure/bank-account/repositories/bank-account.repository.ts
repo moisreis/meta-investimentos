@@ -1,10 +1,17 @@
 import { eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { BankAccount } from "@domain/bank-account/entities/bank-account.entity"
 import type { IBankAccount } from "@domain/bank-account/interfaces/bank-account.interface"
 import { EntityId } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/bank-account.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/bank-account.mapper"
 import { bankAccount } from "@db-schemas/bank-account.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -81,13 +88,13 @@ export class BankAccountRepository implements IBankAccount {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<BankAccount | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(bankAccount)
       .where(eq(bankAccount.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -113,13 +120,15 @@ export class BankAccountRepository implements IBankAccount {
    *
    * @date 2026-09-15
    */
-  async findAllByPortfolioId(portfolioId: EntityId): Promise<BankAccount[]> {
-    const rows = await this.db
+  async findAllByPortfolioId(
+    portfolioId: EntityId
+  ): Promise<BankAccount[]> {
+    const ROWS = await this.db
       .select()
       .from(bankAccount)
       .where(eq(bankAccount.portfolioId, portfolioId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -153,12 +162,12 @@ export class BankAccountRepository implements IBankAccount {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(bankAccount)
       .where(inArray(bankAccount.portfolioId, portfolioIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -184,13 +193,15 @@ export class BankAccountRepository implements IBankAccount {
    *
    * @date 2026-09-15
    */
-  async findAllByBankId(bankId: EntityId): Promise<BankAccount[]> {
-    const rows = await this.db
+  async findAllByBankId(
+    bankId: EntityId
+  ): Promise<BankAccount[]> {
+    const ROWS = await this.db
       .select()
       .from(bankAccount)
       .where(eq(bankAccount.bankId, bankId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -217,17 +228,19 @@ export class BankAccountRepository implements IBankAccount {
    *
    * @date 2026-09-15
    */
-  async findAllByBankIds(bankIds: EntityId[]): Promise<BankAccount[]> {
+  async findAllByBankIds(
+    bankIds: EntityId[]
+  ): Promise<BankAccount[]> {
     if (bankIds.length === 0) {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(bankAccount)
       .where(inArray(bankAccount.bankId, bankIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -256,27 +269,27 @@ export class BankAccountRepository implements IBankAccount {
    */
   async save(persisted: BankAccount): Promise<BankAccount> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(bankAccount)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(bankAccount.id, persisted.id))
         .returning()
 
-      if (!row) {
+      if (!ROW) {
         throw new NotFoundError(
           `BankAccount with id ${persisted.id} was not found.`
         )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(bankAccount)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**
@@ -300,6 +313,8 @@ export class BankAccountRepository implements IBankAccount {
    * @date 2026-09-15
    */
   async delete(id: EntityId): Promise<void> {
-    await this.db.delete(bankAccount).where(eq(bankAccount.id, id))
+    await this.db
+      .delete(bankAccount)
+      .where(eq(bankAccount.id, id))
   }
 }

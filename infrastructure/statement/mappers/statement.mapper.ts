@@ -20,16 +20,20 @@ import { statement } from "@db-schemas/statement.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const STATEMENT = toDomain(ROW);
+ * const STATEMENT = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof statement.$inferSelect): Statement {
+export function ToDomain(
+  row: typeof statement.$inferSelect
+): Statement {
   return Statement.create(
     {
-      portfolioId: row.portfolioId ? EntityId.create(row.portfolioId) : null,
+      portfolioId: row.portfolioId
+        ? EntityId.create(row.portfolioId)
+        : null,
       periodStart: new Date(row.periodStart),
       periodEnd: new Date(row.periodEnd),
       fileUrl: row.fileUrl,
@@ -60,13 +64,15 @@ export function toDomain(row: typeof statement.$inferSelect): Statement {
  * @returns Row insert values.
  *
  * @example
- * const STATEMENT = toInsert(STATEMENT);
+ * const STATEMENT = ToInsert(STATEMENT);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: Statement): typeof statement.$inferInsert {
+export function ToInsert(
+  entity: Statement
+): typeof statement.$inferInsert {
   return {
     portfolioId: entity.portfolioId,
     periodStart: entity.periodStart.toISOString(),
@@ -95,13 +101,13 @@ export function toInsert(entity: Statement): typeof statement.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const STATEMENT = toUpdate(STATEMENT);
+ * const STATEMENT = ToUpdate(STATEMENT);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: Statement
 ): Partial<typeof statement.$inferInsert> {
   return {

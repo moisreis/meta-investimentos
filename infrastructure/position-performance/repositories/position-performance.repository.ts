@@ -1,5 +1,8 @@
 import { and, desc, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { PositionPerformance } from "@domain/position-performance/entities/position-performance.entity"
 import type { IPositionPerformance } from "@domain/position-performance/interfaces/position-performance.interface"
@@ -11,9 +14,9 @@ import {
   SignedPercentage,
 } from "@/value-objects"
 import {
-  toDomain,
-  toInsert,
-  toUpdate,
+  ToDomain,
+  ToInsert,
+  ToUpdate,
 } from "../mappers/position-performance.mapper"
 import { positionPerformance } from "@db-schemas/position-performance.schema"
 import { NotFoundError } from "@errors/not-found.error"
@@ -95,14 +98,16 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    *
    * @date 2026-09-15
    */
-  async findById(id: EntityId): Promise<PositionPerformance | null> {
-    const [row] = await this.db
+  async findById(
+    id: EntityId
+  ): Promise<PositionPerformance | null> {
+    const [ROW] = await this.db
       .select()
       .from(positionPerformance)
       .where(eq(positionPerformance.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -131,12 +136,12 @@ export class PositionPerformanceRepository implements IPositionPerformance {
   async findAllByPositionId(
     positionId: EntityId
   ): Promise<PositionPerformance[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(positionPerformance)
       .where(eq(positionPerformance.positionId, positionId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -171,12 +176,14 @@ export class PositionPerformanceRepository implements IPositionPerformance {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(positionPerformance)
-      .where(inArray(positionPerformance.positionId, positionIds))
+      .where(
+        inArray(positionPerformance.positionId, positionIds)
+      )
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -207,7 +214,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
     positionId: EntityId,
     date: Date
   ): Promise<PositionPerformance | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(positionPerformance)
       .where(
@@ -218,7 +225,7 @@ export class PositionPerformanceRepository implements IPositionPerformance {
       )
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -248,14 +255,14 @@ export class PositionPerformanceRepository implements IPositionPerformance {
   async findLatestByPositionId(
     positionId: EntityId
   ): Promise<PositionPerformance | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(positionPerformance)
       .where(eq(positionPerformance.positionId, positionId))
       .orderBy(desc(positionPerformance.date))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -290,13 +297,18 @@ export class PositionPerformanceRepository implements IPositionPerformance {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .selectDistinctOn([positionPerformance.positionId])
       .from(positionPerformance)
-      .where(inArray(positionPerformance.positionId, positionIds))
-      .orderBy(positionPerformance.positionId, desc(positionPerformance.date))
+      .where(
+        inArray(positionPerformance.positionId, positionIds)
+      )
+      .orderBy(
+        positionPerformance.positionId,
+        desc(positionPerformance.date)
+      )
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -322,29 +334,31 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    *
    * @date 2026-09-15
    */
-  async save(persisted: PositionPerformance): Promise<PositionPerformance> {
+  async save(
+    persisted: PositionPerformance
+  ): Promise<PositionPerformance> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(positionPerformance)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(positionPerformance.id, persisted.id))
         .returning()
 
-      if (!row) {
+      if (!ROW) {
         throw new NotFoundError(
           `PositionPerformance with id ${persisted.id} was not found.`
         )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(positionPerformance)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

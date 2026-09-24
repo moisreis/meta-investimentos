@@ -1,13 +1,16 @@
 import { and, eq, inArray, sql } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { TransactionAllocation } from "@domain/transaction-allocation/entities/transaction-allocation.entity"
 import type { ITransactionAllocation } from "@domain/transaction-allocation/interfaces/transaction-allocation.interface"
 import { EntityId, QuotaQuantity } from "@/value-objects"
 import {
-  toDomain,
-  toInsert,
-  toUpdate,
+  ToDomain,
+  ToInsert,
+  ToUpdate,
 } from "../mappers/transaction-allocation.mapper"
 import { transactionAllocation } from "@db-schemas/transaction-allocation.schema"
 import { ConcurrencyError } from "@errors/concurrency.error"
@@ -87,14 +90,16 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    *
    * @date 2026-09-15
    */
-  async findById(id: EntityId): Promise<TransactionAllocation | null> {
-    const [row] = await this.db
+  async findById(
+    id: EntityId
+  ): Promise<TransactionAllocation | null> {
+    const [ROW] = await this.db
       .select()
       .from(transactionAllocation)
       .where(eq(transactionAllocation.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -123,12 +128,14 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
   async findAllByApplicationId(
     applicationId: EntityId
   ): Promise<TransactionAllocation[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(transactionAllocation)
-      .where(eq(transactionAllocation.applicationId, applicationId))
+      .where(
+        eq(transactionAllocation.applicationId, applicationId)
+      )
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -162,12 +169,17 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(transactionAllocation)
-      .where(inArray(transactionAllocation.applicationId, applicationIds))
+      .where(
+        inArray(
+          transactionAllocation.applicationId,
+          applicationIds
+        )
+      )
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -196,12 +208,12 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
   async findAllByWithdrawalId(
     withdrawId: EntityId
   ): Promise<TransactionAllocation[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(transactionAllocation)
       .where(eq(transactionAllocation.withdrawId, withdrawId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -235,12 +247,14 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(transactionAllocation)
-      .where(inArray(transactionAllocation.withdrawId, withdrawIds))
+      .where(
+        inArray(transactionAllocation.withdrawId, withdrawIds)
+      )
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -271,14 +285,18 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
   async sumQuotasConsumedByApplicationId(
     applicationId: EntityId
   ): Promise<QuotaQuantity | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select({
         quotasConsumed: sql<string>`sum(${transactionAllocation.quotasConsumed})`,
       })
       .from(transactionAllocation)
-      .where(eq(transactionAllocation.applicationId, applicationId))
+      .where(
+        eq(transactionAllocation.applicationId, applicationId)
+      )
 
-    return row.quotasConsumed ? QuotaQuantity.create(row.quotasConsumed) : null
+    return ROW.quotasConsumed
+      ? QuotaQuantity.create(ROW.quotasConsumed)
+      : null
   }
 
   /**
@@ -307,11 +325,16 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
    *
    * @date 2026-09-15
    */
-  async save(persisted: TransactionAllocation): Promise<TransactionAllocation> {
+  async save(
+    persisted: TransactionAllocation
+  ): Promise<TransactionAllocation> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(transactionAllocation)
-        .set({ ...toUpdate(persisted), version: persisted.version + 1 })
+        .set({
+          ...ToUpdate(persisted),
+          version: persisted.version + 1,
+        })
         .where(
           and(
             eq(transactionAllocation.id, persisted.id),
@@ -320,17 +343,17 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
         )
         .returning()
 
-      if (row) {
-        return toDomain(row)
+      if (ROW) {
+        return ToDomain(ROW)
       }
 
-      const [existing] = await this.db
+      const [EXISTING] = await this.db
         .select({ id: transactionAllocation.id })
         .from(transactionAllocation)
         .where(eq(transactionAllocation.id, persisted.id))
         .limit(1)
 
-      if (!existing) {
+      if (!EXISTING) {
         throw new NotFoundError(
           `TransactionAllocation with id ${persisted.id} was not found.`
         )
@@ -341,12 +364,12 @@ export class TransactionAllocationRepository implements ITransactionAllocation {
       )
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(transactionAllocation)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

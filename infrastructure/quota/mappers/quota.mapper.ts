@@ -20,13 +20,13 @@ import { quota } from "@db-schemas/quota.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const QUOTA = toDomain(ROW);
+ * const QUOTA = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof quota.$inferSelect): Quota {
+export function ToDomain(row: typeof quota.$inferSelect): Quota {
   return Quota.create(
     {
       fundId: EntityId.create(row.fundId),
@@ -56,13 +56,15 @@ export function toDomain(row: typeof quota.$inferSelect): Quota {
  * @returns Row insert values.
  *
  * @example
- * const QUOTA = toInsert(QUOTA);
+ * const QUOTA = ToInsert(QUOTA);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: Quota): typeof quota.$inferInsert {
+export function ToInsert(
+  entity: Quota
+): typeof quota.$inferInsert {
   return {
     fundId: entity.fundId,
     date: entity.date,
@@ -89,13 +91,15 @@ export function toInsert(entity: Quota): typeof quota.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const QUOTA = toUpdate(QUOTA);
+ * const QUOTA = ToUpdate(QUOTA);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(entity: Quota): Partial<typeof quota.$inferInsert> {
+export function ToUpdate(
+  entity: Quota
+): Partial<typeof quota.$inferInsert> {
   return {
     fundId: entity.fundId,
     date: entity.date,

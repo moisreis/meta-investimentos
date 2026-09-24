@@ -20,13 +20,15 @@ import { auditLog } from "@db-schemas/audit-log.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const LOG = toDomain(ROW);
+ * const LOG = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof auditLog.$inferSelect): AuditLog {
+export function ToDomain(
+  row: typeof auditLog.$inferSelect
+): AuditLog {
   return AuditLog.create(
     {
       entity: row.entity,
@@ -58,13 +60,15 @@ export function toDomain(row: typeof auditLog.$inferSelect): AuditLog {
  * @returns Row insert values.
  *
  * @example
- * const LOG = toInsert(LOG);
+ * const LOG = ToInsert(LOG);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: AuditLog): typeof auditLog.$inferInsert {
+export function ToInsert(
+  entity: AuditLog
+): typeof auditLog.$inferInsert {
   return {
     entity: entity.entity,
     entityId: entity.entityId,

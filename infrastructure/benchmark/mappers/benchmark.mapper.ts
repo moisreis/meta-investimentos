@@ -19,13 +19,15 @@ import { benchmark } from "@db-schemas/benchmark.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const BENCH = toDomain(ROW);
+ * const BENCH = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof benchmark.$inferSelect): Benchmark {
+export function ToDomain(
+  row: typeof benchmark.$inferSelect
+): Benchmark {
   return Benchmark.create(
     {
       acronym: row.acronym,
@@ -54,13 +56,15 @@ export function toDomain(row: typeof benchmark.$inferSelect): Benchmark {
  * @returns Row insert values.
  *
  * @example
- * const BENCH = toInsert(BENCH);
+ * const BENCH = ToInsert(BENCH);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: Benchmark): typeof benchmark.$inferInsert {
+export function ToInsert(
+  entity: Benchmark
+): typeof benchmark.$inferInsert {
   return {
     acronym: entity.acronym,
     name: entity.name,
@@ -84,13 +88,13 @@ export function toInsert(entity: Benchmark): typeof benchmark.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const BENCH = toUpdate(BENCH);
+ * const BENCH = ToUpdate(BENCH);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: Benchmark
 ): Partial<typeof benchmark.$inferInsert> {
   return {

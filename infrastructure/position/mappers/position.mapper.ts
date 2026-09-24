@@ -20,13 +20,15 @@ import { position } from "@db-schemas/position.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const POS = toDomain(ROW);
+ * const POS = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof position.$inferSelect): Position {
+export function ToDomain(
+  row: typeof position.$inferSelect
+): Position {
   return Position.create(
     {
       portfolioId: EntityId.create(row.portfolioId),
@@ -61,17 +63,20 @@ export function toDomain(row: typeof position.$inferSelect): Position {
  * @returns Row insert values.
  *
  * @example
- * const POS = toInsert(POS);
+ * const POS = ToInsert(POS);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: Position): typeof position.$inferInsert {
+export function ToInsert(
+  entity: Position
+): typeof position.$inferInsert {
   return {
     portfolioId: entity.portfolioId,
     fundId: entity.fundId,
-    initialBalance: entity.initialBalance?.value.toString() ?? null,
+    initialBalance:
+      entity.initialBalance?.value.toString() ?? null,
     initialBalanceDate: entity.initialBalanceDate,
     version: entity.version,
     createdAt: entity.createdAt,
@@ -101,19 +106,20 @@ export function toInsert(entity: Position): typeof position.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const POS = toUpdate(POS);
+ * const POS = ToUpdate(POS);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: Position
 ): Partial<typeof position.$inferInsert> {
   return {
     portfolioId: entity.portfolioId,
     fundId: entity.fundId,
-    initialBalance: entity.initialBalance?.value.toString() ?? null,
+    initialBalance:
+      entity.initialBalance?.value.toString() ?? null,
     initialBalanceDate: entity.initialBalanceDate,
   }
 }

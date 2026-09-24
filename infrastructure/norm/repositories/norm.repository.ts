@@ -1,10 +1,17 @@
 import { and, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Norm } from "@domain/norm/entities/norm.entity"
 import type { INorm } from "@domain/norm/interfaces/norm.interface"
 import { EntityId, SignedPercentage } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/norm.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/norm.mapper"
 import { norm } from "@db-schemas/norm.schema"
 import { NotFoundError } from "@errors/not-found.error"
 import { ConcurrencyError } from "@errors/concurrency.error"
@@ -88,13 +95,13 @@ export class NormRepository implements INorm {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Norm | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(norm)
       .where(eq(norm.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -120,13 +127,15 @@ export class NormRepository implements INorm {
    *
    * @date 2026-09-15
    */
-  async findAllByCategoryId(categoryId: EntityId): Promise<Norm[]> {
-    const rows = await this.db
+  async findAllByCategoryId(
+    categoryId: EntityId
+  ): Promise<Norm[]> {
+    const ROWS = await this.db
       .select()
       .from(norm)
       .where(eq(norm.categoryId, categoryId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -153,17 +162,19 @@ export class NormRepository implements INorm {
    *
    * @date 2026-09-15
    */
-  async findAllByCategoryIds(categoryIds: EntityId[]): Promise<Norm[]> {
+  async findAllByCategoryIds(
+    categoryIds: EntityId[]
+  ): Promise<Norm[]> {
     if (categoryIds.length === 0) {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(norm)
       .where(inArray(norm.categoryId, categoryIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -194,26 +205,34 @@ export class NormRepository implements INorm {
    */
   async save(persisted: Norm): Promise<Norm> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(norm)
-        .set({ ...toUpdate(persisted), version: persisted.version + 1 })
+        .set({
+          ...ToUpdate(persisted),
+          version: persisted.version + 1,
+        })
         .where(
-          and(eq(norm.id, persisted.id), eq(norm.version, persisted.version))
+          and(
+            eq(norm.id, persisted.id),
+            eq(norm.version, persisted.version)
+          )
         )
         .returning()
 
-      if (row) {
-        return toDomain(row)
+      if (ROW) {
+        return ToDomain(ROW)
       }
 
-      const [existing] = await this.db
+      const [EXISTING] = await this.db
         .select({ id: norm.id })
         .from(norm)
         .where(eq(norm.id, persisted.id))
         .limit(1)
 
-      if (!existing) {
-        throw new NotFoundError(`Norm with id ${persisted.id} was not found.`)
+      if (!EXISTING) {
+        throw new NotFoundError(
+          `Norm with id ${persisted.id} was not found.`
+        )
       }
 
       throw new ConcurrencyError(
@@ -221,12 +240,12 @@ export class NormRepository implements INorm {
       )
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(norm)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

@@ -20,22 +20,28 @@ import { portfolio } from "@db-schemas/portfolio.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const PORTFOLIO = toDomain(ROW);
+ * const PORTFOLIO = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof portfolio.$inferSelect): Portfolio {
+export function ToDomain(
+  row: typeof portfolio.$inferSelect
+): Portfolio {
   return Portfolio.create(
     {
       acronym: row.acronym,
       name: row.name,
       userId: EntityId.create(row.userId),
-      annualInterestRate: SignedPercentage.create(row.annualInterestRate),
+      annualInterestRate: SignedPercentage.create(
+        row.annualInterestRate
+      ),
       minAllocation: SignedPercentage.create(row.minAllocation),
       maxAllocation: SignedPercentage.create(row.maxAllocation),
-      targetAllocation: SignedPercentage.create(row.targetAllocation),
+      targetAllocation: SignedPercentage.create(
+        row.targetAllocation
+      ),
       version: row.version,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
@@ -62,18 +68,21 @@ export function toDomain(row: typeof portfolio.$inferSelect): Portfolio {
  * @returns Row insert values.
  *
  * @example
- * const PORTFOLIO = toInsert(PORTFOLIO);
+ * const PORTFOLIO = ToInsert(PORTFOLIO);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: Portfolio): typeof portfolio.$inferInsert {
+export function ToInsert(
+  entity: Portfolio
+): typeof portfolio.$inferInsert {
   return {
     acronym: entity.acronym,
     name: entity.name,
     userId: entity.userId,
-    annualInterestRate: entity.annualInterestRate.value.toString(),
+    annualInterestRate:
+      entity.annualInterestRate.value.toString(),
     minAllocation: entity.minAllocation.value.toString(),
     maxAllocation: entity.maxAllocation.value.toString(),
     targetAllocation: entity.targetAllocation.value.toString(),
@@ -103,20 +112,21 @@ export function toInsert(entity: Portfolio): typeof portfolio.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const PORTFOLIO = toUpdate(PORTFOLIO);
+ * const PORTFOLIO = ToUpdate(PORTFOLIO);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: Portfolio
 ): Partial<typeof portfolio.$inferInsert> {
   return {
     acronym: entity.acronym,
     name: entity.name,
     userId: entity.userId,
-    annualInterestRate: entity.annualInterestRate.value.toString(),
+    annualInterestRate:
+      entity.annualInterestRate.value.toString(),
     minAllocation: entity.minAllocation.value.toString(),
     maxAllocation: entity.maxAllocation.value.toString(),
     targetAllocation: entity.targetAllocation.value.toString(),

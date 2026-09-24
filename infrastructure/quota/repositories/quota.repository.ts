@@ -1,5 +1,18 @@
-import { and, asc, desc, eq, gte, inArray, lte, or, sql } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gte,
+  inArray,
+  lte,
+  or,
+  sql,
+} from "drizzle-orm"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Quota } from "@domain/quota/entities/quota.entity"
 import type {
@@ -8,7 +21,11 @@ import type {
   UpsertQuotaResult,
 } from "@domain/quota/interfaces/quota.interface"
 import { EntityId, QuotaPrice } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/quota.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/quota.mapper"
 import { quota } from "@db-schemas/quota.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -87,13 +104,13 @@ export class QuotaRepository implements IQuota {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Quota | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(quota)
       .where(eq(quota.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -119,12 +136,12 @@ export class QuotaRepository implements IQuota {
    * @date 2026-09-15
    */
   async findAllByFundId(fundId: EntityId): Promise<Quota[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(quota)
       .where(eq(quota.fundId, fundId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -155,12 +172,12 @@ export class QuotaRepository implements IQuota {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(quota)
       .where(inArray(quota.fundId, fundIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -191,13 +208,13 @@ export class QuotaRepository implements IQuota {
     fundId: EntityId,
     date: Date
   ): Promise<Quota | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(quota)
       .where(and(eq(quota.fundId, fundId), eq(quota.date, date)))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -236,7 +253,7 @@ export class QuotaRepository implements IQuota {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(quota)
       .where(
@@ -248,7 +265,7 @@ export class QuotaRepository implements IQuota {
       )
       .orderBy(asc(quota.date), asc(quota.createdAt))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -275,15 +292,17 @@ export class QuotaRepository implements IQuota {
    *
    * @date 2026-09-15
    */
-  async findLatestByFundId(fundId: EntityId): Promise<Quota | null> {
-    const [row] = await this.db
+  async findLatestByFundId(
+    fundId: EntityId
+  ): Promise<Quota | null> {
+    const [ROW] = await this.db
       .select()
       .from(quota)
       .where(eq(quota.fundId, fundId))
       .orderBy(desc(quota.date))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -311,18 +330,20 @@ export class QuotaRepository implements IQuota {
    *
    * @date 2026-09-15
    */
-  async findLatestByFundIds(fundIds: EntityId[]): Promise<Quota[]> {
+  async findLatestByFundIds(
+    fundIds: EntityId[]
+  ): Promise<Quota[]> {
     if (fundIds.length === 0) {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .selectDistinctOn([quota.fundId])
       .from(quota)
       .where(inArray(quota.fundId, fundIds))
       .orderBy(quota.fundId, desc(quota.date))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -350,7 +371,9 @@ export class QuotaRepository implements IQuota {
    *
    * @date 2026-09-15
    */
-  async upsertMany(records: UpsertQuota[]): Promise<UpsertQuotaResult[]> {
+  async upsertMany(
+    records: UpsertQuota[]
+  ): Promise<UpsertQuotaResult[]> {
     if (records.length === 0) {
       return []
     }
@@ -417,25 +440,27 @@ export class QuotaRepository implements IQuota {
    */
   async save(persisted: Quota): Promise<Quota> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(quota)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(quota.id, persisted.id))
         .returning()
 
-      if (!row) {
-        throw new NotFoundError(`Quota with id ${persisted.id} was not found.`)
+      if (!ROW) {
+        throw new NotFoundError(
+          `Quota with id ${persisted.id} was not found.`
+        )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(quota)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

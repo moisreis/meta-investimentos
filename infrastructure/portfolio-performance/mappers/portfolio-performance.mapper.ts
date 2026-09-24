@@ -28,13 +28,13 @@ import { portfolioPerformance } from "@db-schemas/portfolio-performance.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const SNAP = toDomain(ROW);
+ * const SNAP = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(
+export function ToDomain(
   row: typeof portfolioPerformance.$inferSelect
 ): PortfolioPerformance {
   return PortfolioPerformance.create(
@@ -43,7 +43,9 @@ export function toDomain(
       date: row.date,
       quotasHeld: QuotaQuantity.create(row.quotasHeld),
       patrimony: PositiveMoney.create(row.patrimony),
-      applicationTotal: PositiveMoney.create(row.applicationTotal),
+      applicationTotal: PositiveMoney.create(
+        row.applicationTotal
+      ),
       redemptionTotal: PositiveMoney.create(row.redemptionTotal),
       cashFlowNet: SignedMoney.create(row.cashFlowNet),
       earnings: SignedMoney.create(row.earnings),
@@ -57,7 +59,9 @@ export function toDomain(
       returnLast12m: row.returnLast12m
         ? SignedPercentage.create(row.returnLast12m)
         : null,
-      target: row.target ? SignedPercentage.create(row.target) : null,
+      target: row.target
+        ? SignedPercentage.create(row.target)
+        : null,
       cumulativeTarget: row.cumulativeTarget
         ? SignedPercentage.create(row.cumulativeTarget)
         : null,
@@ -95,13 +99,13 @@ export function toDomain(
  * @returns Row insert values.
  *
  * @example
- * const SNAP = toInsert(SNAP);
+ * const SNAP = ToInsert(SNAP);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(
+export function ToInsert(
   entity: PortfolioPerformance
 ): typeof portfolioPerformance.$inferInsert {
   return {
@@ -114,13 +118,18 @@ export function toInsert(
     cashFlowNet: entity.cashFlowNet.value.toString(),
     earnings: entity.earnings.value.toString(),
     returnDaily: entity.returnDaily.value.toString(),
-    returnMonthly: entity.returnMonthly?.value.toString() ?? null,
+    returnMonthly:
+      entity.returnMonthly?.value.toString() ?? null,
     returnYearly: entity.returnYearly?.value.toString() ?? null,
-    returnLast12m: entity.returnLast12m?.value.toString() ?? null,
+    returnLast12m:
+      entity.returnLast12m?.value.toString() ?? null,
     target: entity.target?.value.toString() ?? null,
-    cumulativeTarget: entity.cumulativeTarget?.value.toString() ?? null,
-    inflationSpread: entity.inflationSpread?.value.toString() ?? null,
-    riskFreeSpread: entity.riskFreeSpread?.value.toString() ?? null,
+    cumulativeTarget:
+      entity.cumulativeTarget?.value.toString() ?? null,
+    inflationSpread:
+      entity.inflationSpread?.value.toString() ?? null,
+    riskFreeSpread:
+      entity.riskFreeSpread?.value.toString() ?? null,
     marketSpread: entity.marketSpread?.value.toString() ?? null,
     createdAt: entity.createdAt,
   }
@@ -144,13 +153,13 @@ export function toInsert(
  * @returns Row update values.
  *
  * @example
- * const SNAP = toUpdate(SNAP);
+ * const SNAP = ToUpdate(SNAP);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: PortfolioPerformance
 ): Partial<typeof portfolioPerformance.$inferInsert> {
   return {
@@ -163,13 +172,18 @@ export function toUpdate(
     cashFlowNet: entity.cashFlowNet.value.toString(),
     earnings: entity.earnings.value.toString(),
     returnDaily: entity.returnDaily.value.toString(),
-    returnMonthly: entity.returnMonthly?.value.toString() ?? null,
+    returnMonthly:
+      entity.returnMonthly?.value.toString() ?? null,
     returnYearly: entity.returnYearly?.value.toString() ?? null,
-    returnLast12m: entity.returnLast12m?.value.toString() ?? null,
+    returnLast12m:
+      entity.returnLast12m?.value.toString() ?? null,
     target: entity.target?.value.toString() ?? null,
-    cumulativeTarget: entity.cumulativeTarget?.value.toString() ?? null,
-    inflationSpread: entity.inflationSpread?.value.toString() ?? null,
-    riskFreeSpread: entity.riskFreeSpread?.value.toString() ?? null,
+    cumulativeTarget:
+      entity.cumulativeTarget?.value.toString() ?? null,
+    inflationSpread:
+      entity.inflationSpread?.value.toString() ?? null,
+    riskFreeSpread:
+      entity.riskFreeSpread?.value.toString() ?? null,
     marketSpread: entity.marketSpread?.value.toString() ?? null,
   }
 }

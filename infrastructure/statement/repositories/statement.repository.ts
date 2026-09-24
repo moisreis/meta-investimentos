@@ -1,10 +1,17 @@
 import { eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Statement } from "@domain/statement/entities/statement.entity"
 import type { IStatement } from "@domain/statement/interfaces/statement.interface"
 import { EntityId } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/statement.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/statement.mapper"
 import { statement } from "@db-schemas/statement.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -82,13 +89,13 @@ export class StatementRepository implements IStatement {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Statement | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(statement)
       .where(eq(statement.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -114,13 +121,15 @@ export class StatementRepository implements IStatement {
    *
    * @date 2026-09-15
    */
-  async findAllByPortfolioId(portfolioId: EntityId): Promise<Statement[]> {
-    const rows = await this.db
+  async findAllByPortfolioId(
+    portfolioId: EntityId
+  ): Promise<Statement[]> {
+    const ROWS = await this.db
       .select()
       .from(statement)
       .where(eq(statement.portfolioId, portfolioId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -147,17 +156,19 @@ export class StatementRepository implements IStatement {
    *
    * @date 2026-09-15
    */
-  async findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<Statement[]> {
+  async findAllByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<Statement[]> {
     if (portfolioIds.length === 0) {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(statement)
       .where(inArray(statement.portfolioId, portfolioIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -183,13 +194,15 @@ export class StatementRepository implements IStatement {
    *
    * @date 2026-09-15
    */
-  async findAllByGeneratedByUserId(userId: EntityId): Promise<Statement[]> {
-    const rows = await this.db
+  async findAllByGeneratedByUserId(
+    userId: EntityId
+  ): Promise<Statement[]> {
+    const ROWS = await this.db
       .select()
       .from(statement)
       .where(eq(statement.generatedByUserId, userId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -216,17 +229,19 @@ export class StatementRepository implements IStatement {
    *
    * @date 2026-09-15
    */
-  async findAllByGeneratedByUserIds(userIds: EntityId[]): Promise<Statement[]> {
+  async findAllByGeneratedByUserIds(
+    userIds: EntityId[]
+  ): Promise<Statement[]> {
     if (userIds.length === 0) {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(statement)
       .where(inArray(statement.generatedByUserId, userIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -254,27 +269,27 @@ export class StatementRepository implements IStatement {
    */
   async save(persisted: Statement): Promise<Statement> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(statement)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(statement.id, persisted.id))
         .returning()
 
-      if (!row) {
+      if (!ROW) {
         throw new NotFoundError(
           `Statement with id ${persisted.id} was not found.`
         )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(statement)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

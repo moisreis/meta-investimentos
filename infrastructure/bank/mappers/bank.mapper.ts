@@ -19,13 +19,13 @@ import { bank } from "@db-schemas/bank.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const BANK = toDomain(ROW);
+ * const BANK = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof bank.$inferSelect): Bank {
+export function ToDomain(row: typeof bank.$inferSelect): Bank {
   return Bank.create(
     {
       code: row.code,
@@ -55,13 +55,15 @@ export function toDomain(row: typeof bank.$inferSelect): Bank {
  * @returns Row insert values.
  *
  * @example
- * const BANK = toInsert(BANK);
+ * const BANK = ToInsert(BANK);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: Bank): typeof bank.$inferInsert {
+export function ToInsert(
+  entity: Bank
+): typeof bank.$inferInsert {
   return {
     code: entity.code,
     name: entity.name,
@@ -87,13 +89,15 @@ export function toInsert(entity: Bank): typeof bank.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const BANK = toUpdate(BANK);
+ * const BANK = ToUpdate(BANK);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(entity: Bank): Partial<typeof bank.$inferInsert> {
+export function ToUpdate(
+  entity: Bank
+): Partial<typeof bank.$inferInsert> {
   return {
     code: entity.code,
     name: entity.name,

@@ -1,10 +1,17 @@
 import { and, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Position } from "@domain/position/entities/position.entity"
 import type { IPosition } from "@domain/position/interfaces/position.interface"
 import { EntityId, PositiveMoney } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/position.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/position.mapper"
 import { position } from "@db-schemas/position.schema"
 import { ConcurrencyError } from "@errors/concurrency.error"
 import { NotFoundError } from "@errors/not-found.error"
@@ -93,13 +100,13 @@ export class PositionRepository implements IPosition {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Position | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(position)
       .where(eq(position.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -125,13 +132,15 @@ export class PositionRepository implements IPosition {
    *
    * @date 2026-09-15
    */
-  async findAllByPortfolioId(portfolioId: EntityId): Promise<Position[]> {
-    const rows = await this.db
+  async findAllByPortfolioId(
+    portfolioId: EntityId
+  ): Promise<Position[]> {
+    const ROWS = await this.db
       .select()
       .from(position)
       .where(eq(position.portfolioId, portfolioId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -158,17 +167,19 @@ export class PositionRepository implements IPosition {
    *
    * @date 2026-09-15
    */
-  async findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<Position[]> {
+  async findAllByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<Position[]> {
     if (portfolioIds.length === 0) {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(position)
       .where(inArray(position.portfolioId, portfolioIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -194,17 +205,19 @@ export class PositionRepository implements IPosition {
    *
    * @date 2026-09-15
    */
-  async findAllByFundIds(fundIds: EntityId[]): Promise<Position[]> {
+  async findAllByFundIds(
+    fundIds: EntityId[]
+  ): Promise<Position[]> {
     if (fundIds.length === 0) {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(position)
       .where(inArray(position.fundId, fundIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -235,15 +248,18 @@ export class PositionRepository implements IPosition {
     portfolioId: EntityId,
     fundId: EntityId
   ): Promise<Position | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(position)
       .where(
-        and(eq(position.portfolioId, portfolioId), eq(position.fundId, fundId))
+        and(
+          eq(position.portfolioId, portfolioId),
+          eq(position.fundId, fundId)
+        )
       )
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -275,10 +291,10 @@ export class PositionRepository implements IPosition {
    */
   async save(persisted: Position): Promise<Position> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(position)
         .set({
-          ...toUpdate(persisted),
+          ...ToUpdate(persisted),
           version: persisted.version + 1,
         })
         .where(
@@ -289,17 +305,17 @@ export class PositionRepository implements IPosition {
         )
         .returning()
 
-      if (row) {
-        return toDomain(row)
+      if (ROW) {
+        return ToDomain(ROW)
       }
 
-      const [existing] = await this.db
+      const [EXISTING] = await this.db
         .select({ id: position.id })
         .from(position)
         .where(eq(position.id, persisted.id))
         .limit(1)
 
-      if (!existing) {
+      if (!EXISTING) {
         throw new NotFoundError(
           `Position with id ${persisted.id} was not found.`
         )
@@ -310,12 +326,12 @@ export class PositionRepository implements IPosition {
       )
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(position)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

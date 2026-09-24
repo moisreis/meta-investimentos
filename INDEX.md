@@ -1,4 +1,4 @@
-# Presentation Layer Glossary
+# Naming & Structure Glossary
 
 Naming and structure conventions for this codebase.
 The rules below apply to every file, except the
@@ -21,6 +21,13 @@ responsibility, with a singular suffix.
 
 New suffixes must be documented here before use.
 
+## Infrastructure suffixes
+
+- `infrastructure/<domain>/repositories/`
+  -> `*.repository.ts` (Drizzle persistence classes)
+- `infrastructure/<domain>/mappers/`
+  -> `*.mapper.ts` (row/entity mapping functions)
+
 ## Symbols
 
 - Functions use `PascalCase`.
@@ -31,10 +38,18 @@ New suffixes must be documented here before use.
   data, never for functions.
 - Hook return object properties keep camelCase names,
   since they form the public API of the hook.
+- Class names use `PascalCase`; class methods keep
+  camelCase because they implement the domain
+  interface contract (`implements IX`).
 
 ## Line length
 
 - Code and documentation lines stay within 65 chars.
 - JSX elements may exceed the limit.
+- Deep-path imports with a single specifier cannot be
+  wrapped, so they may exceed the limit.
+- Class declarations and string literals (template
+  messages, tagged templates) are single tokens and
+  may exceed the limit.
 - `npm run format` already enforces the width; run it
   on the changed files before committing.

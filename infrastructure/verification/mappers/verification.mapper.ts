@@ -20,13 +20,15 @@ import { verification } from "@db-schemas/verification.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const V = toDomain(ROW);
+ * const V = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof verification.$inferSelect): Verification {
+export function ToDomain(
+  row: typeof verification.$inferSelect
+): Verification {
   return Verification.create(
     {
       identifier: row.identifier,
@@ -57,13 +59,13 @@ export function toDomain(row: typeof verification.$inferSelect): Verification {
  * @returns Row insert values.
  *
  * @example
- * const V = toInsert(V);
+ * const V = ToInsert(V);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(
+export function ToInsert(
   entity: Verification
 ): typeof verification.$inferInsert {
   return {
@@ -93,13 +95,13 @@ export function toInsert(
  * @returns Row update values.
  *
  * @example
- * const V = toUpdate(V);
+ * const V = ToUpdate(V);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: Verification
 ): Partial<typeof verification.$inferInsert> {
   return {

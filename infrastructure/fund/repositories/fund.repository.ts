@@ -1,10 +1,21 @@
 import { asc, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Fund } from "@domain/fund/entities/fund.entity"
 import type { IFund } from "@domain/fund/interfaces/fund.interface"
-import { CNPJ, EntityId, SignedPercentage } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/fund.mapper"
+import {
+  CNPJ,
+  EntityId,
+  SignedPercentage,
+} from "@/value-objects"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/fund.mapper"
 import { fund } from "@db-schemas/fund.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -81,13 +92,13 @@ export class FundRepository implements IFund {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Fund | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(fund)
       .where(eq(fund.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -118,9 +129,12 @@ export class FundRepository implements IFund {
       return []
     }
 
-    const rows = await this.db.select().from(fund).where(inArray(fund.id, ids))
+    const ROWS = await this.db
+      .select()
+      .from(fund)
+      .where(inArray(fund.id, ids))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -148,13 +162,13 @@ export class FundRepository implements IFund {
    * @date 2026-09-15
    */
   async findByCnpj(cnpj: CNPJ): Promise<Fund | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(fund)
       .where(eq(fund.cnpj, cnpj.value))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -187,14 +201,14 @@ export class FundRepository implements IFund {
     limit?: number
     offset?: number
   }): Promise<Fund[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(fund)
       .orderBy(asc(fund.name))
       .limit(options?.limit ?? 100)
       .offset(options?.offset ?? 0)
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -221,12 +235,12 @@ export class FundRepository implements IFund {
    * @date 2026-09-15
    */
   async findAllByBankId(bankId: EntityId): Promise<Fund[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(fund)
       .where(eq(fund.bankId, bankId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -252,13 +266,15 @@ export class FundRepository implements IFund {
    *
    * @date 2026-09-15
    */
-  async findAllByBenchmarkId(benchmarkId: EntityId): Promise<Fund[]> {
-    const rows = await this.db
+  async findAllByBenchmarkId(
+    benchmarkId: EntityId
+  ): Promise<Fund[]> {
+    const ROWS = await this.db
       .select()
       .from(fund)
       .where(eq(fund.benchmarkId, benchmarkId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -284,13 +300,15 @@ export class FundRepository implements IFund {
    *
    * @date 2026-09-15
    */
-  async findAllByCategoryId(categoryId: EntityId): Promise<Fund[]> {
-    const rows = await this.db
+  async findAllByCategoryId(
+    categoryId: EntityId
+  ): Promise<Fund[]> {
+    const ROWS = await this.db
       .select()
       .from(fund)
       .where(eq(fund.categoryId, categoryId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -318,25 +336,27 @@ export class FundRepository implements IFund {
    */
   async save(persisted: Fund): Promise<Fund> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(fund)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(fund.id, persisted.id))
         .returning()
 
-      if (!row) {
-        throw new NotFoundError(`Fund with id ${persisted.id} was not found.`)
+      if (!ROW) {
+        throw new NotFoundError(
+          `Fund with id ${persisted.id} was not found.`
+        )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(fund)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

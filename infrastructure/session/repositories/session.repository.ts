@@ -1,10 +1,17 @@
 import { eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Session } from "@domain/session/entities/session.entity"
 import type { ISession } from "@domain/session/interfaces/session.interface"
 import { EntityId } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/session.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/session.mapper"
 import { session } from "@db-schemas/session.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -81,13 +88,13 @@ export class SessionRepository implements ISession {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Session | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(session)
       .where(eq(session.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -113,13 +120,13 @@ export class SessionRepository implements ISession {
    * @date 2026-09-15
    */
   async findByToken(token: string): Promise<Session | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(session)
       .where(eq(session.token, token))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -145,12 +152,12 @@ export class SessionRepository implements ISession {
    * @date 2026-09-15
    */
   async findAllByUserId(userId: EntityId): Promise<Session[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(session)
       .where(eq(session.userId, userId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -177,17 +184,19 @@ export class SessionRepository implements ISession {
    *
    * @date 2026-09-15
    */
-  async findAllByUserIds(userIds: EntityId[]): Promise<Session[]> {
+  async findAllByUserIds(
+    userIds: EntityId[]
+  ): Promise<Session[]> {
     if (userIds.length === 0) {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(session)
       .where(inArray(session.userId, userIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -215,27 +224,27 @@ export class SessionRepository implements ISession {
    */
   async save(persisted: Session): Promise<Session> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(session)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(session.id, persisted.id))
         .returning()
 
-      if (!row) {
+      if (!ROW) {
         throw new NotFoundError(
           `Session with id ${persisted.id} was not found.`
         )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(session)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

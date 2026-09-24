@@ -20,13 +20,13 @@ import { norm } from "@db-schemas/norm.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const NORM = toDomain(ROW);
+ * const NORM = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof norm.$inferSelect): Norm {
+export function ToDomain(row: typeof norm.$inferSelect): Norm {
   return Norm.create(
     {
       articleNumber: row.articleNumber,
@@ -34,7 +34,9 @@ export function toDomain(row: typeof norm.$inferSelect): Norm {
       categoryId: EntityId.create(row.categoryId),
       minAllocation: SignedPercentage.create(row.minAllocation),
       maxAllocation: SignedPercentage.create(row.maxAllocation),
-      targetAllocation: SignedPercentage.create(row.targetAllocation),
+      targetAllocation: SignedPercentage.create(
+        row.targetAllocation
+      ),
       version: row.version,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
@@ -61,13 +63,15 @@ export function toDomain(row: typeof norm.$inferSelect): Norm {
  * @returns Row insert values.
  *
  * @example
- * const NORM = toInsert(NORM);
+ * const NORM = ToInsert(NORM);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: Norm): typeof norm.$inferInsert {
+export function ToInsert(
+  entity: Norm
+): typeof norm.$inferInsert {
   return {
     articleNumber: entity.articleNumber,
     name: entity.name,
@@ -100,13 +104,15 @@ export function toInsert(entity: Norm): typeof norm.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const NORM = toUpdate(NORM);
+ * const NORM = ToUpdate(NORM);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(entity: Norm): Partial<typeof norm.$inferInsert> {
+export function ToUpdate(
+  entity: Norm
+): Partial<typeof norm.$inferInsert> {
   return {
     articleNumber: entity.articleNumber,
     name: entity.name,

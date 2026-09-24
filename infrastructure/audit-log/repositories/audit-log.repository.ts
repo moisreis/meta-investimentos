@@ -1,10 +1,13 @@
 import { and, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { AuditLog } from "@domain/audit-log/entities/audit-log.entity"
 import type { IAuditLog } from "@domain/audit-log/interfaces/audit-log.interface"
 import { EntityId } from "@/value-objects"
-import { toDomain, toInsert } from "../mappers/audit-log.mapper"
+import { ToDomain, ToInsert } from "../mappers/audit-log.mapper"
 import { auditLog } from "@db-schemas/audit-log.schema"
 
 export type DbClient = PgAsyncDatabase<PgQueryResultHKT>
@@ -80,13 +83,13 @@ export class AuditLogRepository implements IAuditLog {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<AuditLog | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(auditLog)
       .where(eq(auditLog.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -113,12 +116,12 @@ export class AuditLogRepository implements IAuditLog {
    * @date 2026-09-15
    */
   async findAllByEntity(entity: string): Promise<AuditLog[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(auditLog)
       .where(eq(auditLog.entity, entity))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -149,12 +152,17 @@ export class AuditLogRepository implements IAuditLog {
     entity: string,
     entityId: EntityId
   ): Promise<AuditLog[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(auditLog)
-      .where(and(eq(auditLog.entity, entity), eq(auditLog.entityId, entityId)))
+      .where(
+        and(
+          eq(auditLog.entity, entity),
+          eq(auditLog.entityId, entityId)
+        )
+      )
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -190,14 +198,17 @@ export class AuditLogRepository implements IAuditLog {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(auditLog)
       .where(
-        and(eq(auditLog.entity, entity), inArray(auditLog.entityId, entityIds))
+        and(
+          eq(auditLog.entity, entity),
+          inArray(auditLog.entityId, entityIds)
+        )
       )
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -224,12 +235,12 @@ export class AuditLogRepository implements IAuditLog {
    * @date 2026-09-15
    */
   async findAllByUserId(userId: EntityId): Promise<AuditLog[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(auditLog)
       .where(eq(auditLog.userId, userId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -256,17 +267,19 @@ export class AuditLogRepository implements IAuditLog {
    *
    * @date 2026-09-15
    */
-  async findAllByUserIds(userIds: EntityId[]): Promise<AuditLog[]> {
+  async findAllByUserIds(
+    userIds: EntityId[]
+  ): Promise<AuditLog[]> {
     if (userIds.length === 0) {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(auditLog)
       .where(inArray(auditLog.userId, userIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -293,11 +306,11 @@ export class AuditLogRepository implements IAuditLog {
    * @date 2026-09-15
    */
   async save(persisted: AuditLog): Promise<AuditLog> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(auditLog)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 }

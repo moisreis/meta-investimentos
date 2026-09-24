@@ -21,13 +21,13 @@ import { benchmarkHistory } from "@db-schemas/benchmark-history.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const RECORD = toDomain(ROW);
+ * const RECORD = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(
+export function ToDomain(
   row: typeof benchmarkHistory.$inferSelect
 ): BenchmarkHistory {
   return BenchmarkHistory.create(
@@ -59,13 +59,13 @@ export function toDomain(
  * @returns Row insert values.
  *
  * @example
- * const RECORD = toInsert(RECORD);
+ * const RECORD = ToInsert(RECORD);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(
+export function ToInsert(
   entity: BenchmarkHistory
 ): typeof benchmarkHistory.$inferInsert {
   return {
@@ -92,13 +92,13 @@ export function toInsert(
  * @returns Row update values.
  *
  * @example
- * const RECORD = toUpdate(RECORD);
+ * const RECORD = ToUpdate(RECORD);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: BenchmarkHistory
 ): Partial<typeof benchmarkHistory.$inferInsert> {
   return {

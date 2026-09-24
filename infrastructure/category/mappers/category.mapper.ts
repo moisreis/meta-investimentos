@@ -19,13 +19,15 @@ import { category } from "@db-schemas/category.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const CAT = toDomain(ROW);
+ * const CAT = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof category.$inferSelect): Category {
+export function ToDomain(
+  row: typeof category.$inferSelect
+): Category {
   return Category.create(
     {
       name: row.name,
@@ -54,13 +56,15 @@ export function toDomain(row: typeof category.$inferSelect): Category {
  * @returns Row insert values.
  *
  * @example
- * const CAT = toInsert(CAT);
+ * const CAT = ToInsert(CAT);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: Category): typeof category.$inferInsert {
+export function ToInsert(
+  entity: Category
+): typeof category.$inferInsert {
   return {
     name: entity.name,
     createdAt: entity.createdAt,
@@ -85,13 +89,13 @@ export function toInsert(entity: Category): typeof category.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const CAT = toUpdate(CAT);
+ * const CAT = ToUpdate(CAT);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: Category
 ): Partial<typeof category.$inferInsert> {
   return {

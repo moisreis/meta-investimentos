@@ -1,10 +1,17 @@
 import { asc, desc, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Benchmark } from "@domain/benchmark/entities/benchmark.entity"
 import type { IBenchmark } from "@domain/benchmark/interfaces/benchmark.interface"
 import type { EntityId } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/benchmark.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/benchmark.mapper"
 import { benchmark } from "@db-schemas/benchmark.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -80,13 +87,13 @@ export class BenchmarkRepository implements IBenchmark {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Benchmark | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(benchmark)
       .where(eq(benchmark.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -119,14 +126,14 @@ export class BenchmarkRepository implements IBenchmark {
     limit?: number
     offset?: number
   }): Promise<Benchmark[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(benchmark)
       .orderBy(asc(benchmark.name))
       .limit(options?.limit ?? 100)
       .offset(options?.offset ?? 0)
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -158,12 +165,12 @@ export class BenchmarkRepository implements IBenchmark {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(benchmark)
       .where(inArray(benchmark.id, ids))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -191,15 +198,17 @@ export class BenchmarkRepository implements IBenchmark {
    *
    * @date 2026-09-15
    */
-  async findByAcronym(acronym: string): Promise<Benchmark | null> {
-    const [row] = await this.db
+  async findByAcronym(
+    acronym: string
+  ): Promise<Benchmark | null> {
+    const [ROW] = await this.db
       .select()
       .from(benchmark)
       .where(eq(benchmark.acronym, acronym))
       .orderBy(desc(benchmark.createdAt))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -227,27 +236,27 @@ export class BenchmarkRepository implements IBenchmark {
    */
   async save(persisted: Benchmark): Promise<Benchmark> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(benchmark)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(benchmark.id, persisted.id))
         .returning()
 
-      if (!row) {
+      if (!ROW) {
         throw new NotFoundError(
           `Benchmark with id ${persisted.id} was not found.`
         )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(benchmark)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

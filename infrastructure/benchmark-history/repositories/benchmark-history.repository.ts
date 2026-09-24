@@ -1,13 +1,16 @@
 import { and, asc, eq, gte, inArray, lte } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { BenchmarkHistory } from "@domain/benchmark-history/entities/benchmark-history.entity"
 import type { IBenchmarkHistory } from "@domain/benchmark-history/interfaces/benchmark-history.interface"
 import { EntityId, SignedPercentage } from "@/value-objects"
 import {
-  toDomain,
-  toInsert,
-  toUpdate,
+  ToDomain,
+  ToInsert,
+  ToUpdate,
 } from "../mappers/benchmark-history.mapper"
 import { benchmarkHistory } from "@db-schemas/benchmark-history.schema"
 import { NotFoundError } from "@errors/not-found.error"
@@ -85,14 +88,16 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    *
    * @date 2026-09-15
    */
-  async findById(id: EntityId): Promise<BenchmarkHistory | null> {
-    const [row] = await this.db
+  async findById(
+    id: EntityId
+  ): Promise<BenchmarkHistory | null> {
+    const [ROW] = await this.db
       .select()
       .from(benchmarkHistory)
       .where(eq(benchmarkHistory.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -122,12 +127,12 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
   async findAllByBenchmarkId(
     benchmarkId: EntityId
   ): Promise<BenchmarkHistory[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(benchmarkHistory)
       .where(eq(benchmarkHistory.benchmarkId, benchmarkId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -162,12 +167,12 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(benchmarkHistory)
       .where(inArray(benchmarkHistory.benchmarkId, benchmarkIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -209,7 +214,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(benchmarkHistory)
       .where(
@@ -219,9 +224,12 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
           lte(benchmarkHistory.date, endDate)
         )
       )
-      .orderBy(asc(benchmarkHistory.date), asc(benchmarkHistory.createdAt))
+      .orderBy(
+        asc(benchmarkHistory.date),
+        asc(benchmarkHistory.createdAt)
+      )
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -253,7 +261,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
     benchmarkId: EntityId,
     date: Date
   ): Promise<BenchmarkHistory | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(benchmarkHistory)
       .where(
@@ -264,7 +272,7 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
       )
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -290,29 +298,31 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    *
    * @date 2026-09-15
    */
-  async save(persisted: BenchmarkHistory): Promise<BenchmarkHistory> {
+  async save(
+    persisted: BenchmarkHistory
+  ): Promise<BenchmarkHistory> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(benchmarkHistory)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(benchmarkHistory.id, persisted.id))
         .returning()
 
-      if (!row) {
+      if (!ROW) {
         throw new NotFoundError(
           `BenchmarkHistory with id ${persisted.id} was not found.`
         )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(benchmarkHistory)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**
@@ -336,6 +346,8 @@ export class BenchmarkHistoryRepository implements IBenchmarkHistory {
    * @date 2026-09-15
    */
   async delete(id: EntityId): Promise<void> {
-    await this.db.delete(benchmarkHistory).where(eq(benchmarkHistory.id, id))
+    await this.db
+      .delete(benchmarkHistory)
+      .where(eq(benchmarkHistory.id, id))
   }
 }

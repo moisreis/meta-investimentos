@@ -1,10 +1,17 @@
 import { and, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Account } from "@domain/account/entities/account.entity"
 import type { IAccount } from "@domain/account/interfaces/account.interface"
 import { EntityId } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/account.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/account.mapper"
 import { account } from "@db-schemas/account.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -81,13 +88,13 @@ export class AccountRepository implements IAccount {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Account | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(account)
       .where(eq(account.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -119,7 +126,7 @@ export class AccountRepository implements IAccount {
     providerId: string,
     accountId: string
   ): Promise<Account | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(account)
       .where(
@@ -130,7 +137,7 @@ export class AccountRepository implements IAccount {
       )
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -157,12 +164,12 @@ export class AccountRepository implements IAccount {
    * @date 2026-09-15
    */
   async findAllByUserId(userId: EntityId): Promise<Account[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(account)
       .where(eq(account.userId, userId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -189,17 +196,19 @@ export class AccountRepository implements IAccount {
    *
    * @date 2026-09-15
    */
-  async findAllByUserIds(userIds: EntityId[]): Promise<Account[]> {
+  async findAllByUserIds(
+    userIds: EntityId[]
+  ): Promise<Account[]> {
     if (userIds.length === 0) {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(account)
       .where(inArray(account.userId, userIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -227,27 +236,27 @@ export class AccountRepository implements IAccount {
    */
   async save(persisted: Account): Promise<Account> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(account)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(account.id, persisted.id))
         .returning()
 
-      if (!row) {
+      if (!ROW) {
         throw new NotFoundError(
           `Account with id ${persisted.id} was not found.`
         )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(account)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

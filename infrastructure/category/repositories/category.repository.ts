@@ -1,10 +1,17 @@
 import { asc, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Category } from "@domain/category/entities/category.entity"
 import type { ICategory } from "@domain/category/interfaces/category.interface"
 import type { EntityId } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/category.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/category.mapper"
 import { category } from "@db-schemas/category.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -81,13 +88,13 @@ export class CategoryRepository implements ICategory {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Category | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(category)
       .where(eq(category.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -114,13 +121,13 @@ export class CategoryRepository implements ICategory {
    * @date 2026-09-15
    */
   async findByName(name: string): Promise<Category | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(category)
       .where(eq(category.name, name))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -153,14 +160,14 @@ export class CategoryRepository implements ICategory {
     limit?: number
     offset?: number
   }): Promise<Category[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(category)
       .orderBy(asc(category.name))
       .limit(options?.limit ?? 100)
       .offset(options?.offset ?? 0)
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -192,12 +199,12 @@ export class CategoryRepository implements ICategory {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(category)
       .where(inArray(category.id, ids))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -225,27 +232,27 @@ export class CategoryRepository implements ICategory {
    */
   async save(persisted: Category): Promise<Category> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(category)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(category.id, persisted.id))
         .returning()
 
-      if (!row) {
+      if (!ROW) {
         throw new NotFoundError(
           `Category with id ${persisted.id} was not found.`
         )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(category)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

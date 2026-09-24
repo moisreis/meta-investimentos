@@ -1,10 +1,17 @@
 import { eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Verification } from "@domain/verification/entities/verification.entity"
 import type { IVerification } from "@domain/verification/interfaces/verification.interface"
 import type { EntityId } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/verification.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/verification.mapper"
 import { verification } from "@db-schemas/verification.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -82,13 +89,13 @@ export class VerificationRepository implements IVerification {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Verification | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(verification)
       .where(eq(verification.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -114,13 +121,15 @@ export class VerificationRepository implements IVerification {
    *
    * @date 2026-09-15
    */
-  async findAllByIdentifier(identifier: string): Promise<Verification[]> {
-    const rows = await this.db
+  async findAllByIdentifier(
+    identifier: string
+  ): Promise<Verification[]> {
+    const ROWS = await this.db
       .select()
       .from(verification)
       .where(eq(verification.identifier, identifier))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -147,17 +156,19 @@ export class VerificationRepository implements IVerification {
    *
    * @date 2026-09-15
    */
-  async findAllByIdentifiers(identifiers: string[]): Promise<Verification[]> {
+  async findAllByIdentifiers(
+    identifiers: string[]
+  ): Promise<Verification[]> {
     if (identifiers.length === 0) {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(verification)
       .where(inArray(verification.identifier, identifiers))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -185,27 +196,27 @@ export class VerificationRepository implements IVerification {
    */
   async save(persisted: Verification): Promise<Verification> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(verification)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(verification.id, persisted.id))
         .returning()
 
-      if (!row) {
+      if (!ROW) {
         throw new NotFoundError(
           `Verification with id ${persisted.id} was not found.`
         )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(verification)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**
@@ -229,6 +240,8 @@ export class VerificationRepository implements IVerification {
    * @date 2026-09-15
    */
   async delete(id: EntityId): Promise<void> {
-    await this.db.delete(verification).where(eq(verification.id, id))
+    await this.db
+      .delete(verification)
+      .where(eq(verification.id, id))
   }
 }

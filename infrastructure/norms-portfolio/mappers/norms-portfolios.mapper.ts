@@ -21,13 +21,13 @@ import { normsPortfolios } from "@db-schemas/norms-portfolios.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const REL = toDomain(ROW);
+ * const REL = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(
+export function ToDomain(
   row: typeof normsPortfolios.$inferSelect
 ): NormsPortfolios {
   return NormsPortfolios.create({
@@ -35,7 +35,9 @@ export function toDomain(
     portfolioId: EntityId.create(row.portfolioId),
     minAllocation: SignedPercentage.create(row.minAllocation),
     maxAllocation: SignedPercentage.create(row.maxAllocation),
-    targetAllocation: SignedPercentage.create(row.targetAllocation),
+    targetAllocation: SignedPercentage.create(
+      row.targetAllocation
+    ),
     version: row.version,
     createdAt: row.createdAt,
   })
@@ -59,13 +61,13 @@ export function toDomain(
  * @returns Row insert values.
  *
  * @example
- * const REL = toInsert(REL);
+ * const REL = ToInsert(REL);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(
+export function ToInsert(
   entity: NormsPortfolios
 ): typeof normsPortfolios.$inferInsert {
   return {

@@ -22,13 +22,13 @@ import { transactionAllocation } from "@db-schemas/transaction-allocation.schema
  * @returns The hydrated entity.
  *
  * @example
- * const ALLOC = toDomain(ROW);
+ * const ALLOC = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(
+export function ToDomain(
   row: typeof transactionAllocation.$inferSelect
 ): TransactionAllocation {
   return TransactionAllocation.create(
@@ -62,13 +62,13 @@ export function toDomain(
  * @returns Row insert values.
  *
  * @example
- * const ALLOC = toInsert(ALLOC);
+ * const ALLOC = ToInsert(ALLOC);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(
+export function ToInsert(
   entity: TransactionAllocation
 ): typeof transactionAllocation.$inferInsert {
   return {
@@ -101,13 +101,13 @@ export function toInsert(
  * @returns Row update values.
  *
  * @example
- * const ALLOC = toUpdate(ALLOC);
+ * const ALLOC = ToUpdate(ALLOC);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: TransactionAllocation
 ): Partial<typeof transactionAllocation.$inferInsert> {
   return {

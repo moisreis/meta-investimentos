@@ -1,5 +1,8 @@
 import { and, desc, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { PortfolioPerformance } from "@domain/portfolio-performance/entities/portfolio-performance.entity"
 import type { IPortfolioPerformance } from "@domain/portfolio-performance/interfaces/portfolio-performance.interface"
@@ -11,9 +14,9 @@ import {
   SignedPercentage,
 } from "@/value-objects"
 import {
-  toDomain,
-  toInsert,
-  toUpdate,
+  ToDomain,
+  ToInsert,
+  ToUpdate,
 } from "../mappers/portfolio-performance.mapper"
 import { portfolioPerformance } from "@db-schemas/portfolio-performance.schema"
 import { NotFoundError } from "@errors/not-found.error"
@@ -99,14 +102,16 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    *
    * @date 2026-09-15
    */
-  async findById(id: EntityId): Promise<PortfolioPerformance | null> {
-    const [row] = await this.db
+  async findById(
+    id: EntityId
+  ): Promise<PortfolioPerformance | null> {
+    const [ROW] = await this.db
       .select()
       .from(portfolioPerformance)
       .where(eq(portfolioPerformance.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -135,12 +140,12 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
   async findAllByPortfolioId(
     portfolioId: EntityId
   ): Promise<PortfolioPerformance[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(portfolioPerformance)
       .where(eq(portfolioPerformance.portfolioId, portfolioId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -174,12 +179,14 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(portfolioPerformance)
-      .where(inArray(portfolioPerformance.portfolioId, portfolioIds))
+      .where(
+        inArray(portfolioPerformance.portfolioId, portfolioIds)
+      )
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -210,7 +217,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
     portfolioId: EntityId,
     date: Date
   ): Promise<PortfolioPerformance | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(portfolioPerformance)
       .where(
@@ -221,7 +228,7 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
       )
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -251,14 +258,14 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
   async findLatestByPortfolioId(
     portfolioId: EntityId
   ): Promise<PortfolioPerformance | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(portfolioPerformance)
       .where(eq(portfolioPerformance.portfolioId, portfolioId))
       .orderBy(desc(portfolioPerformance.date))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -293,16 +300,18 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .selectDistinctOn([portfolioPerformance.portfolioId])
       .from(portfolioPerformance)
-      .where(inArray(portfolioPerformance.portfolioId, portfolioIds))
+      .where(
+        inArray(portfolioPerformance.portfolioId, portfolioIds)
+      )
       .orderBy(
         portfolioPerformance.portfolioId,
         desc(portfolioPerformance.date)
       )
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -329,29 +338,31 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    *
    * @date 2026-09-15
    */
-  async save(persisted: PortfolioPerformance): Promise<PortfolioPerformance> {
+  async save(
+    persisted: PortfolioPerformance
+  ): Promise<PortfolioPerformance> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(portfolioPerformance)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(portfolioPerformance.id, persisted.id))
         .returning()
 
-      if (!row) {
+      if (!ROW) {
         throw new NotFoundError(
           `PortfolioPerformance with id ${persisted.id} was not found.`
         )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(portfolioPerformance)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

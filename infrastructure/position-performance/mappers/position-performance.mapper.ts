@@ -28,13 +28,13 @@ import { positionPerformance } from "@db-schemas/position-performance.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const SNAPSHOT = toDomain(ROW);
+ * const SNAPSHOT = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(
+export function ToDomain(
   row: typeof positionPerformance.$inferSelect
 ): PositionPerformance {
   return PositionPerformance.create(
@@ -43,7 +43,9 @@ export function toDomain(
       date: row.date,
       quotasHeld: QuotaQuantity.create(row.quotasHeld),
       patrimony: PositiveMoney.create(row.patrimony),
-      applicationTotal: PositiveMoney.create(row.applicationTotal),
+      applicationTotal: PositiveMoney.create(
+        row.applicationTotal
+      ),
       redemptionTotal: PositiveMoney.create(row.redemptionTotal),
       cashFlowNet: SignedMoney.create(row.cashFlowNet),
       earnings: SignedMoney.create(row.earnings),
@@ -83,13 +85,13 @@ export function toDomain(
  * @returns Row insert values.
  *
  * @example
- * const SNAPSHOT = toInsert(SNAPSHOT);
+ * const SNAPSHOT = ToInsert(SNAPSHOT);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(
+export function ToInsert(
   entity: PositionPerformance
 ): typeof positionPerformance.$inferInsert {
   return {
@@ -102,9 +104,11 @@ export function toInsert(
     cashFlowNet: entity.cashFlowNet.value.toString(),
     earnings: entity.earnings.value.toString(),
     returnDaily: entity.returnDaily.value.toString(),
-    returnMonthly: entity.returnMonthly?.value.toString() ?? null,
+    returnMonthly:
+      entity.returnMonthly?.value.toString() ?? null,
     returnYearly: entity.returnYearly?.value.toString() ?? null,
-    returnLast12m: entity.returnLast12m?.value.toString() ?? null,
+    returnLast12m:
+      entity.returnLast12m?.value.toString() ?? null,
     allocation: entity.allocation.value.toString(),
     createdAt: entity.createdAt,
   }
@@ -128,13 +132,13 @@ export function toInsert(
  * @returns Row update values.
  *
  * @example
- * const SNAPSHOT = toUpdate(SNAPSHOT);
+ * const SNAPSHOT = ToUpdate(SNAPSHOT);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: PositionPerformance
 ): Partial<typeof positionPerformance.$inferInsert> {
   return {
@@ -147,9 +151,11 @@ export function toUpdate(
     cashFlowNet: entity.cashFlowNet.value.toString(),
     earnings: entity.earnings.value.toString(),
     returnDaily: entity.returnDaily.value.toString(),
-    returnMonthly: entity.returnMonthly?.value.toString() ?? null,
+    returnMonthly:
+      entity.returnMonthly?.value.toString() ?? null,
     returnYearly: entity.returnYearly?.value.toString() ?? null,
-    returnLast12m: entity.returnLast12m?.value.toString() ?? null,
+    returnLast12m:
+      entity.returnLast12m?.value.toString() ?? null,
     allocation: entity.allocation.value.toString(),
   }
 }

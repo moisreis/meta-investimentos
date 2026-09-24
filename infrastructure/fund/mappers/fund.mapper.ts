@@ -1,5 +1,9 @@
 import { Fund } from "@domain/fund/entities/fund.entity"
-import { CNPJ, EntityId, SignedPercentage } from "@/value-objects"
+import {
+  CNPJ,
+  EntityId,
+  SignedPercentage,
+} from "@/value-objects"
 import { fund } from "@db-schemas/fund.schema"
 
 /**
@@ -20,13 +24,13 @@ import { fund } from "@db-schemas/fund.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const FUND = toDomain(ROW);
+ * const FUND = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof fund.$inferSelect): Fund {
+export function ToDomain(row: typeof fund.$inferSelect): Fund {
   return Fund.create(
     {
       cnpj: CNPJ.create(row.cnpj),
@@ -38,8 +42,12 @@ export function toDomain(row: typeof fund.$inferSelect): Fund {
         ? SignedPercentage.create(row.performanceFee)
         : null,
       bankId: EntityId.create(row.bankId),
-      benchmarkId: row.benchmarkId ? EntityId.create(row.benchmarkId) : null,
-      categoryId: row.categoryId ? EntityId.create(row.categoryId) : null,
+      benchmarkId: row.benchmarkId
+        ? EntityId.create(row.benchmarkId)
+        : null,
+      categoryId: row.categoryId
+        ? EntityId.create(row.categoryId)
+        : null,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     },
@@ -65,18 +73,22 @@ export function toDomain(row: typeof fund.$inferSelect): Fund {
  * @returns Row insert values.
  *
  * @example
- * const FUND = toInsert(FUND);
+ * const FUND = ToInsert(FUND);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: Fund): typeof fund.$inferInsert {
+export function ToInsert(
+  entity: Fund
+): typeof fund.$inferInsert {
   return {
     cnpj: entity.cnpj.value,
     name: entity.name,
-    administrationFee: entity.administrationFee?.value.toString() ?? null,
-    performanceFee: entity.performanceFee?.value.toString() ?? null,
+    administrationFee:
+      entity.administrationFee?.value.toString() ?? null,
+    performanceFee:
+      entity.performanceFee?.value.toString() ?? null,
     bankId: entity.bankId,
     benchmarkId: entity.benchmarkId,
     categoryId: entity.categoryId,
@@ -102,18 +114,22 @@ export function toInsert(entity: Fund): typeof fund.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const FUND = toUpdate(FUND);
+ * const FUND = ToUpdate(FUND);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(entity: Fund): Partial<typeof fund.$inferInsert> {
+export function ToUpdate(
+  entity: Fund
+): Partial<typeof fund.$inferInsert> {
   return {
     cnpj: entity.cnpj.value,
     name: entity.name,
-    administrationFee: entity.administrationFee?.value.toString() ?? null,
-    performanceFee: entity.performanceFee?.value.toString() ?? null,
+    administrationFee:
+      entity.administrationFee?.value.toString() ?? null,
+    performanceFee:
+      entity.performanceFee?.value.toString() ?? null,
     bankId: entity.bankId,
     benchmarkId: entity.benchmarkId,
     categoryId: entity.categoryId,

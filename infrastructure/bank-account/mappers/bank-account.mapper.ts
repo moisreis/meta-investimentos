@@ -21,13 +21,15 @@ import { bankAccount } from "@db-schemas/bank-account.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const ACCOUNT = toDomain(ROW);
+ * const ACCOUNT = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof bankAccount.$inferSelect): BankAccount {
+export function ToDomain(
+  row: typeof bankAccount.$inferSelect
+): BankAccount {
   return BankAccount.create(
     {
       portfolioId: EntityId.create(row.portfolioId),
@@ -59,13 +61,15 @@ export function toDomain(row: typeof bankAccount.$inferSelect): BankAccount {
  * @returns Row insert values.
  *
  * @example
- * const ACCOUNT = toInsert(ACCOUNT);
+ * const ACCOUNT = ToInsert(ACCOUNT);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: BankAccount): typeof bankAccount.$inferInsert {
+export function ToInsert(
+  entity: BankAccount
+): typeof bankAccount.$inferInsert {
   return {
     portfolioId: entity.portfolioId,
     bankId: entity.bankId,
@@ -93,13 +97,13 @@ export function toInsert(entity: BankAccount): typeof bankAccount.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const ACCOUNT = toUpdate(ACCOUNT);
+ * const ACCOUNT = ToUpdate(ACCOUNT);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: BankAccount
 ): Partial<typeof bankAccount.$inferInsert> {
   return {

@@ -20,13 +20,13 @@ import { user } from "@db-schemas/user.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const USER = toDomain(ROW);
+ * const USER = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(row: typeof user.$inferSelect): User {
+export function ToDomain(row: typeof user.$inferSelect): User {
   return User.create(
     {
       name: row.name,
@@ -62,13 +62,15 @@ export function toDomain(row: typeof user.$inferSelect): User {
  * @returns Row insert values.
  *
  * @example
- * const USER = toInsert(USER);
+ * const USER = ToInsert(USER);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(entity: User): typeof user.$inferInsert {
+export function ToInsert(
+  entity: User
+): typeof user.$inferInsert {
   return {
     name: entity.name,
     email: entity.email,
@@ -101,13 +103,15 @@ export function toInsert(entity: User): typeof user.$inferInsert {
  * @returns Row update values.
  *
  * @example
- * const USER = toUpdate(USER);
+ * const USER = ToUpdate(USER);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(entity: User): Partial<typeof user.$inferInsert> {
+export function ToUpdate(
+  entity: User
+): Partial<typeof user.$inferInsert> {
   return {
     name: entity.name,
     email: entity.email,

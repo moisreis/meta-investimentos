@@ -1,10 +1,16 @@
 import { and, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { NormsPortfolios } from "@domain/norms-portfolio/entities/norms-portfolios.entity"
 import type { INormsPortfolios } from "@domain/norms-portfolio/interfaces/norms-portfolios.interface"
 import { EntityId, SignedPercentage } from "@/value-objects"
-import { toDomain, toInsert } from "../mappers/norms-portfolios.mapper"
+import {
+  ToDomain,
+  ToInsert,
+} from "../mappers/norms-portfolios.mapper"
 import { normsPortfolios } from "@db-schemas/norms-portfolios.schema"
 
 export type DbClient = PgAsyncDatabase<PgQueryResultHKT>
@@ -94,7 +100,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
     normId: EntityId,
     portfolioId: EntityId
   ): Promise<NormsPortfolios | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(normsPortfolios)
       .where(
@@ -105,7 +111,7 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
       )
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -134,12 +140,12 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
   async findAllByPortfolioId(
     portfolioId: EntityId
   ): Promise<NormsPortfolios[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(normsPortfolios)
       .where(eq(normsPortfolios.portfolioId, portfolioId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -173,12 +179,12 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(normsPortfolios)
       .where(inArray(normsPortfolios.portfolioId, portfolioIds))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -204,13 +210,15 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    *
    * @date 2026-09-15
    */
-  async findAllByNormId(normId: EntityId): Promise<NormsPortfolios[]> {
-    const rows = await this.db
+  async findAllByNormId(
+    normId: EntityId
+  ): Promise<NormsPortfolios[]> {
+    const ROWS = await this.db
       .select()
       .from(normsPortfolios)
       .where(eq(normsPortfolios.normId, normId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -238,21 +246,29 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    *
    * @date 2026-09-15
    */
-  async save(persisted: NormsPortfolios): Promise<NormsPortfolios> {
-    const [row] = await this.db
+  async save(
+    persisted: NormsPortfolios
+  ): Promise<NormsPortfolios> {
+    const [ROW] = await this.db
       .insert(normsPortfolios)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .onConflictDoUpdate({
-        target: [normsPortfolios.normId, normsPortfolios.portfolioId],
+        target: [
+          normsPortfolios.normId,
+          normsPortfolios.portfolioId,
+        ],
         set: {
-          minAllocation: persisted.minAllocation.value.toString(),
-          maxAllocation: persisted.maxAllocation.value.toString(),
-          targetAllocation: persisted.targetAllocation.value.toString(),
+          minAllocation:
+            persisted.minAllocation.value.toString(),
+          maxAllocation:
+            persisted.maxAllocation.value.toString(),
+          targetAllocation:
+            persisted.targetAllocation.value.toString(),
         },
       })
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**
@@ -276,7 +292,10 @@ export class NormsPortfoliosRepository implements INormsPortfolios {
    *
    * @date 2026-09-15
    */
-  async delete(normId: EntityId, portfolioId: EntityId): Promise<void> {
+  async delete(
+    normId: EntityId,
+    portfolioId: EntityId
+  ): Promise<void> {
     await this.db
       .delete(normsPortfolios)
       .where(

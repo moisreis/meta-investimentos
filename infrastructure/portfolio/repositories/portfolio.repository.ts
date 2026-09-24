@@ -1,10 +1,17 @@
 import { and, asc, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Portfolio } from "@domain/portfolio/entities/portfolio.entity"
 import type { IPortfolio } from "@domain/portfolio/interfaces/portfolio.interface"
 import { EntityId, SignedPercentage } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/portfolio.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/portfolio.mapper"
 import { portfolio } from "@db-schemas/portfolio.schema"
 import { NotFoundError } from "@errors/not-found.error"
 import { ConcurrencyError } from "@errors/concurrency.error"
@@ -93,13 +100,13 @@ export class PortfolioRepository implements IPortfolio {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Portfolio | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(portfolio)
       .where(eq(portfolio.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -126,12 +133,12 @@ export class PortfolioRepository implements IPortfolio {
    * @date 2026-09-15
    */
   async findAllByUserId(userId: EntityId): Promise<Portfolio[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(portfolio)
       .where(eq(portfolio.userId, userId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -160,14 +167,14 @@ export class PortfolioRepository implements IPortfolio {
     limit?: number
     offset?: number
   }): Promise<Portfolio[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(portfolio)
       .orderBy(asc(portfolio.createdAt))
       .limit(options?.limit ?? 100)
       .offset(options?.offset ?? 0)
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -199,12 +206,12 @@ export class PortfolioRepository implements IPortfolio {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(portfolio)
       .where(inArray(portfolio.id, ids))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -236,9 +243,12 @@ export class PortfolioRepository implements IPortfolio {
    */
   async save(persisted: Portfolio): Promise<Portfolio> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(portfolio)
-        .set({ ...toUpdate(persisted), version: persisted.version + 1 })
+        .set({
+          ...ToUpdate(persisted),
+          version: persisted.version + 1,
+        })
         .where(
           and(
             eq(portfolio.id, persisted.id),
@@ -247,17 +257,17 @@ export class PortfolioRepository implements IPortfolio {
         )
         .returning()
 
-      if (row) {
-        return toDomain(row)
+      if (ROW) {
+        return ToDomain(ROW)
       }
 
-      const [existing] = await this.db
+      const [EXISTING] = await this.db
         .select({ id: portfolio.id })
         .from(portfolio)
         .where(eq(portfolio.id, persisted.id))
         .limit(1)
 
-      if (!existing) {
+      if (!EXISTING) {
         throw new NotFoundError(
           `Portfolio with id ${persisted.id} was not found.`
         )
@@ -268,12 +278,12 @@ export class PortfolioRepository implements IPortfolio {
       )
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(portfolio)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**
@@ -325,6 +335,8 @@ export class PortfolioRepository implements IPortfolio {
       return
     }
 
-    await this.db.delete(portfolio).where(inArray(portfolio.id, ids))
+    await this.db
+      .delete(portfolio)
+      .where(inArray(portfolio.id, ids))
   }
 }

@@ -1,11 +1,31 @@
-import { and, asc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import {
+  and,
+  asc,
+  eq,
+  gte,
+  inArray,
+  isNull,
+  lte,
+  sql,
+} from "drizzle-orm"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Withdrawal } from "@domain/withdrawal/entities/withdrawal.entity"
 import type { IWithdrawal } from "@domain/withdrawal/interfaces/withdrawal.interface"
 import type { WithdrawalTotals } from "@domain/withdrawal/interfaces/withdrawal.interface"
-import { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/withdrawal.mapper"
+import {
+  EntityId,
+  PositiveMoney,
+  QuotaQuantity,
+} from "@/value-objects"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/withdrawal.mapper"
 import { withdrawal } from "@db-schemas/withdrawal.schema"
 import { ConcurrencyError } from "@errors/concurrency.error"
 import { NotFoundError } from "@errors/not-found.error"
@@ -86,13 +106,13 @@ export class WithdrawalRepository implements IWithdrawal {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Withdrawal | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(withdrawal)
       .where(eq(withdrawal.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -118,13 +138,15 @@ export class WithdrawalRepository implements IWithdrawal {
    *
    * @date 2026-09-15
    */
-  async findAllByPositionId(positionId: EntityId): Promise<Withdrawal[]> {
-    const rows = await this.db
+  async findAllByPositionId(
+    positionId: EntityId
+  ): Promise<Withdrawal[]> {
+    const ROWS = await this.db
       .select()
       .from(withdrawal)
       .where(eq(withdrawal.positionId, positionId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -158,7 +180,7 @@ export class WithdrawalRepository implements IWithdrawal {
     startDate: Date,
     endDate: Date
   ): Promise<Withdrawal[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(withdrawal)
       .where(
@@ -170,7 +192,7 @@ export class WithdrawalRepository implements IWithdrawal {
       )
       .orderBy(asc(withdrawal.date), asc(withdrawal.createdAt))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -212,7 +234,7 @@ export class WithdrawalRepository implements IWithdrawal {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(withdrawal)
       .where(
@@ -224,7 +246,7 @@ export class WithdrawalRepository implements IWithdrawal {
       )
       .orderBy(asc(withdrawal.date), asc(withdrawal.createdAt))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -263,7 +285,7 @@ export class WithdrawalRepository implements IWithdrawal {
     startDate: Date,
     endDate: Date
   ): Promise<WithdrawalTotals> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select({
         amount: sql<string>`sum(${withdrawal.amount})`,
         quotas: sql<string>`sum(${withdrawal.quotas})`,
@@ -279,8 +301,12 @@ export class WithdrawalRepository implements IWithdrawal {
       )
 
     return {
-      amount: row.amount ? PositiveMoney.create(row.amount) : null,
-      quotas: row.quotas ? QuotaQuantity.create(row.quotas) : null,
+      amount: ROW.amount
+        ? PositiveMoney.create(ROW.amount)
+        : null,
+      quotas: ROW.quotas
+        ? QuotaQuantity.create(ROW.quotas)
+        : null,
     }
   }
 
@@ -312,9 +338,12 @@ export class WithdrawalRepository implements IWithdrawal {
    */
   async save(persisted: Withdrawal): Promise<Withdrawal> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(withdrawal)
-        .set({ ...toUpdate(persisted), version: persisted.version + 1 })
+        .set({
+          ...ToUpdate(persisted),
+          version: persisted.version + 1,
+        })
         .where(
           and(
             eq(withdrawal.id, persisted.id),
@@ -323,17 +352,17 @@ export class WithdrawalRepository implements IWithdrawal {
         )
         .returning()
 
-      if (row) {
-        return toDomain(row)
+      if (ROW) {
+        return ToDomain(ROW)
       }
 
-      const [existing] = await this.db
+      const [EXISTING] = await this.db
         .select({ id: withdrawal.id })
         .from(withdrawal)
         .where(eq(withdrawal.id, persisted.id))
         .limit(1)
 
-      if (!existing) {
+      if (!EXISTING) {
         throw new NotFoundError(
           `Withdrawal with id ${persisted.id} was not found.`
         )
@@ -344,12 +373,12 @@ export class WithdrawalRepository implements IWithdrawal {
       )
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(withdrawal)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**

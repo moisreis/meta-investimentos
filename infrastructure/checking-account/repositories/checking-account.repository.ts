@@ -1,13 +1,16 @@
 import { and, asc, eq, gte, inArray, lte } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { CheckingAccount } from "@domain/checking-account/entities/checking-account.entity"
 import type { ICheckingAccount } from "@domain/checking-account/interfaces/checking-account.interface"
 import { EntityId, SignedMoney } from "@/value-objects"
 import {
-  toDomain,
-  toInsert,
-  toUpdate,
+  ToDomain,
+  ToInsert,
+  ToUpdate,
 } from "../mappers/checking-account.mapper"
 import { checkingAccount } from "@db-schemas/checking-account.schema"
 import { NotFoundError } from "@errors/not-found.error"
@@ -85,13 +88,13 @@ export class CheckingAccountRepository implements ICheckingAccount {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<CheckingAccount | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(checkingAccount)
       .where(eq(checkingAccount.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -121,12 +124,12 @@ export class CheckingAccountRepository implements ICheckingAccount {
   async findAllByBankAccountId(
     bankAccountId: EntityId
   ): Promise<CheckingAccount[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(checkingAccount)
       .where(eq(checkingAccount.bankAccountId, bankAccountId))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -161,12 +164,14 @@ export class CheckingAccountRepository implements ICheckingAccount {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(checkingAccount)
-      .where(inArray(checkingAccount.bankAccountId, bankAccountIds))
+      .where(
+        inArray(checkingAccount.bankAccountId, bankAccountIds)
+      )
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -206,7 +211,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(checkingAccount)
       .where(
@@ -218,7 +223,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
       )
       .orderBy(asc(checkingAccount.date))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -250,7 +255,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
     bankAccountId: EntityId,
     date: Date
   ): Promise<CheckingAccount | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(checkingAccount)
       .where(
@@ -261,7 +266,7 @@ export class CheckingAccountRepository implements ICheckingAccount {
       )
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -287,29 +292,31 @@ export class CheckingAccountRepository implements ICheckingAccount {
    *
    * @date 2026-09-15
    */
-  async save(persisted: CheckingAccount): Promise<CheckingAccount> {
+  async save(
+    persisted: CheckingAccount
+  ): Promise<CheckingAccount> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(checkingAccount)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(checkingAccount.id, persisted.id))
         .returning()
 
-      if (!row) {
+      if (!ROW) {
         throw new NotFoundError(
           `CheckingAccount with id ${persisted.id} was not found.`
         )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(checkingAccount)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**
@@ -333,6 +340,8 @@ export class CheckingAccountRepository implements ICheckingAccount {
    * @date 2026-09-15
    */
   async delete(id: EntityId): Promise<void> {
-    await this.db.delete(checkingAccount).where(eq(checkingAccount.id, id))
+    await this.db
+      .delete(checkingAccount)
+      .where(eq(checkingAccount.id, id))
   }
 }

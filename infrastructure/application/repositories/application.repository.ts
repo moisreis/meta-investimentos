@@ -1,11 +1,31 @@
-import { and, asc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import {
+  and,
+  asc,
+  eq,
+  gte,
+  inArray,
+  isNull,
+  lte,
+  sql,
+} from "drizzle-orm"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { Application } from "@domain/application/entities/application.entity"
 import type { IApplication } from "@domain/application/interfaces/application.interface"
 import type { ApplicationTotals } from "@domain/application/interfaces/application.interface"
-import { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/application.mapper"
+import {
+  EntityId,
+  PositiveMoney,
+  QuotaQuantity,
+} from "@/value-objects"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/application.mapper"
 import { application } from "@db-schemas/application.schema"
 import { ConcurrencyError } from "@errors/concurrency.error"
 import { NotFoundError } from "@errors/not-found.error"
@@ -83,13 +103,13 @@ export class ApplicationRepository implements IApplication {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<Application | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(application)
       .where(eq(application.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -116,14 +136,16 @@ export class ApplicationRepository implements IApplication {
    *
    * @date 2026-09-15
    */
-  async findAllByPositionId(positionId: EntityId): Promise<Application[]> {
-    const rows = await this.db
+  async findAllByPositionId(
+    positionId: EntityId
+  ): Promise<Application[]> {
+    const ROWS = await this.db
       .select()
       .from(application)
       .where(eq(application.positionId, positionId))
       .orderBy(asc(application.date), asc(application.createdAt))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -157,7 +179,7 @@ export class ApplicationRepository implements IApplication {
     startDate: Date,
     endDate: Date
   ): Promise<Application[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(application)
       .where(
@@ -169,7 +191,7 @@ export class ApplicationRepository implements IApplication {
       )
       .orderBy(asc(application.date), asc(application.createdAt))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -208,7 +230,7 @@ export class ApplicationRepository implements IApplication {
       return []
     }
 
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(application)
       .where(
@@ -220,7 +242,7 @@ export class ApplicationRepository implements IApplication {
       )
       .orderBy(asc(application.date), asc(application.createdAt))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -255,7 +277,7 @@ export class ApplicationRepository implements IApplication {
     startDate: Date,
     endDate: Date
   ): Promise<ApplicationTotals> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select({
         amount: sql<string>`sum(${application.amount})`,
         quotas: sql<string>`sum(${application.quotas})`,
@@ -271,8 +293,12 @@ export class ApplicationRepository implements IApplication {
       )
 
     return {
-      amount: row.amount ? PositiveMoney.create(row.amount) : null,
-      quotas: row.quotas ? QuotaQuantity.create(row.quotas) : null,
+      amount: ROW.amount
+        ? PositiveMoney.create(ROW.amount)
+        : null,
+      quotas: ROW.quotas
+        ? QuotaQuantity.create(ROW.quotas)
+        : null,
     }
   }
 
@@ -304,9 +330,12 @@ export class ApplicationRepository implements IApplication {
    */
   async save(persisted: Application): Promise<Application> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(application)
-        .set({ ...toUpdate(persisted), version: persisted.version + 1 })
+        .set({
+          ...ToUpdate(persisted),
+          version: persisted.version + 1,
+        })
         .where(
           and(
             eq(application.id, persisted.id),
@@ -315,17 +344,17 @@ export class ApplicationRepository implements IApplication {
         )
         .returning()
 
-      if (row) {
-        return toDomain(row)
+      if (ROW) {
+        return ToDomain(ROW)
       }
 
-      const [existing] = await this.db
+      const [EXISTING] = await this.db
         .select({ id: application.id })
         .from(application)
         .where(eq(application.id, persisted.id))
         .limit(1)
 
-      if (!existing) {
+      if (!EXISTING) {
         throw new NotFoundError(
           `Application with id ${persisted.id} was not found.`
         )
@@ -336,12 +365,12 @@ export class ApplicationRepository implements IApplication {
       )
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(application)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**
@@ -365,6 +394,8 @@ export class ApplicationRepository implements IApplication {
    * @date 2026-09-15
    */
   async delete(id: EntityId): Promise<void> {
-    await this.db.delete(application).where(eq(application.id, id))
+    await this.db
+      .delete(application)
+      .where(eq(application.id, id))
   }
 }

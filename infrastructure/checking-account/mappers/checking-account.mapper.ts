@@ -21,13 +21,13 @@ import { checkingAccount } from "@db-schemas/checking-account.schema"
  * @returns The hydrated entity.
  *
  * @example
- * const BALANCE = toDomain(ROW);
+ * const BALANCE = ToDomain(ROW);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toDomain(
+export function ToDomain(
   row: typeof checkingAccount.$inferSelect
 ): CheckingAccount {
   return CheckingAccount.create(
@@ -58,13 +58,13 @@ export function toDomain(
  * @returns Row insert values.
  *
  * @example
- * const BALANCE = toInsert(BALANCE);
+ * const BALANCE = ToInsert(BALANCE);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
-export function toInsert(
+export function ToInsert(
   entity: CheckingAccount
 ): typeof checkingAccount.$inferInsert {
   return {
@@ -80,7 +80,7 @@ export function toInsert(
  *
  * @remarks
  * Schema has no timestamp columns; body is identical
- * to `toInsert`.
+ * to `ToInsert`.
  *
  * @explanation
  * Retained for consistency with the insert/update split
@@ -91,13 +91,13 @@ export function toInsert(
  * @returns Row update values.
  *
  * @example
- * const BALANCE = toUpdate(BALANCE);
+ * const BALANCE = ToUpdate(BALANCE);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-15
  */
-export function toUpdate(
+export function ToUpdate(
   entity: CheckingAccount
 ): Partial<typeof checkingAccount.$inferInsert> {
   return {

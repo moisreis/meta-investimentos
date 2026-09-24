@@ -1,10 +1,17 @@
 import { asc, eq, inArray } from "drizzle-orm"
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
+import type {
+  PgAsyncDatabase,
+  PgQueryResultHKT,
+} from "drizzle-orm/pg-core"
 
 import { User } from "@domain/user/entities/user.entity"
 import type { IUser } from "@domain/user/interfaces/user.interface"
 import { CPF, EntityId } from "@/value-objects"
-import { toDomain, toInsert, toUpdate } from "../mappers/user.mapper"
+import {
+  ToDomain,
+  ToInsert,
+  ToUpdate,
+} from "../mappers/user.mapper"
 import { user } from "@db-schemas/user.schema"
 import { NotFoundError } from "@errors/not-found.error"
 
@@ -82,13 +89,13 @@ export class UserRepository implements IUser {
    * @date 2026-09-15
    */
   async findById(id: EntityId): Promise<User | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(user)
       .where(eq(user.id, id))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -115,13 +122,13 @@ export class UserRepository implements IUser {
    * @date 2026-09-15
    */
   async findByEmail(email: string): Promise<User | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(user)
       .where(eq(user.email, email))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -147,13 +154,13 @@ export class UserRepository implements IUser {
    * @date 2026-09-15
    */
   async findByCpf(cpf: CPF): Promise<User | null> {
-    const [row] = await this.db
+    const [ROW] = await this.db
       .select()
       .from(user)
       .where(eq(user.cpf, cpf.value))
       .limit(1)
 
-    return row ? toDomain(row) : null
+    return ROW ? ToDomain(ROW) : null
   }
 
   /**
@@ -184,9 +191,12 @@ export class UserRepository implements IUser {
       return []
     }
 
-    const rows = await this.db.select().from(user).where(inArray(user.id, ids))
+    const ROWS = await this.db
+      .select()
+      .from(user)
+      .where(inArray(user.id, ids))
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -218,14 +228,14 @@ export class UserRepository implements IUser {
     limit?: number
     offset?: number
   }): Promise<User[]> {
-    const rows = await this.db
+    const ROWS = await this.db
       .select()
       .from(user)
       .orderBy(asc(user.createdAt))
       .limit(options?.limit ?? 100)
       .offset(options?.offset ?? 0)
 
-    return rows.map((row) => toDomain(row))
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -253,25 +263,27 @@ export class UserRepository implements IUser {
    */
   async save(persisted: User): Promise<User> {
     if (persisted.id) {
-      const [row] = await this.db
+      const [ROW] = await this.db
         .update(user)
-        .set(toUpdate(persisted))
+        .set(ToUpdate(persisted))
         .where(eq(user.id, persisted.id))
         .returning()
 
-      if (!row) {
-        throw new NotFoundError(`User with id ${persisted.id} was not found.`)
+      if (!ROW) {
+        throw new NotFoundError(
+          `User with id ${persisted.id} was not found.`
+        )
       }
 
-      return toDomain(row)
+      return ToDomain(ROW)
     }
 
-    const [row] = await this.db
+    const [ROW] = await this.db
       .insert(user)
-      .values(toInsert(persisted))
+      .values(ToInsert(persisted))
       .returning()
 
-    return toDomain(row)
+    return ToDomain(ROW)
   }
 
   /**
