@@ -53,6 +53,38 @@ function translateSignInError(authError: {
 
 /**
  * @summary
+ * Resolves the post-authentication redirect target.
+ *
+ * @remarks
+ * Reads the `redirect` query parameter set by the middleware.
+ * Falls back to the dashboard route (`/`) when missing or invalid.
+ *
+ * @explanation
+ * The middleware appends a `redirect` query parameter to the
+ * sign-in URL when an unauthenticated user hits a protected
+ * route. After a successful sign-in this helper restores the
+ * original destination instead of always landing on the dashboard.
+ *
+ * @returns The redirect target or the dashboard route.
+ *
+ * @example
+ * const TARGET = getRedirectTarget()
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-23
+ */
+function getRedirectTarget(): string {
+  const params = new URLSearchParams(window.location.search)
+  const redirect = params.get("redirect")
+
+  return redirect?.startsWith("/") && !redirect.startsWith("//")
+    ? redirect
+    : "/"
+}
+
+/**
+ * @summary
  * Manages the sign-in form state, validation and submission.
  *
  * @remarks
@@ -60,7 +92,8 @@ function translateSignInError(authError: {
  * Validates with Zod before calling the
  * **Better-Auth** email/password endpoint.
  * Re-validates a field as it changes after an invalid attempt.
- * On success, redirects to the dashboard (`/`).
+ * On success, redirects to the `redirect` query
+ * target or the dashboard (`/`).
  *
  * @explanation
  * Use inside a sign-in form to keep the component presentational.
@@ -137,7 +170,7 @@ function useSignIn() {
         setStatus("error")
       } else {
         setStatus("success")
-        window.location.href = "/"
+        window.location.href = getRedirectTarget()
       }
     } catch {
       setError("Erro inesperado. Tente novamente.")

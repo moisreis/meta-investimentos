@@ -28,7 +28,8 @@ import { SIGN_UP } from "@/presentation/routes/(auth)/settings/labels.settings"
  *
  * @explanation
  * Use as the sign-up component inside AuthLayout.
- * On success, redirects to the dashboard (/).
+ * On success, honors the `redirect` query parameter or
+ * falls back to the dashboard (/).
  *
  * @returns The sign-up form.
  *
