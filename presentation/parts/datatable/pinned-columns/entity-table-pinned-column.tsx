@@ -8,6 +8,7 @@ import { EntityTableCell } from "../rows/entity-table-cell"
 import type {
   EntityCell,
   EntityTable,
+  EntityTableAlign,
 } from "../settings/entity-table-features.settings"
 
 /**
@@ -20,7 +21,7 @@ export interface EntityTablePinnedColumnProps<
   cell: EntityCell<TData>
   side: "start" | "end"
   style: CSSProperties
-  align: "start" | "end"
+  align: EntityTableAlign
   className?: string
 }
 
@@ -58,9 +59,7 @@ function EntityTablePinnedColumn<TData extends RowData>({
       align={align}
       className={cn(
         "z-30 bg-background",
-        side === "start"
-          ? "border-r"
-          : "flex items-center justify-center border-l",
+        side === "start" ? "border-r" : "border-r-0 border-l",
         className
       )}
     />

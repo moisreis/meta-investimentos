@@ -71,7 +71,8 @@ export function CreateEntitySelectColumn<TData extends RowData>(
     id: ENTITY_TABLE_SELECT_COLUMN_ID,
     enableSorting: false,
     enableHiding: false,
-    meta: { pinned: "start" },
+    size: 48,
+    meta: { pinned: "start", align: "center" },
     header: ({ table }) => (
       <EntityTableSelectAllHeader
         checked={table.getIsAllPageRowsSelected()}

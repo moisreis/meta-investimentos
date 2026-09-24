@@ -4,10 +4,14 @@ import type { CSSProperties } from "react"
 import type { RowData } from "@tanstack/react-table"
 import { cn } from "cn"
 
+import { TableCell } from "@/presentation/ui/table"
+
 import type {
   EntityCell,
   EntityTable,
+  EntityTableAlign,
 } from "../settings/entity-table-features.settings"
+import { FormatEntityTableAlignClass } from "../settings/entity-table-labels.settings"
 
 /**
  * Props for the plain entity table data cell.
@@ -16,7 +20,7 @@ export interface EntityTableCellProps<TData extends RowData> {
   table: EntityTable<TData>
   cell: EntityCell<TData>
   style: CSSProperties
-  align: "start" | "end"
+  align: EntityTableAlign
   className?: string
 }
 
@@ -45,16 +49,16 @@ function EntityTableCell<TData extends RowData>({
   className,
 }: EntityTableCellProps<TData>) {
   return (
-    <div
+    <TableCell
       style={style}
       className={cn(
-        "flex h-11 items-center border-r border-b border-border px-3 text-sm font-normal group-data-[state=selected]:bg-muted",
-        align === "end" ? "justify-end" : "justify-start",
+        "h-11 truncate border-r border-b border-border text-sm font-normal",
+        FormatEntityTableAlignClass(align),
         className
       )}
     >
       <table.FlexRender cell={cell} />
-    </div>
+    </TableCell>
   )
 }
 

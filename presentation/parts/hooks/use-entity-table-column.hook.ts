@@ -6,6 +6,7 @@ import type { RowData } from "@tanstack/react-table"
 import type {
   EntityColumn,
   EntityTable,
+  EntityTableAlign,
 } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 
 /**
@@ -13,7 +14,7 @@ import type {
  */
 export interface EntityTableColumnLayout {
   style: CSSProperties
-  align: "start" | "end"
+  align: EntityTableAlign
   pinned: false | "start" | "end"
 }
 

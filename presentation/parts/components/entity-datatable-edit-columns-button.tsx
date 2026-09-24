@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/presentation/ui/dropdown-menu"
 
-export interface EntityDatatableEditColumns {
+export interface EntityDatatableEditColumnsColumn {
   id: string
   getCanHide: () => boolean
   getIsVisible: () => boolean
@@ -18,7 +18,7 @@ export interface EntityDatatableEditColumns {
 }
 
 export interface EntityDatatableEditColumns {
-  getAllColumns: () => EntityDatatableEditColumns[]
+  getAllColumns: () => EntityDatatableEditColumnsColumn[]
 }
 
 /**
@@ -35,7 +35,9 @@ export interface EntityDatatableEditColumns {
  */
 export interface EntityDatatableEditColumnsButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   table?: EntityDatatableEditColumns
-  getColumnLabel?: (column: EntityDatatableEditColumns) => string
+  getColumnLabel?: (
+    column: EntityDatatableEditColumnsColumn
+  ) => string
 }
 
 // ---------------------------------

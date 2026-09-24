@@ -3,9 +3,10 @@
 import type { RowData } from "@tanstack/react-table"
 import { cn } from "cn"
 
+import { TableHeader, TableRow } from "@/presentation/ui/table"
+
 import { EntityTableColumn } from "../columns/entity-table-column"
 import type { EntityTable } from "../settings/entity-table-features.settings"
-import { ENTITY_TABLE_HEADER_BG } from "../settings/entity-table-labels.settings"
 
 /**
  * Props for the sticky entity table header.
@@ -37,15 +38,16 @@ function EntityTableHeader<TData extends RowData>({
   className,
 }: EntityTableHeaderProps<TData>) {
   return (
-    <>
+    <TableHeader
+      className={cn(
+        "sticky top-0 z-40 bg-background",
+        className
+      )}
+    >
       {table.getHeaderGroups().map((headerGroup) => (
-        <div
+        <TableRow
           key={headerGroup.id}
-          className={cn(
-            "sticky top-0 z-40 flex h-fit w-full min-w-max flex-row items-center border-r border-b border-border",
-            ENTITY_TABLE_HEADER_BG,
-            className
-          )}
+          className="hover:bg-transparent"
         >
           {headerGroup.headers.map((header, index) => {
             const nextIsPinnedEnd =
@@ -65,9 +67,9 @@ function EntityTableHeader<TData extends RowData>({
               />
             )
           })}
-        </div>
+        </TableRow>
       ))}
-    </>
+    </TableHeader>
   )
 }
 

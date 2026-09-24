@@ -24,6 +24,8 @@ export interface EntityTableRowModel<TData extends RowData> {
 export interface EntityTableRowsModel<TData extends RowData> {
   empty: boolean
   rows: EntityTableRowModel<TData>[]
+  /** Number of visible leaf columns for the empty row. */
+  columnCount: number
 }
 
 /**
@@ -52,6 +54,7 @@ function useEntityRows<TData extends RowData>(
   return {
     empty: ROWS.length === 0,
     rows: ROW_MODELS,
+    columnCount: table.getAllLeafColumns().length,
   }
 }
 

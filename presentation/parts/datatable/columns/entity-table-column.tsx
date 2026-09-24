@@ -4,6 +4,7 @@ import type { RowData } from "@tanstack/react-table"
 import { cn } from "cn"
 
 import { useEntityTableColumn } from "@/presentation/parts/hooks/use-entity-table-column.hook"
+import { TableHead } from "@/presentation/ui/table"
 
 import { EntityTablePinnedColumn } from "../pinned-columns/entity-table-pinned-column"
 import { EntityTableCell } from "../rows/entity-table-cell"
@@ -12,7 +13,10 @@ import type {
   EntityHeader,
   EntityTable,
 } from "../settings/entity-table-features.settings"
-import { ENTITY_TABLE_HEADER_BG } from "../settings/entity-table-labels.settings"
+import {
+  ENTITY_TABLE_HEADER_BG,
+  FormatEntityTableAlignClass,
+} from "../settings/entity-table-labels.settings"
 
 /**
  * Props for the generic entity table column renderer.
@@ -76,21 +80,21 @@ function EntityTableColumn<TData extends RowData>({
   }
 
   return (
-    <div
+    <TableHead
       style={style}
       className={cn(
-        "flex h-11 items-center border-r border-b border-border px-3 text-xs font-medium text-muted-foreground uppercase",
-        align === "end" ? "justify-end" : "justify-start",
+        "h-11 border-r border-b border-border text-xs font-medium text-muted-foreground uppercase",
+        FormatEntityTableAlignClass(align),
         ENTITY_TABLE_HEADER_BG,
         pinned === "start" && "z-30",
-        pinned === "end" && "z-30 border-l",
+        pinned === "end" && "z-30 border-r-0 border-l",
         className
       )}
     >
       {header!.isPlaceholder ? null : (
         <table.FlexRender header={header!} />
       )}
-    </div>
+    </TableHead>
   )
 }
 

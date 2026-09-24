@@ -27,7 +27,13 @@ export interface EntityDatatableProps<TData extends RowData> {
  * @remarks
  * Composes the sticky header, the body rows and the pagination
  * footer inside a vertical scroll container. Applies the column
- * pinning declared through the column metadata.
+ * pinning declared through the column metadata. The `<table>`
+ * element is rendered directly instead of reusing the `Table`
+ * UI primitive, because that primitive owns its own horizontal
+ * scrollport: nesting it here would make it the vertical scroll
+ * container too, detaching the sticky header from this screen's
+ * scroll area. The structural table primitives (header, body,
+ * rows and cells) are all reused from `presentation/ui/table`.
  *
  * @param props - The table and the optional bulk delete flow.
  *
@@ -52,11 +58,14 @@ function EntityDatatable<TData extends RowData>({
       )}
     >
       <div className="min-h-0 flex-1 overflow-auto">
-        <div className="relative flex min-h-full w-full min-w-max flex-col">
+        <table
+          data-slot="table"
+          className="w-max table-fixed border-separate border-spacing-0 text-sm"
+        >
           <EntityTableHeader table={table} />
 
           <EntityTableRows table={table} />
-        </div>
+        </table>
       </div>
 
       <EntityTablePagination

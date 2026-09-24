@@ -60,9 +60,19 @@ function FormatBulkDeleteDescription(count: number): string {
   return `Deseja excluir ${count} itens? Esta ação não pode ser desfeita.`
 }
 
+// Maps a column alignment to its cell and header classes.
+function FormatEntityTableAlignClass(
+  align: "start" | "center" | "end"
+): string {
+  if (align === "center") return "px-0 text-center"
+
+  return align === "end" ? "px-3 text-right" : "px-3 text-left"
+}
+
 export {
   FormatBulkDeleteButtonLabel,
   FormatBulkDeleteDescription,
+  FormatEntityTableAlignClass,
   FormatPageSizeDropdownLabel,
   FormatPageSizeLabel,
   FormatSelectedRowsLabel,

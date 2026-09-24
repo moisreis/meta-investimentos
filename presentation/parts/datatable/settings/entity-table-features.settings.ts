@@ -43,10 +43,13 @@ export const ENTITY_TABLE_FEATURES = tableFeatures({
   },
   // Phantom slot that declares the column metadata contract.
   columnMeta: {} as {
-    align?: "start" | "end"
+    align?: EntityTableAlign
     pinned?: "start" | "end"
   },
 })
+
+// Text alignment supported by entity table columns.
+export type EntityTableAlign = "start" | "center" | "end"
 
 // Features type used as the first generic of every table type.
 export type EntityTableFeatures = typeof ENTITY_TABLE_FEATURES
