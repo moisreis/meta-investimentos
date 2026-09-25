@@ -57,6 +57,16 @@ export const PORTFOLIO_DATATABLE = {
   COLUMN_TARGET_ALLOCATION: "Alocação Alvo",
   COLUMN_MAX_ALLOCATION: "Alocação Máx.",
 
+  // Performance column headers.
+  COLUMN_PATRIMONY: "Patrimônio",
+  COLUMN_EARNINGS: "Rendimento",
+  COLUMN_RETURN_DAILY: "Ret. Diário",
+  COLUMN_RETURN_MONTHLY: "Ret. Mensal",
+
+  // Toolbar filter copy.
+  FILTER_DATE_RANGE_PLACEHOLDER: "Selecione um período",
+  FILTER_SEARCH_PLACEHOLDER: "Buscar por nome",
+
   // Row actions menu.
   ROW_ACTIONS_LABEL: "Ações",
   ROW_VIEW_LABEL: "Ver",
@@ -94,6 +104,10 @@ export const PORTFOLIO_DATATABLE_COLUMN_LABELS: Record<
   minAllocation: PORTFOLIO_DATATABLE.COLUMN_MIN_ALLOCATION,
   targetAllocation: PORTFOLIO_DATATABLE.COLUMN_TARGET_ALLOCATION,
   maxAllocation: PORTFOLIO_DATATABLE.COLUMN_MAX_ALLOCATION,
+  patrimony: PORTFOLIO_DATATABLE.COLUMN_PATRIMONY,
+  earnings: PORTFOLIO_DATATABLE.COLUMN_EARNINGS,
+  returnDaily: PORTFOLIO_DATATABLE.COLUMN_RETURN_DAILY,
+  returnMonthly: PORTFOLIO_DATATABLE.COLUMN_RETURN_MONTHLY,
 }
 
 // Formats the delete dialog description with the name.

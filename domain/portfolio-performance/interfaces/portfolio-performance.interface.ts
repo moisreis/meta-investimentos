@@ -69,7 +69,9 @@ export interface IPortfolioPerformance {
    *
    * @date 2026-09-13
    */
-  findAllByPortfolioId(portfolioId: EntityId): Promise<PortfolioPerformance[]>
+  findAllByPortfolioId(
+    portfolioId: EntityId
+  ): Promise<PortfolioPerformance[]>
 
   /**
    * @summary
@@ -182,6 +184,69 @@ export interface IPortfolioPerformance {
   findLatestByPortfolioIds(
     portfolioIds: EntityId[]
   ): Promise<PortfolioPerformance[]>
+
+  /**
+   * @summary
+   * Retrieves the latest snapshot of each portfolio within
+   * a date range.
+   *
+   * @remarks
+   * Returns an empty array when no performance matches the
+   * range or the portfolios. Only the latest entry of each
+   * portfolio inside `[from, to]` is returned.
+   *
+   * @explanation
+   * Use this method to hydrate the snapshot that closes a
+   * date range for several portfolios in a single query.
+   *
+   * @param portfolioIds - The identifiers of the portfolios.
+   * @param from - The inclusive start of the range.
+   * @param to - The inclusive end of the range.
+   *
+   * @returns The latest snapshots in the range.
+   *
+   * @example
+   * const PERFS = await PERF_REPO
+   *   .findLatestByPortfolioIdsInRange(PF_IDS, FROM, TO);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  findLatestByPortfolioIdsInRange(
+    portfolioIds: EntityId[],
+    from: Date,
+    to: Date
+  ): Promise<PortfolioPerformance[]>
+
+  /**
+   * @summary
+   * Retrieves the distinct snapshot dates of the portfolios.
+   *
+   * @remarks
+   * Returns an empty array when no performance matches.
+   * Every date is unique and ordered ascending.
+   *
+   * @explanation
+   * Use this method to list the days that hold performance
+   * records for the provided portfolios, so the UI can
+   * disable the remaining days.
+   *
+   * @param portfolioIds - The identifiers of the portfolios.
+   *
+   * @returns The distinct snapshot dates.
+   *
+   * @example
+   * const DATES = await PERF_REPO
+   *   .findDistinctDatesByPortfolioIds(PF_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  findDistinctDatesByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<Date[]>
 
   /**
    * @summary

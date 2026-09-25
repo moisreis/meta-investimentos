@@ -8,6 +8,7 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
 import { CreatePortfolioTableColumns } from "../datatable/table-columns"
@@ -37,15 +38,19 @@ const COLUMN_HELPER = createColumnHelper<
  * every page and page-size change.
  *
  * @param portfolios - The rows rendered by the datatable.
+ * @param performanceFor - Resolves the range snapshot.
  *
  * @returns The table instance plus the action flows.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-24
+ * @date 2026-09-25
  */
 function usePortfolioDatatable(
-  portfolios: PortfolioResponseDTO[]
+  portfolios: PortfolioResponseDTO[],
+  performanceFor: (
+    portfolioId: string
+  ) => PortfolioPerformanceResponseDTO | null
 ) {
   const addDialog = usePortfolioAddDialog()
   const editDialog = usePortfolioEditDialog()
@@ -58,9 +63,11 @@ function usePortfolioDatatable(
         onView: rowActions.handleView,
         onEdit: editDialog.handleOpen,
         onDelete: rowActions.handleDelete,
+        performanceFor,
       }),
     [
       editDialog.handleOpen,
+      performanceFor,
       rowActions.handleDelete,
       rowActions.handleView,
     ]

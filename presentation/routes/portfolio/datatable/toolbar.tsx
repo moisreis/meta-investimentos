@@ -12,6 +12,7 @@ import { PORTFOLIO_DATATABLE_COLUMN_LABELS } from "@/presentation/routes/portfol
 interface PortfolioDatatableToolbarProps<TData extends RowData> {
   table: EntityTable<TData>
   onAddItem: () => void
+  filters?: React.ReactNode
 }
 
 /**
@@ -24,11 +25,13 @@ interface PortfolioDatatableToolbarProps<TData extends RowData> {
  * button. The add-item button opens the portfolio add
  * dialog and the edit-columns button toggles the
  * visibility of the hideable columns, resolving each
- * column label through the portfolio settings.
+ * column label through the portfolio settings. The
+ * optional `filters` slot renders on the left side.
  *
  * @param props - The shared table instance.
  * @param props.table - The shared table instance.
  * @param props.onAddItem - Opens the add dialog.
+ * @param props.filters - The left-side filter group.
  *
  * @returns The portfolio datatable toolbar.
  *
@@ -39,9 +42,11 @@ interface PortfolioDatatableToolbarProps<TData extends RowData> {
 function PortfolioDatatableToolbar<TData extends RowData>({
   table,
   onAddItem,
+  filters,
 }: PortfolioDatatableToolbarProps<TData>) {
   return (
     <EntityDatatableToolbar
+      filters={filters}
       actions={
         <>
           <EntityDatatableEditColumnsButton

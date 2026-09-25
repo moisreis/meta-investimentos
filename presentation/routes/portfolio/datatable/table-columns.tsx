@@ -8,14 +8,19 @@ import type {
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatPercentage } from "@/presentation/presenters/percentage.presenter"
 import { PORTFOLIO_DATATABLE } from "@/presentation/routes/portfolio/settings/labels.settings"
+import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
 export interface PortfolioTableColumnOptions {
   onEdit: (portfolio: PortfolioResponseDTO) => void
   onDelete: (portfolio: PortfolioResponseDTO) => void
   onView: (portfolio: PortfolioResponseDTO) => void
+  performanceFor: (
+    portfolioId: string
+  ) => PortfolioPerformanceResponseDTO | null
 }
 
 /**
@@ -29,7 +34,9 @@ export interface PortfolioTableColumnOptions {
  * and stop at a readable minimum when space runs out, so
  * the table scrolls horizontally instead of collapsing.
  * Rate columns render through the percentage presenter
- * and align to the end.
+ * and money columns through the currency presenter, both
+ * aligned to the end. Performance columns resolve the
+ * snapshot of the selected range through `performanceFor`.
  *
  * @param columnHelper - The entity column helper.
  * @param options - The row action callbacks.
@@ -38,7 +45,7 @@ export interface PortfolioTableColumnOptions {
  *
  * @author Moisés Reis
  *
- * @date 2026-09-24
+ * @date 2026-09-25
  */
 export function CreatePortfolioTableColumns(
   columnHelper: ColumnHelper<
@@ -53,7 +60,7 @@ export function CreatePortfolioTableColumns(
     columnHelper.accessor("acronym", {
       header: PORTFOLIO_DATATABLE.COLUMN_ACRONYM,
       enableHiding: false,
-      size: 96,
+      size: 130,
       meta: { pinned: "start" },
     }),
 
@@ -91,11 +98,57 @@ export function CreatePortfolioTableColumns(
       cell: (info) => FormatPercentage(info.getValue()),
     }),
 
+    columnHelper.accessor(
+      (row) => options.performanceFor(row.id)?.patrimony ?? null,
+      {
+        id: "patrimony",
+        header: PORTFOLIO_DATATABLE.COLUMN_PATRIMONY,
+        size: 120,
+        meta: { align: "end", fluid: true },
+        cell: (info) => FormatCurrency(info.getValue()),
+      }
+    ),
+
+    columnHelper.accessor(
+      (row) => options.performanceFor(row.id)?.earnings ?? null,
+      {
+        id: "earnings",
+        header: PORTFOLIO_DATATABLE.COLUMN_EARNINGS,
+        size: 120,
+        meta: { align: "end", fluid: true },
+        cell: (info) => FormatCurrency(info.getValue()),
+      }
+    ),
+
+    columnHelper.accessor(
+      (row) =>
+        options.performanceFor(row.id)?.returnDaily ?? null,
+      {
+        id: "returnDaily",
+        header: PORTFOLIO_DATATABLE.COLUMN_RETURN_DAILY,
+        size: 110,
+        meta: { align: "end", fluid: true },
+        cell: (info) => FormatPercentage(info.getValue()),
+      }
+    ),
+
+    columnHelper.accessor(
+      (row) =>
+        options.performanceFor(row.id)?.returnMonthly ?? null,
+      {
+        id: "returnMonthly",
+        header: PORTFOLIO_DATATABLE.COLUMN_RETURN_MONTHLY,
+        size: 110,
+        meta: { align: "end", fluid: true },
+        cell: (info) => FormatPercentage(info.getValue()),
+      }
+    ),
+
     columnHelper.display({
       id: "actions",
       enableSorting: false,
       enableHiding: false,
-      size: 88,
+      size: 50,
       meta: { pinned: "end", align: "center" },
       cell: ({ row }) => (
         <EntityTableRowMenuDropdown

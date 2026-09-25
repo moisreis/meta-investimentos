@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from "drizzle-orm"
+import { and, desc, eq, gte, inArray, lte } from "drizzle-orm"
 import type {
   PgAsyncDatabase,
   PgQueryResultHKT,
@@ -312,6 +312,108 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
       )
 
     return ROWS.map((row) => ToDomain(row))
+  }
+
+  /**
+   * @summary
+   * Retrieves the latest snapshot of each portfolio within
+   * a date range.
+   *
+   * @remarks
+   * Uses `DISTINCT ON (portfolio_id)` combined with a date
+   * boundary to return the most recent row of each
+   * portfolio that closes the range in a single query.
+   *
+   * @explanation
+   * Use this method to hydrate the snapshot inside
+   * `[from, to]` of many portfolios without issuing one
+   * query per portfolio.
+   *
+   * @param portfolioIds - The ids of the portfolios.
+   * @param from - The inclusive start of the range.
+   * @param to - The inclusive end of the range.
+   *
+   * @returns The latest snapshots in the range.
+   *
+   * @example
+   * const IN_RANGE = await PERF_REPO
+   *   .findLatestByPortfolioIdsInRange(PF_IDS, FROM, TO);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async findLatestByPortfolioIdsInRange(
+    portfolioIds: EntityId[],
+    from: Date,
+    to: Date
+  ): Promise<PortfolioPerformance[]> {
+    if (portfolioIds.length === 0) {
+      return []
+    }
+
+    const ROWS = await this.db
+      .selectDistinctOn([portfolioPerformance.portfolioId])
+      .from(portfolioPerformance)
+      .where(
+        and(
+          inArray(
+            portfolioPerformance.portfolioId,
+            portfolioIds
+          ),
+          gte(portfolioPerformance.date, from),
+          lte(portfolioPerformance.date, to)
+        )
+      )
+      .orderBy(
+        portfolioPerformance.portfolioId,
+        desc(portfolioPerformance.date)
+      )
+
+    return ROWS.map((row) => ToDomain(row))
+  }
+
+  /**
+   * @summary
+   * Retrieves the distinct snapshot dates of the portfolios.
+   *
+   * @remarks
+   * Uses `DISTINCT ON (date)` to return one row per day,
+   * ordered ascending, in a single query. Returns an empty
+   * array when the input is empty.
+   *
+   * @explanation
+   * Use this method to build the day index that drives the
+   * enabled days of the date range filter.
+   *
+   * @param portfolioIds - The ids of the portfolios.
+   *
+   * @returns The distinct snapshot dates.
+   *
+   * @example
+   * const DATES = await PERF_REPO
+   *   .findDistinctDatesByPortfolioIds(PF_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async findDistinctDatesByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<Date[]> {
+    if (portfolioIds.length === 0) {
+      return []
+    }
+
+    const ROWS = await this.db
+      .selectDistinctOn([portfolioPerformance.date])
+      .from(portfolioPerformance)
+      .where(
+        inArray(portfolioPerformance.portfolioId, portfolioIds)
+      )
+      .orderBy(portfolioPerformance.date)
+
+    return ROWS.map((row) => row.date)
   }
 
   /**
