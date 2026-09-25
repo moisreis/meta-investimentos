@@ -93,7 +93,10 @@ export interface IBank {
    *
    * @date 2026-09-13
    */
-  findAll(options?: { limit?: number; offset?: number }): Promise<Bank[]>
+  findAll(options?: {
+    limit?: number
+    offset?: number
+  }): Promise<Bank[]>
 
   /**
    * @summary
@@ -168,4 +171,29 @@ export interface IBank {
    * @date 2026-09-13
    */
   delete(id: EntityId): Promise<void>
+
+  /**
+   * @summary
+   * Removes the banks with the provided ids.
+   *
+   * @remarks
+   * Resolves when the banks are removed. A no-op for an
+   * empty id list.
+   *
+   * @explanation
+   * Use this method to delete many banks in a single
+   * operation instead of one query per id.
+   *
+   * @param ids - The unique identifiers of the banks.
+   *
+   * @returns Resolves when removed.
+   *
+   * @example
+   * await BANK_REPO.deleteByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  deleteByIds(ids: EntityId[]): Promise<void>
 }

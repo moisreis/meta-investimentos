@@ -10,6 +10,15 @@ export interface PortfolioRowCount {
   count: number
 }
 
+// Count of bank account rows linked to a bank.
+export interface BankRowCount {
+  // The unique identifier of the bank.
+  bankId: EntityId
+
+  // The number of linked bank account rows.
+  count: number
+}
+
 /**
  * @summary
  * Defines the repository contract for `BankAccount` entities.
@@ -188,6 +197,32 @@ export interface IBankAccount {
    * @date 2026-09-15
    */
   findAllByBankIds(bankIds: EntityId[]): Promise<BankAccount[]>
+
+  /**
+   * @summary
+   * Counts the bank account rows linked per provided bank.
+   *
+   * @remarks
+   * Returns an entry per matched bank and an empty
+   * array when the input is empty.
+   *
+   * @explanation
+   * Use this method to tally bank accounts through a single
+   * grouped query instead of hydrating every row.
+   *
+   * @param bankIds - The ids of the banks.
+   *
+   * @returns The bank account count per bank.
+   *
+   * @example
+   * const COUNTS = await BANK_ACCOUNT_REPO
+   *   .countByBankIds(BANK_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  countByBankIds(bankIds: EntityId[]): Promise<BankRowCount[]>
 
   /**
    * @summary

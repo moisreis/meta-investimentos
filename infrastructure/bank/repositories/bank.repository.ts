@@ -274,4 +274,32 @@ export class BankRepository implements IBank {
   async delete(id: EntityId): Promise<void> {
     await this.db.delete(bank).where(eq(bank.id, id))
   }
+
+  /**
+   * @summary
+   * Removes the banks with the provided ids.
+   *
+   * @remarks
+   * A batched delete avoids an N+1 query pattern. Resolves
+   * when the rows are removed; a no-op for an empty input.
+   *
+   * @explanation
+   * Use this method to delete many banks in one query.
+   *
+   * @param ids - The ids of the banks to remove.
+   *
+   * @example
+   * await BANK_REPO.deleteByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async deleteByIds(ids: EntityId[]): Promise<void> {
+    if (ids.length === 0) {
+      return
+    }
+
+    await this.db.delete(bank).where(inArray(bank.id, ids))
+  }
 }

@@ -6,6 +6,7 @@ import type {
 
 import { BankAccount } from "@domain/bank-account/entities/bank-account.entity"
 import type {
+  BankRowCount,
   IBankAccount,
   PortfolioRowCount,
 } from "@domain/bank-account/interfaces/bank-account.interface"
@@ -291,6 +292,53 @@ export class BankAccountRepository implements IBankAccount {
       .where(inArray(bankAccount.bankId, bankIds))
 
     return ROWS.map((row) => ToDomain(row))
+  }
+
+  /**
+   * @summary
+   * Counts the bank account rows linked per provided bank.
+   *
+   * @remarks
+   * Runs a grouped query so no rows are hydrated. Returns
+   * an empty array when the input is empty.
+   *
+   * @explanation
+   * Use this method to tally bank accounts across many
+   * banks in a single aggregated query.
+   *
+   * @param bankIds - The ids of the banks.
+   *
+   * @returns The count per bank.
+   *
+   * @example
+   * const COUNTS = await BANK_ACCOUNT_REPO
+   *   .countByBankIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async countByBankIds(
+    bankIds: EntityId[]
+  ): Promise<BankRowCount[]> {
+    if (bankIds.length === 0) {
+      return []
+    }
+
+    const ROWS = await this.db
+      .select({
+        bankId: bankAccount.bankId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(bankAccount)
+      .where(inArray(bankAccount.bankId, bankIds))
+      .groupBy(bankAccount.bankId)
+      .orderBy(bankAccount.bankId)
+
+    return ROWS.map((row) => ({
+      bankId: EntityId.create(row.bankId),
+      count: row.count,
+    }))
   }
 
   /**
