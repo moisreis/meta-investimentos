@@ -381,4 +381,33 @@ export class FundRepository implements IFund {
   async delete(id: EntityId): Promise<void> {
     await this.db.delete(fund).where(eq(fund.id, id))
   }
+
+  /**
+   * @summary
+   * Removes the funds with the provided ids.
+   *
+   * @remarks
+   * A batched delete avoids an N+1 query pattern.
+   * Resolves when the rows are removed; a no-op for
+   * an empty input.
+   *
+   * @explanation
+   * Use this method to delete many funds in one query.
+   *
+   * @param ids - The ids of the funds to remove.
+   *
+   * @example
+   * await FUND_REPO.deleteByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async deleteByIds(ids: EntityId[]): Promise<void> {
+    if (ids.length === 0) {
+      return
+    }
+
+    await this.db.delete(fund).where(inArray(fund.id, ids))
+  }
 }

@@ -6,6 +6,7 @@ import type {
 
 import { Position } from "@domain/position/entities/position.entity"
 import type {
+  FundRowCount,
   IPosition,
   PortfolioRowCount,
 } from "@domain/position/interfaces/position.interface"
@@ -230,6 +231,56 @@ export class PositionRepository implements IPosition {
 
     return ROWS.map((row) => ({
       portfolioId: EntityId.create(row.portfolioId),
+      count: row.count,
+    }))
+  }
+
+  /**
+   * @summary
+   * Counts the position rows held per provided fund.
+   *
+   * @remarks
+   * Runs a grouped query so no rows are hydrated.
+   * Returns an empty array when the input is empty.
+   * Because the `(portfolio, fund)` pair is unique,
+   * the count equals the number of portfolios that
+   * hold the fund.
+   *
+   * @explanation
+   * Use this method to tally positions across many
+   * funds in a single aggregated query.
+   *
+   * @param fundIds - The ids of the funds.
+   *
+   * @returns The count per fund.
+   *
+   * @example
+   * const COUNTS = await POSITION_REPO
+   *   .countByFundIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async countByFundIds(
+    fundIds: EntityId[]
+  ): Promise<FundRowCount[]> {
+    if (fundIds.length === 0) {
+      return []
+    }
+
+    const ROWS = await this.db
+      .select({
+        fundId: position.fundId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(position)
+      .where(inArray(position.fundId, fundIds))
+      .groupBy(position.fundId)
+      .orderBy(position.fundId)
+
+    return ROWS.map((row) => ({
+      fundId: EntityId.create(row.fundId),
       count: row.count,
     }))
   }

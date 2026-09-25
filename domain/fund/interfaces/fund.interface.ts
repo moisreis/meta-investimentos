@@ -94,7 +94,10 @@ export interface IFund {
    *
    * @date 2026-09-13
    */
-  findAll(options?: { limit?: number; offset?: number }): Promise<Fund[]>
+  findAll(options?: {
+    limit?: number
+    offset?: number
+  }): Promise<Fund[]>
 
   /**
    * @summary
@@ -244,4 +247,28 @@ export interface IFund {
    * @date 2026-09-13
    */
   delete(id: EntityId): Promise<void>
+
+  /**
+   * @summary
+   * Removes the funds with the provided ids.
+   *
+   * @remarks
+   * Resolves when the rows are removed.
+   *
+   * @explanation
+   * Use this method to delete many funds in one
+   * batched operation.
+   *
+   * @param ids - The unique identifiers of the funds.
+   *
+   * @returns Resolves when removed.
+   *
+   * @example
+   * await FUND_REPO.deleteByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  deleteByIds(ids: EntityId[]): Promise<void>
 }
