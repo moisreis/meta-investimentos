@@ -18,6 +18,10 @@ import {
 // Id shared by the selection column definition.
 const ENTITY_TABLE_SELECT_COLUMN_ID = "select"
 
+// Fixed width of the selection column. Locked through
+// equal min and max sizes so it never gets resized.
+const ENTITY_TABLE_SELECT_COLUMN_WIDTH = 48
+
 /**
  * Props for the select-all header checkbox.
  */
@@ -55,7 +59,8 @@ export function EntityTableSelectAllHeader({
  * @remarks
  * Returns a pinned start display column with a select-all
  * header and a per-row checkbox. The column can never be
- * sorted or hidden.
+ * sorted, hidden or resized: its width is fixed through
+ * equal `minSize` and `maxSize` values.
  *
  * @param columnHelper - The column helper of the entity.
  *
@@ -72,7 +77,9 @@ export function CreateEntitySelectColumn<TData extends RowData>(
     id: ENTITY_TABLE_SELECT_COLUMN_ID,
     enableSorting: false,
     enableHiding: false,
-    size: 48,
+    size: ENTITY_TABLE_SELECT_COLUMN_WIDTH,
+    minSize: ENTITY_TABLE_SELECT_COLUMN_WIDTH,
+    maxSize: ENTITY_TABLE_SELECT_COLUMN_WIDTH,
     meta: { pinned: "start", align: "center" },
     header: ({ table }) => (
       <EntityTableSelectAllHeader

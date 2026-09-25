@@ -74,7 +74,7 @@ export function UserAvatar({
           <AvatarFallback>{INITIALS || "?"}</AvatarFallback>
         )}
       </Avatar>
-      <span className="text-sm font-medium">
+      <span className="text-sm font-normal">
         {FULL_NAME || "-"}
       </span>
     </div>

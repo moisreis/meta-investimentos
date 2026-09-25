@@ -15,15 +15,17 @@ const FLUID_MIN_WIDTH = 96
  * Distributes the horizontal surplus among the fluid columns.
  *
  * @remarks
- * Resolves the width of every fluid column so the non-pinned
- * columns grow or shrink with the available space. The scroll
- * container is measured through a resize observer and the
- * computed widths are written to the `columnSizing` state,
- * keeping the declared proportions while always fitting the
- * screen. Pinned and fixed columns keep their declared
- * widths. The pass runs again when the visible columns
- * change, keeping the layout balanced after columns are
- * hidden.
+ * Resolves the width of every fluid column so the columns
+ * declared as `fluid` and not pinned grow or shrink with the
+ * available space. The scroll container is measured through a
+ * resize observer and the computed widths are written to the
+ * `columnSizing` state, keeping the declared proportions
+ * while always fitting the screen. The selection is
+ * declarative (visible, `fluid` and unpinned columns), so the
+ * pinned and fixed columns keep their exact widths regardless
+ * of when the pinning state is applied. The pass runs again
+ * when the visible columns change, keeping the layout
+ * balanced after columns are hidden.
  *
  * @param table - The table instance.
  * @param containerRef - The scroll container element.
@@ -56,8 +58,10 @@ function useEntityDatatableFluidWidths<TData extends RowData>(
       if (!NODE) return
 
       const TABLE = TABLE_REF.current
-      const FLUID = TABLE.getCenterLeafColumns().filter(
-        (COLUMN) => COLUMN.columnDef.meta?.fluid === true
+      const FLUID = TABLE.getVisibleLeafColumns().filter(
+        (COLUMN) =>
+          COLUMN.columnDef.meta?.fluid === true &&
+          COLUMN.columnDef.meta?.pinned === undefined
       )
 
       if (FLUID.length === 0) return

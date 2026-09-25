@@ -68,6 +68,8 @@ export function CreatePortfolioTableColumns(
       header: PORTFOLIO_DATATABLE.COLUMN_ACRONYM,
       enableHiding: false,
       size: 130,
+      minSize: 130,
+      maxSize: 130,
       meta: { pinned: "start" },
     }),
 
@@ -185,6 +187,8 @@ export function CreatePortfolioTableColumns(
       enableSorting: false,
       enableHiding: false,
       size: 50,
+      minSize: 50,
+      maxSize: 50,
       meta: { pinned: "end", align: "center" },
       cell: ({ row }) => (
         <EntityTableRowMenuDropdown
