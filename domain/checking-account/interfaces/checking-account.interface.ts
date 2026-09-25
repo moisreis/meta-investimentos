@@ -49,6 +49,58 @@ export interface ICheckingAccount {
 
   /**
    * @summary
+   * Retrieves all checking accounts.
+   *
+   * @remarks
+   * Supports optional pagination through limit and
+   * offset. Ordered by date descending.
+   *
+   * @explanation
+   * Use this method to list every checking account
+   * balance through the repository.
+   *
+   * @param options - Optional pagination parameters.
+   *
+   * @returns The matching entries.
+   *
+   * @example
+   * const CAS = await CHECKING_REPO.findAll();
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  findAll(options?: {
+    limit?: number
+    offset?: number
+  }): Promise<CheckingAccount[]>
+
+  /**
+   * @summary
+   * Retrieves all checking accounts with the provided ids.
+   *
+   * @remarks
+   * Returns an empty array when no ids match.
+   *
+   * @explanation
+   * Use this method to hydrate checking account rows by
+   * their ids in a single batched query.
+   *
+   * @param ids - The ids of the checking accounts.
+   *
+   * @returns The matching entries.
+   *
+   * @example
+   * const CAS = await CHECKING_REPO.findAllByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  findAllByIds(ids: EntityId[]): Promise<CheckingAccount[]>
+
+  /**
+   * @summary
    * Retrieves all checking accounts of the bank account.
    *
    * @remarks
@@ -70,7 +122,9 @@ export interface ICheckingAccount {
    *
    * @date 2026-09-13
    */
-  findAllByBankAccountId(bankAccountId: EntityId): Promise<CheckingAccount[]>
+  findAllByBankAccountId(
+    bankAccountId: EntityId
+  ): Promise<CheckingAccount[]>
 
   /**
    * @summary
@@ -186,7 +240,9 @@ export interface ICheckingAccount {
    *
    * @date 2026-09-13
    */
-  save(checkingAccount: CheckingAccount): Promise<CheckingAccount>
+  save(
+    checkingAccount: CheckingAccount
+  ): Promise<CheckingAccount>
 
   /**
    * @summary
@@ -211,4 +267,28 @@ export interface ICheckingAccount {
    * @date 2026-09-13
    */
   delete(id: EntityId): Promise<void>
+
+  /**
+   * @summary
+   * Removes the checking accounts with the provided ids.
+   *
+   * @remarks
+   * Resolves when the checking accounts are removed.
+   *
+   * @explanation
+   * Use this method to delete many checking account
+   * records in one batched operation.
+   *
+   * @param ids - The unique identifiers of the entries.
+   *
+   * @returns Resolves when removed.
+   *
+   * @example
+   * await CHECKING_REPO.deleteByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  deleteByIds(ids: EntityId[]): Promise<void>
 }

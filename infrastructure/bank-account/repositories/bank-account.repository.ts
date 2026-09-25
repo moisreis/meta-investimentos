@@ -1,4 +1,4 @@
-import { eq, inArray, sql } from "drizzle-orm"
+import { asc, eq, inArray, sql } from "drizzle-orm"
 import type {
   PgAsyncDatabase,
   PgQueryResultHKT,
@@ -99,6 +99,43 @@ export class BankAccountRepository implements IBankAccount {
       .limit(1)
 
     return ROW ? ToDomain(ROW) : null
+  }
+
+  /**
+   * @summary
+   * Retrieves all bank accounts.
+   *
+   * @remarks
+   * Supports optional pagination through limit and
+   * offset. Ordered by creation date ascending.
+   *
+   * @explanation
+   * Use this method to list every bank account through
+   * the repository.
+   *
+   * @param options - Optional pagination parameters.
+   *
+   * @returns The matching entities.
+   *
+   * @example
+   * const ACCOUNTS = await BANK_ACCOUNT_REPO.findAll();
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async findAll(options?: {
+    limit?: number
+    offset?: number
+  }): Promise<BankAccount[]> {
+    const ROWS = await this.db
+      .select()
+      .from(bankAccount)
+      .orderBy(asc(bankAccount.createdAt))
+      .limit(options?.limit ?? 100)
+      .offset(options?.offset ?? 0)
+
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**

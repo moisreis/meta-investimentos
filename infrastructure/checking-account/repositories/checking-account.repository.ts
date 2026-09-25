@@ -1,4 +1,12 @@
-import { and, asc, eq, gte, inArray, lte } from "drizzle-orm"
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gte,
+  inArray,
+  lte,
+} from "drizzle-orm"
 import type {
   PgAsyncDatabase,
   PgQueryResultHKT,
@@ -95,6 +103,43 @@ export class CheckingAccountRepository implements ICheckingAccount {
       .limit(1)
 
     return ROW ? ToDomain(ROW) : null
+  }
+
+  /**
+   * @summary
+   * Retrieves all checking account balances.
+   *
+   * @remarks
+   * Supports optional pagination through limit and
+   * offset. Ordered by date descending, newest first.
+   *
+   * @explanation
+   * Use this method to list every checking account
+   * balance row through the repository.
+   *
+   * @param options - Optional pagination parameters.
+   *
+   * @returns The matching entities.
+   *
+   * @example
+   * const BALANCES = await CHECKING_REPO.findAll();
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async findAll(options?: {
+    limit?: number
+    offset?: number
+  }): Promise<CheckingAccount[]> {
+    const ROWS = await this.db
+      .select()
+      .from(checkingAccount)
+      .orderBy(desc(checkingAccount.date))
+      .limit(options?.limit ?? 100)
+      .offset(options?.offset ?? 0)
+
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**
@@ -271,6 +316,43 @@ export class CheckingAccountRepository implements ICheckingAccount {
 
   /**
    * @summary
+   * Retrieves all balances with the provided ids.
+   *
+   * @remarks
+   * Returns an empty array when no ids match.
+   *
+   * @explanation
+   * Use this method to hydrate checking account balances
+   * by their ids in a single batched query.
+   *
+   * @param ids - The ids of the balances.
+   *
+   * @returns The matching entities.
+   *
+   * @example
+   * const BALANCES = await CHECKING_REPO.findAllByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async findAllByIds(
+    ids: EntityId[]
+  ): Promise<CheckingAccount[]> {
+    if (ids.length === 0) {
+      return []
+    }
+
+    const ROWS = await this.db
+      .select()
+      .from(checkingAccount)
+      .where(inArray(checkingAccount.id, ids))
+
+    return ROWS.map((row) => ToDomain(row))
+  }
+
+  /**
+   * @summary
    * Persists the provided checking account balance.
    *
    * @remarks
@@ -343,5 +425,35 @@ export class CheckingAccountRepository implements ICheckingAccount {
     await this.db
       .delete(checkingAccount)
       .where(eq(checkingAccount.id, id))
+  }
+
+  /**
+   * @summary
+   * Removes the balances with the provided ids.
+   *
+   * @remarks
+   * Resolves when the rows are removed.
+   *
+   * @explanation
+   * Use this method to delete many checking account
+   * balance rows in one batched operation.
+   *
+   * @param ids - The unique identifiers of the balances.
+   *
+   * @example
+   * await CHECKING_REPO.deleteByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async deleteByIds(ids: EntityId[]): Promise<void> {
+    if (ids.length === 0) {
+      return
+    }
+
+    await this.db
+      .delete(checkingAccount)
+      .where(inArray(checkingAccount.id, ids))
   }
 }

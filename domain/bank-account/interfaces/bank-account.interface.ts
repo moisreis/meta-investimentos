@@ -67,6 +67,34 @@ export interface IBankAccount {
 
   /**
    * @summary
+   * Retrieves all bank accounts.
+   *
+   * @remarks
+   * Supports optional pagination through limit and
+   * offset.
+   *
+   * @explanation
+   * Use this method to list every bank account through
+   * the repository.
+   *
+   * @param options - Optional pagination parameters.
+   *
+   * @returns The matching entries.
+   *
+   * @example
+   * const BAS = await BANK_ACCOUNT_REPO.findAll();
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  findAll(options?: {
+    limit?: number
+    offset?: number
+  }): Promise<BankAccount[]>
+
+  /**
+   * @summary
    * Retrieves all bank accounts of the provided portfolio.
    *
    * @remarks
