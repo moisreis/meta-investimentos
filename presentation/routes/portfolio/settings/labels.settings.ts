@@ -53,9 +53,9 @@ export const PORTFOLIO_DATATABLE = {
   COLUMN_ACRONYM: "Sigla",
   COLUMN_NAME: "Nome",
   COLUMN_ANNUAL_INTEREST_RATE: "Taxa Anual",
-  COLUMN_MIN_ALLOCATION: "Alocação Mín.",
-  COLUMN_TARGET_ALLOCATION: "Alocação Alvo",
-  COLUMN_MAX_ALLOCATION: "Alocação Máx.",
+  COLUMN_FUND_COUNT: "Nº de Fundos",
+  COLUMN_BANK_ACCOUNT_COUNT: "Nº de Contas Bancárias",
+  COLUMN_OWNER: "Proprietário",
 
   // Performance column headers.
   COLUMN_PATRIMONY: "Patrimônio",
@@ -101,14 +101,34 @@ export const PORTFOLIO_DATATABLE_COLUMN_LABELS: Record<
   name: PORTFOLIO_DATATABLE.COLUMN_NAME,
   annualInterestRate:
     PORTFOLIO_DATATABLE.COLUMN_ANNUAL_INTEREST_RATE,
-  minAllocation: PORTFOLIO_DATATABLE.COLUMN_MIN_ALLOCATION,
-  targetAllocation: PORTFOLIO_DATATABLE.COLUMN_TARGET_ALLOCATION,
-  maxAllocation: PORTFOLIO_DATATABLE.COLUMN_MAX_ALLOCATION,
+  fundCount: PORTFOLIO_DATATABLE.COLUMN_FUND_COUNT,
+  bankAccountCount:
+    PORTFOLIO_DATATABLE.COLUMN_BANK_ACCOUNT_COUNT,
+  owner: PORTFOLIO_DATATABLE.COLUMN_OWNER,
   patrimony: PORTFOLIO_DATATABLE.COLUMN_PATRIMONY,
   earnings: PORTFOLIO_DATATABLE.COLUMN_EARNINGS,
   returnDaily: PORTFOLIO_DATATABLE.COLUMN_RETURN_DAILY,
   returnMonthly: PORTFOLIO_DATATABLE.COLUMN_RETURN_MONTHLY,
 }
+
+// KPI card copy for the portfolio list screen.
+export const PORTFOLIO_KPI = {
+  // Total patrimony card.
+  TOTAL_PATRIMONY_TITLE: "Patrimônio Total",
+  TOTAL_PATRIMONY_COMPARISON: "no período selecionado",
+
+  // Total earnings card.
+  TOTAL_EARNINGS_TITLE: "Rendimento Acumulado",
+  TOTAL_EARNINGS_COMPARISON: "sobre o patrimônio",
+
+  // Portfolio count card.
+  PORTFOLIO_COUNT_TITLE: "Carteiras",
+  PORTFOLIO_COUNT_COMPARISON: "carteiras cadastradas",
+
+  // Fund count card.
+  FUND_COUNT_TITLE: "Fundos Custodiados",
+  FUND_COUNT_COMPARISON: "fundos nas carteiras",
+} as const
 
 // Formats the delete dialog description with the name.
 function FormatDeletePortfolioDescription(name: string): string {

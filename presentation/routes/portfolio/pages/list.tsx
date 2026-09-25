@@ -1,10 +1,5 @@
 "use client"
 
-import {
-  IconTrendingDown,
-  IconTrendingUp,
-} from "@tabler/icons-react"
-
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
@@ -17,18 +12,29 @@ import { PortfolioConfirmDeleteDialog } from "../dialogs/confirm-delete"
 import { PortfolioEditDialog } from "../dialogs/edit"
 import { usePortfolioDatatableFilters } from "../hooks/use-portfolio-datatable-filters.hook"
 import { usePortfolioDatatable } from "../hooks/use-portfolio-datatable.hook"
+import { usePortfolioKpis } from "../hooks/use-portfolio-kpis.hook"
+import type {
+  PortfolioHoldingsCount,
+  PortfolioOwner,
+} from "../types/portfolio-list.types"
 
 interface PortfolioListProps {
   data: PortfolioResponseDTO[] | null
   availableDates?: string[]
+  holdingsCounts?: Record<string, PortfolioHoldingsCount> | null
+  owner?: PortfolioOwner | null
 }
 
 function PortfolioList({
   data,
   availableDates = [],
+  holdingsCounts = null,
+  owner = null,
 }: PortfolioListProps) {
+  const PORTFOLIOS = data ?? []
+
   const filters = usePortfolioDatatableFilters(
-    data ?? [],
+    PORTFOLIOS,
     availableDates
   )
   const {
@@ -39,38 +45,30 @@ function PortfolioList({
     editDialog,
   } = usePortfolioDatatable(
     filters.filteredPortfolios,
-    filters.performanceFor
+    filters.performanceFor,
+    holdingsCounts,
+    owner
   )
+  const kpis = usePortfolioKpis({
+    portfolios: PORTFOLIOS,
+    performanceFor: filters.performanceFor,
+    holdingsCounts,
+  })
 
   return (
     <>
       <EntityDatatableKpiGroup>
-        <EntityDatatableKpiCard
-          title="Patrimônio Total"
-          value="R$ 1.901.910,00"
-          trend="+ 12%"
-          dotIndicator="success"
-          comparison="vs. mês anterior"
-          icon={IconTrendingUp}
-        />
-        <EntityDatatableKpiCard
-          title="Rendimento Mensal"
-          value="R$ 18.450,20"
-          trend="- 2.4%"
-          dotIndicator="negative"
-          comparison="vs. mês anterior"
-          icon={IconTrendingDown}
-        />
-        <EntityDatatableKpiCard
-          title="Ativos Custodiados"
-          value="14"
-          comparison="em 4 corretoras"
-        />
-        <EntityDatatableKpiCard
-          title="Maior Alocação"
-          value="Renda Fixa"
-          comparison="45% da carteira"
-        />
+        {kpis.map((kpi) => (
+          <EntityDatatableKpiCard
+            key={kpi.key}
+            title={kpi.title}
+            value={kpi.value}
+            trend={kpi.trend}
+            comparison={kpi.comparison}
+            dotIndicator={kpi.dotIndicator}
+            icon={kpi.icon}
+          />
+        ))}
       </EntityDatatableKpiGroup>
 
       <PortfolioDatatableToolbar

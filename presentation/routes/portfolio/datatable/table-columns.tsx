@@ -8,11 +8,15 @@ import type {
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatPercentage } from "@/presentation/presenters/percentage.presenter"
+import { UserAvatar } from "@/presentation/presenters/user-avatar.presenter"
 import { PORTFOLIO_DATATABLE } from "@/presentation/routes/portfolio/settings/labels.settings"
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+
+import type { PortfolioOwner } from "../types/portfolio-list.types"
 
 export interface PortfolioTableColumnOptions {
   onEdit: (portfolio: PortfolioResponseDTO) => void
@@ -21,6 +25,9 @@ export interface PortfolioTableColumnOptions {
   performanceFor: (
     portfolioId: string
   ) => PortfolioPerformanceResponseDTO | null
+  fundCountOf: (portfolioId: string) => number
+  bankAccountCountOf: (portfolioId: string) => number
+  owner: PortfolioOwner | null
 }
 
 /**
@@ -32,11 +39,14 @@ export interface PortfolioTableColumnOptions {
  * the actions column to the end. Data columns are fluid:
  * they grow or shrink to fit the available width and their
  * overflow is truncated instead of spilling into the
- * neighbor columns. Rate columns render through the
- * percentage presenter and money columns through the
- * currency presenter, both aligned to the end. Performance
- * columns resolve the snapshot of the selected range
- * through `performanceFor`.
+ * neighbor columns. Count columns render through the count
+ * presenter, rate columns through the percentage presenter
+ * and money columns through the currency presenter, all
+ * aligned to the end. Counting and owner columns resolve
+ * derived data through `fundCountOf`, `bankAccountCountOf`
+ * and the `owner` record, while performance columns resolve
+ * the snapshot of the selected range through
+ * `performanceFor`.
  *
  * @param columnHelper - The entity column helper.
  * @param options - The row action callbacks.
@@ -77,25 +87,41 @@ export function CreatePortfolioTableColumns(
       cell: (info) => FormatPercentage(info.getValue()),
     }),
 
-    columnHelper.accessor("minAllocation", {
-      header: PORTFOLIO_DATATABLE.COLUMN_MIN_ALLOCATION,
-      size: 120,
+    columnHelper.accessor((row) => options.fundCountOf(row.id), {
+      id: "fundCount",
+      header: PORTFOLIO_DATATABLE.COLUMN_FUND_COUNT,
+      size: 110,
       meta: { align: "end", fluid: true },
-      cell: (info) => FormatPercentage(info.getValue()),
+      cell: (info) => FormatCount(info.getValue()),
     }),
 
-    columnHelper.accessor("targetAllocation", {
-      header: PORTFOLIO_DATATABLE.COLUMN_TARGET_ALLOCATION,
-      size: 120,
-      meta: { align: "end", fluid: true },
-      cell: (info) => FormatPercentage(info.getValue()),
-    }),
+    columnHelper.accessor(
+      (row) => options.bankAccountCountOf(row.id),
+      {
+        id: "bankAccountCount",
+        header: PORTFOLIO_DATATABLE.COLUMN_BANK_ACCOUNT_COUNT,
+        size: 150,
+        meta: { align: "end", fluid: true },
+        cell: (info) => FormatCount(info.getValue()),
+      }
+    ),
 
-    columnHelper.accessor("maxAllocation", {
-      header: PORTFOLIO_DATATABLE.COLUMN_MAX_ALLOCATION,
-      size: 120,
-      meta: { align: "end", fluid: true },
-      cell: (info) => FormatPercentage(info.getValue()),
+    columnHelper.display({
+      id: "owner",
+      header: PORTFOLIO_DATATABLE.COLUMN_OWNER,
+      size: 200,
+      enableSorting: false,
+      meta: { fluid: true },
+      cell: () =>
+        options.owner ? (
+          <UserAvatar
+            firstName={options.owner.firstName}
+            lastName={options.owner.lastName}
+            image={options.owner.image}
+          />
+        ) : (
+          <span className="text-muted-foreground">-</span>
+        ),
     }),
 
     columnHelper.accessor(
