@@ -26,6 +26,7 @@ interface BankListProps {
 
 function BankList({ data, summaries = null }: BankListProps) {
   const BANKS = data ?? []
+  const HAS_BANKS = BANKS.length > 0
 
   const filters = useBankDatatableFilters(BANKS)
   const {
@@ -36,18 +37,6 @@ function BankList({ data, summaries = null }: BankListProps) {
     editDialog,
   } = useBankDatatable(filters.filteredBanks, summaries)
   const kpis = useBankKpis({ banks: BANKS, summaries })
-
-  if (BANKS.length === 0) {
-    return (
-      <EntityEmptyTable
-        icon={IconBuildingBank}
-        title={BANK_EMPTY.TITLE}
-        description={BANK_EMPTY.DESCRIPTION}
-        primaryActionLabel={BANK_EMPTY.PRIMARY_ACTION_LABEL}
-        onPrimaryAction={addDialog.handleOpen}
-      />
-    )
-  }
 
   return (
     <>
@@ -76,10 +65,20 @@ function BankList({ data, summaries = null }: BankListProps) {
         }
       />
 
-      <BankDatatableTable
-        table={table}
-        onBulkDelete={bulkDelete.handleBulkDelete}
-      />
+      {HAS_BANKS ? (
+        <BankDatatableTable
+          table={table}
+          onBulkDelete={bulkDelete.handleBulkDelete}
+        />
+      ) : (
+        <EntityEmptyTable
+          icon={IconBuildingBank}
+          title={BANK_EMPTY.TITLE}
+          description={BANK_EMPTY.DESCRIPTION}
+          primaryActionLabel={BANK_EMPTY.PRIMARY_ACTION_LABEL}
+          onPrimaryAction={addDialog.handleOpen}
+        />
+      )}
 
       <BankAddDialog dialog={addDialog} />
       <BankEditDialog dialog={editDialog} />

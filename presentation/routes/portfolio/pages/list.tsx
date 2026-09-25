@@ -31,6 +31,7 @@ function PortfolioList({
   summaries = null,
 }: PortfolioListProps) {
   const PORTFOLIOS = data ?? []
+  const HAS_PORTFOLIOS = PORTFOLIOS.length > 0
 
   const filters = usePortfolioDatatableFilters(
     PORTFOLIOS,
@@ -52,18 +53,6 @@ function PortfolioList({
     performanceFor: filters.performanceFor,
     summaries,
   })
-
-  if (PORTFOLIOS.length === 0) {
-    return (
-      <EntityEmptyTable
-        icon={IconWallet}
-        title={PORTFOLIO_EMPTY.TITLE}
-        description={PORTFOLIO_EMPTY.DESCRIPTION}
-        primaryActionLabel={PORTFOLIO_EMPTY.PRIMARY_ACTION_LABEL}
-        onPrimaryAction={addDialog.handleOpen}
-      />
-    )
-  }
 
   return (
     <>
@@ -95,10 +84,22 @@ function PortfolioList({
         }
       />
 
-      <PortfolioDatatableTable
-        table={table}
-        onBulkDelete={bulkDelete.handleBulkDelete}
-      />
+      {HAS_PORTFOLIOS ? (
+        <PortfolioDatatableTable
+          table={table}
+          onBulkDelete={bulkDelete.handleBulkDelete}
+        />
+      ) : (
+        <EntityEmptyTable
+          icon={IconWallet}
+          title={PORTFOLIO_EMPTY.TITLE}
+          description={PORTFOLIO_EMPTY.DESCRIPTION}
+          primaryActionLabel={
+            PORTFOLIO_EMPTY.PRIMARY_ACTION_LABEL
+          }
+          onPrimaryAction={addDialog.handleOpen}
+        />
+      )}
 
       <PortfolioAddDialog dialog={addDialog} />
       <PortfolioEditDialog dialog={editDialog} />
