@@ -52,6 +52,7 @@ export function CreatePortfolioTableColumns(
 
     columnHelper.accessor("acronym", {
       header: PORTFOLIO_DATATABLE.COLUMN_ACRONYM,
+      enableHiding: false,
       size: 96,
       meta: { pinned: "start" },
     }),

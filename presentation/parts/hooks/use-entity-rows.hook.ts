@@ -34,7 +34,9 @@ export interface EntityTableRowsModel<TData extends RowData> {
  *
  * @remarks
  * Exposes the selection state and the visible cells per row so
- * the row component stays presentational.
+ * the row component stays presentational. The model re-computes
+ * whenever the visible column ids change, so hiding and showing
+ * columns keeps the body rows aligned with the header.
  *
  * @param table - The table instance.
  *
@@ -49,7 +51,16 @@ function useEntityRows<TData extends RowData>(
 ): EntityTableRowsModel<TData> {
   const ROWS = table.getRowModel().rows
 
-  const ROW_MODELS = useMemo(() => ROWS.map(ToRowModel), [ROWS])
+  // Rebuilds when the visible column set changes, keeping the
+  // cells of each row aligned with the current table state.
+  const VISIBLE_COLUMN_IDS = table
+    .getVisibleLeafColumns()
+    .map((column) => column.id)
+
+  const ROW_MODELS = useMemo(
+    () => ROWS.map(ToRowModel),
+    [ROWS, VISIBLE_COLUMN_IDS]
+  )
 
   return {
     empty: ROWS.length === 0,

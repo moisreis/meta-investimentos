@@ -50,7 +50,9 @@ export interface EntityDatatableEditColumnsButtonProps extends ButtonHTMLAttribu
  * @remarks
  * Without a `table`, renders a standalone button. With a `table`,
  * attaches a dropdown listing every hideable column, each toggled
- * through a checkbox item.
+ * through a checkbox item. The last visible column is locked so
+ * the table always keeps one fluid column; without it, the fixed
+ * table layout would stretch the pinned columns to fill the row.
  *
  * @param props - Native button properties plus the optional table.
  *
@@ -106,22 +108,34 @@ export function EntityDatatableEditColumnsButton({
         }
       />
       <DropdownMenuContent align="end" className="w-56">
-        {table
-          .getAllColumns()
-          .filter((column) => column.getCanHide())
-          .map((column) => (
-            <DropdownMenuCheckboxItem
-              key={column.id}
-              checked={column.getIsVisible()}
-              onCheckedChange={(value) =>
-                column.toggleVisibility(!!value)
-              }
-            >
-              {getColumnLabel
-                ? getColumnLabel(column)
-                : column.id}
-            </DropdownMenuCheckboxItem>
-          ))}
+        {(() => {
+          const columns = table
+            .getAllColumns()
+            .filter((column) => column.getCanHide())
+          const visibleCount = columns.filter((column) =>
+            column.getIsVisible()
+          ).length
+
+          return columns.map((column) => {
+            const isLastVisible =
+              column.getIsVisible() && visibleCount <= 1
+
+            return (
+              <DropdownMenuCheckboxItem
+                key={column.id}
+                checked={column.getIsVisible()}
+                disabled={isLastVisible}
+                onCheckedChange={(value) =>
+                  column.toggleVisibility(!!value)
+                }
+              >
+                {getColumnLabel
+                  ? getColumnLabel(column)
+                  : column.id}
+              </DropdownMenuCheckboxItem>
+            )
+          })
+        })()}
       </DropdownMenuContent>
     </DropdownMenu>
   )
