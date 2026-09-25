@@ -53,7 +53,6 @@ export const BANK_DATATABLE = {
   COLUMN_CODE: "Código",
   COLUMN_NAME: "Nome",
   COLUMN_ACCOUNT_COUNT: "Nº de Contas",
-  COLUMN_CREATED_AT: "Cadastrado em",
 
   // Toolbar filter copy.
   FILTER_SEARCH_PLACEHOLDER: "Buscar por nome",
@@ -89,7 +88,6 @@ export const BANK_DATATABLE_COLUMN_LABELS: Record<
   code: BANK_DATATABLE.COLUMN_CODE,
   name: BANK_DATATABLE.COLUMN_NAME,
   accountCount: BANK_DATATABLE.COLUMN_ACCOUNT_COUNT,
-  createdAt: BANK_DATATABLE.COLUMN_CREATED_AT,
 }
 
 // KPI card copy for the bank list screen.
@@ -118,5 +116,13 @@ function FormatDeleteBankDescription(name: string): string {
     "Esta ação não pode ser desfeita."
   )
 }
+
+// Empty state copy for the bank list screen.
+export const BANK_EMPTY = {
+  TITLE: "Nenhum banco cadastrado",
+  DESCRIPTION:
+    "Cadastre o primeiro banco para vincular contas às carteiras.",
+  PRIMARY_ACTION_LABEL: BANK_FORM.ADD_BUTTON,
+} as const
 
 export { FormatDeleteBankDescription }

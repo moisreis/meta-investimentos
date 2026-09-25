@@ -138,4 +138,13 @@ function FormatDeletePortfolioDescription(name: string): string {
   )
 }
 
+// Empty state copy for the portfolio list screen.
+export const PORTFOLIO_EMPTY = {
+  TITLE: "Nenhuma carteira cadastrada",
+  DESCRIPTION:
+    "Comece cadastrando a sua primeira carteira para " +
+    "acompanhar os seus investimentos.",
+  PRIMARY_ACTION_LABEL: PORTFOLIO_FORM.ADD_BUTTON,
+} as const
+
 export { FormatDeletePortfolioDescription }

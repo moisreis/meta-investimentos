@@ -9,7 +9,6 @@ import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
-import { FormatDate } from "@/presentation/presenters/date.presenter"
 import { BANK_DATATABLE } from "@/presentation/routes/bank/settings/labels.settings"
 import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
 
@@ -80,13 +79,6 @@ export function CreateBankTableColumns(
         cell: (info) => FormatCount(info.getValue()),
       }
     ),
-
-    columnHelper.accessor("createdAt", {
-      header: BANK_DATATABLE.COLUMN_CREATED_AT,
-      size: 120,
-      meta: { align: "end", fluid: true },
-      cell: (info) => FormatDate(info.getValue()),
-    }),
 
     columnHelper.display({
       id: "actions",

@@ -1,7 +1,10 @@
 "use client"
 
+import { IconWallet } from "@tabler/icons-react"
+
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
+import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
 import { PortfolioDatatableFilters } from "../datatable/filters"
@@ -13,6 +16,7 @@ import { PortfolioEditDialog } from "../dialogs/edit"
 import { usePortfolioDatatableFilters } from "../hooks/use-portfolio-datatable-filters.hook"
 import { usePortfolioDatatable } from "../hooks/use-portfolio-datatable.hook"
 import { usePortfolioKpis } from "../hooks/use-portfolio-kpis.hook"
+import { PORTFOLIO_EMPTY } from "../settings/labels.settings"
 import type { PortfolioRowSummary } from "../types/portfolio-list.types"
 
 interface PortfolioListProps {
@@ -48,6 +52,18 @@ function PortfolioList({
     performanceFor: filters.performanceFor,
     summaries,
   })
+
+  if (PORTFOLIOS.length === 0) {
+    return (
+      <EntityEmptyTable
+        icon={IconWallet}
+        title={PORTFOLIO_EMPTY.TITLE}
+        description={PORTFOLIO_EMPTY.DESCRIPTION}
+        primaryActionLabel={PORTFOLIO_EMPTY.PRIMARY_ACTION_LABEL}
+        onPrimaryAction={addDialog.handleOpen}
+      />
+    )
+  }
 
   return (
     <>
