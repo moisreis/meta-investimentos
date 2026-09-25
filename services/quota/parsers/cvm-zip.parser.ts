@@ -5,39 +5,37 @@ const CSV_ENTRY = /\.csv$/i
 
 /**
  * @summary
- * Extracts **CVM** `INF_DIARIO` CSV files that match the
- * requested CNPJs.
+ * Extracts the **CVM** `INF_DIARIO` CSV files from a
+ * monthly archive.
  *
  * @remarks
- * Uses a **fflate** filter to inflate only the matching
- * entries. Unmatched entries are skipped and never
- * materialized.
+ * Uses a **fflate** filter to inflate only the `CSV`
+ * entries. Since `maio/2022` the monthly layout ships a
+ * single consolidated CSV whose rows carry the
+ * `CNPJ_FUNDO_CLASSE` column, so the per-fund selection
+ * happens downstream, over the parsed rows.
  *
  * @explanation
- * Use this parser to avoid holding the thousands of entries
- * inside a monthly archive. It keeps memory use low on
- * constrained serverless runtimes.
+ * Use this parser to obtain the raw monthly CSV bytes.
+ * It keeps memory use low on constrained serverless
+ * runtimes by never materializing non-CSV entries.
  *
  * @param bytes - The raw monthly archive bytes.
- * @param cnpjs - The target fund **CNPJ** digit strings.
  *
- * @returns The matching CSV bytes.
+ * @returns The extracted CSV file bytes.
  *
  * @example
- * const FILES = extractCvmFundFiles(ZIP, CNPJS);
+ * const FILES = extractCvmCsvFiles(ZIP);
  *
  * @author Moisés Reis
  *
- * @date 2026-09-17
+ * @date 2026-09-25
  */
-export function extractCvmFundFiles(
-  bytes: Uint8Array,
-  cnpjs: Set<string>
+export function extractCvmCsvFiles(
+  bytes: Uint8Array
 ): Uint8Array[] {
   const FILES = unzipSync(bytes, {
-    filter: (file) =>
-      CSV_ENTRY.test(file.name) &&
-      Array.from(cnpjs).some((cnpj) => file.name.includes(cnpj)),
+    filter: (file) => CSV_ENTRY.test(file.name),
   })
 
   return Object.values(FILES) as Uint8Array[]

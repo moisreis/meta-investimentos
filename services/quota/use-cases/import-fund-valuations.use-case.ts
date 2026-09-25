@@ -4,7 +4,7 @@ import { IFund } from "@domain/fund/interfaces/fund.interface"
 import type { ICvmClient } from "@/domain/quota/interfaces/cvm-client.interface"
 import type { UpsertQuota } from "@domain/quota/interfaces/quota.interface"
 import { parseCvmCsvBytes } from "../parsers/cvm-csv.parser"
-import { extractCvmFundFiles } from "../parsers/cvm-zip.parser"
+import { extractCvmCsvFiles } from "../parsers/cvm-zip.parser"
 
 // ---------------------------------
 // CONSTANTS
@@ -160,7 +160,9 @@ export function resolveCvmWindow(
   const JAN = new Date(Date.UTC(now.getUTCFullYear(), 0, 1))
   const RAW = computeRawRange(window, TODAY, JAN)
 
-  const CLAMPED_START = new Date(Math.max(RAW.start.getTime(), JAN.getTime()))
+  const CLAMPED_START = new Date(
+    Math.max(RAW.start.getTime(), JAN.getTime())
+  )
   const CLAMPED_END = new Date(
     Math.min(RAW.end.getTime(), endOfUtcDay(TODAY).getTime())
   )
@@ -186,7 +188,11 @@ function computeRawRange(
     case "month":
       return {
         start: new Date(
-          Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1)
+          Date.UTC(
+            today.getUTCFullYear(),
+            today.getUTCMonth(),
+            1
+          )
         ),
         end: endOfUtcDay(today),
       }
@@ -247,9 +253,9 @@ export class ImportFundValuationsUseCase {
    * Fetches and persists one month of quota data.
    *
    * @remarks
-   * Downloads the monthly **CVM** archive, extracts only the
-   * fund files that belong to the current slice, and upserts
-   * rows in small batches.
+   * Downloads the monthly **CVM** archive, parses the
+   * consolidated CSV, and upserts only the tracked
+   * funds' rows in small batches.
    *
    * @explanation
    * Use this method inside an **Inngest** function. The
@@ -270,7 +276,9 @@ export class ImportFundValuationsUseCase {
    *
    * @date 2026-09-17
    */
-  async importMonth(input: ImportMonthInput): Promise<ImportMonthResult> {
+  async importMonth(
+    input: ImportMonthInput
+  ): Promise<ImportMonthResult> {
     const FUNDS = await this.fundRepository.findAll({
       limit: input.limit,
       offset: input.offset,
@@ -307,7 +315,7 @@ export class ImportFundValuationsUseCase {
       }
     }
 
-    const CSV_BYTES = extractCvmFundFiles(ZIP_BYTES, new Set(CNPJ_MAP.keys()))
+    const CSV_BYTES = extractCvmCsvFiles(ZIP_BYTES)
 
     const { upserts, skipped } = buildUpserts(
       CSV_BYTES,
@@ -383,7 +391,6 @@ function buildUpserts(
       const FUND_ID = cnpjMap.get(ROW.cnpj)
 
       if (FUND_ID === undefined) {
-        skipped++
         continue
       }
 
@@ -423,7 +430,11 @@ function startOfUtcMonday(date: Date): Date {
 
 function startOfUtcDay(date: Date): Date {
   return new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+    Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate()
+    )
   )
 }
 
@@ -446,7 +457,9 @@ function addUtcMonths(date: Date, months: number): Date {
   const YEAR = date.getUTCFullYear()
   const MONTH = date.getUTCMonth() + months
   const DAY = date.getUTCDate()
-  const LAST_DAY = new Date(Date.UTC(YEAR, MONTH + 1, 0)).getUTCDate()
+  const LAST_DAY = new Date(
+    Date.UTC(YEAR, MONTH + 1, 0)
+  ).getUTCDate()
 
   return new Date(Date.UTC(YEAR, MONTH, Math.min(DAY, LAST_DAY)))
 }
