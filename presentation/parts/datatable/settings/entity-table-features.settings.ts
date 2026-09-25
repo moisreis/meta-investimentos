@@ -42,9 +42,9 @@ export const ENTITY_TABLE_FEATURES = tableFeatures({
     text: sortFn_text,
   },
   // Phantom slot that declares the column metadata contract.
-  // Pinned columns are frozen at the table edges; fluid columns
-  // absorb the horizontal surplus so the remaining columns keep
-  // their exact widths.
+  // Pinned columns are frozen at the table edges; fluid
+  // columns grow and shrink to absorb the available width
+  // while keeping their declared proportions.
   columnMeta: {} as {
     align?: EntityTableAlign
     fluid?: boolean

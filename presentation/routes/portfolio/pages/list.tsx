@@ -78,7 +78,7 @@ function PortfolioList({
         onAddItem={addDialog.handleOpen}
         filters={
           <PortfolioDatatableFilters
-            dates={filters.calendarDates}
+            isPerformanceDay={filters.isPerformanceDay}
             range={filters.range}
             onRangeChange={filters.onRangeChange}
             query={filters.query}

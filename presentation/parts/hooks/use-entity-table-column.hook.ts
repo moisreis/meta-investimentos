@@ -25,12 +25,13 @@ export interface EntityTableColumnLayout {
  * @remarks
  * Returns the pixel width, the sticky offsets for pinned
  * columns, the declared text alignment and the pin region.
- * Fluid columns (declared with `meta.fluid`) omit the width,
- * so the fixed table layout lets them absorb the horizontal
- * surplus while every other column keeps its exact size.
- * A fluid column must not be pinned: its rendered width
- * differs from its declared size, which would misalign the
- * sticky offsets of the neighboring pinned columns.
+ * Fluid columns resolve their width through the screen
+ * sizing pass, so they grow or shrink with the available
+ * space while the pinned and fixed columns keep their
+ * exact sizes. A fluid column must not be pinned: its
+ * rendered width differs from its declared size, which
+ * would misalign the sticky offsets of the neighboring
+ * pinned columns.
  *
  * @param table - The table instance.
  * @param column - The column being rendered.
@@ -49,9 +50,7 @@ function useEntityTableColumn<TData extends RowData>(
 
   const STYLE: CSSProperties = {
     position: pinned ? "sticky" : undefined,
-    ...(column.columnDef.meta?.fluid !== true && {
-      width: column.getSize(),
-    }),
+    width: column.getSize(),
     ...(pinned === "start" && {
       left: column.getStart(),
     }),

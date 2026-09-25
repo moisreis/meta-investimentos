@@ -17,7 +17,7 @@ import { FormatDate } from "@/presentation/presenters/date.presenter"
 export interface EntityDateRangeFilterProps {
   value: DateRange | undefined
   onChange: (range: DateRange | undefined) => void
-  disabledDates?: Date[]
+  isDateDisabled?: (date: Date) => boolean
   placeholder?: string
   numberOfMonths?: number
 }
@@ -30,14 +30,14 @@ export interface EntityDateRangeFilterProps {
  * Composes the shared popover and calendar primitives. The
  * trigger displays the selected range through the pt-BR
  * date presenter, or the placeholder when nothing is
- * selected. Days passed in `disabledDates` are disabled in
- * the calendar and the popover closes once a full range
+ * selected. Days matched by `isDateDisabled` are disabled
+ * in the calendar and the popover closes once a full range
  * is picked.
  *
  * @param props - The filter contract.
  * @param props.value - The selected range.
  * @param props.onChange - Reports the next range.
- * @param props.disabledDates - Days without registries.
+ * @param props.isDateDisabled - Disables a calendar day.
  * @param props.placeholder - Trigger text when empty.
  * @param props.numberOfMonths - Months shown side by side.
  *
@@ -50,7 +50,7 @@ export interface EntityDateRangeFilterProps {
 function EntityDateRangeFilter({
   value,
   onChange,
-  disabledDates,
+  isDateDisabled,
   placeholder = "Selecione um período",
   numberOfMonths = 2,
 }: EntityDateRangeFilterProps) {
@@ -67,8 +67,8 @@ function EntityDateRangeFilter({
         render={
           <Button
             type="button"
-            variant="outline"
-            className="h-8 gap-1.5 px-2.5 font-normal text-muted-foreground"
+            variant="ghost"
+            className="font-normal text-muted-foreground"
           >
             <IconCalendar aria-hidden="true" />
             <span>{TRIGGER_LABEL}</span>
@@ -86,7 +86,7 @@ function EntityDateRangeFilter({
             if (next?.from && next.to) setOpen(false)
           }}
           numberOfMonths={numberOfMonths}
-          disabled={disabledDates}
+          disabled={isDateDisabled}
         />
       </PopoverContent>
     </Popover>

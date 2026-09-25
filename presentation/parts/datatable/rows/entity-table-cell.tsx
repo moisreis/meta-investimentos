@@ -33,7 +33,7 @@ export interface EntityTableCellProps<TData extends RowData> {
  * Applies the resolved column width, the declared alignment
  * and the selection highlight. Pinned cells are handled by
  * the pinned column wrapper, and fluid columns render inside
- * a truncating wrapper with a content-level minimum width.
+ * a truncating wrapper that keeps the value on one line.
  *
  * @param props - The table, the cell and its layout.
  *
@@ -63,7 +63,7 @@ function EntityTableCell<TData extends RowData>({
       )}
     >
       {IS_FLUID ? (
-        <EntityTableFluidContent size={cell.column.getSize()}>
+        <EntityTableFluidContent>
           <table.FlexRender cell={cell} />
         </EntityTableFluidContent>
       ) : (

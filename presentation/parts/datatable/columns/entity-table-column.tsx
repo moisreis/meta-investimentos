@@ -95,7 +95,7 @@ function EntityTableColumn<TData extends RowData>({
       )}
     >
       {header!.isPlaceholder ? null : IS_FLUID ? (
-        <EntityTableFluidContent size={column.getSize()}>
+        <EntityTableFluidContent>
           <table.FlexRender header={header!} />
         </EntityTableFluidContent>
       ) : (

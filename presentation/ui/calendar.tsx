@@ -10,7 +10,11 @@ import {
 } from "react-day-picker"
 
 import { Button, buttonVariants } from "@/presentation/ui/button"
-import { IconChevronLeft, IconChevronRight, IconChevronDown } from "@tabler/icons-react"
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronDown,
+} from "@tabler/icons-react"
 
 function Calendar({
   className,
@@ -41,6 +45,13 @@ function Calendar({
       formatters={{
         formatMonthDropdown: (date) =>
           date.toLocaleString(locale?.code, { month: "short" }),
+        formatCaption: (date) => {
+          const label = date.toLocaleDateString(locale?.code, {
+            month: "long",
+            year: "numeric",
+          })
+          return label.charAt(0).toUpperCase() + label.slice(1)
+        },
         ...formatters,
       }}
       classNames={{
@@ -49,7 +60,10 @@ function Calendar({
           "relative flex flex-col gap-4 md:flex-row",
           defaultClassNames.months
         ),
-        month: cn("flex w-full flex-col gap-4", defaultClassNames.month),
+        month: cn(
+          "flex w-full flex-col gap-4",
+          defaultClassNames.month
+        ),
         nav: cn(
           "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1",
           defaultClassNames.nav
@@ -87,7 +101,10 @@ function Calendar({
             : "flex items-center gap-1 rounded-(--cell-radius) text-sm [&>svg]:size-3.5 [&>svg]:text-muted-foreground",
           defaultClassNames.caption_label
         ),
-        month_grid: cn("w-full border-collapse", defaultClassNames.month_grid),
+        month_grid: cn(
+          "w-full border-collapse",
+          defaultClassNames.month_grid
+        ),
         weekdays: cn("flex", defaultClassNames.weekdays),
         weekday: cn(
           "flex-1 rounded-(--cell-radius) text-[0.8rem] font-normal text-muted-foreground select-none",
@@ -113,7 +130,10 @@ function Calendar({
           "relative isolate z-0 rounded-l-(--cell-radius) bg-muted after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-muted",
           defaultClassNames.range_start
         ),
-        range_middle: cn("rounded-none", defaultClassNames.range_middle),
+        range_middle: cn(
+          "rounded-none",
+          defaultClassNames.range_middle
+        ),
         range_end: cn(
           "relative isolate z-0 rounded-r-(--cell-radius) bg-muted after:absolute after:inset-y-0 after:left-0 after:w-4 after:bg-muted",
           defaultClassNames.range_end
@@ -147,18 +167,27 @@ function Calendar({
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === "left") {
             return (
-              <IconChevronLeft className={cn("size-4", className)} {...props} />
+              <IconChevronLeft
+                className={cn("size-4", className)}
+                {...props}
+              />
             )
           }
 
           if (orientation === "right") {
             return (
-              <IconChevronRight className={cn("size-4", className)} {...props} />
+              <IconChevronRight
+                className={cn("size-4", className)}
+                {...props}
+              />
             )
           }
 
           return (
-            <IconChevronDown className={cn("size-4", className)} {...props} />
+            <IconChevronDown
+              className={cn("size-4", className)}
+              {...props}
+            />
           )
         },
         DayButton: ({ ...props }) => (
@@ -186,7 +215,9 @@ function CalendarDayButton({
   modifiers,
   locale,
   ...props
-}: React.ComponentProps<typeof DayButton> & { locale?: Partial<Locale> }) {
+}: React.ComponentProps<typeof DayButton> & {
+  locale?: Partial<Locale>
+}) {
   const defaultClassNames = getDefaultClassNames()
 
   const ref = React.useRef<HTMLButtonElement>(null)

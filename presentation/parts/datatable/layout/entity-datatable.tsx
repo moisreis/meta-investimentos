@@ -1,8 +1,10 @@
 "use client"
 
+import { useRef } from "react"
 import type { RowData } from "@tanstack/react-table"
 import { cn } from "cn"
 
+import { useEntityDatatableFluidWidths } from "@/presentation/parts/hooks/use-entity-datatable-fluid-widths.hook"
 import { useEntityDatatablePinning } from "@/presentation/parts/hooks/use-entity-datatable-pinning.hook"
 
 import { EntityTablePagination } from "../pagination/entity-table-pagination"
@@ -27,18 +29,18 @@ export interface EntityDatatableProps<TData extends RowData> {
  * @remarks
  * Composes the sticky header, the body rows and the pagination
  * footer inside a vertical scroll container. Applies the column
- * pinning declared through the column metadata. The `<table>`
- * element is rendered directly instead of reusing the `Table`
- * UI primitive, because that primitive owns its own horizontal
- * scrollport: nesting it here would make it the vertical scroll
- * container too, detaching the sticky header from this screen's
- * scroll area. The table is sized `w-full min-w-max`: it never
- * shrinks below the available width when columns are hidden,
- * but grows wider than it when the visible columns overflow.
- * Columns declared as fluid absorb the horizontal surplus, so
- * the pinned columns keep their exact widths in every case.
- * The structural table primitives (header, body, rows and cells)
- * are all reused from `presentation/ui/table`.
+ * pinning declared through the column metadata and keeps the
+ * fluid column widths fitting the screen through the shared
+ * sizing pass. The `<table>` element is rendered directly
+ * instead of reusing the `Table` UI primitive, because that
+ * primitive owns its own horizontal scrollport: nesting it
+ * here would make it the vertical scroll container too,
+ * detaching the sticky header from this screen's scroll area.
+ * The table is sized `w-full table-fixed`: it always fits the
+ * container, and the fluid columns grow or shrink with the
+ * available width. The structural table primitives (header,
+ * body, rows and cells) are all reused from
+ * `presentation/ui/table`.
  *
  * @param props - The table and the optional bulk delete flow.
  *
@@ -55,6 +57,10 @@ function EntityDatatable<TData extends RowData>({
 }: EntityDatatableProps<TData>) {
   useEntityDatatablePinning(table)
 
+  const SCROLL_REF = useRef<HTMLDivElement>(null)
+
+  useEntityDatatableFluidWidths(table, SCROLL_REF)
+
   return (
     <div
       className={cn(
@@ -62,10 +68,13 @@ function EntityDatatable<TData extends RowData>({
         className
       )}
     >
-      <div className="min-h-0 flex-1 overflow-auto">
+      <div
+        ref={SCROLL_REF}
+        className="min-h-0 flex-1 overflow-auto"
+      >
         <table
           data-slot="table"
-          className="w-full min-w-max table-fixed border-separate border-spacing-0 text-sm"
+          className="w-full table-fixed border-separate border-spacing-0 text-sm"
         >
           <EntityTableHeader table={table} />
 

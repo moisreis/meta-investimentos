@@ -27,10 +27,13 @@ function ToUtcDayKey(date: Date): string {
 
 // Builds the initial range covering every available day.
 function BuildInitialRange(
-  dates: Date[]
+  keys: string[]
 ): DateRange | undefined {
-  if (dates.length === 0) return undefined
-  return { from: dates[0], to: dates[dates.length - 1] }
+  if (keys.length === 0) return undefined
+  return {
+    from: FromUtcDayKey(keys[0]),
+    to: FromUtcDayKey(keys[keys.length - 1]),
+  }
 }
 
 // Indexes snapshots by their portfolio id.
@@ -47,7 +50,7 @@ interface UsePortfolioDatatableFiltersOutput {
   onQueryChange: (query: string) => void
   range: DateRange | undefined
   onRangeChange: (range: DateRange | undefined) => void
-  calendarDates: Date[]
+  isPerformanceDay: (date: Date) => boolean
   performanceFor: (
     portfolioId: string
   ) => PortfolioPerformanceResponseDTO | null
@@ -63,8 +66,11 @@ interface UsePortfolioDatatableFiltersOutput {
  * performance index loaded for that range. The range starts
  * covering the full span of available days; every change
  * refetches the latest snapshot per portfolio through the
- * server action. Rows are narrowed by the name query before
- * the table receives them.
+ * server action. `isPerformanceDay` reports whether any
+ * portfolio has a registry on the given calendar day, so
+ * the date range filter can keep only those days enabled.
+ * Rows are narrowed by the name query before the table
+ * receives them.
  *
  * @param portfolios - The rows rendered by the datatable.
  * @param availableDates - UTC day keys with registries.
@@ -81,13 +87,13 @@ function usePortfolioDatatableFilters(
 ): UsePortfolioDatatableFiltersOutput {
   const [QUERY, setQuery] = useState("")
 
-  const CALENDAR_DATES = useMemo(
-    () => availableDates.map((key) => FromUtcDayKey(key)),
+  const AVAILABLE_KEYS = useMemo(
+    () => new Set(availableDates),
     [availableDates]
   )
 
   const [RANGE, setRange] = useState<DateRange | undefined>(() =>
-    BuildInitialRange(CALENDAR_DATES)
+    BuildInitialRange(availableDates)
   )
 
   const [PERFORMANCES, setPerformances] = useState<
@@ -117,6 +123,11 @@ function usePortfolioDatatableFilters(
     })
   }, [RANGE])
 
+  const isPerformanceDay = useCallback(
+    (date: Date) => AVAILABLE_KEYS.has(ToUtcDayKey(date)),
+    [AVAILABLE_KEYS]
+  )
+
   const performanceFor = useCallback(
     (portfolioId: string) => PERFORMANCES[portfolioId] ?? null,
     [PERFORMANCES]
@@ -137,7 +148,7 @@ function usePortfolioDatatableFilters(
     onQueryChange: setQuery,
     range: RANGE,
     onRangeChange: setRange,
-    calendarDates: CALENDAR_DATES,
+    isPerformanceDay,
     performanceFor,
     filteredPortfolios: FILTERED_PORTFOLIOS,
   }

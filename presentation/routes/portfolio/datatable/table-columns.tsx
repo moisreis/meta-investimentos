@@ -30,13 +30,13 @@ export interface PortfolioTableColumnOptions {
  * @remarks
  * Pins the selection and acronym columns to the start and
  * the actions column to the end. Data columns are fluid:
- * they share the available width when columns are hidden
- * and stop at a readable minimum when space runs out, so
- * the table scrolls horizontally instead of collapsing.
- * Rate columns render through the percentage presenter
- * and money columns through the currency presenter, both
- * aligned to the end. Performance columns resolve the
- * snapshot of the selected range through `performanceFor`.
+ * they grow or shrink to fit the available width and their
+ * overflow is truncated instead of spilling into the
+ * neighbor columns. Rate columns render through the
+ * percentage presenter and money columns through the
+ * currency presenter, both aligned to the end. Performance
+ * columns resolve the snapshot of the selected range
+ * through `performanceFor`.
  *
  * @param columnHelper - The entity column helper.
  * @param options - The row action callbacks.
