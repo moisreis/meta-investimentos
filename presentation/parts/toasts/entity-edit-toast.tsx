@@ -1,10 +1,14 @@
 "use client"
 
 import * as React from "react"
+
 import { useAuthFormToast } from "@/presentation/parts/hooks/use-auth-form-toast.hook"
 import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
 
-interface PortfolioFormToastProps {
+/**
+ * Props for the entity edit result toast.
+ */
+export interface EntityEditToastProps {
   status: PortfolioFormStatus
   errorMessage?: string | null
   successTitle: string
@@ -18,21 +22,21 @@ const VALIDATION_ERROR =
 
 /**
  * @summary
- * Shows a portfolio form result toast for success or
- * error outcomes.
+ * Shows an entity edit result toast for success or error.
  *
  * @remarks
- * Fires a toast once when the status becomes `success`
- * or `error` after the submit runs. Uses
- * `useAuthFormToast` callbacks with the given copy.
+ * Fires a toast when the status becomes `success` or
+ * `error` after the edit form submits. Uses the shared
+ * auth form toast callbacks with the given copy.
  *
  * @explanation
- * Render inside the portfolio add/edit forms wiring the
+ * Render next to the entity edit dialog wiring the form
  * submit status. On error, the message falls back to a
- * validation hint. The component renders no visible output.
+ * validation hint. The component renders no visible
+ * output.
  *
- * @param props - Props of the portfolio form toast.
- * @param props.status - Current portfolio form status.
+ * @param props - Props of the entity edit toast.
+ * @param props.status - Current entity form status.
  * @param props.errorMessage - Action error message, if any.
  * @param props.successTitle - Success toast title.
  * @param props.successDescription - Success toast description.
@@ -41,21 +45,22 @@ const VALIDATION_ERROR =
  * @returns Toast trigger, no output.
  *
  * @example
- * <PortfolioFormToast status={status} errorMessage={error}
- *   successTitle="Carteira criada!" successDescription="..."
+ * <EntityEditToast status={status} errorMessage={error}
+ *   successTitle="Carteira atualizada!"
+ *   successDescription="As informações foram salvas."
  *   errorTitle="Não foi possível salvar" />
  *
  * @author Moisés Reis
  *
- * @date 2026-09-24
+ * @date 2026-09-25
  */
-function PortfolioFormToast({
+function EntityEditToast({
   status,
   errorMessage,
   successTitle,
   successDescription,
   errorTitle,
-}: PortfolioFormToastProps) {
+}: EntityEditToastProps) {
   const { showSuccess, showError } = useAuthFormToast({
     successTitle,
     successDescription,
@@ -84,4 +89,4 @@ function PortfolioFormToast({
   return null
 }
 
-export { PortfolioFormToast }
+export { EntityEditToast }

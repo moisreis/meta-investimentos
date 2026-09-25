@@ -29,6 +29,24 @@ export const PORTFOLIO_FORM = {
   ERROR_TITLE: "Não foi possível salvar a carteira",
 } as const
 
+// Dialog copy for the portfolio add/edit flows.
+export const PORTFOLIO_DIALOG = {
+  // Add dialog header.
+  ADD_TITLE: "Nova carteira",
+  ADD_DESCRIPTION: "Preencha os dados da nova carteira.",
+
+  // Add-another prompt dialog.
+  ADD_ANOTHER_TITLE: "Adicionar outra carteira?",
+  ADD_ANOTHER_DESCRIPTION:
+    "A carteira foi criada com sucesso. O que deseja fazer?",
+  ADD_ANOTHER_BACK_LABEL: "Voltar para a tabela",
+  ADD_ANOTHER_ANOTHER_LABEL: "Adicionar outra",
+
+  // Edit dialog header.
+  EDIT_TITLE: "Editar carteira",
+  EDIT_DESCRIPTION: "Atualize os dados da carteira.",
+} as const
+
 // Datatable copy for the portfolio list screen.
 export const PORTFOLIO_DATATABLE = {
   // Column headers.

@@ -11,7 +11,9 @@ import type { EntityTableFeatures } from "@/presentation/parts/datatable/setting
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
 import { CreatePortfolioTableColumns } from "../datatable/table-columns"
+import { usePortfolioAddDialog } from "./use-portfolio-add-dialog.hook"
 import { usePortfolioBulkDelete } from "./use-portfolio-bulk-delete.hook"
+import { usePortfolioEditDialog } from "./use-portfolio-edit-dialog.hook"
 import { usePortfolioRowActions } from "./use-portfolio-row-actions.hook"
 
 // Column helper bound to the entity table features.
@@ -26,8 +28,9 @@ const COLUMN_HELPER = createColumnHelper<
  *
  * @remarks
  * Creates the shared table instance used by the toolbar,
- * the datatable and the pagination, wiring the row actions
- * and the bulk delete flow into the column definitions.
+ * the datatable and the pagination, wiring the row actions,
+ * the add/edit dialogs and the bulk delete flow into the
+ * column definitions.
  * The pagination starts at ten rows per page; it is seeded
  * through `initialState` so the slice stays mutable — the
  * `state` option would treat it as controlled and ignore
@@ -44,6 +47,8 @@ const COLUMN_HELPER = createColumnHelper<
 function usePortfolioDatatable(
   portfolios: PortfolioResponseDTO[]
 ) {
+  const addDialog = usePortfolioAddDialog()
+  const editDialog = usePortfolioEditDialog()
   const rowActions = usePortfolioRowActions()
   const bulkDelete = usePortfolioBulkDelete()
 
@@ -51,12 +56,12 @@ function usePortfolioDatatable(
     () =>
       CreatePortfolioTableColumns(COLUMN_HELPER, {
         onView: rowActions.handleView,
-        onEdit: rowActions.handleEdit,
+        onEdit: editDialog.handleOpen,
         onDelete: rowActions.handleDelete,
       }),
     [
+      editDialog.handleOpen,
       rowActions.handleDelete,
-      rowActions.handleEdit,
       rowActions.handleView,
     ]
   )
@@ -71,7 +76,13 @@ function usePortfolioDatatable(
     },
   })
 
-  return { table: TABLE, rowActions, bulkDelete }
+  return {
+    table: TABLE,
+    rowActions,
+    bulkDelete,
+    addDialog,
+    editDialog,
+  }
 }
 
 export { usePortfolioDatatable }

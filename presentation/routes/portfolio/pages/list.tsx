@@ -11,6 +11,9 @@ import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-re
 
 import { PortfolioDatatableTable } from "../datatable/table"
 import { PortfolioDatatableToolbar } from "../datatable/toolbar"
+import { PortfolioAddDialog } from "../dialogs/add"
+import { PortfolioConfirmDeleteDialog } from "../dialogs/confirm-delete"
+import { PortfolioEditDialog } from "../dialogs/edit"
 import { usePortfolioDatatable } from "../hooks/use-portfolio-datatable.hook"
 
 interface PortfolioListProps {
@@ -18,8 +21,13 @@ interface PortfolioListProps {
 }
 
 function PortfolioList({ data }: PortfolioListProps) {
-  const { table, rowActions, bulkDelete } =
-    usePortfolioDatatable(data ?? [])
+  const {
+    table,
+    rowActions,
+    bulkDelete,
+    addDialog,
+    editDialog,
+  } = usePortfolioDatatable(data ?? [])
 
   return (
     <>
@@ -52,13 +60,19 @@ function PortfolioList({ data }: PortfolioListProps) {
         />
       </EntityDatatableKpiGroup>
 
-      <PortfolioDatatableToolbar table={table} />
+      <PortfolioDatatableToolbar
+        table={table}
+        onAddItem={addDialog.handleOpen}
+      />
 
       <PortfolioDatatableTable
         table={table}
         onBulkDelete={bulkDelete.handleBulkDelete}
-        rowActions={rowActions}
       />
+
+      <PortfolioAddDialog dialog={addDialog} />
+      <PortfolioEditDialog dialog={editDialog} />
+      <PortfolioConfirmDeleteDialog dialog={rowActions} />
     </>
   )
 }

@@ -7,11 +7,11 @@ import { EntityDatatableEditColumnsButton } from "@/presentation/parts/component
 import { EntityDatatableToolbar } from "@/presentation/parts/components/entity-datatable-toolbar"
 import { EntityDatatableToolbarSeparator } from "@/presentation/parts/components/entity-datatable-toolbar-separator"
 import type { EntityTable } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import { usePortfolioDatatableToolbar } from "@/presentation/routes/portfolio/hooks/use-portfolio-datatable-toolbar.hook"
 import { PORTFOLIO_DATATABLE_COLUMN_LABELS } from "@/presentation/routes/portfolio/settings/labels.settings"
 
 interface PortfolioDatatableToolbarProps<TData extends RowData> {
   table: EntityTable<TData>
+  onAddItem: () => void
 }
 
 /**
@@ -21,23 +21,25 @@ interface PortfolioDatatableToolbarProps<TData extends RowData> {
  * @remarks
  * Composes the shared datatable toolbar with the
  * add-item button, a separator and the edit-columns
- * button. The edit-columns button toggles the visibility
- * of the hideable columns, resolving each column label
- * through the portfolio settings.
+ * button. The add-item button opens the portfolio add
+ * dialog and the edit-columns button toggles the
+ * visibility of the hideable columns, resolving each
+ * column label through the portfolio settings.
  *
  * @param props - The shared table instance.
+ * @param props.table - The shared table instance.
+ * @param props.onAddItem - Opens the add dialog.
  *
  * @returns The portfolio datatable toolbar.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-24
+ * @date 2026-09-25
  */
 function PortfolioDatatableToolbar<TData extends RowData>({
   table,
+  onAddItem,
 }: PortfolioDatatableToolbarProps<TData>) {
-  const { handleAddItem } = usePortfolioDatatableToolbar()
-
   return (
     <EntityDatatableToolbar
       actions={
@@ -50,9 +52,7 @@ function PortfolioDatatableToolbar<TData extends RowData>({
             }
           />
           <EntityDatatableToolbarSeparator />
-          <EntityDatatableAddItemButton
-            onClick={handleAddItem}
-          />
+          <EntityDatatableAddItemButton onClick={onAddItem} />
         </>
       }
     />

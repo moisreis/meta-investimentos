@@ -1,22 +1,30 @@
 "use client"
 
+import * as React from "react"
+
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
 
-import { PortfolioFormToast } from "@/presentation/parts/components/portfolio-form-toast"
 import { PortfolioPercentageInput } from "@/presentation/parts/components/portfolio-percentage-input"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
-
+import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
 import { useEditPortfolioForm } from "@/presentation/routes/portfolio/hooks/use-edit-portfolio-form.hook"
 
 import { PORTFOLIO_FORM } from "@/presentation/routes/portfolio/settings/labels.settings"
 
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
-interface EditPortfolioFormProps {
+/**
+ * Props for the edit portfolio form.
+ */
+export interface EditPortfolioFormProps {
   portfolio: PortfolioResponseDTO
+  onStatusChange?: (
+    status: PortfolioFormStatus,
+    error: string | null
+  ) => void
 }
 
 /**
@@ -28,26 +36,32 @@ interface EditPortfolioFormProps {
  * Validates fields with **Zod** and shows
  * human-readable error messages.
  * Submits the portfolio to the update server action.
- * Shows loading state while submitting.
+ * Shows loading state while submitting and reports the
+ * submit status through `onStatusChange` so the parent
+ * dialog can react to the outcome.
  *
  * @explanation
- * Use as the edit component of the portfolio screen.
- * On success, a success toast is shown.
+ * Use as the edit component of the portfolio dialog flow.
+ * The parent renders the result toast and closes on
+ * success based on the reported status.
  *
  * @param props - Props of the edit portfolio form.
  * @param props.portfolio - Portfolio being edited.
+ * @param props.onStatusChange - Reports submit outcomes.
  *
  * @returns The edit portfolio form.
  *
  * @example
- * <EditPortfolioForm portfolio={portfolio} />
+ * <EditPortfolioForm portfolio={portfolio}
+ *   onStatusChange={(status, error) => handle(status, error)} />
  *
  * @author Moisés Reis
  *
- * @date 2026-09-24
+ * @date 2026-09-25
  */
 function EditPortfolioForm({
   portfolio,
+  onStatusChange,
 }: EditPortfolioFormProps) {
   const {
     acronym,
@@ -68,6 +82,10 @@ function EditPortfolioForm({
     fieldErrors,
     handleSubmit,
   } = useEditPortfolioForm(portfolio)
+
+  React.useEffect(() => {
+    onStatusChange?.(status, error)
+  }, [status, error, onStatusChange])
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
@@ -185,15 +203,6 @@ function EditPortfolioForm({
         pending={pending}
         label={PORTFOLIO_FORM.EDIT_BUTTON}
         pendingLabel={PORTFOLIO_FORM.EDIT_PENDING_BUTTON}
-      />
-      <PortfolioFormToast
-        status={status}
-        errorMessage={error}
-        successTitle={PORTFOLIO_FORM.UPDATE_SUCCESS_TITLE}
-        successDescription={
-          PORTFOLIO_FORM.UPDATE_SUCCESS_DESCRIPTION
-        }
-        errorTitle={PORTFOLIO_FORM.ERROR_TITLE}
       />
     </SharedFormWrapper>
   )

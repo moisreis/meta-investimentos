@@ -1,17 +1,28 @@
 "use client"
 
+import * as React from "react"
+
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
 
-import { PortfolioFormToast } from "@/presentation/parts/components/portfolio-form-toast"
 import { PortfolioPercentageInput } from "@/presentation/parts/components/portfolio-percentage-input"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
-
+import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
 import { useAddPortfolioForm } from "@/presentation/routes/portfolio/hooks/use-add-portfolio-form.hook"
 
 import { PORTFOLIO_FORM } from "@/presentation/routes/portfolio/settings/labels.settings"
+
+/**
+ * Props for the add portfolio form.
+ */
+export interface AddPortfolioFormProps {
+  onStatusChange?: (
+    status: PortfolioFormStatus,
+    error: string | null
+  ) => void
+}
 
 /**
  * @summary
@@ -21,22 +32,31 @@ import { PORTFOLIO_FORM } from "@/presentation/routes/portfolio/settings/labels.
  * Validates fields with **Zod** and shows
  * human-readable error messages.
  * Submits the portfolio to the create server action.
- * Shows loading state while submitting.
+ * Shows loading state while submitting and reports the
+ * submit status through `onStatusChange` so the parent
+ * dialog can react to the outcome.
  *
  * @explanation
- * Use as the add component of the portfolio screen.
- * On success, a success toast is shown.
+ * Use as the add component of the portfolio dialog flow.
+ * The parent renders the result toast and the follow-up
+ * prompt based on the reported status.
+ *
+ * @param props - Props of the add portfolio form.
+ * @param props.onStatusChange - Reports submit outcomes.
  *
  * @returns The add portfolio form.
  *
  * @example
- * <AddPortfolioForm />
+ * <AddPortfolioForm
+ *   onStatusChange={(status, error) => handle(status, error)} />
  *
  * @author Moisés Reis
  *
- * @date 2026-09-24
+ * @date 2026-09-25
  */
-function AddPortfolioForm() {
+function AddPortfolioForm({
+  onStatusChange,
+}: AddPortfolioFormProps) {
   const {
     acronym,
     updateAcronym,
@@ -56,6 +76,10 @@ function AddPortfolioForm() {
     fieldErrors,
     handleSubmit,
   } = useAddPortfolioForm()
+
+  React.useEffect(() => {
+    onStatusChange?.(status, error)
+  }, [status, error, onStatusChange])
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
@@ -173,15 +197,6 @@ function AddPortfolioForm() {
         pending={pending}
         label={PORTFOLIO_FORM.ADD_BUTTON}
         pendingLabel={PORTFOLIO_FORM.ADD_PENDING_BUTTON}
-      />
-      <PortfolioFormToast
-        status={status}
-        errorMessage={error}
-        successTitle={PORTFOLIO_FORM.CREATE_SUCCESS_TITLE}
-        successDescription={
-          PORTFOLIO_FORM.CREATE_SUCCESS_DESCRIPTION
-        }
-        errorTitle={PORTFOLIO_FORM.ERROR_TITLE}
       />
     </SharedFormWrapper>
   )
