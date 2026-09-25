@@ -1,11 +1,14 @@
-import { asc, eq, inArray } from "drizzle-orm"
+import { asc, eq, inArray, sql } from "drizzle-orm"
 import type {
   PgAsyncDatabase,
   PgQueryResultHKT,
 } from "drizzle-orm/pg-core"
 
 import { Fund } from "@domain/fund/entities/fund.entity"
-import type { IFund } from "@domain/fund/interfaces/fund.interface"
+import type {
+  CategoryRowCount,
+  IFund,
+} from "@domain/fund/interfaces/fund.interface"
 import {
   CNPJ,
   EntityId,
@@ -309,6 +312,61 @@ export class FundRepository implements IFund {
       .where(eq(fund.categoryId, categoryId))
 
     return ROWS.map((row) => ToDomain(row))
+  }
+
+  /**
+   * @summary
+   * Counts the fund rows linked to each provided category.
+   *
+   * @remarks
+   * Runs a grouped query so no rows are hydrated.
+   * Returns an empty array when the input is empty.
+   * Only categories that own at least one fund appear
+   * in the result.
+   *
+   * @explanation
+   * Use this method to tally funds across many
+   * categories in a single aggregated query.
+   *
+   * @param categoryIds - The ids of the categories.
+   *
+   * @returns The count per category.
+   *
+   * @example
+   * const COUNTS = await FUND_REPO
+   *   .countByCategoryIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async countByCategoryIds(
+    categoryIds: EntityId[]
+  ): Promise<CategoryRowCount[]> {
+    if (categoryIds.length === 0) {
+      return []
+    }
+
+    const ROWS = await this.db
+      .select({
+        categoryId: fund.categoryId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(fund)
+      .where(inArray(fund.categoryId, categoryIds))
+      .groupBy(fund.categoryId)
+      .orderBy(fund.categoryId)
+
+    return ROWS.flatMap((row) =>
+      row.categoryId === null
+        ? []
+        : [
+            {
+              categoryId: EntityId.create(row.categoryId),
+              count: row.count,
+            },
+          ]
+    )
   }
 
   /**

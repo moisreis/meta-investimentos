@@ -278,4 +278,36 @@ export class CategoryRepository implements ICategory {
   async delete(id: EntityId): Promise<void> {
     await this.db.delete(category).where(eq(category.id, id))
   }
+
+  /**
+   * @summary
+   * Removes the categories with the provided ids.
+   *
+   * @remarks
+   * A batched delete avoids an N+1 query pattern.
+   * Resolves when the rows are removed; a no-op for
+   * an empty input.
+   *
+   * @explanation
+   * Use this method to delete many categories in one
+   * query.
+   *
+   * @param ids - The ids of the categories to remove.
+   *
+   * @example
+   * await CATEGORY_REPO.deleteByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async deleteByIds(ids: EntityId[]): Promise<void> {
+    if (ids.length === 0) {
+      return
+    }
+
+    await this.db
+      .delete(category)
+      .where(inArray(category.id, ids))
+  }
 }

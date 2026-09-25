@@ -93,7 +93,10 @@ export interface ICategory {
    *
    * @date 2026-09-13
    */
-  findAll(options?: { limit?: number; offset?: number }): Promise<Category[]>
+  findAll(options?: {
+    limit?: number
+    offset?: number
+  }): Promise<Category[]>
 
   /**
    * @summary
@@ -168,4 +171,28 @@ export interface ICategory {
    * @date 2026-09-13
    */
   delete(id: EntityId): Promise<void>
+
+  /**
+   * @summary
+   * Removes the categories with the provided ids.
+   *
+   * @remarks
+   * Resolves when the rows are removed.
+   *
+   * @explanation
+   * Use this method to delete many categories in one
+   * batched operation.
+   *
+   * @param ids - The unique identifiers of the categories.
+   *
+   * @returns Resolves when removed.
+   *
+   * @example
+   * await CATEGORY_REPO.deleteByIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  deleteByIds(ids: EntityId[]): Promise<void>
 }

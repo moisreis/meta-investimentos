@@ -1,6 +1,15 @@
 import type { Fund } from "@domain/fund/entities/fund.entity"
 import type { CNPJ, EntityId } from "@/value-objects"
 
+// Count of fund rows linked to a category.
+export interface CategoryRowCount {
+  // The unique identifier of the category.
+  categoryId: EntityId
+
+  // The number of linked fund rows.
+  count: number
+}
+
 /**
  * @summary
  * Defines the repository contract for `Fund` entities.
@@ -198,6 +207,35 @@ export interface IFund {
    * @date 2026-09-15
    */
   findAllByCategoryId(categoryId: EntityId): Promise<Fund[]>
+
+  /**
+   * @summary
+   * Counts the fund rows linked to each provided category.
+   *
+   * @remarks
+   * Returns an entry per matched category and an empty
+   * array when the input is empty. Categories without
+   * funds are absent from the result.
+   *
+   * @explanation
+   * Use this method to tally funds through a single
+   * grouped query instead of hydrating every row.
+   *
+   * @param categoryIds - The identifiers of the categories.
+   *
+   * @returns The fund count per category.
+   *
+   * @example
+   * const COUNTS = await FUND_REPO
+   *   .countByCategoryIds(CATEGORY_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  countByCategoryIds(
+    categoryIds: EntityId[]
+  ): Promise<CategoryRowCount[]>
 
   /**
    * @summary
