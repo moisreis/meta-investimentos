@@ -1,11 +1,14 @@
-import { and, eq, inArray } from "drizzle-orm"
+import { and, eq, inArray, sql } from "drizzle-orm"
 import type {
   PgAsyncDatabase,
   PgQueryResultHKT,
 } from "drizzle-orm/pg-core"
 
 import { Position } from "@domain/position/entities/position.entity"
-import type { IPosition } from "@domain/position/interfaces/position.interface"
+import type {
+  IPosition,
+  PortfolioRowCount,
+} from "@domain/position/interfaces/position.interface"
 import { EntityId, PositiveMoney } from "@/value-objects"
 import {
   ToDomain,
@@ -180,6 +183,55 @@ export class PositionRepository implements IPosition {
       .where(inArray(position.portfolioId, portfolioIds))
 
     return ROWS.map((row) => ToDomain(row))
+  }
+
+  /**
+   * @summary
+   * Counts the position rows held per provided portfolio.
+   *
+   * @remarks
+   * Runs a grouped query so no rows are hydrated. Returns
+   * an empty array when the input is empty. Because the
+   * `(portfolio, fund)` pair is unique, the count equals
+   * the number of distinct funds held by the portfolio.
+   *
+   * @explanation
+   * Use this method to tally positions across many
+   * portfolios in a single aggregated query.
+   *
+   * @param portfolioIds - The ids of the portfolios.
+   *
+   * @returns The count per portfolio.
+   *
+   * @example
+   * const COUNTS = await POSITION_REPO
+   *   .countByPortfolioIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async countByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<PortfolioRowCount[]> {
+    if (portfolioIds.length === 0) {
+      return []
+    }
+
+    const ROWS = await this.db
+      .select({
+        portfolioId: position.portfolioId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(position)
+      .where(inArray(position.portfolioId, portfolioIds))
+      .groupBy(position.portfolioId)
+      .orderBy(position.portfolioId)
+
+    return ROWS.map((row) => ({
+      portfolioId: EntityId.create(row.portfolioId),
+      count: row.count,
+    }))
   }
 
   /**

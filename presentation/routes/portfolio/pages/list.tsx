@@ -13,23 +13,18 @@ import { PortfolioEditDialog } from "../dialogs/edit"
 import { usePortfolioDatatableFilters } from "../hooks/use-portfolio-datatable-filters.hook"
 import { usePortfolioDatatable } from "../hooks/use-portfolio-datatable.hook"
 import { usePortfolioKpis } from "../hooks/use-portfolio-kpis.hook"
-import type {
-  PortfolioHoldingsCount,
-  PortfolioOwner,
-} from "../types/portfolio-list.types"
+import type { PortfolioRowSummary } from "../types/portfolio-list.types"
 
 interface PortfolioListProps {
   data: PortfolioResponseDTO[] | null
   availableDates?: string[]
-  holdingsCounts?: Record<string, PortfolioHoldingsCount> | null
-  owner?: PortfolioOwner | null
+  summaries?: Record<string, PortfolioRowSummary> | null
 }
 
 function PortfolioList({
   data,
   availableDates = [],
-  holdingsCounts = null,
-  owner = null,
+  summaries = null,
 }: PortfolioListProps) {
   const PORTFOLIOS = data ?? []
 
@@ -46,13 +41,12 @@ function PortfolioList({
   } = usePortfolioDatatable(
     filters.filteredPortfolios,
     filters.performanceFor,
-    holdingsCounts,
-    owner
+    summaries
   )
   const kpis = usePortfolioKpis({
     portfolios: PORTFOLIOS,
     performanceFor: filters.performanceFor,
-    holdingsCounts,
+    summaries,
   })
 
   return (

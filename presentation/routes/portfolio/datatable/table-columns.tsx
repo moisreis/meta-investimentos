@@ -16,7 +16,7 @@ import { PORTFOLIO_DATATABLE } from "@/presentation/routes/portfolio/settings/la
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
-import type { PortfolioOwner } from "../types/portfolio-list.types"
+import type { PortfolioRowSummary } from "../types/portfolio-list.types"
 
 export interface PortfolioTableColumnOptions {
   onEdit: (portfolio: PortfolioResponseDTO) => void
@@ -25,9 +25,7 @@ export interface PortfolioTableColumnOptions {
   performanceFor: (
     portfolioId: string
   ) => PortfolioPerformanceResponseDTO | null
-  fundCountOf: (portfolioId: string) => number
-  bankAccountCountOf: (portfolioId: string) => number
-  owner: PortfolioOwner | null
+  summaryFor: (portfolioId: string) => PortfolioRowSummary | null
 }
 
 /**
@@ -43,10 +41,9 @@ export interface PortfolioTableColumnOptions {
  * presenter, rate columns through the percentage presenter
  * and money columns through the currency presenter, all
  * aligned to the end. Counting and owner columns resolve
- * derived data through `fundCountOf`, `bankAccountCountOf`
- * and the `owner` record, while performance columns resolve
- * the snapshot of the selected range through
- * `performanceFor`.
+ * their derived data per row through `summaryFor`, while
+ * performance columns resolve the snapshot of the selected
+ * range through `performanceFor`.
  *
  * @param columnHelper - The entity column helper.
  * @param options - The row action callbacks.
@@ -87,16 +84,19 @@ export function CreatePortfolioTableColumns(
       cell: (info) => FormatPercentage(info.getValue()),
     }),
 
-    columnHelper.accessor((row) => options.fundCountOf(row.id), {
-      id: "fundCount",
-      header: PORTFOLIO_DATATABLE.COLUMN_FUND_COUNT,
-      size: 110,
-      meta: { align: "end", fluid: true },
-      cell: (info) => FormatCount(info.getValue()),
-    }),
+    columnHelper.accessor(
+      (row) => options.summaryFor(row.id)?.fundCount ?? 0,
+      {
+        id: "fundCount",
+        header: PORTFOLIO_DATATABLE.COLUMN_FUND_COUNT,
+        size: 110,
+        meta: { align: "end", fluid: true },
+        cell: (info) => FormatCount(info.getValue()),
+      }
+    ),
 
     columnHelper.accessor(
-      (row) => options.bankAccountCountOf(row.id),
+      (row) => options.summaryFor(row.id)?.bankAccountCount ?? 0,
       {
         id: "bankAccountCount",
         header: PORTFOLIO_DATATABLE.COLUMN_BANK_ACCOUNT_COUNT,
@@ -106,23 +106,33 @@ export function CreatePortfolioTableColumns(
       }
     ),
 
-    columnHelper.display({
-      id: "owner",
-      header: PORTFOLIO_DATATABLE.COLUMN_OWNER,
-      size: 200,
-      enableSorting: false,
-      meta: { fluid: true },
-      cell: () =>
-        options.owner ? (
-          <UserAvatar
-            firstName={options.owner.firstName}
-            lastName={options.owner.lastName}
-            image={options.owner.image}
-          />
-        ) : (
-          <span className="text-muted-foreground">-</span>
-        ),
-    }),
+    columnHelper.accessor(
+      (row) => options.summaryFor(row.id)?.owner ?? null,
+      {
+        id: "owner",
+        header: PORTFOLIO_DATATABLE.COLUMN_OWNER,
+        size: 200,
+        enableSorting: false,
+        meta: { fluid: true },
+        cell: (info) => {
+          const OWNER = info.getValue()
+
+          if (!OWNER) {
+            return (
+              <span className="text-muted-foreground">-</span>
+            )
+          }
+
+          return (
+            <UserAvatar
+              firstName={OWNER.firstName}
+              lastName={OWNER.lastName}
+              image={OWNER.image}
+            />
+          )
+        },
+      }
+    ),
 
     columnHelper.accessor(
       (row) => options.performanceFor(row.id)?.patrimony ?? null,

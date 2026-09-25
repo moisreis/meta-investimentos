@@ -1,11 +1,14 @@
-import { eq, inArray } from "drizzle-orm"
+import { eq, inArray, sql } from "drizzle-orm"
 import type {
   PgAsyncDatabase,
   PgQueryResultHKT,
 } from "drizzle-orm/pg-core"
 
 import { BankAccount } from "@domain/bank-account/entities/bank-account.entity"
-import type { IBankAccount } from "@domain/bank-account/interfaces/bank-account.interface"
+import type {
+  IBankAccount,
+  PortfolioRowCount,
+} from "@domain/bank-account/interfaces/bank-account.interface"
 import { EntityId } from "@/value-objects"
 import {
   ToDomain,
@@ -168,6 +171,53 @@ export class BankAccountRepository implements IBankAccount {
       .where(inArray(bankAccount.portfolioId, portfolioIds))
 
     return ROWS.map((row) => ToDomain(row))
+  }
+
+  /**
+   * @summary
+   * Counts the bank account rows linked per provided portfolio.
+   *
+   * @remarks
+   * Runs a grouped query so no rows are hydrated. Returns
+   * an empty array when the input is empty.
+   *
+   * @explanation
+   * Use this method to tally bank accounts across many
+   * portfolios in a single aggregated query.
+   *
+   * @param portfolioIds - The ids of the portfolios.
+   *
+   * @returns The count per portfolio.
+   *
+   * @example
+   * const COUNTS = await BANK_ACCOUNT_REPO
+   *   .countByPortfolioIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async countByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<PortfolioRowCount[]> {
+    if (portfolioIds.length === 0) {
+      return []
+    }
+
+    const ROWS = await this.db
+      .select({
+        portfolioId: bankAccount.portfolioId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(bankAccount)
+      .where(inArray(bankAccount.portfolioId, portfolioIds))
+      .groupBy(bankAccount.portfolioId)
+      .orderBy(bankAccount.portfolioId)
+
+    return ROWS.map((row) => ({
+      portfolioId: EntityId.create(row.portfolioId),
+      count: row.count,
+    }))
   }
 
   /**

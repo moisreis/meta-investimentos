@@ -10,11 +10,14 @@ export interface PortfolioOwner {
   image: string | null
 }
 
-// Derived tallies rendered on a portfolio row.
-export interface PortfolioHoldingsCount {
+// Derived data rendered on a portfolio row.
+export interface PortfolioRowSummary {
   // Distinct funds held by the portfolio.
   fundCount: number
 
   // Bank accounts linked to the portfolio.
   bankAccountCount: number
+
+  // Display data of the owning user.
+  owner: PortfolioOwner | null
 }

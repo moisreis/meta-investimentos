@@ -1,6 +1,15 @@
 import type { Position } from "@domain/position/entities/position.entity"
 import type { EntityId } from "@/value-objects"
 
+// Count of position rows linked to a portfolio.
+export interface PortfolioRowCount {
+  // The unique identifier of the portfolio.
+  portfolioId: EntityId
+
+  // The number of linked position rows.
+  count: number
+}
+
 /**
  * @summary
  * Defines the repository contract for `Position` entities.
@@ -68,7 +77,9 @@ export interface IPosition {
    *
    * @date 2026-09-13
    */
-  findAllByPortfolioId(portfolioId: EntityId): Promise<Position[]>
+  findAllByPortfolioId(
+    portfolioId: EntityId
+  ): Promise<Position[]>
 
   /**
    * @summary
@@ -93,7 +104,39 @@ export interface IPosition {
    *
    * @date 2026-09-13
    */
-  findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<Position[]>
+  findAllByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<Position[]>
+
+  /**
+   * @summary
+   * Counts the position rows held per provided portfolio.
+   *
+   * @remarks
+   * Returns an entry per matched portfolio and an empty
+   * array when the input is empty. Because the `(portfolio,
+   * fund)` pair is unique, the count equals the number of
+   * distinct funds held by the portfolio.
+   *
+   * @explanation
+   * Use this method to tally positions through a single
+   * grouped query instead of hydrating every row.
+   *
+   * @param portfolioIds - The identifiers of the portfolios.
+   *
+   * @returns The position count per portfolio.
+   *
+   * @example
+   * const COUNTS = await POSITION_REPO
+   *   .countByPortfolioIds(PORTFOLIO_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  countByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<PortfolioRowCount[]>
 
   /**
    * @summary

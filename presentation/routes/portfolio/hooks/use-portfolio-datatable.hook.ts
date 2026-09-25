@@ -16,10 +16,7 @@ import { usePortfolioAddDialog } from "./use-portfolio-add-dialog.hook"
 import { usePortfolioBulkDelete } from "./use-portfolio-bulk-delete.hook"
 import { usePortfolioEditDialog } from "./use-portfolio-edit-dialog.hook"
 import { usePortfolioRowActions } from "./use-portfolio-row-actions.hook"
-import type {
-  PortfolioHoldingsCount,
-  PortfolioOwner,
-} from "../types/portfolio-list.types"
+import type { PortfolioRowSummary } from "../types/portfolio-list.types"
 
 // Column helper bound to the entity table features.
 const COLUMN_HELPER = createColumnHelper<
@@ -43,9 +40,8 @@ const COLUMN_HELPER = createColumnHelper<
  *
  * @param portfolios - The rows rendered by the datatable.
  * @param performanceFor - Resolves the range snapshot.
- * @param holdingsCounts - Tallies of funds and bank
- * accounts keyed by portfolio id.
- * @param owner - The display data of the owning user.
+ * @param summaries - Derived per-row data (fund and bank
+ * account counts plus the owner) keyed by portfolio id.
  *
  * @returns The table instance plus the action flows.
  *
@@ -58,27 +54,16 @@ function usePortfolioDatatable(
   performanceFor: (
     portfolioId: string
   ) => PortfolioPerformanceResponseDTO | null,
-  holdingsCounts: Record<
-    string,
-    PortfolioHoldingsCount
-  > | null = null,
-  owner: PortfolioOwner | null = null
+  summaries: Record<string, PortfolioRowSummary> | null = null
 ) {
   const addDialog = usePortfolioAddDialog()
   const editDialog = usePortfolioEditDialog()
   const rowActions = usePortfolioRowActions()
   const bulkDelete = usePortfolioBulkDelete()
 
-  const fundCountOf = useCallback(
-    (portfolioId: string) =>
-      holdingsCounts?.[portfolioId]?.fundCount ?? 0,
-    [holdingsCounts]
-  )
-
-  const bankAccountCountOf = useCallback(
-    (portfolioId: string) =>
-      holdingsCounts?.[portfolioId]?.bankAccountCount ?? 0,
-    [holdingsCounts]
+  const summaryFor = useCallback(
+    (portfolioId: string) => summaries?.[portfolioId] ?? null,
+    [summaries]
   )
 
   const COLUMNS = useMemo(
@@ -88,18 +73,14 @@ function usePortfolioDatatable(
         onEdit: editDialog.handleOpen,
         onDelete: rowActions.handleDelete,
         performanceFor,
-        fundCountOf,
-        bankAccountCountOf,
-        owner,
+        summaryFor,
       }),
     [
-      bankAccountCountOf,
       editDialog.handleOpen,
-      fundCountOf,
-      owner,
       performanceFor,
       rowActions.handleDelete,
       rowActions.handleView,
+      summaryFor,
     ]
   )
 

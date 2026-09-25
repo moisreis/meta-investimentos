@@ -1,14 +1,10 @@
 "use server"
 
-import { headers } from "next/headers"
-
-import { auth } from "@/clients/better-auth.client"
 import { db } from "@/clients/database.client"
 import { PortfolioPerformanceRepository } from "@/infrastructure/portfolio-performance/repositories/portfolio-performance.repository"
-import { PortfolioRepository } from "@/infrastructure/portfolio/repositories/portfolio.repository"
+import { LoadSessionPortfolios } from "@/presentation/routes/portfolio/helpers/load-session-portfolios.helper"
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 import { ListPortfolioPerformanceByRangeUseCase } from "@/services/portfolio-performance/use-cases/list-portfolio-performance-by-range.use-case"
-import { ListPortfoliosUseCase } from "@/services/portfolio/use-cases/list-portfolios.use-case"
 
 export interface ListPortfolioPerformanceActionInput {
   from: string
@@ -25,8 +21,8 @@ export interface ListPortfolioPerformanceActionOutput {
  * Lists the portfolio performances within a date range.
  *
  * @remarks
- * Resolves the session user id from the request headers,
- * lists the user portfolios, and returns the latest
+ * Resolves the session user and the user portfolios
+ * through the shared loader, then returns the latest
  * `portfolio_performance` snapshot of each portfolio that
  * falls inside `[from, to]`. The boundaries are UTC day
  * keys (`YYYY-MM-DD`) mapped to UTC midnight and the last
@@ -55,21 +51,13 @@ export async function listPortfolioPerformanceAction(
   input: ListPortfolioPerformanceActionInput
 ): Promise<ListPortfolioPerformanceActionOutput> {
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const SESSION_BUNDLE = await LoadSessionPortfolios()
 
-    if (!SESSION?.user) {
+    if (!SESSION_BUNDLE) {
       return { data: null, error: "Faça login para continuar." }
     }
 
-    const PORTFOLIO_REPOSITORY = new PortfolioRepository(db)
-    const LIST_USE_CASE = new ListPortfoliosUseCase(
-      PORTFOLIO_REPOSITORY
-    )
-    const PORTFOLIOS = await LIST_USE_CASE.execute({
-      userId: SESSION.user.id,
-    })
+    const { portfolios: PORTFOLIOS } = SESSION_BUNDLE
 
     const PERFORMANCE_REPOSITORY =
       new PortfolioPerformanceRepository(db)

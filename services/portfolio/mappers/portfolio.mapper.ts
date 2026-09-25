@@ -36,10 +36,14 @@ export function toCreatePortfolioProps(
     acronym: dto.acronym,
     name: dto.name,
     userId: EntityId.create(dto.userId),
-    annualInterestRate: SignedPercentage.create(dto.annualInterestRate),
+    annualInterestRate: SignedPercentage.create(
+      dto.annualInterestRate
+    ),
     minAllocation: SignedPercentage.create(dto.minAllocation),
     maxAllocation: SignedPercentage.create(dto.maxAllocation),
-    targetAllocation: SignedPercentage.create(dto.targetAllocation),
+    targetAllocation: SignedPercentage.create(
+      dto.targetAllocation
+    ),
   }
 }
 
@@ -49,35 +53,33 @@ export function toCreatePortfolioProps(
  *
  * @remarks
  * Serializes value objects to decimal strings and dates
- * to ISO 8601 strings. The owner display name defaults
- * to an empty string when it is not provided.
+ * to ISO 8601 strings. Owned data such as the display
+ * name of the user is resolved separately by the loader.
  *
  * @explanation
  * Use this function to expose an entity as the response DTO.
  *
  * @param entity - The portfolio domain entity.
- * @param ownerName - Optional display name of the owning user.
  *
  * @returns The response payload.
  *
  * @example
- * const RESPONSE = toResponseDTO(ENTITY, "Moisés Reis");
+ * const RESPONSE = toResponseDTO(ENTITY);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-22
  */
 export function toResponseDTO(
-  entity: Portfolio,
-  ownerName: string = ""
+  entity: Portfolio
 ): PortfolioResponseDTO {
   return {
     id: entity.id as string,
     acronym: entity.acronym,
     name: entity.name,
     userId: entity.userId,
-    ownerName,
-    annualInterestRate: entity.annualInterestRate.value.toString(),
+    annualInterestRate:
+      entity.annualInterestRate.value.toString(),
     minAllocation: entity.minAllocation.value.toString(),
     maxAllocation: entity.maxAllocation.value.toString(),
     targetAllocation: entity.targetAllocation.value.toString(),
