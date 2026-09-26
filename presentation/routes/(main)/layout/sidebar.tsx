@@ -1,27 +1,76 @@
+import type { ReactNode } from "react"
+
+import {
+  IconArrowDownCircle,
+  IconArrowUpCircle,
+  IconBuildingBank,
+  IconCash,
+  IconCategory,
+  IconChartDonut,
+  IconChartHistogram,
+  IconChartPie,
+  IconCoin,
+  IconCreditCard,
+  IconFileAnalytics,
+  IconLayoutDashboard,
+  IconLogs,
+  IconPigMoney,
+  IconUsers,
+  IconWallet,
+} from "@tabler/icons-react"
+
 import { Sidebar, SidebarRail } from "@/presentation/ui/sidebar"
 
 import { MainSidebarGroup } from "@/presentation/parts/components/main-sidebar-group"
 import { MainUserActions } from "@/presentation/parts/components/main-user-actions"
 import { MainSidebarHeader } from "@/presentation/parts/components/main-sidebar-header"
 import { MainSidebarContent } from "@/presentation/parts/components/main-sidebar-content"
-
 import {
-  IconLayoutDashboard,
-  IconLogs,
-  IconWallet,
-  IconChartDonut,
-  IconCash,
-  IconBuildingBank,
-  IconPigMoney,
-  IconCreditCard,
-  IconFileAnalytics,
-  IconBrandSpeedtest,
-  IconChartHistogram,
-  IconCoin,
-  IconChartPie,
-  IconCategory,
-  IconUsers,
-} from "@tabler/icons-react"
+  MAIN_NAVIGATION,
+  type MainNavigationItem,
+} from "@/presentation/parts/navigation/main-navigation"
+
+// Icons resolved per navigation href.
+const SIDEBAR_ICONS: Record<string, ReactNode> = {
+  "/main": <IconLayoutDashboard />,
+  "/portfolio": <IconWallet />,
+  "/position": <IconChartDonut />,
+  "/application": <IconArrowUpCircle />,
+  "/withdrawal": <IconArrowDownCircle />,
+  "/transaction": <IconCash />,
+  "/statement": <IconFileAnalytics />,
+  "/portfolio-performance": <IconWallet />,
+  "/position-performance": <IconCoin />,
+  "/bank": <IconBuildingBank />,
+  "/bank-account": <IconPigMoney />,
+  "/checking-account": <IconCreditCard />,
+  "/benchmark-history": <IconChartHistogram />,
+  "/fund": <IconCoin />,
+  "/category": <IconCategory />,
+  "/quota": <IconChartPie />,
+  "/users": <IconUsers />,
+  "/audit-log": <IconLogs />,
+}
+
+/**
+ * @summary
+ * Resolves the sidebar icon of a navigation item.
+ *
+ * @remarks
+ * Falls back to null when the href has no icon so the
+ * group item still renders without breaking.
+ *
+ * @param item - The navigation item.
+ *
+ * @returns The icon element or `null`.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-25
+ */
+function SidebarIconFor(item: MainNavigationItem): ReactNode {
+  return SIDEBAR_ICONS[item.href] ?? null
+}
 
 function MainSidebar() {
   return (
@@ -31,116 +80,17 @@ function MainSidebar() {
       </MainSidebarHeader>
 
       <MainSidebarContent>
-        <MainSidebarGroup
-          label="Visão Geral"
-          items={[
-            {
-              icon: <IconLayoutDashboard />,
-              label: "Painel",
-              href: "/main",
-            },
-          ]}
-        />
-
-        <MainSidebarGroup
-          label="Carteiras"
-          items={[
-            {
-              icon: <IconWallet />,
-              label: "Carteiras",
-              href: "/portfolio",
-            },
-            {
-              icon: <IconChartDonut />,
-              label: "Posições",
-              href: "/position",
-            },
-            {
-              icon: <IconCash />,
-              label: "Transações",
-              href: "/transaction",
-            },
-            {
-              icon: <IconFileAnalytics />,
-              label: "Relatórios",
-              href: "/statement",
-            },
-            {
-              icon: <IconBrandSpeedtest />,
-              label: "Performance",
-              href: "/portfolio-performance",
-            },
-          ]}
-        />
-
-        <MainSidebarGroup
-          label="Instituições bancárias"
-          items={[
-            {
-              icon: <IconBuildingBank />,
-              label: "Bancos",
-              href: "/bank",
-            },
-            {
-              icon: <IconPigMoney />,
-              label: "Contas bancárias",
-              href: "/bank-account",
-            },
-            {
-              icon: <IconCreditCard />,
-              label: "Contas correntes",
-              href: "/checking-account",
-            },
-          ]}
-        />
-
-        <MainSidebarGroup
-          label="Ìndices econômicos"
-          items={[
-            {
-              icon: <IconChartHistogram />,
-              label: "Histórico de registros",
-              href: "/benchmark-history",
-            },
-          ]}
-        />
-
-        <MainSidebarGroup
-          label="Fundos de investimento"
-          items={[
-            {
-              icon: <IconCoin />,
-              label: "Fundos credenciados",
-              href: "/fund",
-            },
-            {
-              icon: <IconCategory />,
-              label: "Categorias",
-              href: "/category",
-            },
-            {
-              icon: <IconChartPie />,
-              label: "Registros de cotas",
-              href: "/quota",
-            },
-          ]}
-        />
-
-        <MainSidebarGroup
-          label="Administração"
-          items={[
-            {
-              icon: <IconUsers />,
-              label: "Usuários",
-              href: "/users",
-            },
-            {
-              icon: <IconLogs />,
-              label: "Atividades do sistema",
-              href: "/audit-log",
-            },
-          ]}
-        />
+        {MAIN_NAVIGATION.map((group) => (
+          <MainSidebarGroup
+            key={group.label}
+            label={group.label}
+            items={group.items.map((item) => ({
+              label: item.label,
+              href: item.href,
+              icon: SidebarIconFor(item),
+            }))}
+          />
+        ))}
       </MainSidebarContent>
       <SidebarRail />
     </Sidebar>
