@@ -57,7 +57,9 @@ export class GetStatementUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: GetStatementInput): Promise<StatementResponseDTO> {
+  async execute(
+    input: GetStatementInput
+  ): Promise<StatementResponseDTO> {
     const ID = EntityId.create(input.statementId)
     const STATEMENT = await this.statementRepository.findById(ID)
     if (!STATEMENT) {

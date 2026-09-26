@@ -371,7 +371,10 @@ export class PositionPerformance {
    *
    * @date 2026-09-13
    */
-  private constructor(props: Required<PositionPerformanceProps>, id?: string) {
+  private constructor(
+    props: Required<PositionPerformanceProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -431,13 +434,19 @@ export class PositionPerformance {
       )
     }
     if (!props.date) {
-      throw new ValidationError("`PositionPerformance` must have a date.")
+      throw new ValidationError(
+        "`PositionPerformance` must have a date."
+      )
     }
     if (!props.quotasHeld) {
-      throw new ValidationError("`PositionPerformance` must have quotas held.")
+      throw new ValidationError(
+        "`PositionPerformance` must have quotas held."
+      )
     }
     if (!props.patrimony) {
-      throw new ValidationError("`PositionPerformance` must have patrimony.")
+      throw new ValidationError(
+        "`PositionPerformance` must have patrimony."
+      )
     }
     if (!props.applicationTotal) {
       throw new ValidationError(
@@ -455,7 +464,9 @@ export class PositionPerformance {
       )
     }
     if (!props.earnings) {
-      throw new ValidationError("`PositionPerformance` must have earnings.")
+      throw new ValidationError(
+        "`PositionPerformance` must have earnings."
+      )
     }
     if (!props.returnDaily) {
       throw new ValidationError(
@@ -470,13 +481,14 @@ export class PositionPerformance {
 
     const NOW = new Date()
 
-    const NORMALIZED_PROPS: Required<PositionPerformanceProps> = {
-      ...props,
-      returnMonthly: props.returnMonthly ?? null,
-      returnYearly: props.returnYearly ?? null,
-      returnLast12m: props.returnLast12m ?? null,
-      createdAt: props.createdAt ?? NOW,
-    }
+    const NORMALIZED_PROPS: Required<PositionPerformanceProps> =
+      {
+        ...props,
+        returnMonthly: props.returnMonthly ?? null,
+        returnYearly: props.returnYearly ?? null,
+        returnLast12m: props.returnLast12m ?? null,
+        createdAt: props.createdAt ?? NOW,
+      }
 
     return new PositionPerformance(NORMALIZED_PROPS, id)
   }

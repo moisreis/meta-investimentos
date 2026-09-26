@@ -227,7 +227,8 @@ void main() {
 
 function isDev() {
   return (
-    typeof process !== "undefined" && process.env?.NODE_ENV !== "production"
+    typeof process !== "undefined" &&
+    process.env?.NODE_ENV !== "production"
   )
 }
 
@@ -242,7 +243,11 @@ function hexToRgb(hex: string): [number, number, number] {
       : h.padEnd(6, "0").slice(0, 6)
   const n = Number.parseInt(full, 16)
   if (Number.isNaN(n)) return [0.1, 0.1, 0.12]
-  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255]
+  return [
+    ((n >> 16) & 255) / 255,
+    ((n >> 8) & 255) / 255,
+    (n & 255) / 255,
+  ]
 }
 
 function isDarkTheme(): boolean {
@@ -253,7 +258,8 @@ function isDarkTheme(): boolean {
   const dataTheme = root.getAttribute("data-theme")
   if (dataTheme === "dark") return true
   if (dataTheme === "light") return false
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
+  return window.matchMedia("(prefers-color-scheme: dark)")
+    .matches
 }
 
 function resolveDark(theme: AsciiFluidTheme): boolean {
@@ -262,7 +268,11 @@ function resolveDark(theme: AsciiFluidTheme): boolean {
   return isDarkTheme()
 }
 
-function compile(gl: WebGLRenderingContext, type: number, source: string) {
+function compile(
+  gl: WebGLRenderingContext,
+  type: number,
+  source: string
+) {
   const shader = gl.createShader(type)
   if (!shader) return null
   gl.shaderSource(shader, source)
@@ -328,8 +338,16 @@ function createFBO(
   gl.bindTexture(gl.TEXTURE_2D, tex)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter)
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+  gl.texParameteri(
+    gl.TEXTURE_2D,
+    gl.TEXTURE_WRAP_S,
+    gl.CLAMP_TO_EDGE
+  )
+  gl.texParameteri(
+    gl.TEXTURE_2D,
+    gl.TEXTURE_WRAP_T,
+    gl.CLAMP_TO_EDGE
+  )
   gl.texImage2D(
     gl.TEXTURE_2D,
     0,
@@ -400,10 +418,26 @@ function buildAtlas(
   if (!tex) return null
   gl.bindTexture(gl.TEXTURE_2D, tex)
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1)
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+  gl.texParameteri(
+    gl.TEXTURE_2D,
+    gl.TEXTURE_MIN_FILTER,
+    gl.LINEAR
+  )
+  gl.texParameteri(
+    gl.TEXTURE_2D,
+    gl.TEXTURE_MAG_FILTER,
+    gl.LINEAR
+  )
+  gl.texParameteri(
+    gl.TEXTURE_2D,
+    gl.TEXTURE_WRAP_S,
+    gl.CLAMP_TO_EDGE
+  )
+  gl.texParameteri(
+    gl.TEXTURE_2D,
+    gl.TEXTURE_WRAP_T,
+    gl.CLAMP_TO_EDGE
+  )
   gl.texImage2D(
     gl.TEXTURE_2D,
     0,
@@ -479,7 +513,14 @@ export function createAsciiFluid(
   const pressure = createProgram(gl, vs, FRAG_PRESSURE)
   const gradient = createProgram(gl, vs, FRAG_GRADIENT)
   const display = createProgram(gl, vs, FRAG_DISPLAY)
-  if (!splat || !advect || !divergence || !pressure || !gradient || !display) {
+  if (
+    !splat ||
+    !advect ||
+    !divergence ||
+    !pressure ||
+    !gradient ||
+    !display
+  ) {
     return null
   }
 
@@ -503,7 +544,8 @@ export function createAsciiFluid(
   const dye = createDoubleFBO(gl, SIM, SIM, gl.LINEAR)
   const pressureFbo = createDoubleFBO(gl, SIM, SIM, gl.NEAREST)
   const divergenceFbo = createFBO(gl, SIM, SIM, gl.NEAREST)
-  if (!velocity || !dye || !pressureFbo || !divergenceFbo) return null
+  if (!velocity || !dye || !pressureFbo || !divergenceFbo)
+    return null
 
   const initialAtlas = buildAtlas(gl, options.charset)
   if (!initialAtlas) return null
@@ -555,7 +597,9 @@ export function createAsciiFluid(
   const ro = new ResizeObserver(resize)
   if (canvas.parentElement) ro.observe(canvas.parentElement)
 
-  const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)")
+  const mqReduce = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  )
   const onReduce = () => {
     reduce = mqReduce.matches
   }
@@ -581,9 +625,13 @@ export function createAsciiFluid(
     mouse.inside = false
   }
 
-  window.addEventListener("pointermove", onPointer, { passive: true })
+  window.addEventListener("pointermove", onPointer, {
+    passive: true,
+  })
   const parentEl = canvas.parentElement
-  parentEl?.addEventListener("pointerleave", onLeave, { passive: true })
+  parentEl?.addEventListener("pointerleave", onLeave, {
+    passive: true,
+  })
 
   const tick = (now: number) => {
     if (!running) return
@@ -602,15 +650,23 @@ export function createAsciiFluid(
     }
 
     const dark = resolveDark(p.theme)
-    const ink = hexToRgb(p.color ?? (dark ? DARK.ink : LIGHT.ink))
+    const ink = hexToRgb(
+      p.color ?? (dark ? DARK.ink : LIGHT.ink)
+    )
     const paper = hexToRgb(
       p.backgroundColor ?? (dark ? DARK.paper : LIGHT.paper)
     )
     const texel = [1 / SIM, 1 / SIM] as const
     const aspect = canvas.width / Math.max(canvas.height, 1)
-    const brushR = 0.00012 + Math.max(0.05, Math.min(1, p.brush)) * 0.0011
+    const brushR =
+      0.00012 + Math.max(0.05, Math.min(1, p.brush)) * 0.0011
 
-    if (p.interactive && mouse.moved && mouse.inside && !reduce) {
+    if (
+      p.interactive &&
+      mouse.moved &&
+      mouse.inside &&
+      !reduce
+    ) {
       const speed = Math.hypot(mouse.dx, mouse.dy)
       const strength = p.force * (18 + speed * 120)
 
@@ -618,7 +674,10 @@ export function createAsciiFluid(
       bindQuad(splat.program)
       gl.activeTexture(gl.TEXTURE0)
       gl.bindTexture(gl.TEXTURE_2D, velocity.read.tex)
-      gl.uniform1i(gl.getUniformLocation(splat.program, "u_target"), 0)
+      gl.uniform1i(
+        gl.getUniformLocation(splat.program, "u_target"),
+        0
+      )
       gl.uniform2f(
         gl.getUniformLocation(splat.program, "u_point"),
         mouse.x,
@@ -630,9 +689,18 @@ export function createAsciiFluid(
         mouse.dy * strength,
         0
       )
-      gl.uniform1f(gl.getUniformLocation(splat.program, "u_radius"), brushR)
-      gl.uniform1f(gl.getUniformLocation(splat.program, "u_aspect"), aspect)
-      gl.uniform1f(gl.getUniformLocation(splat.program, "u_velocityField"), 1)
+      gl.uniform1f(
+        gl.getUniformLocation(splat.program, "u_radius"),
+        brushR
+      )
+      gl.uniform1f(
+        gl.getUniformLocation(splat.program, "u_aspect"),
+        aspect
+      )
+      gl.uniform1f(
+        gl.getUniformLocation(splat.program, "u_velocityField"),
+        1
+      )
       blit(velocity.write)
       velocity.swap()
 
@@ -640,7 +708,10 @@ export function createAsciiFluid(
       const dyeAmt = Math.min(1.4, 0.45 + speed * 8) * p.force
       gl.activeTexture(gl.TEXTURE0)
       gl.bindTexture(gl.TEXTURE_2D, dye.read.tex)
-      gl.uniform1i(gl.getUniformLocation(splat.program, "u_target"), 0)
+      gl.uniform1i(
+        gl.getUniformLocation(splat.program, "u_target"),
+        0
+      )
       gl.uniform2f(
         gl.getUniformLocation(splat.program, "u_point"),
         mouse.x,
@@ -656,8 +727,14 @@ export function createAsciiFluid(
         gl.getUniformLocation(splat.program, "u_radius"),
         brushR * 1.15
       )
-      gl.uniform1f(gl.getUniformLocation(splat.program, "u_aspect"), aspect)
-      gl.uniform1f(gl.getUniformLocation(splat.program, "u_velocityField"), 0)
+      gl.uniform1f(
+        gl.getUniformLocation(splat.program, "u_aspect"),
+        aspect
+      )
+      gl.uniform1f(
+        gl.getUniformLocation(splat.program, "u_velocityField"),
+        0
+      )
       blit(dye.write)
       dye.swap()
 
@@ -673,16 +750,33 @@ export function createAsciiFluid(
       bindQuad(splat.program)
       gl.activeTexture(gl.TEXTURE0)
       gl.bindTexture(gl.TEXTURE_2D, velocity.read.tex)
-      gl.uniform1i(gl.getUniformLocation(splat.program, "u_target"), 0)
+      gl.uniform1i(
+        gl.getUniformLocation(splat.program, "u_target"),
+        0
+      )
       gl.uniform2f(
         gl.getUniformLocation(splat.program, "u_point"),
         0.5 + Math.sin(time * 0.23) * 0.22,
         0.5 + Math.cos(time * 0.19) * 0.18
       )
-      gl.uniform3f(gl.getUniformLocation(splat.program, "u_color"), ax, ay, 0)
-      gl.uniform1f(gl.getUniformLocation(splat.program, "u_radius"), 0.0018)
-      gl.uniform1f(gl.getUniformLocation(splat.program, "u_aspect"), aspect)
-      gl.uniform1f(gl.getUniformLocation(splat.program, "u_velocityField"), 1)
+      gl.uniform3f(
+        gl.getUniformLocation(splat.program, "u_color"),
+        ax,
+        ay,
+        0
+      )
+      gl.uniform1f(
+        gl.getUniformLocation(splat.program, "u_radius"),
+        0.0018
+      )
+      gl.uniform1f(
+        gl.getUniformLocation(splat.program, "u_aspect"),
+        aspect
+      )
+      gl.uniform1f(
+        gl.getUniformLocation(splat.program, "u_velocityField"),
+        1
+      )
       blit(velocity.write)
       velocity.swap()
     }
@@ -691,28 +785,43 @@ export function createAsciiFluid(
       bindQuad(advect.program)
       gl.activeTexture(gl.TEXTURE0)
       gl.bindTexture(gl.TEXTURE_2D, velocity.read.tex)
-      gl.uniform1i(gl.getUniformLocation(advect.program, "u_velocity"), 0)
+      gl.uniform1i(
+        gl.getUniformLocation(advect.program, "u_velocity"),
+        0
+      )
       gl.activeTexture(gl.TEXTURE1)
       gl.bindTexture(gl.TEXTURE_2D, velocity.read.tex)
-      gl.uniform1i(gl.getUniformLocation(advect.program, "u_source"), 1)
+      gl.uniform1i(
+        gl.getUniformLocation(advect.program, "u_source"),
+        1
+      )
       gl.uniform2f(
         gl.getUniformLocation(advect.program, "u_texel"),
         texel[0],
         texel[1]
       )
-      gl.uniform1f(gl.getUniformLocation(advect.program, "u_dt"), dt)
+      gl.uniform1f(
+        gl.getUniformLocation(advect.program, "u_dt"),
+        dt
+      )
       gl.uniform1f(
         gl.getUniformLocation(advect.program, "u_dissipation"),
         1 - Math.min(0.18, p.dissipation * 2.5)
       )
-      gl.uniform1f(gl.getUniformLocation(advect.program, "u_velocityField"), 1)
+      gl.uniform1f(
+        gl.getUniformLocation(advect.program, "u_velocityField"),
+        1
+      )
       blit(velocity.write)
       velocity.swap()
 
       bindQuad(divergence.program)
       gl.activeTexture(gl.TEXTURE0)
       gl.bindTexture(gl.TEXTURE_2D, velocity.read.tex)
-      gl.uniform1i(gl.getUniformLocation(divergence.program, "u_velocity"), 0)
+      gl.uniform1i(
+        gl.getUniformLocation(divergence.program, "u_velocity"),
+        0
+      )
       gl.uniform2f(
         gl.getUniformLocation(divergence.program, "u_texel"),
         texel[0],
@@ -726,10 +835,19 @@ export function createAsciiFluid(
       for (let i = 0; i < 14; i++) {
         gl.activeTexture(gl.TEXTURE0)
         gl.bindTexture(gl.TEXTURE_2D, pressureFbo.read.tex)
-        gl.uniform1i(gl.getUniformLocation(pressure.program, "u_pressure"), 0)
+        gl.uniform1i(
+          gl.getUniformLocation(pressure.program, "u_pressure"),
+          0
+        )
         gl.activeTexture(gl.TEXTURE1)
         gl.bindTexture(gl.TEXTURE_2D, divergenceFbo.tex)
-        gl.uniform1i(gl.getUniformLocation(pressure.program, "u_divergence"), 1)
+        gl.uniform1i(
+          gl.getUniformLocation(
+            pressure.program,
+            "u_divergence"
+          ),
+          1
+        )
         gl.uniform2f(
           gl.getUniformLocation(pressure.program, "u_texel"),
           texel[0],
@@ -742,10 +860,16 @@ export function createAsciiFluid(
       bindQuad(gradient.program)
       gl.activeTexture(gl.TEXTURE0)
       gl.bindTexture(gl.TEXTURE_2D, pressureFbo.read.tex)
-      gl.uniform1i(gl.getUniformLocation(gradient.program, "u_pressure"), 0)
+      gl.uniform1i(
+        gl.getUniformLocation(gradient.program, "u_pressure"),
+        0
+      )
       gl.activeTexture(gl.TEXTURE1)
       gl.bindTexture(gl.TEXTURE_2D, velocity.read.tex)
-      gl.uniform1i(gl.getUniformLocation(gradient.program, "u_velocity"), 1)
+      gl.uniform1i(
+        gl.getUniformLocation(gradient.program, "u_velocity"),
+        1
+      )
       gl.uniform2f(
         gl.getUniformLocation(gradient.program, "u_texel"),
         texel[0],
@@ -757,21 +881,33 @@ export function createAsciiFluid(
       bindQuad(advect.program)
       gl.activeTexture(gl.TEXTURE0)
       gl.bindTexture(gl.TEXTURE_2D, velocity.read.tex)
-      gl.uniform1i(gl.getUniformLocation(advect.program, "u_velocity"), 0)
+      gl.uniform1i(
+        gl.getUniformLocation(advect.program, "u_velocity"),
+        0
+      )
       gl.activeTexture(gl.TEXTURE1)
       gl.bindTexture(gl.TEXTURE_2D, dye.read.tex)
-      gl.uniform1i(gl.getUniformLocation(advect.program, "u_source"), 1)
+      gl.uniform1i(
+        gl.getUniformLocation(advect.program, "u_source"),
+        1
+      )
       gl.uniform2f(
         gl.getUniformLocation(advect.program, "u_texel"),
         texel[0],
         texel[1]
       )
-      gl.uniform1f(gl.getUniformLocation(advect.program, "u_dt"), dt)
+      gl.uniform1f(
+        gl.getUniformLocation(advect.program, "u_dt"),
+        dt
+      )
       gl.uniform1f(
         gl.getUniformLocation(advect.program, "u_dissipation"),
         1 - Math.min(0.22, Math.max(0.02, p.dissipation))
       )
-      gl.uniform1f(gl.getUniformLocation(advect.program, "u_velocityField"), 0)
+      gl.uniform1f(
+        gl.getUniformLocation(advect.program, "u_velocityField"),
+        0
+      )
       blit(dye.write)
       dye.swap()
     }
@@ -779,18 +915,29 @@ export function createAsciiFluid(
     bindQuad(display.program)
     gl.activeTexture(gl.TEXTURE0)
     gl.bindTexture(gl.TEXTURE_2D, dye.read.tex)
-    gl.uniform1i(gl.getUniformLocation(display.program, "u_dye"), 0)
+    gl.uniform1i(
+      gl.getUniformLocation(display.program, "u_dye"),
+      0
+    )
     gl.activeTexture(gl.TEXTURE1)
     gl.bindTexture(gl.TEXTURE_2D, atlas.tex)
-    gl.uniform1i(gl.getUniformLocation(display.program, "u_atlas"), 1)
+    gl.uniform1i(
+      gl.getUniformLocation(display.program, "u_atlas"),
+      1
+    )
     gl.uniform2f(
       gl.getUniformLocation(display.program, "u_resolution"),
       canvas.width,
       canvas.height
     )
     const cell =
-      Math.max(7, p.cellSize) * Math.min(window.devicePixelRatio || 1, 2)
-    gl.uniform2f(gl.getUniformLocation(display.program, "u_cell"), cell, cell)
+      Math.max(7, p.cellSize) *
+      Math.min(window.devicePixelRatio || 1, 2)
+    gl.uniform2f(
+      gl.getUniformLocation(display.program, "u_cell"),
+      cell,
+      cell
+    )
     gl.uniform1f(
       gl.getUniformLocation(display.program, "u_charCount"),
       atlas.count
@@ -807,7 +954,10 @@ export function createAsciiFluid(
       paper[1],
       paper[2]
     )
-    gl.uniform1f(gl.getUniformLocation(display.program, "u_time"), time)
+    gl.uniform1f(
+      gl.getUniformLocation(display.program, "u_time"),
+      time
+    )
     gl.uniform1f(
       gl.getUniformLocation(display.program, "u_animate"),
       p.animate && !reduce ? 1 : 0
@@ -943,7 +1093,10 @@ export function AsciiFluid({
         className
       )}
     >
-      <canvas ref={canvasRef} className="meta-:absolute meta-:inset-0 meta-:size-full" />
+      <canvas
+        ref={canvasRef}
+        className="meta-:absolute meta-:inset-0 meta-:size-full"
+      />
     </div>
   )
 }

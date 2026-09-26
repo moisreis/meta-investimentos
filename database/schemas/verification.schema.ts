@@ -1,5 +1,10 @@
 import { sql } from "drizzle-orm"
-import { index, pgSchema, text, timestamp } from "drizzle-orm/pg-core"
+import {
+  index,
+  pgSchema,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core"
 
 // Stores the verification requests for a user.
 // Holds the identifier, the value, and the expiry.
@@ -11,7 +16,9 @@ export const verification = pgSchema("user").table(
       .default(sql`gen_random_uuid()::text`),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
-    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    expiresAt: timestamp("expires_at", {
+      withTimezone: true,
+    }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

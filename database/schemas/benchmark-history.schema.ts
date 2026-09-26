@@ -31,6 +31,8 @@ export const benchmarkHistory = pgSchema("benchmark").table(
     ),
 
     // Speeds up lookups of history records by their benchmark.
-    index("benchmark_history_benchmark_id_idx").on(table.benchmarkId),
+    index("benchmark_history_benchmark_id_idx").on(
+      table.benchmarkId
+    ),
   ]
 )

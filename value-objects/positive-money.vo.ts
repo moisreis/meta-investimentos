@@ -70,7 +70,9 @@ export class PositiveMoney {
    */
   public static create(value: Decimal.Value): PositiveMoney {
     if (value === undefined || value === null) {
-      throw new ValidationError("`PositiveMoney` must be defined.")
+      throw new ValidationError(
+        "`PositiveMoney` must be defined."
+      )
     }
 
     let DECIMAL_VALUE: Decimal
@@ -78,11 +80,15 @@ export class PositiveMoney {
     try {
       DECIMAL_VALUE = new Decimal(value)
     } catch {
-      throw new ValidationError("`PositiveMoney` must be a valid number.")
+      throw new ValidationError(
+        "`PositiveMoney` must be a valid number."
+      )
     }
 
     if (!DECIMAL_VALUE.isFinite()) {
-      throw new ValidationError("`PositiveMoney` must be a finite number.")
+      throw new ValidationError(
+        "`PositiveMoney` must be a finite number."
+      )
     }
 
     if (DECIMAL_VALUE.lessThan(0)) {
@@ -92,7 +98,10 @@ export class PositiveMoney {
     }
 
     return new PositiveMoney({
-      value: DECIMAL_VALUE.toDecimalPlaces(MONEY_DECIMAL_PLACES, ROUNDING_MODE),
+      value: DECIMAL_VALUE.toDecimalPlaces(
+        MONEY_DECIMAL_PLACES,
+        ROUNDING_MODE
+      ),
     })
   }
 
@@ -119,7 +128,10 @@ export class PositiveMoney {
    *
    * @date 2026-09-23
    */
-  public static equals(a: PositiveMoney, b: PositiveMoney): boolean {
+  public static equals(
+    a: PositiveMoney,
+    b: PositiveMoney
+  ): boolean {
     return a.value.equals(b.value)
   }
 }

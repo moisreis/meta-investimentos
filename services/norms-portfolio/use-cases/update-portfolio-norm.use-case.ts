@@ -40,7 +40,9 @@ export interface UpdatePortfolioNormInput {
  * @date 2026-09-15
  */
 export class UpdatePortfolioNormUseCase {
-  constructor(private normsPortfoliosRepository: INormsPortfolios) {}
+  constructor(
+    private normsPortfoliosRepository: INormsPortfolios
+  ) {}
 
   /**
    * @summary
@@ -84,7 +86,9 @@ export class UpdatePortfolioNormUseCase {
         PORTFOLIO_ID
       )
     if (!EXISTING) {
-      throw new NotFoundError("`NormPortfolio` relation not found.")
+      throw new NotFoundError(
+        "`NormPortfolio` relation not found."
+      )
     }
     const UPDATED = NormsPortfolios.create(
       {
@@ -102,7 +106,8 @@ export class UpdatePortfolioNormUseCase {
       },
       EXISTING.id as string
     )
-    const SAVED = await this.normsPortfoliosRepository.save(UPDATED)
+    const SAVED =
+      await this.normsPortfoliosRepository.save(UPDATED)
     return toResponseDTO(SAVED)
   }
 }

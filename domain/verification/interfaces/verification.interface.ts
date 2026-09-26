@@ -69,7 +69,9 @@ export interface IVerification {
    *
    * @date 2026-09-13
    */
-  findAllByIdentifier(identifier: string): Promise<Verification[]>
+  findAllByIdentifier(
+    identifier: string
+  ): Promise<Verification[]>
 
   /**
    * @summary
@@ -94,7 +96,9 @@ export interface IVerification {
    *
    * @date 2026-09-15
    */
-  findAllByIdentifiers(identifiers: string[]): Promise<Verification[]>
+  findAllByIdentifiers(
+    identifiers: string[]
+  ): Promise<Verification[]>
 
   /**
    * @summary

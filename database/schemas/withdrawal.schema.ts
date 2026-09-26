@@ -22,10 +22,18 @@ export const withdrawal = pgSchema("portfolio").table(
       .notNull()
       .references(() => position.id),
     date: timestamp("date", { withTimezone: true }).notNull(),
-    amount: numeric("amount", { precision: 18, scale: 6 }).notNull(),
-    quotas: numeric("quotas", { precision: 18, scale: 6 }).notNull(),
+    amount: numeric("amount", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
+    quotas: numeric("quotas", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
     reversedAt: timestamp("reversed_at", { withTimezone: true }),
-    reversedByUserId: text("reversed_by_user_id").references(() => user.id),
+    reversedByUserId: text("reversed_by_user_id").references(
+      () => user.id
+    ),
     version: integer("version").default(0).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
@@ -42,6 +50,9 @@ export const withdrawal = pgSchema("portfolio").table(
     check("withdrawal_quotas_nonneg", sql`${table.quotas} >= 0`),
 
     // Speeds up lookups of withdrawals by position and date.
-    index("withdrawal_position_date_idx").on(table.positionId, table.date),
+    index("withdrawal_position_date_idx").on(
+      table.positionId,
+      table.date
+    ),
   ]
 )

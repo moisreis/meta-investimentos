@@ -33,7 +33,9 @@ export const bankAccount = pgSchema("bank").table(
   (table) => [
     // Enforces that a portfolio may link a given bank account
     // at most once.
-    uniqueIndex("bank_account_portfolio_bank_agency_number_uidx").on(
+    uniqueIndex(
+      "bank_account_portfolio_bank_agency_number_uidx"
+    ).on(
       table.portfolioId,
       table.bankId,
       table.agency,

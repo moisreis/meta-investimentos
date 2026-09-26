@@ -1,5 +1,10 @@
 import { sql } from "drizzle-orm"
-import { boolean, pgSchema, text, timestamp } from "drizzle-orm/pg-core"
+import {
+  boolean,
+  pgSchema,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core"
 import { userRole } from "@db-schemas/user-role.enum"
 
 // Stores the registered users of the platform.
@@ -15,7 +20,9 @@ export const user = pgSchema("user").table("user", {
   lastName: text("last_name").notNull(),
   cpf: text("cpf").notNull().unique(),
   email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").default(false).notNull(),
+  emailVerified: boolean("email_verified")
+    .default(false)
+    .notNull(),
   image: text("image"),
   role: userRole("role").default("USER").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })

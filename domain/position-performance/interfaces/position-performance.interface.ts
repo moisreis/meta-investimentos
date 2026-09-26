@@ -69,7 +69,9 @@ export interface IPositionPerformance {
    *
    * @date 2026-09-13
    */
-  findAllByPositionId(positionId: EntityId): Promise<PositionPerformance[]>
+  findAllByPositionId(
+    positionId: EntityId
+  ): Promise<PositionPerformance[]>
 
   /**
    * @summary
@@ -94,7 +96,9 @@ export interface IPositionPerformance {
    *
    * @date 2026-09-15
    */
-  findAllByPositionIds(positionIds: EntityId[]): Promise<PositionPerformance[]>
+  findAllByPositionIds(
+    positionIds: EntityId[]
+  ): Promise<PositionPerformance[]>
 
   /**
    * @summary
@@ -204,7 +208,9 @@ export interface IPositionPerformance {
    *
    * @date 2026-09-13
    */
-  save(positionPerformance: PositionPerformance): Promise<PositionPerformance>
+  save(
+    positionPerformance: PositionPerformance
+  ): Promise<PositionPerformance>
 
   /**
    * @summary

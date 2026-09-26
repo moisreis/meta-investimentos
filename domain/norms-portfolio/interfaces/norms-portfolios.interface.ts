@@ -76,7 +76,9 @@ export interface INormsPortfolios {
    *
    * @date 2026-09-13
    */
-  findAllByPortfolioId(portfolioId: EntityId): Promise<NormsPortfolios[]>
+  findAllByPortfolioId(
+    portfolioId: EntityId
+  ): Promise<NormsPortfolios[]>
 
   /**
    * @summary
@@ -101,7 +103,9 @@ export interface INormsPortfolios {
    *
    * @date 2026-09-15
    */
-  findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<NormsPortfolios[]>
+  findAllByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<NormsPortfolios[]>
 
   /**
    * @summary
@@ -150,7 +154,9 @@ export interface INormsPortfolios {
    *
    * @date 2026-09-13
    */
-  save(normsPortfolios: NormsPortfolios): Promise<NormsPortfolios>
+  save(
+    normsPortfolios: NormsPortfolios
+  ): Promise<NormsPortfolios>
 
   /**
    * @summary

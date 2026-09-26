@@ -22,10 +22,18 @@ export const application = pgSchema("portfolio").table(
       .notNull()
       .references(() => position.id),
     date: timestamp("date", { withTimezone: true }).notNull(),
-    amount: numeric("amount", { precision: 18, scale: 6 }).notNull(),
-    quotas: numeric("quotas", { precision: 18, scale: 6 }).notNull(),
+    amount: numeric("amount", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
+    quotas: numeric("quotas", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
     reversedAt: timestamp("reversed_at", { withTimezone: true }),
-    reversedByUserId: text("reversed_by_user_id").references(() => user.id),
+    reversedByUserId: text("reversed_by_user_id").references(
+      () => user.id
+    ),
     version: integer("version").default(0).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
@@ -36,12 +44,21 @@ export const application = pgSchema("portfolio").table(
   },
   (table) => [
     // Enforces that the application amount is non-negative.
-    check("application_amount_nonneg", sql`${table.amount} >= 0`),
+    check(
+      "application_amount_nonneg",
+      sql`${table.amount} >= 0`
+    ),
 
     // Enforces that the application quotas are non-negative.
-    check("application_quotas_nonneg", sql`${table.quotas} >= 0`),
+    check(
+      "application_quotas_nonneg",
+      sql`${table.quotas} >= 0`
+    ),
 
     // Speeds up lookups of applications by position and date.
-    index("application_position_date_idx").on(table.positionId, table.date),
+    index("application_position_date_idx").on(
+      table.positionId,
+      table.date
+    ),
   ]
 )

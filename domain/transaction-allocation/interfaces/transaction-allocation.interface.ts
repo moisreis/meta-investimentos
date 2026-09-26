@@ -124,7 +124,9 @@ export interface ITransactionAllocation {
    *
    * @date 2026-09-13
    */
-  findAllByWithdrawalId(withdrawId: EntityId): Promise<TransactionAllocation[]>
+  findAllByWithdrawalId(
+    withdrawId: EntityId
+  ): Promise<TransactionAllocation[]>
 
   /**
    * @summary

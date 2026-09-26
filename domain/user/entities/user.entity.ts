@@ -369,7 +369,9 @@ export class User {
       throw new ValidationError("`User` must have a name.")
     }
     if (!props.email || !EMAIL_PATTERN.test(props.email)) {
-      throw new ValidationError("`User` must have a valid email.")
+      throw new ValidationError(
+        "`User` must have a valid email."
+      )
     }
     if (!props.firstName || props.firstName.trim() === "") {
       throw new ValidationError("`User` must have a first name.")
@@ -444,7 +446,8 @@ export class User {
     const name = props.name ?? this.props.name
     const firstName = props.firstName ?? this.props.firstName
     const lastName = props.lastName ?? this.props.lastName
-    const image = props.image === undefined ? this.props.image : props.image
+    const image =
+      props.image === undefined ? this.props.image : props.image
 
     if (name.trim() === "") {
       throw new ValidationError("`User` must have a name.")

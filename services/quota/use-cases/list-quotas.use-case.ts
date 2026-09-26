@@ -54,9 +54,12 @@ export class ListQuotasUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: ListQuotasInput): Promise<QuotaResponseDTO[]> {
+  async execute(
+    input: ListQuotasInput
+  ): Promise<QuotaResponseDTO[]> {
     const FUND_ID = EntityId.create(input.fundId)
-    const QUOTAS = await this.quotaRepository.findAllByFundId(FUND_ID)
+    const QUOTAS =
+      await this.quotaRepository.findAllByFundId(FUND_ID)
     return QUOTAS.map(toResponseDTO)
   }
 }

@@ -54,9 +54,12 @@ export class ListNormsUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: ListNormsInput): Promise<NormResponseDTO[]> {
+  async execute(
+    input: ListNormsInput
+  ): Promise<NormResponseDTO[]> {
     const CATEGORY_ID = EntityId.create(input.categoryId)
-    const NORMS = await this.normRepository.findAllByCategoryId(CATEGORY_ID)
+    const NORMS =
+      await this.normRepository.findAllByCategoryId(CATEGORY_ID)
     return NORMS.map(toResponseDTO)
   }
 }

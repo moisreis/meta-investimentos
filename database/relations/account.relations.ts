@@ -1,5 +1,10 @@
 import { defineRelations } from "drizzle-orm"
-import { account, session, user, verification } from "@db-schemas"
+import {
+  account,
+  session,
+  user,
+  verification,
+} from "@db-schemas"
 
 // Connects an account to its owning user.
 export const accountRelations = defineRelations(

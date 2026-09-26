@@ -307,30 +307,47 @@ export class Norm {
    * @date 2026-09-13
    */
   public static create(props: NormProps, id?: string): Norm {
-    if (!props.articleNumber || props.articleNumber.trim() === "") {
-      throw new ValidationError("`Norm` must have an article number.")
+    if (
+      !props.articleNumber ||
+      props.articleNumber.trim() === ""
+    ) {
+      throw new ValidationError(
+        "`Norm` must have an article number."
+      )
     }
     if (!props.name || props.name.trim() === "") {
       throw new ValidationError("`Norm` must have a name.")
     }
     if (!props.categoryId || props.categoryId.trim() === "") {
-      throw new ValidationError("`Norm` must have a category id.")
+      throw new ValidationError(
+        "`Norm` must have a category id."
+      )
     }
     if (!props.minAllocation) {
-      throw new ValidationError("`Norm` must have a minimum allocation.")
+      throw new ValidationError(
+        "`Norm` must have a minimum allocation."
+      )
     }
     if (!props.maxAllocation) {
-      throw new ValidationError("`Norm` must have a maximum allocation.")
+      throw new ValidationError(
+        "`Norm` must have a maximum allocation."
+      )
     }
     if (!props.targetAllocation) {
-      throw new ValidationError("`Norm` must have a target allocation.")
+      throw new ValidationError(
+        "`Norm` must have a target allocation."
+      )
     }
-    if (props.minAllocation.value.gt(props.targetAllocation.value)) {
+    if (
+      props.minAllocation.value.gt(props.targetAllocation.value)
+    ) {
       throw new ValidationError(
         "`Norm` minimum allocation must not exceed target allocation."
       )
     }
-    if (props.targetAllocation.value.gt(props.maxAllocation.value)) {
+    if (
+      props.targetAllocation.value.gt(props.maxAllocation.value)
+    ) {
       throw new ValidationError(
         "`Norm` target allocation must not exceed maximum allocation."
       )
@@ -389,30 +406,43 @@ export class Norm {
     },
     now?: Date
   ): Norm {
-    const ARTICLE_NUMBER = options.articleNumber ?? this.props.articleNumber
+    const ARTICLE_NUMBER =
+      options.articleNumber ?? this.props.articleNumber
     const NAME = options.name ?? this.props.name
-    const CATEGORY_ID = options.categoryId ?? this.props.categoryId
+    const CATEGORY_ID =
+      options.categoryId ?? this.props.categoryId
     const MIN = options.minAllocation ?? this.props.minAllocation
     const MAX = options.maxAllocation ?? this.props.maxAllocation
-    const TARGET = options.targetAllocation ?? this.props.targetAllocation
+    const TARGET =
+      options.targetAllocation ?? this.props.targetAllocation
 
     if (!ARTICLE_NUMBER || ARTICLE_NUMBER.trim() === "") {
-      throw new ValidationError("`Norm` must have an article number.")
+      throw new ValidationError(
+        "`Norm` must have an article number."
+      )
     }
     if (!NAME || NAME.trim() === "") {
       throw new ValidationError("`Norm` must have a name.")
     }
     if (!CATEGORY_ID || CATEGORY_ID.trim() === "") {
-      throw new ValidationError("`Norm` must have a category id.")
+      throw new ValidationError(
+        "`Norm` must have a category id."
+      )
     }
     if (!MIN) {
-      throw new ValidationError("`Norm` must have a minimum allocation.")
+      throw new ValidationError(
+        "`Norm` must have a minimum allocation."
+      )
     }
     if (!MAX) {
-      throw new ValidationError("`Norm` must have a maximum allocation.")
+      throw new ValidationError(
+        "`Norm` must have a maximum allocation."
+      )
     }
     if (!TARGET) {
-      throw new ValidationError("`Norm` must have a target allocation.")
+      throw new ValidationError(
+        "`Norm` must have a target allocation."
+      )
     }
     if (MIN.value.gt(TARGET.value)) {
       throw new ValidationError(

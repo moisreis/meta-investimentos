@@ -55,10 +55,14 @@ export class ListWithdrawalsUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: ListWithdrawalsInput): Promise<WithdrawalResponseDTO[]> {
+  async execute(
+    input: ListWithdrawalsInput
+  ): Promise<WithdrawalResponseDTO[]> {
     const POSITION_ID = EntityId.create(input.positionId)
     const WITHDRAWALS =
-      await this.withdrawalRepository.findAllByPositionId(POSITION_ID)
+      await this.withdrawalRepository.findAllByPositionId(
+        POSITION_ID
+      )
     return WITHDRAWALS.map(toResponseDTO)
   }
 }

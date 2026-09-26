@@ -76,7 +76,10 @@ export class ApplicationRecorded {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(props: Required<ApplicationRecordedProps>, id?: string) {
+  private constructor(
+    props: Required<ApplicationRecordedProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -138,16 +141,24 @@ export class ApplicationRecorded {
       )
     }
     if (!props.fundId) {
-      throw new ValidationError("`ApplicationRecorded` must have a fund id.")
+      throw new ValidationError(
+        "`ApplicationRecorded` must have a fund id."
+      )
     }
     if (!props.date) {
-      throw new ValidationError("`ApplicationRecorded` must have a date.")
+      throw new ValidationError(
+        "`ApplicationRecorded` must have a date."
+      )
     }
     if (!props.amount) {
-      throw new ValidationError("`ApplicationRecorded` must have an amount.")
+      throw new ValidationError(
+        "`ApplicationRecorded` must have an amount."
+      )
     }
     if (!props.quotas) {
-      throw new ValidationError("`ApplicationRecorded` must have quotas.")
+      throw new ValidationError(
+        "`ApplicationRecorded` must have quotas."
+      )
     }
 
     const NOW = new Date()

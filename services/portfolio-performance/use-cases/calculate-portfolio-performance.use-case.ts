@@ -116,14 +116,19 @@ export class CalculatePortfolioPerformanceUseCase {
     const TARGET_DATE = new Date(input.date)
     const PORTFOLIO_ID = EntityId.create(input.portfolioId)
 
-    const PORTFOLIO = await this.portfolioRepository.findById(PORTFOLIO_ID)
+    const PORTFOLIO =
+      await this.portfolioRepository.findById(PORTFOLIO_ID)
     if (!PORTFOLIO) {
       throw new NotFoundError("`Portfolio` not found.")
     }
 
     const POSITIONS =
-      await this.positionRepository.findAllByPortfolioId(PORTFOLIO_ID)
-    const POSITION_IDS = POSITIONS.map((position) => position.id as EntityId)
+      await this.positionRepository.findAllByPortfolioId(
+        PORTFOLIO_ID
+      )
+    const POSITION_IDS = POSITIONS.map(
+      (position) => position.id as EntityId
+    )
 
     if (POSITION_IDS.length === 0) {
       const EMPTY = PortfolioPerformance.create({
@@ -136,9 +141,13 @@ export class CalculatePortfolioPerformanceUseCase {
         cashFlowNet: SignedMoney.create("0"),
         earnings: SignedMoney.create("0"),
         returnDaily: SignedPercentage.create("0"),
-        target: await this.resolveTarget(input, PORTFOLIO.annualInterestRate),
+        target: await this.resolveTarget(
+          input,
+          PORTFOLIO.annualInterestRate
+        ),
       })
-      const SAVED = await this.portfolioPerformanceRepository.save(EMPTY)
+      const SAVED =
+        await this.portfolioPerformanceRepository.save(EMPTY)
       return toResponseDTO(SAVED)
     }
 
@@ -182,16 +191,18 @@ export class CalculatePortfolioPerformanceUseCase {
       const DAY_WITHDRAWALS = WITHDRAWALS.filter(
         (withdrawal) => withdrawal.positionId === position.id
       )
-      const HELD_APPLICATION_QUOTAS = calculatePortfolioApplicationQuotasSum({
-        quotaQuantity: DAY_APPLICATIONS.map((application) => ({
-          value: application.quotas,
-        })),
-      })
-      const HELD_WITHDRAWAL_QUOTAS = calculatePortfolioWithdrawalQuotasSum({
-        quotaQuantity: DAY_WITHDRAWALS.map((withdrawal) => ({
-          value: withdrawal.quotas,
-        })),
-      })
+      const HELD_APPLICATION_QUOTAS =
+        calculatePortfolioApplicationQuotasSum({
+          quotaQuantity: DAY_APPLICATIONS.map((application) => ({
+            value: application.quotas,
+          })),
+        })
+      const HELD_WITHDRAWAL_QUOTAS =
+        calculatePortfolioWithdrawalQuotasSum({
+          quotaQuantity: DAY_WITHDRAWALS.map((withdrawal) => ({
+            value: withdrawal.quotas,
+          })),
+        })
       QUOTAS_BY_POSITION.set(
         position.id as string,
         QuotaQuantity.create(
@@ -203,9 +214,11 @@ export class CalculatePortfolioPerformanceUseCase {
     }
 
     const QUOTAS_HELD = calculatePortfolioQuotasHeldSum({
-      quotaQuantity: [...QUOTAS_BY_POSITION.values()].map((quotas) => ({
-        value: quotas,
-      })),
+      quotaQuantity: [...QUOTAS_BY_POSITION.values()].map(
+        (quotas) => ({
+          value: quotas,
+        })
+      ),
     })
 
     const PATRIMONY = await this.calculatePatrimony({
@@ -220,9 +233,13 @@ export class CalculatePortfolioPerformanceUseCase {
       )
 
     const EARNINGS = calculatePortfolioEarnings({
-      sumOfPositionCurrentBalances: SignedMoney.create(PATRIMONY.value),
+      sumOfPositionCurrentBalances: SignedMoney.create(
+        PATRIMONY.value
+      ),
       sumOfPositionInitialBalance: SignedMoney.create(
-        PREVIOUS_PORTFOLIO ? PREVIOUS_PORTFOLIO.patrimony.value : "0"
+        PREVIOUS_PORTFOLIO
+          ? PREVIOUS_PORTFOLIO.patrimony.value
+          : "0"
       ),
       cashFlow: DAILY_CALCULATION.cashFlowNet,
     })
@@ -232,7 +249,8 @@ export class CalculatePortfolioPerformanceUseCase {
       targetDate: TARGET_DATE,
       currentDayPortfolioValue: PATRIMONY,
       currentDayCashFlow: DAILY_CALCULATION.cashFlowNet,
-      previousDayPortfolioValue: PREVIOUS_PORTFOLIO?.patrimony ?? null,
+      previousDayPortfolioValue:
+        PREVIOUS_PORTFOLIO?.patrimony ?? null,
     })
 
     const PERFORMANCE = PortfolioPerformance.create({
@@ -260,14 +278,20 @@ export class CalculatePortfolioPerformanceUseCase {
         targetDate: TARGET_DATE,
         months: 12,
       }),
-      target: await this.resolveTarget(input, PORTFOLIO.annualInterestRate),
+      target: await this.resolveTarget(
+        input,
+        PORTFOLIO.annualInterestRate
+      ),
       cumulativeTarget: input.inflationRate
         ? calculatePortfolioCumulativeTarget({
             monthlyTargets: [
               {
                 value: calculatePortfolioTarget({
-                  annualInterestRate: PORTFOLIO.annualInterestRate,
-                  inflationRate: SignedPercentage.create(input.inflationRate),
+                  annualInterestRate:
+                    PORTFOLIO.annualInterestRate,
+                  inflationRate: SignedPercentage.create(
+                    input.inflationRate
+                  ),
                 }),
               },
             ],
@@ -276,24 +300,31 @@ export class CalculatePortfolioPerformanceUseCase {
       inflationSpread: input.inflationRate
         ? calculatePortfolioInflationSpread({
             portfolioReturn: RETURN_DAILY,
-            inflationRate: SignedPercentage.create(input.inflationRate),
+            inflationRate: SignedPercentage.create(
+              input.inflationRate
+            ),
           })
         : null,
       riskFreeSpread: input.riskFreeRate
         ? calculatePortfolioRiskFreeSpread({
             portfolioReturn: RETURN_DAILY,
-            riskFreeRate: SignedPercentage.create(input.riskFreeRate),
+            riskFreeRate: SignedPercentage.create(
+              input.riskFreeRate
+            ),
           })
         : null,
       marketSpread: input.marketRate
         ? calculatePortfolioMarketSpread({
             portfolioReturn: RETURN_DAILY,
-            marketRate: SignedPercentage.create(input.marketRate),
+            marketRate: SignedPercentage.create(
+              input.marketRate
+            ),
           })
         : null,
     })
 
-    const SAVED = await this.portfolioPerformanceRepository.save(PERFORMANCE)
+    const SAVED =
+      await this.portfolioPerformanceRepository.save(PERFORMANCE)
     return toResponseDTO(SAVED)
   }
 
@@ -301,11 +332,19 @@ export class CalculatePortfolioPerformanceUseCase {
     applications: Application[]
     withdrawals: Withdrawal[]
   }): {
-    applicationTotal: ReturnType<typeof calculatePortfolioApplicationSum>
-    redemptionTotal: ReturnType<typeof calculatePortfolioWithdrawalSum>
+    applicationTotal: ReturnType<
+      typeof calculatePortfolioApplicationSum
+    >
+    redemptionTotal: ReturnType<
+      typeof calculatePortfolioWithdrawalSum
+    >
     cashFlowNet: ReturnType<typeof calculatePortfolioCashFlowNet>
-    applicationQuotas: ReturnType<typeof calculatePortfolioApplicationQuotasSum>
-    withdrawalQuotas: ReturnType<typeof calculatePortfolioWithdrawalQuotasSum>
+    applicationQuotas: ReturnType<
+      typeof calculatePortfolioApplicationQuotasSum
+    >
+    withdrawalQuotas: ReturnType<
+      typeof calculatePortfolioWithdrawalQuotasSum
+    >
   } {
     const APPLICATION_TOTAL = calculatePortfolioApplicationSum({
       application: input.applications.map((application) => ({
@@ -321,16 +360,18 @@ export class CalculatePortfolioPerformanceUseCase {
       applications: APPLICATION_TOTAL,
       withdrawals: REDEMPTION_TOTAL,
     })
-    const APPLICATION_QUOTAS = calculatePortfolioApplicationQuotasSum({
-      quotaQuantity: input.applications.map((application) => ({
-        value: application.quotas,
-      })),
-    })
-    const WITHDRAWAL_QUOTAS = calculatePortfolioWithdrawalQuotasSum({
-      quotaQuantity: input.withdrawals.map((withdrawal) => ({
-        value: withdrawal.quotas,
-      })),
-    })
+    const APPLICATION_QUOTAS =
+      calculatePortfolioApplicationQuotasSum({
+        quotaQuantity: input.applications.map((application) => ({
+          value: application.quotas,
+        })),
+      })
+    const WITHDRAWAL_QUOTAS =
+      calculatePortfolioWithdrawalQuotasSum({
+        quotaQuantity: input.withdrawals.map((withdrawal) => ({
+          value: withdrawal.quotas,
+        })),
+      })
 
     return {
       applicationTotal: APPLICATION_TOTAL,
@@ -356,12 +397,15 @@ export class CalculatePortfolioPerformanceUseCase {
       if (!QUOTAS) {
         continue
       }
-      const QUOTA = await this.quotaRepository.findByFundIdAndDate(
-        position.fundId,
-        input.targetDate
-      )
+      const QUOTA =
+        await this.quotaRepository.findByFundIdAndDate(
+          position.fundId,
+          input.targetDate
+        )
       if (!QUOTA) {
-        throw new ValidationError("`Quota` is required for the target date.")
+        throw new ValidationError(
+          "`Quota` is required for the target date."
+        )
       }
       TOTAL = TOTAL.plus(QUOTA.price.value.times(QUOTAS.value))
     }
@@ -372,7 +416,9 @@ export class CalculatePortfolioPerformanceUseCase {
     portfolioId: EntityId
     targetDate: Date
     currentDayPortfolioValue: PositiveMoney
-    currentDayCashFlow: ReturnType<typeof calculatePortfolioCashFlowNet>
+    currentDayCashFlow: ReturnType<
+      typeof calculatePortfolioCashFlowNet
+    >
     previousDayPortfolioValue: PositiveMoney | null
   }): Promise<SignedPercentage> {
     if (!input.previousDayPortfolioValue) {
@@ -399,26 +445,38 @@ export class CalculatePortfolioPerformanceUseCase {
     targetDate: Date
     months: number
   }): Promise<SignedPercentage | null> {
-    const WINDOW_START = this.addMonths(input.targetDate, -input.months)
+    const WINDOW_START = this.addMonths(
+      input.targetDate,
+      -input.months
+    )
     const PERFORMANCES =
       await this.portfolioPerformanceRepository.findAllByPortfolioId(
         input.portfolioId
       )
     const IN_WINDOW = PERFORMANCES.filter(
       (performance) =>
-        performance.date >= WINDOW_START && performance.date <= input.targetDate
-    ).sort((left, right) => left.date.getTime() - right.date.getTime())
+        performance.date >= WINDOW_START &&
+        performance.date <= input.targetDate
+    ).sort(
+      (left, right) => left.date.getTime() - right.date.getTime()
+    )
     if (IN_WINDOW.length < 2) {
       return null
     }
 
-    const FACTORS: { value: GrowthFactor }[] = IN_WINDOW.map((performance) => ({
-      value: GrowthFactor.create(
-        new Decimal(1).plus(performance.returnDaily.value.dividedBy(100))
-      ),
-    }))
+    const FACTORS: { value: GrowthFactor }[] = IN_WINDOW.map(
+      (performance) => ({
+        value: GrowthFactor.create(
+          new Decimal(1).plus(
+            performance.returnDaily.value.dividedBy(100)
+          )
+        ),
+      })
+    )
 
-    return calculatePortfolioReturn({ dailyGrowthFactors: FACTORS })
+    return calculatePortfolioReturn({
+      dailyGrowthFactors: FACTORS,
+    })
   }
 
   private resolveTarget(
@@ -430,7 +488,9 @@ export class CalculatePortfolioPerformanceUseCase {
     }
     return calculatePortfolioTarget({
       annualInterestRate,
-      inflationRate: SignedPercentage.create(input.inflationRate),
+      inflationRate: SignedPercentage.create(
+        input.inflationRate
+      ),
     })
   }
 

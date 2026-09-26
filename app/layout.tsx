@@ -14,7 +14,10 @@ const ROBOTO_SLAB_HEADING = Roboto_Slab({
 })
 
 // Stores the **Geist** sans-serif font configuration.
-const GEIST = Geist({ subsets: ["latin"], variable: "--font-sans" })
+const GEIST = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
 // Stores the **Geist Mono** font configuration.
 const FONT_MONO = Geist_Mono({

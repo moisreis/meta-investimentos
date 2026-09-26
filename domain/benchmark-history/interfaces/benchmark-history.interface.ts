@@ -70,7 +70,9 @@ export interface IBenchmarkHistory {
    *
    * @date 2026-09-13
    */
-  findAllByBenchmarkId(benchmarkId: EntityId): Promise<BenchmarkHistory[]>
+  findAllByBenchmarkId(
+    benchmarkId: EntityId
+  ): Promise<BenchmarkHistory[]>
 
   /**
    * @summary
@@ -95,7 +97,9 @@ export interface IBenchmarkHistory {
    *
    * @date 2026-09-15
    */
-  findAllByBenchmarkIds(benchmarkIds: EntityId[]): Promise<BenchmarkHistory[]>
+  findAllByBenchmarkIds(
+    benchmarkIds: EntityId[]
+  ): Promise<BenchmarkHistory[]>
 
   /**
    * @summary
@@ -181,7 +185,9 @@ export interface IBenchmarkHistory {
    *
    * @date 2026-09-13
    */
-  save(benchmarkHistory: BenchmarkHistory): Promise<BenchmarkHistory>
+  save(
+    benchmarkHistory: BenchmarkHistory
+  ): Promise<BenchmarkHistory>
 
   /**
    * @summary

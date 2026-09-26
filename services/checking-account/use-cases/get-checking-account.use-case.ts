@@ -30,7 +30,9 @@ export interface GetCheckingAccountInput {
  * @date 2026-09-15
  */
 export class GetCheckingAccountUseCase {
-  constructor(private checkingAccountRepository: ICheckingAccount) {}
+  constructor(
+    private checkingAccountRepository: ICheckingAccount
+  ) {}
 
   /**
    * @summary
@@ -61,7 +63,8 @@ export class GetCheckingAccountUseCase {
     input: GetCheckingAccountInput
   ): Promise<CheckingAccountResponseDTO> {
     const ID = EntityId.create(input.checkingAccountId)
-    const ENTRY = await this.checkingAccountRepository.findById(ID)
+    const ENTRY =
+      await this.checkingAccountRepository.findById(ID)
     if (!ENTRY) {
       throw new NotFoundError("`CheckingAccount` not found.")
     }

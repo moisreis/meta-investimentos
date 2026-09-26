@@ -30,7 +30,9 @@ export interface GetPortfolioPerformanceInput {
  * @date 2026-09-15
  */
 export class GetPortfolioPerformanceUseCase {
-  constructor(private portfolioPerformanceRepository: IPortfolioPerformance) {}
+  constructor(
+    private portfolioPerformanceRepository: IPortfolioPerformance
+  ) {}
 
   /**
    * @summary
@@ -60,11 +62,14 @@ export class GetPortfolioPerformanceUseCase {
   async execute(
     input: GetPortfolioPerformanceInput
   ): Promise<PortfolioPerformanceResponseDTO> {
-    const PERFORMANCE = await this.portfolioPerformanceRepository.findById(
-      EntityId.create(input.id)
-    )
+    const PERFORMANCE =
+      await this.portfolioPerformanceRepository.findById(
+        EntityId.create(input.id)
+      )
     if (!PERFORMANCE) {
-      throw new NotFoundError("`PortfolioPerformance` not found.")
+      throw new NotFoundError(
+        "`PortfolioPerformance` not found."
+      )
     }
     return toResponseDTO(PERFORMANCE)
   }

@@ -12,7 +12,15 @@ import {
 // Connects a user to its accounts, sessions, and portfolios.
 // Also connects the user to its statements and audit logs.
 export const userRelations = defineRelations(
-  { user, account, session, verification, portfolio, statement, auditLog },
+  {
+    user,
+    account,
+    session,
+    verification,
+    portfolio,
+    statement,
+    auditLog,
+  },
   (r) => ({
     user: {
       accounts: r.many.account({

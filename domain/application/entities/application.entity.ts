@@ -159,7 +159,9 @@ export class Application {
    * @date 2026-09-13
    */
   get reversedAt(): Date | null {
-    return this.props.reversedAt ? new Date(this.props.reversedAt) : null
+    return this.props.reversedAt
+      ? new Date(this.props.reversedAt)
+      : null
   }
 
   /**
@@ -263,12 +265,17 @@ export class Application {
    *
    * @date 2026-09-13
    */
-  private constructor(props: Required<ApplicationProps>, id?: string) {
+  private constructor(
+    props: Required<ApplicationProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
       date: new Date(props.date),
-      reversedAt: props.reversedAt ? new Date(props.reversedAt) : null,
+      reversedAt: props.reversedAt
+        ? new Date(props.reversedAt)
+        : null,
       createdAt: new Date(props.createdAt),
       updatedAt: new Date(props.updatedAt),
     })
@@ -310,18 +317,29 @@ export class Application {
    *
    * @date 2026-09-13
    */
-  public static create(props: ApplicationProps, id?: string): Application {
+  public static create(
+    props: ApplicationProps,
+    id?: string
+  ): Application {
     if (!props.positionId || props.positionId.trim() === "") {
-      throw new ValidationError("`Application` must have a position id.")
+      throw new ValidationError(
+        "`Application` must have a position id."
+      )
     }
     if (!props.date) {
-      throw new ValidationError("`Application` must have a date.")
+      throw new ValidationError(
+        "`Application` must have a date."
+      )
     }
     if (!props.amount) {
-      throw new ValidationError("`Application` must have an amount.")
+      throw new ValidationError(
+        "`Application` must have an amount."
+      )
     }
     if (!props.quotas) {
-      throw new ValidationError("`Application` must have quotas.")
+      throw new ValidationError(
+        "`Application` must have quotas."
+      )
     }
 
     const NOW = new Date()

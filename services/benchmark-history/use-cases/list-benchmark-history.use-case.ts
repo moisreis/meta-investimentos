@@ -29,7 +29,9 @@ export interface ListBenchmarkHistoryInput {
  * @date 2026-09-15
  */
 export class ListBenchmarkHistoryUseCase {
-  constructor(private benchmarkHistoryRepository: IBenchmarkHistory) {}
+  constructor(
+    private benchmarkHistoryRepository: IBenchmarkHistory
+  ) {}
 
   /**
    * @summary
@@ -61,7 +63,9 @@ export class ListBenchmarkHistoryUseCase {
   ): Promise<BenchmarkHistoryResponseDTO[]> {
     const BENCHMARK_ID = EntityId.create(input.benchmarkId)
     const ENTRIES =
-      await this.benchmarkHistoryRepository.findAllByBenchmarkId(BENCHMARK_ID)
+      await this.benchmarkHistoryRepository.findAllByBenchmarkId(
+        BENCHMARK_ID
+      )
     return ENTRIES.map(toResponseDTO)
   }
 }

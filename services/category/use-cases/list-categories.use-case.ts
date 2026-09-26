@@ -53,7 +53,9 @@ export class ListCategoriesUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: ListCategoriesInput): Promise<CategoryResponseDTO[]> {
+  async execute(
+    input: ListCategoriesInput
+  ): Promise<CategoryResponseDTO[]> {
     const CATEGORIES = await this.categoryRepository.findAll({
       limit: input.limit,
       offset: input.offset,

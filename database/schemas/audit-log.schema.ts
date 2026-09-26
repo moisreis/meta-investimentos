@@ -25,7 +25,10 @@ export const auditLog = pgSchema("audit").table(
   },
   (table) => [
     // Speeds up lookups of audit entries by entity and id.
-    index("audit_log_entity_entity_id_idx").on(table.entity, table.entityId),
+    index("audit_log_entity_entity_id_idx").on(
+      table.entity,
+      table.entityId
+    ),
 
     // Speeds up lookups of audit entries by their acting user.
     index("audit_log_user_id_idx").on(table.userId),

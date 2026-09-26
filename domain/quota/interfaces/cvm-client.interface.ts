@@ -43,5 +43,8 @@ export interface ICvmClient {
    *
    * @date 2026-09-17
    */
-  fetchMonthlyFile(year: number, month: number): Promise<Buffer | null>
+  fetchMonthlyFile(
+    year: number,
+    month: number
+  ): Promise<Buffer | null>
 }

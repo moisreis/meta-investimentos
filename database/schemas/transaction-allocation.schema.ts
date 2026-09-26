@@ -42,15 +42,18 @@ export const transactionAllocation = pgSchema("portfolio").table(
 
     // Enforces that an application/withdrawal pair is allocated
     // at most once.
-    uniqueIndex("transaction_allocation_application_withdraw_uidx").on(
-      table.applicationId,
-      table.withdrawId
-    ),
+    uniqueIndex(
+      "transaction_allocation_application_withdraw_uidx"
+    ).on(table.applicationId, table.withdrawId),
 
     // Speeds up lookups of allocations by their application.
-    index("transaction_allocation_application_id_idx").on(table.applicationId),
+    index("transaction_allocation_application_id_idx").on(
+      table.applicationId
+    ),
 
     // Speeds up lookups of allocations by their withdrawal.
-    index("transaction_allocation_withdraw_id_idx").on(table.withdrawId),
+    index("transaction_allocation_withdraw_id_idx").on(
+      table.withdrawId
+    ),
   ]
 )

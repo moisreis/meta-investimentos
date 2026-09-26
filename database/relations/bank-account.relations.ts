@@ -1,5 +1,10 @@
 import { defineRelations } from "drizzle-orm"
-import { bank, bankAccount, checkingAccount, portfolio } from "@db-schemas"
+import {
+  bank,
+  bankAccount,
+  checkingAccount,
+  portfolio,
+} from "@db-schemas"
 
 // Connects a bank account to its bank and portfolio.
 // Also links the daily checking balances of the account.

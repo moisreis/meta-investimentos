@@ -37,5 +37,7 @@ export function calculateCashFlowNet({
   applications,
   withdrawals,
 }: CalculateCashFlowNetProps): SignedMoney {
-  return SignedMoney.create(applications.value.minus(withdrawals.value))
+  return SignedMoney.create(
+    applications.value.minus(withdrawals.value)
+  )
 }

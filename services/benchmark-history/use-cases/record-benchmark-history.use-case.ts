@@ -79,13 +79,15 @@ export class RecordBenchmarkHistoryUseCase {
     input: RecordBenchmarkHistoryInput
   ): Promise<BenchmarkHistoryResponseDTO> {
     const BENCHMARK_ID = EntityId.create(input.benchmarkId)
-    const BENCHMARK = await this.benchmarkRepository.findById(BENCHMARK_ID)
+    const BENCHMARK =
+      await this.benchmarkRepository.findById(BENCHMARK_ID)
     if (!BENCHMARK) {
       throw new NotFoundError("`Benchmark` not found.")
     }
     const PROPS = toCreateBenchmarkHistoryProps(input)
     const ENTRY = BenchmarkHistory.create(PROPS)
-    const SAVED = await this.benchmarkHistoryRepository.save(ENTRY)
+    const SAVED =
+      await this.benchmarkHistoryRepository.save(ENTRY)
     return toResponseDTO(SAVED)
   }
 }

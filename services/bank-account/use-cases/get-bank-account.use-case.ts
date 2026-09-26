@@ -59,9 +59,12 @@ export class GetBankAccountUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: GetBankAccountInput): Promise<BankAccountResponseDTO> {
+  async execute(
+    input: GetBankAccountInput
+  ): Promise<BankAccountResponseDTO> {
     const ID = EntityId.create(input.bankAccountId)
-    const BANK_ACCOUNT = await this.bankAccountRepository.findById(ID)
+    const BANK_ACCOUNT =
+      await this.bankAccountRepository.findById(ID)
     if (!BANK_ACCOUNT) {
       throw new NotFoundError("`BankAccount` not found.")
     }

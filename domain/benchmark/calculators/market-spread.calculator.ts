@@ -38,5 +38,7 @@ export function calculatePortfolioMarketSpread({
   portfolioReturn,
   marketRate,
 }: CalculatePortfolioMarketSpreadProps): SignedPercentage {
-  return SignedPercentage.create(portfolioReturn.value.minus(marketRate.value))
+  return SignedPercentage.create(
+    portfolioReturn.value.minus(marketRate.value)
+  )
 }

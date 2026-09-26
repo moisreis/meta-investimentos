@@ -69,7 +69,9 @@ export class UpdateUserUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: UpdateUserInput): Promise<UserResponseDTO> {
+  async execute(
+    input: UpdateUserInput
+  ): Promise<UserResponseDTO> {
     const ID = EntityId.create(input.userId)
     const USER = await this.userRepository.findById(ID)
     if (!USER) {

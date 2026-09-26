@@ -28,7 +28,9 @@ import type { CategoryResponseDTO } from "../dto/category-response.dto"
  *
  * @date 2026-09-22
  */
-export function toCreateCategoryProps(dto: CreateCategoryDTO): CategoryProps {
+export function toCreateCategoryProps(
+  dto: CreateCategoryDTO
+): CategoryProps {
   return {
     name: dto.name,
   }
@@ -56,7 +58,9 @@ export function toCreateCategoryProps(dto: CreateCategoryDTO): CategoryProps {
  *
  * @date 2026-09-22
  */
-export function toResponseDTO(entity: Category): CategoryResponseDTO {
+export function toResponseDTO(
+  entity: Category
+): CategoryResponseDTO {
   return {
     id: entity.id as string,
     name: entity.name,

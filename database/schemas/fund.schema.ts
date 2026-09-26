@@ -29,8 +29,12 @@ export const fund = pgSchema("fund").table(
     bankId: uuid("bank_id")
       .notNull()
       .references(() => bank.id),
-    benchmarkId: uuid("benchmark_id").references(() => benchmark.id),
-    categoryId: uuid("category_id").references(() => category.id),
+    benchmarkId: uuid("benchmark_id").references(
+      () => benchmark.id
+    ),
+    categoryId: uuid("category_id").references(
+      () => category.id
+    ),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

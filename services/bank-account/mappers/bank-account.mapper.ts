@@ -62,7 +62,9 @@ export function toCreateBankAccountProps(
  *
  * @date 2026-09-22
  */
-export function toResponseDTO(entity: BankAccount): BankAccountResponseDTO {
+export function toResponseDTO(
+  entity: BankAccount
+): BankAccountResponseDTO {
   return {
     id: entity.id as string,
     portfolioId: entity.portfolioId,

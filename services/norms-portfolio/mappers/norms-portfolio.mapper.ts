@@ -37,7 +37,9 @@ export function toCreateNormsPortfoliosProps(
     portfolioId: EntityId.create(dto.portfolioId),
     minAllocation: SignedPercentage.create(dto.minAllocation),
     maxAllocation: SignedPercentage.create(dto.maxAllocation),
-    targetAllocation: SignedPercentage.create(dto.targetAllocation),
+    targetAllocation: SignedPercentage.create(
+      dto.targetAllocation
+    ),
   }
 }
 

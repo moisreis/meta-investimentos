@@ -69,7 +69,9 @@ export class QuotaQuantity {
    */
   public static create(value: Decimal.Value): QuotaQuantity {
     if (value === undefined || value === null) {
-      throw new ValidationError("`QuotaQuantity` must be defined.")
+      throw new ValidationError(
+        "`QuotaQuantity` must be defined."
+      )
     }
 
     let DECIMAL_VALUE: Decimal
@@ -77,11 +79,15 @@ export class QuotaQuantity {
     try {
       DECIMAL_VALUE = new Decimal(value)
     } catch {
-      throw new ValidationError("`QuotaQuantity` must be a valid number.")
+      throw new ValidationError(
+        "`QuotaQuantity` must be a valid number."
+      )
     }
 
     if (!DECIMAL_VALUE.isFinite()) {
-      throw new ValidationError("`QuotaQuantity` must be a finite number.")
+      throw new ValidationError(
+        "`QuotaQuantity` must be a finite number."
+      )
     }
 
     if (DECIMAL_VALUE.lessThan(0)) {
@@ -121,7 +127,10 @@ export class QuotaQuantity {
    *
    * @date 2026-09-23
    */
-  public static equals(a: QuotaQuantity, b: QuotaQuantity): boolean {
+  public static equals(
+    a: QuotaQuantity,
+    b: QuotaQuantity
+  ): boolean {
     return a.value.equals(b.value)
   }
 }

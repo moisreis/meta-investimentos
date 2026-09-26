@@ -29,7 +29,9 @@ export interface ListPortfolioNormsInput {
  * @date 2026-09-15
  */
 export class ListPortfolioNormsUseCase {
-  constructor(private normsPortfoliosRepository: INormsPortfolios) {}
+  constructor(
+    private normsPortfoliosRepository: INormsPortfolios
+  ) {}
 
   /**
    * @summary
@@ -61,7 +63,9 @@ export class ListPortfolioNormsUseCase {
   ): Promise<NormPortfolioResponseDTO[]> {
     const PORTFOLIO_ID = EntityId.create(input.portfolioId)
     const RELATIONS =
-      await this.normsPortfoliosRepository.findAllByPortfolioId(PORTFOLIO_ID)
+      await this.normsPortfoliosRepository.findAllByPortfolioId(
+        PORTFOLIO_ID
+      )
     return RELATIONS.map(toResponseDTO)
   }
 }

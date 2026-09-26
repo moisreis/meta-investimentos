@@ -58,9 +58,12 @@ export class GetApplicationUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: GetApplicationInput): Promise<ApplicationResponseDTO> {
+  async execute(
+    input: GetApplicationInput
+  ): Promise<ApplicationResponseDTO> {
     const ID = EntityId.create(input.applicationId)
-    const APPLICATION = await this.applicationRepository.findById(ID)
+    const APPLICATION =
+      await this.applicationRepository.findById(ID)
     if (!APPLICATION) {
       throw new NotFoundError("`Application` not found.")
     }

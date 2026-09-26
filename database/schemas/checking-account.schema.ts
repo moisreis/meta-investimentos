@@ -18,7 +18,10 @@ export const checkingAccount = pgSchema("bank").table(
       .notNull()
       .references(() => bankAccount.id),
     date: timestamp("date", { withTimezone: true }).notNull(),
-    value: numeric("value", { precision: 18, scale: 6 }).notNull(),
+    value: numeric("value", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
   },
   (table) => [
     // Enforces that a bank account holds one balance per date.

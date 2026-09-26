@@ -59,7 +59,9 @@ export function toCreateBenchmarkProps(
  *
  * @date 2026-09-22
  */
-export function toResponseDTO(entity: Benchmark): BenchmarkResponseDTO {
+export function toResponseDTO(
+  entity: Benchmark
+): BenchmarkResponseDTO {
   return {
     id: entity.id as string,
     acronym: entity.acronym,

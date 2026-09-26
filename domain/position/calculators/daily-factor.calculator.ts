@@ -57,9 +57,10 @@ export function calculateDailyFactor({
   previousDayQuotaValue,
   previousDayQuotaQuantity,
 }: CalculateDailyFactorProps): GrowthFactor {
-  const PREVIOUS_DAY_VALUE = previousDayQuotaQuantity.value.times(
-    previousDayQuotaValue.value
-  )
+  const PREVIOUS_DAY_VALUE =
+    previousDayQuotaQuantity.value.times(
+      previousDayQuotaValue.value
+    )
 
   if (PREVIOUS_DAY_VALUE.isZero()) {
     throw new ValidationError(

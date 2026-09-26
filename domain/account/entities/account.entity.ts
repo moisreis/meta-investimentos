@@ -348,7 +348,10 @@ export class Account {
    *
    * @date 2026-09-13
    */
-  private constructor(props: Required<AccountProps>, id?: string) {
+  private constructor(
+    props: Required<AccountProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -398,12 +401,19 @@ export class Account {
    *
    * @date 2026-09-13
    */
-  public static create(props: AccountProps, id?: string): Account {
+  public static create(
+    props: AccountProps,
+    id?: string
+  ): Account {
     if (!props.providerId || props.providerId.trim() === "") {
-      throw new ValidationError("`Account` must have a provider id.")
+      throw new ValidationError(
+        "`Account` must have a provider id."
+      )
     }
     if (!props.accountId || props.accountId.trim() === "") {
-      throw new ValidationError("`Account` must have an account id.")
+      throw new ValidationError(
+        "`Account` must have an account id."
+      )
     }
     if (!props.userId || props.userId.trim() === "") {
       throw new ValidationError("`Account` must have a user id.")

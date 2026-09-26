@@ -133,7 +133,10 @@ export class Benchmark {
    *
    * @date 2026-09-13
    */
-  private constructor(props: Required<BenchmarkProps>, id?: string) {
+  private constructor(
+    props: Required<BenchmarkProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -172,9 +175,14 @@ export class Benchmark {
    *
    * @date 2026-09-13
    */
-  public static create(props: BenchmarkProps, id?: string): Benchmark {
+  public static create(
+    props: BenchmarkProps,
+    id?: string
+  ): Benchmark {
     if (!props.acronym || props.acronym.trim() === "") {
-      throw new ValidationError("`Benchmark` must have an acronym.")
+      throw new ValidationError(
+        "`Benchmark` must have an acronym."
+      )
     }
     if (!props.name || props.name.trim() === "") {
       throw new ValidationError("`Benchmark` must have a name.")
@@ -254,7 +262,9 @@ export class Benchmark {
    */
   public changeAcronym(acronym: string): Benchmark {
     if (!acronym || acronym.trim() === "") {
-      throw new ValidationError("`Benchmark` must have an acronym.")
+      throw new ValidationError(
+        "`Benchmark` must have an acronym."
+      )
     }
 
     return new Benchmark(

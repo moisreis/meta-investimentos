@@ -1,7 +1,10 @@
 import { Fund } from "@domain/fund/entities/fund.entity"
 import { IFund } from "@domain/fund/interfaces/fund.interface"
 import type { FundResponseDTO } from "../dto/fund-response.dto"
-import { toCreateFundProps, toResponseDTO } from "../mappers/fund.mapper"
+import {
+  toCreateFundProps,
+  toResponseDTO,
+} from "../mappers/fund.mapper"
 
 export interface CreateFundInput {
   cnpj: string
@@ -74,7 +77,9 @@ export class CreateFundUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: CreateFundInput): Promise<FundResponseDTO> {
+  async execute(
+    input: CreateFundInput
+  ): Promise<FundResponseDTO> {
     const PROPS = toCreateFundProps(input)
     const FUND = Fund.create(PROPS)
     const SAVED = await this.fundRepository.save(FUND)

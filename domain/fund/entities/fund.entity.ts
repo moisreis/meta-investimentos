@@ -1,4 +1,8 @@
-﻿import { type CNPJ, EntityId, type SignedPercentage } from "@/value-objects"
+﻿import {
+  type CNPJ,
+  EntityId,
+  type SignedPercentage,
+} from "@/value-objects"
 import { ValidationError } from "@/errors"
 
 export interface FundProps {
@@ -371,7 +375,10 @@ export class Fund {
     },
     now?: Date
   ): Fund {
-    if (options.name !== undefined && options.name.trim() === "") {
+    if (
+      options.name !== undefined &&
+      options.name.trim() === ""
+    ) {
       throw new ValidationError("`Fund` must have a name.")
     }
 

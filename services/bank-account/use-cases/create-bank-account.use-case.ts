@@ -77,7 +77,8 @@ export class CreateBankAccountUseCase {
   ): Promise<BankAccountResponseDTO> {
     const PROPS = toCreateBankAccountProps(input)
     const BANK_ACCOUNT = BankAccount.create(PROPS)
-    const SAVED = await this.bankAccountRepository.save(BANK_ACCOUNT)
+    const SAVED =
+      await this.bankAccountRepository.save(BANK_ACCOUNT)
     return toResponseDTO(SAVED)
   }
 }

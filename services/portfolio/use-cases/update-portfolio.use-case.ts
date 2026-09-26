@@ -70,7 +70,9 @@ export class UpdatePortfolioUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: UpdatePortfolioInput): Promise<PortfolioResponseDTO> {
+  async execute(
+    input: UpdatePortfolioInput
+  ): Promise<PortfolioResponseDTO> {
     const ID = EntityId.create(input.portfolioId)
     const PORTFOLIO = await this.portfolioRepository.findById(ID)
     if (!PORTFOLIO) {

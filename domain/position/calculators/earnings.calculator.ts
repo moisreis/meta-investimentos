@@ -42,6 +42,8 @@ export function calculateEarnings({
   cashFlow,
 }: CalculateEarningsProps): SignedMoney {
   return SignedMoney.create(
-    currentBalance.value.minus(initialBalance.value).minus(cashFlow.value)
+    currentBalance.value
+      .minus(initialBalance.value)
+      .minus(cashFlow.value)
   )
 }

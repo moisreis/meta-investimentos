@@ -61,7 +61,9 @@ export class UpdateCategoryUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: UpdateCategoryInput): Promise<CategoryResponseDTO> {
+  async execute(
+    input: UpdateCategoryInput
+  ): Promise<CategoryResponseDTO> {
     const ID = EntityId.create(input.categoryId)
     const CATEGORY = await this.categoryRepository.findById(ID)
     if (!CATEGORY) {

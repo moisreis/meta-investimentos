@@ -1,5 +1,12 @@
-import { Fund, type FundProps } from "@domain/fund/entities/fund.entity"
-import { CNPJ, EntityId, SignedPercentage } from "@/value-objects"
+import {
+  Fund,
+  type FundProps,
+} from "@domain/fund/entities/fund.entity"
+import {
+  CNPJ,
+  EntityId,
+  SignedPercentage,
+} from "@/value-objects"
 import type { CreateFundDTO } from "../dto/create-fund.dto"
 import type { FundResponseDTO } from "../dto/fund-response.dto"
 
@@ -26,7 +33,9 @@ import type { FundResponseDTO } from "../dto/fund-response.dto"
  *
  * @date 2026-09-22
  */
-export function toCreateFundProps(dto: CreateFundDTO): FundProps {
+export function toCreateFundProps(
+  dto: CreateFundDTO
+): FundProps {
   return {
     cnpj: CNPJ.create(dto.cnpj),
     name: dto.name,
@@ -37,8 +46,12 @@ export function toCreateFundProps(dto: CreateFundDTO): FundProps {
       ? SignedPercentage.create(dto.performanceFee)
       : null,
     bankId: EntityId.create(dto.bankId),
-    benchmarkId: dto.benchmarkId ? EntityId.create(dto.benchmarkId) : null,
-    categoryId: dto.categoryId ? EntityId.create(dto.categoryId) : null,
+    benchmarkId: dto.benchmarkId
+      ? EntityId.create(dto.benchmarkId)
+      : null,
+    categoryId: dto.categoryId
+      ? EntityId.create(dto.categoryId)
+      : null,
   }
 }
 

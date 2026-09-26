@@ -64,7 +64,9 @@ export class UpdateBankUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: UpdateBankInput): Promise<BankResponseDTO> {
+  async execute(
+    input: UpdateBankInput
+  ): Promise<BankResponseDTO> {
     const ID = EntityId.create(input.bankId)
     const BANK = await this.bankRepository.findById(ID)
     if (!BANK) {

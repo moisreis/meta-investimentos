@@ -89,13 +89,15 @@ export class AllocateTransactionUseCase {
     if (!APPLICATION) {
       throw new NotFoundError("`Application` not found.")
     }
-    const WITHDRAWAL = await this.withdrawalRepository.findById(WITHDRAW_ID)
+    const WITHDRAWAL =
+      await this.withdrawalRepository.findById(WITHDRAW_ID)
     if (!WITHDRAWAL) {
       throw new NotFoundError("`Withdrawal` not found.")
     }
     const PROPS = toCreateTransactionAllocationProps(input)
     const ALLOCATION = TransactionAllocation.create(PROPS)
-    const SAVED = await this.transactionAllocationRepository.save(ALLOCATION)
+    const SAVED =
+      await this.transactionAllocationRepository.save(ALLOCATION)
     return toResponseDTO(SAVED)
   }
 }

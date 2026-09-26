@@ -66,9 +66,12 @@ export class GetTransactionAllocationUseCase {
     input: GetTransactionAllocationInput
   ): Promise<TransactionAllocationResponseDTO> {
     const ID = EntityId.create(input.transactionAllocationId)
-    const ALLOCATION = await this.transactionAllocationRepository.findById(ID)
+    const ALLOCATION =
+      await this.transactionAllocationRepository.findById(ID)
     if (!ALLOCATION) {
-      throw new NotFoundError("`TransactionAllocation` not found.")
+      throw new NotFoundError(
+        "`TransactionAllocation` not found."
+      )
     }
     return toResponseDTO(ALLOCATION)
   }

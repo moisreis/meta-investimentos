@@ -1,7 +1,10 @@
 import { Norm } from "@domain/norm/entities/norm.entity"
 import { INorm } from "@domain/norm/interfaces/norm.interface"
 import type { NormResponseDTO } from "../dto/norm-response.dto"
-import { toCreateNormProps, toResponseDTO } from "../mappers/norm.mapper"
+import {
+  toCreateNormProps,
+  toResponseDTO,
+} from "../mappers/norm.mapper"
 
 export interface CreateNormInput {
   articleNumber: string
@@ -71,7 +74,9 @@ export class CreateNormUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: CreateNormInput): Promise<NormResponseDTO> {
+  async execute(
+    input: CreateNormInput
+  ): Promise<NormResponseDTO> {
     const PROPS = toCreateNormProps(input)
     const NORM = Norm.create(PROPS)
     const SAVED = await this.normRepository.save(NORM)

@@ -77,19 +77,28 @@ export class QuotaPrice {
     try {
       DECIMAL_VALUE = new Decimal(value)
     } catch {
-      throw new ValidationError("`QuotaPrice` must be a valid number.")
+      throw new ValidationError(
+        "`QuotaPrice` must be a valid number."
+      )
     }
 
     if (!DECIMAL_VALUE.isFinite()) {
-      throw new ValidationError("`QuotaPrice` must be a finite number.")
+      throw new ValidationError(
+        "`QuotaPrice` must be a finite number."
+      )
     }
 
     if (DECIMAL_VALUE.lessThan(0)) {
-      throw new ValidationError("`QuotaPrice` must be equal or greater than 0.")
+      throw new ValidationError(
+        "`QuotaPrice` must be equal or greater than 0."
+      )
     }
 
     return new QuotaPrice({
-      value: DECIMAL_VALUE.toDecimalPlaces(PRICE_DECIMAL_PLACES, ROUNDING_MODE),
+      value: DECIMAL_VALUE.toDecimalPlaces(
+        PRICE_DECIMAL_PLACES,
+        ROUNDING_MODE
+      ),
     })
   }
 

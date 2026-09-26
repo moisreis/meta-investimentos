@@ -30,7 +30,9 @@ export interface GetBenchmarkHistoryInput {
  * @date 2026-09-15
  */
 export class GetBenchmarkHistoryUseCase {
-  constructor(private benchmarkHistoryRepository: IBenchmarkHistory) {}
+  constructor(
+    private benchmarkHistoryRepository: IBenchmarkHistory
+  ) {}
 
   /**
    * @summary
@@ -61,7 +63,8 @@ export class GetBenchmarkHistoryUseCase {
     input: GetBenchmarkHistoryInput
   ): Promise<BenchmarkHistoryResponseDTO> {
     const ID = EntityId.create(input.benchmarkHistoryId)
-    const ENTRY = await this.benchmarkHistoryRepository.findById(ID)
+    const ENTRY =
+      await this.benchmarkHistoryRepository.findById(ID)
     if (!ENTRY) {
       throw new NotFoundError("`BenchmarkHistory` not found.")
     }

@@ -78,7 +78,7 @@ export interface ResolvedCvmClientConfig {
  * @date 2026-09-23
  */
 export function resolveCvmClientConfig(
-  config: CvmClientConfig = {},
+  config: CvmClientConfig = {}
 ): ResolvedCvmClientConfig {
   return {
     baseUrl: config.baseUrl ?? CVM_BASE_URL,
@@ -118,15 +118,15 @@ export function resolveCvmClientConfig(
 export function buildMonthlyFileUrl(
   _config: ResolvedCvmClientConfig,
   year: number,
-  month: number,
+  month: number
 ): string {
   const PADDED_YEAR = String(year).padStart(4, "0")
   const PADDED_MONTH = String(month).padStart(2, "0")
 
-  return FILE_URL_TEMPLATE.replace("{YEAR}", PADDED_YEAR).replace(
-    "{MONTH}",
-    PADDED_MONTH,
-  )
+  return FILE_URL_TEMPLATE.replace(
+    "{YEAR}",
+    PADDED_YEAR
+  ).replace("{MONTH}", PADDED_MONTH)
 }
 
 /**
@@ -228,13 +228,17 @@ export class CvmClient implements ICvmClient {
    */
   async fetchMonthlyFile(
     year: number,
-    month: number,
+    month: number
   ): Promise<Buffer | null> {
     const URL = buildMonthlyFileUrl(this.config, year, month)
 
     let LAST_ERROR: unknown
 
-    for (let ATTEMPT = 0; ATTEMPT <= this.config.maxRetries; ATTEMPT++) {
+    for (
+      let ATTEMPT = 0;
+      ATTEMPT <= this.config.maxRetries;
+      ATTEMPT++
+    ) {
       if (ATTEMPT > 0) {
         await delay(BASE_DELAY_MS * 2 ** (ATTEMPT - 1))
       }
@@ -243,7 +247,8 @@ export class CvmClient implements ICvmClient {
         const RESPONSE = await fetch(URL, {
           headers: {
             "User-Agent": this.config.userAgent,
-            Accept: "application/zip, application/octet-stream, */*",
+            Accept:
+              "application/zip, application/octet-stream, */*",
           },
           signal: AbortSignal.timeout(this.config.timeoutMs),
         })
@@ -254,14 +259,14 @@ export class CvmClient implements ICvmClient {
 
         if (RESPONSE.status === 429 || RESPONSE.status >= 500) {
           LAST_ERROR = new CvmSourceError(
-            `CVM source returned HTTP ${RESPONSE.status} for ${URL}.`,
+            `CVM source returned HTTP ${RESPONSE.status} for ${URL}.`
           )
           continue
         }
 
         if (!RESPONSE.ok) {
           LAST_ERROR = new CvmSourceError(
-            `CVM source returned HTTP ${RESPONSE.status} for ${URL}.`,
+            `CVM source returned HTTP ${RESPONSE.status} for ${URL}.`
           )
           continue
         }
@@ -269,8 +274,11 @@ export class CvmClient implements ICvmClient {
         const BODY = await RESPONSE.arrayBuffer()
         return Buffer.from(BODY)
       } catch (error) {
-        const MESSAGE = error instanceof Error ? error.message : String(error)
-        LAST_ERROR = new CvmSourceError(`Failed to fetch ${URL}: ${MESSAGE}.`)
+        const MESSAGE =
+          error instanceof Error ? error.message : String(error)
+        LAST_ERROR = new CvmSourceError(
+          `Failed to fetch ${URL}: ${MESSAGE}.`
+        )
       }
     }
 
@@ -302,7 +310,9 @@ export class CvmClient implements ICvmClient {
  *
  * @date 2026-09-23
  */
-export function createCvmClient(config: CvmClientConfig = {}): CvmClient {
+export function createCvmClient(
+  config: CvmClientConfig = {}
+): CvmClient {
   return new CvmClient(resolveCvmClientConfig(config))
 }
 

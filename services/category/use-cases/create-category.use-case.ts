@@ -59,7 +59,9 @@ export class CreateCategoryUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: CreateCategoryInput): Promise<CategoryResponseDTO> {
+  async execute(
+    input: CreateCategoryInput
+  ): Promise<CategoryResponseDTO> {
     const PROPS = toCreateCategoryProps(input)
     const CATEGORY = Category.create(PROPS)
     const SAVED = await this.categoryRepository.save(CATEGORY)

@@ -121,10 +121,14 @@ export class BenchmarkRateRecorded {
       )
     }
     if (!props.date) {
-      throw new ValidationError("`BenchmarkRateRecorded` must have a date.")
+      throw new ValidationError(
+        "`BenchmarkRateRecorded` must have a date."
+      )
     }
     if (!props.rate) {
-      throw new ValidationError("`BenchmarkRateRecorded` must have a rate.")
+      throw new ValidationError(
+        "`BenchmarkRateRecorded` must have a rate."
+      )
     }
 
     const NOW = new Date()

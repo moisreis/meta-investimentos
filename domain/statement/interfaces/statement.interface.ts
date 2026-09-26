@@ -68,7 +68,9 @@ export interface IStatement {
    *
    * @date 2026-09-13
    */
-  findAllByPortfolioId(portfolioId: EntityId): Promise<Statement[]>
+  findAllByPortfolioId(
+    portfolioId: EntityId
+  ): Promise<Statement[]>
 
   /**
    * @summary
@@ -93,7 +95,9 @@ export interface IStatement {
    *
    * @date 2026-09-15
    */
-  findAllByPortfolioIds(portfolioIds: EntityId[]): Promise<Statement[]>
+  findAllByPortfolioIds(
+    portfolioIds: EntityId[]
+  ): Promise<Statement[]>
 
   /**
    * @summary
@@ -118,7 +122,9 @@ export interface IStatement {
    *
    * @date 2026-09-13
    */
-  findAllByGeneratedByUserId(userId: EntityId): Promise<Statement[]>
+  findAllByGeneratedByUserId(
+    userId: EntityId
+  ): Promise<Statement[]>
 
   /**
    * @summary
@@ -143,7 +149,9 @@ export interface IStatement {
    *
    * @date 2026-09-15
    */
-  findAllByGeneratedByUserIds(userIds: EntityId[]): Promise<Statement[]>
+  findAllByGeneratedByUserIds(
+    userIds: EntityId[]
+  ): Promise<Statement[]>
 
   /**
    * @summary

@@ -217,7 +217,10 @@ export class Session {
    *
    * @date 2026-09-13
    */
-  private constructor(props: Required<SessionProps>, id?: string) {
+  private constructor(
+    props: Required<SessionProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -261,7 +264,10 @@ export class Session {
    *
    * @date 2026-09-13
    */
-  public static create(props: SessionProps, id?: string): Session {
+  public static create(
+    props: SessionProps,
+    id?: string
+  ): Session {
     if (!props.userId || props.userId.trim() === "") {
       throw new ValidationError("`Session` must have a user id.")
     }
@@ -269,7 +275,9 @@ export class Session {
       throw new ValidationError("`Session` must have a token.")
     }
     if (!props.expiresAt) {
-      throw new ValidationError("`Session` must have an expiration date.")
+      throw new ValidationError(
+        "`Session` must have an expiration date."
+      )
     }
 
     const NOW = new Date()

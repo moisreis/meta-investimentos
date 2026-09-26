@@ -67,7 +67,9 @@ export class UpdateFundUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: UpdateFundInput): Promise<FundResponseDTO> {
+  async execute(
+    input: UpdateFundInput
+  ): Promise<FundResponseDTO> {
     const ID = EntityId.create(input.fundId)
     const FUND = await this.fundRepository.findById(ID)
     if (!FUND) {

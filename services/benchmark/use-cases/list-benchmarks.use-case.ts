@@ -53,7 +53,9 @@ export class ListBenchmarksUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: ListBenchmarksInput): Promise<BenchmarkResponseDTO[]> {
+  async execute(
+    input: ListBenchmarksInput
+  ): Promise<BenchmarkResponseDTO[]> {
     const BENCHMARKS = await this.benchmarkRepository.findAll({
       limit: input.limit,
       offset: input.offset,

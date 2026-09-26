@@ -64,7 +64,9 @@ export class UpdateBenchmarkUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: UpdateBenchmarkInput): Promise<BenchmarkResponseDTO> {
+  async execute(
+    input: UpdateBenchmarkInput
+  ): Promise<BenchmarkResponseDTO> {
     const ID = EntityId.create(input.benchmarkId)
     const BENCHMARK = await this.benchmarkRepository.findById(ID)
     if (!BENCHMARK) {

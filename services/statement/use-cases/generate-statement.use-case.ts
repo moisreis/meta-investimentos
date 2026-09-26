@@ -74,7 +74,9 @@ export class GenerateStatementUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: GenerateStatementInput): Promise<StatementResponseDTO> {
+  async execute(
+    input: GenerateStatementInput
+  ): Promise<StatementResponseDTO> {
     const PROPS = toCreateStatementProps({
       portfolioId: input.portfolioId,
       periodStart: input.periodStart,

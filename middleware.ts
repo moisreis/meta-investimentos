@@ -30,7 +30,9 @@ export function middleware(request: NextRequest): NextResponse {
   const isProtected = PROTECTED_PREFIXES.some((prefix) =>
     pathname.startsWith(prefix)
   )
-  const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route))
+  const isAuthRoute = AUTH_ROUTES.some((route) =>
+    pathname.startsWith(route)
+  )
 
   if (!hasSession && isProtected) {
     const url = new URL("/sign-in", request.url)

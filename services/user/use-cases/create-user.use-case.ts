@@ -2,7 +2,10 @@ import { User } from "@domain/user/entities/user.entity"
 import { IUser } from "@domain/user/interfaces/user.interface"
 import type { UserRole } from "../dto/create-user.dto"
 import type { UserResponseDTO } from "../dto/user-response.dto"
-import { toCreateUserProps, toResponseDTO } from "../mappers/user.mapper"
+import {
+  toCreateUserProps,
+  toResponseDTO,
+} from "../mappers/user.mapper"
 
 export interface CreateUserInput {
   name: string
@@ -76,7 +79,9 @@ export class CreateUserUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: CreateUserInput): Promise<UserResponseDTO> {
+  async execute(
+    input: CreateUserInput
+  ): Promise<UserResponseDTO> {
     const PROPS = toCreateUserProps(input)
     const USER = User.create(PROPS)
     const SAVED = await this.userRepository.save(USER)

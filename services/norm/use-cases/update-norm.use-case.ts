@@ -68,7 +68,9 @@ export class UpdateNormUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: UpdateNormInput): Promise<NormResponseDTO> {
+  async execute(
+    input: UpdateNormInput
+  ): Promise<NormResponseDTO> {
     const ID = EntityId.create(input.normId)
     const NORM = await this.normRepository.findById(ID)
     if (!NORM) {

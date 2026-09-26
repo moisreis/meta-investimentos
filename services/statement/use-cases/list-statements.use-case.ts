@@ -54,10 +54,14 @@ export class ListStatementsUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: ListStatementsInput): Promise<StatementResponseDTO[]> {
+  async execute(
+    input: ListStatementsInput
+  ): Promise<StatementResponseDTO[]> {
     const PORTFOLIO_ID = EntityId.create(input.portfolioId)
     const STATEMENTS =
-      await this.statementRepository.findAllByPortfolioId(PORTFOLIO_ID)
+      await this.statementRepository.findAllByPortfolioId(
+        PORTFOLIO_ID
+      )
     return STATEMENTS.map(toResponseDTO)
   }
 }

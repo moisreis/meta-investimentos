@@ -20,7 +20,10 @@ export const quota = pgSchema("fund").table(
       .notNull()
       .references(() => fund.id),
     date: timestamp("date", { withTimezone: true }).notNull(),
-    price: numeric("price", { precision: 18, scale: 6 }).notNull(),
+    price: numeric("price", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -30,7 +33,10 @@ export const quota = pgSchema("fund").table(
     check("quota_price_nonneg", sql`${table.price} >= 0`),
 
     // Enforces that a fund holds a single quota price per date.
-    uniqueIndex("quota_fund_date_uidx").on(table.fundId, table.date),
+    uniqueIndex("quota_fund_date_uidx").on(
+      table.fundId,
+      table.date
+    ),
 
     // Speeds up lookups of quota records by their full key.
     index("quota_fund_date_idx").on(table.fundId, table.date),

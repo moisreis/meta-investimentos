@@ -29,7 +29,9 @@ export interface ListPortfolioPerformanceInput {
  * @date 2026-09-15
  */
 export class ListPortfolioPerformanceUseCase {
-  constructor(private portfolioPerformanceRepository: IPortfolioPerformance) {}
+  constructor(
+    private portfolioPerformanceRepository: IPortfolioPerformance
+  ) {}
 
   /**
    * @summary
@@ -63,6 +65,8 @@ export class ListPortfolioPerformanceUseCase {
       await this.portfolioPerformanceRepository.findAllByPortfolioId(
         EntityId.create(input.portfolioId)
       )
-    return PERFORMANCES.map((performance) => toResponseDTO(performance))
+    return PERFORMANCES.map((performance) =>
+      toResponseDTO(performance)
+    )
   }
 }

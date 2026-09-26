@@ -61,7 +61,9 @@ export class ListApplicationsUseCase {
   ): Promise<ApplicationResponseDTO[]> {
     const POSITION_ID = EntityId.create(input.positionId)
     const APPLICATIONS =
-      await this.applicationRepository.findAllByPositionId(POSITION_ID)
+      await this.applicationRepository.findAllByPositionId(
+        POSITION_ID
+      )
     return APPLICATIONS.map(toResponseDTO)
   }
 }

@@ -76,7 +76,10 @@ export class WithdrawalRecorded {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(props: Required<WithdrawalRecordedProps>, id?: string) {
+  private constructor(
+    props: Required<WithdrawalRecordedProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -133,19 +136,29 @@ export class WithdrawalRecorded {
       )
     }
     if (!props.positionId) {
-      throw new ValidationError("`WithdrawalRecorded` must have a position id.")
+      throw new ValidationError(
+        "`WithdrawalRecorded` must have a position id."
+      )
     }
     if (!props.fundId) {
-      throw new ValidationError("`WithdrawalRecorded` must have a fund id.")
+      throw new ValidationError(
+        "`WithdrawalRecorded` must have a fund id."
+      )
     }
     if (!props.date) {
-      throw new ValidationError("`WithdrawalRecorded` must have a date.")
+      throw new ValidationError(
+        "`WithdrawalRecorded` must have a date."
+      )
     }
     if (!props.amount) {
-      throw new ValidationError("`WithdrawalRecorded` must have an amount.")
+      throw new ValidationError(
+        "`WithdrawalRecorded` must have an amount."
+      )
     }
     if (!props.quotas) {
-      throw new ValidationError("`WithdrawalRecorded` must have quotas.")
+      throw new ValidationError(
+        "`WithdrawalRecorded` must have quotas."
+      )
     }
 
     const NOW = new Date()

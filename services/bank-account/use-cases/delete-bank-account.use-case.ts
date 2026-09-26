@@ -60,7 +60,8 @@ export class DeleteBankAccountUseCase {
    */
   async execute(input: DeleteBankAccountInput): Promise<void> {
     const ID = EntityId.create(input.bankAccountId)
-    const BANK_ACCOUNT = await this.bankAccountRepository.findById(ID)
+    const BANK_ACCOUNT =
+      await this.bankAccountRepository.findById(ID)
     if (!BANK_ACCOUNT) {
       throw new NotFoundError("`BankAccount` not found.")
     }

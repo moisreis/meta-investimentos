@@ -60,7 +60,10 @@ export class ApplicationReversed {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(props: Required<ApplicationReversedProps>, id?: string) {
+  private constructor(
+    props: Required<ApplicationReversedProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -115,13 +118,19 @@ export class ApplicationReversed {
       )
     }
     if (!props.positionId) {
-      throw new ValidationError("`ApplicationReversed` needs a position id.")
+      throw new ValidationError(
+        "`ApplicationReversed` needs a position id."
+      )
     }
     if (!props.reversedAt) {
-      throw new ValidationError("`ApplicationReversed` needs a reversed date.")
+      throw new ValidationError(
+        "`ApplicationReversed` needs a reversed date."
+      )
     }
     if (!props.reversedByUserId) {
-      throw new ValidationError("`ApplicationReversed` needs a user id.")
+      throw new ValidationError(
+        "`ApplicationReversed` needs a user id."
+      )
     }
 
     const NOW = new Date()

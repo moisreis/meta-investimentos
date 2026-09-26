@@ -1,4 +1,9 @@
-import { pgSchema, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import {
+  pgSchema,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core"
 
 // Stores the fund categories on the platform.
 // Each category has a unique name used to group funds.

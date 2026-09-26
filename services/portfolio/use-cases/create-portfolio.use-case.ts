@@ -77,7 +77,9 @@ export class CreatePortfolioUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: CreatePortfolioInput): Promise<PortfolioResponseDTO> {
+  async execute(
+    input: CreatePortfolioInput
+  ): Promise<PortfolioResponseDTO> {
     const PROPS = toCreatePortfolioProps(input)
     const PORTFOLIO = Portfolio.create(PROPS)
     const SAVED = await this.portfolioRepository.save(PORTFOLIO)

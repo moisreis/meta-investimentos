@@ -52,7 +52,9 @@ export const normsPortfolios = pgSchema("portfolio").table(
     ),
 
     // Speeds up lookups of norm/portfolio links by portfolio.
-    index("norms_portfolios_portfolio_id_idx").on(table.portfolioId),
+    index("norms_portfolios_portfolio_id_idx").on(
+      table.portfolioId
+    ),
 
     // Speeds up lookups of norm/portfolio links by their norm.
     index("norms_portfolios_norm_id_idx").on(table.normId),

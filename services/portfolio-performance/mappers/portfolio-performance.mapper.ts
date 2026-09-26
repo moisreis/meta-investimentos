@@ -46,7 +46,9 @@ export function toResponseDTO(
     returnLast12m: entity.returnLast12m
       ? entity.returnLast12m.value.toString()
       : null,
-    target: entity.target ? entity.target.value.toString() : null,
+    target: entity.target
+      ? entity.target.value.toString()
+      : null,
     cumulativeTarget: entity.cumulativeTarget
       ? entity.cumulativeTarget.value.toString()
       : null,

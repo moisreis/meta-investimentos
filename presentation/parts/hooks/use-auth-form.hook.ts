@@ -92,9 +92,7 @@ function TranslateAuthError(
   const CODE_MESSAGE = authError.code && messages[authError.code]
 
   return (
-    CODE_MESSAGE ??
-    authError.message ??
-    "Erro de autenticação."
+    CODE_MESSAGE ?? authError.message ?? "Erro de autenticação."
   )
 }
 

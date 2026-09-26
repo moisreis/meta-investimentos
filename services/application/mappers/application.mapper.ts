@@ -2,7 +2,11 @@ import {
   Application,
   type ApplicationProps,
 } from "@domain/application/entities/application.entity"
-import { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
+import {
+  EntityId,
+  PositiveMoney,
+  QuotaQuantity,
+} from "@/value-objects"
 import type { CreateApplicationDTO } from "../dto/create-application.dto"
 import type { ApplicationResponseDTO } from "../dto/application-response.dto"
 import type { ReverseApplicationDTO } from "../dto/reverse-application.dto"
@@ -93,14 +97,18 @@ export function toReverseApplicationProps(
  *
  * @date 2026-09-22
  */
-export function toResponseDTO(entity: Application): ApplicationResponseDTO {
+export function toResponseDTO(
+  entity: Application
+): ApplicationResponseDTO {
   return {
     id: entity.id as string,
     positionId: entity.positionId,
     date: entity.date.toISOString(),
     amount: entity.amount.value.toString(),
     quotas: entity.quotas.value.toString(),
-    reversedAt: entity.reversedAt ? entity.reversedAt.toISOString() : null,
+    reversedAt: entity.reversedAt
+      ? entity.reversedAt.toISOString()
+      : null,
     reversedByUserId: entity.reversedByUserId,
     createdAt: entity.createdAt.toISOString(),
     updatedAt: entity.updatedAt.toISOString(),

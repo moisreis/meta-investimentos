@@ -38,5 +38,7 @@ export function calculatePortfolioCashFlowNet({
   applications,
   withdrawals,
 }: CalculatePortfolioCashFlowNetProps): SignedMoney {
-  return SignedMoney.create(applications.value.minus(withdrawals.value))
+  return SignedMoney.create(
+    applications.value.minus(withdrawals.value)
+  )
 }

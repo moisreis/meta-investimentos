@@ -1,4 +1,7 @@
-import { Norm, type NormProps } from "@domain/norm/entities/norm.entity"
+import {
+  Norm,
+  type NormProps,
+} from "@domain/norm/entities/norm.entity"
 import { EntityId, SignedPercentage } from "@/value-objects"
 import type { CreateNormDTO } from "../dto/create-norm.dto"
 import type { NormResponseDTO } from "../dto/norm-response.dto"
@@ -26,14 +29,18 @@ import type { NormResponseDTO } from "../dto/norm-response.dto"
  *
  * @date 2026-09-22
  */
-export function toCreateNormProps(dto: CreateNormDTO): NormProps {
+export function toCreateNormProps(
+  dto: CreateNormDTO
+): NormProps {
   return {
     articleNumber: dto.articleNumber,
     name: dto.name,
     categoryId: EntityId.create(dto.categoryId),
     minAllocation: SignedPercentage.create(dto.minAllocation),
     maxAllocation: SignedPercentage.create(dto.maxAllocation),
-    targetAllocation: SignedPercentage.create(dto.targetAllocation),
+    targetAllocation: SignedPercentage.create(
+      dto.targetAllocation
+    ),
   }
 }
 

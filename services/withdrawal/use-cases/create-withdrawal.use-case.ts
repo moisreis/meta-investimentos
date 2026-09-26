@@ -77,15 +77,19 @@ export class CreateWithdrawalUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: CreateWithdrawalInput): Promise<WithdrawalResponseDTO> {
+  async execute(
+    input: CreateWithdrawalInput
+  ): Promise<WithdrawalResponseDTO> {
     const POSITION_ID = EntityId.create(input.positionId)
-    const POSITION = await this.positionRepository.findById(POSITION_ID)
+    const POSITION =
+      await this.positionRepository.findById(POSITION_ID)
     if (!POSITION) {
       throw new NotFoundError("`Position` not found.")
     }
     const PROPS = toCreateWithdrawalProps(input)
     const WITHDRAWAL = Withdrawal.create(PROPS)
-    const SAVED = await this.withdrawalRepository.save(WITHDRAWAL)
+    const SAVED =
+      await this.withdrawalRepository.save(WITHDRAWAL)
     return toResponseDTO(SAVED)
   }
 }

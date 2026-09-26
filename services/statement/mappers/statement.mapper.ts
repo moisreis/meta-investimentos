@@ -34,7 +34,9 @@ export function toCreateStatementProps(
   dto: GenerateStatementDTO
 ): Omit<StatementProps, "fileUrl"> {
   return {
-    portfolioId: dto.portfolioId ? EntityId.create(dto.portfolioId) : null,
+    portfolioId: dto.portfolioId
+      ? EntityId.create(dto.portfolioId)
+      : null,
     periodStart: new Date(dto.periodStart),
     periodEnd: new Date(dto.periodEnd),
     generatedByUserId: dto.generatedByUserId
@@ -65,7 +67,9 @@ export function toCreateStatementProps(
  *
  * @date 2026-09-22
  */
-export function toResponseDTO(entity: Statement): StatementResponseDTO {
+export function toResponseDTO(
+  entity: Statement
+): StatementResponseDTO {
   return {
     id: entity.id as string,
     portfolioId: entity.portfolioId,

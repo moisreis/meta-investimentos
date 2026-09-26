@@ -132,7 +132,10 @@ export class Category {
    *
    * @date 2026-09-13
    */
-  private constructor(props: Required<CategoryProps>, id?: string) {
+  private constructor(
+    props: Required<CategoryProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -170,7 +173,10 @@ export class Category {
    *
    * @date 2026-09-13
    */
-  public static create(props: CategoryProps, id?: string): Category {
+  public static create(
+    props: CategoryProps,
+    id?: string
+  ): Category {
     if (!props.name || props.name.trim() === "") {
       throw new ValidationError("`Category` must have a name.")
     }

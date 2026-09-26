@@ -1,4 +1,7 @@
-import { Bank, type BankProps } from "@domain/bank/entities/bank.entity"
+import {
+  Bank,
+  type BankProps,
+} from "@domain/bank/entities/bank.entity"
 import type { CreateBankDTO } from "../dto/create-bank.dto"
 import type { BankResponseDTO } from "../dto/bank-response.dto"
 
@@ -25,7 +28,9 @@ import type { BankResponseDTO } from "../dto/bank-response.dto"
  *
  * @date 2026-09-22
  */
-export function toCreateBankProps(dto: CreateBankDTO): BankProps {
+export function toCreateBankProps(
+  dto: CreateBankDTO
+): BankProps {
   return {
     code: dto.code,
     name: dto.name,

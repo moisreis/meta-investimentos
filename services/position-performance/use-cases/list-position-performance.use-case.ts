@@ -29,7 +29,9 @@ export interface ListPositionPerformanceInput {
  * @date 2026-09-15
  */
 export class ListPositionPerformanceUseCase {
-  constructor(private positionPerformanceRepository: IPositionPerformance) {}
+  constructor(
+    private positionPerformanceRepository: IPositionPerformance
+  ) {}
 
   /**
    * @summary
@@ -63,6 +65,8 @@ export class ListPositionPerformanceUseCase {
       await this.positionPerformanceRepository.findAllByPositionId(
         EntityId.create(input.positionId)
       )
-    return PERFORMANCES.map((performance) => toResponseDTO(performance))
+    return PERFORMANCES.map((performance) =>
+      toResponseDTO(performance)
+    )
   }
 }

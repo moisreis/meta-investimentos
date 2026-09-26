@@ -27,9 +27,12 @@ export const account = pgSchema("user").table(
     accessTokenExpiresAt: timestamp("access_token_expires_at", {
       withTimezone: true,
     }),
-    refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
-      withTimezone: true,
-    }),
+    refreshTokenExpiresAt: timestamp(
+      "refresh_token_expires_at",
+      {
+        withTimezone: true,
+      }
+    ),
     scope: text("scope"),
     password: text("password"),
     createdAt: timestamp("created_at", { withTimezone: true })

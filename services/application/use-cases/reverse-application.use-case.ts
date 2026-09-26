@@ -67,11 +67,14 @@ export class ReverseApplicationUseCase {
     input: ReverseApplicationInput
   ): Promise<ApplicationResponseDTO> {
     const ID = EntityId.create(input.applicationId)
-    const APPLICATION = await this.applicationRepository.findById(ID)
+    const APPLICATION =
+      await this.applicationRepository.findById(ID)
     if (!APPLICATION) {
       throw new NotFoundError("`Application` not found.")
     }
-    const REVERSE_USER_ID = EntityId.create(input.reversedByUserId)
+    const REVERSE_USER_ID = EntityId.create(
+      input.reversedByUserId
+    )
     const REVERSED = APPLICATION.reverse(REVERSE_USER_ID)
     const SAVED = await this.applicationRepository.save(REVERSED)
     return toResponseDTO(SAVED)

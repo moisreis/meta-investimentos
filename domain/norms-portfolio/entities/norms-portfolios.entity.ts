@@ -218,7 +218,10 @@ export class NormsPortfolios {
    *
    * @date 2026-09-13
    */
-  private constructor(props: Required<NormsPortfoliosProps>, id?: string) {
+  private constructor(
+    props: Required<NormsPortfoliosProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -269,10 +272,14 @@ export class NormsPortfolios {
     id?: string
   ): NormsPortfolios {
     if (!props.normId || props.normId.trim() === "") {
-      throw new ValidationError("`NormsPortfolios` must have a norm id.")
+      throw new ValidationError(
+        "`NormsPortfolios` must have a norm id."
+      )
     }
     if (!props.portfolioId || props.portfolioId.trim() === "") {
-      throw new ValidationError("`NormsPortfolios` must have a portfolio id.")
+      throw new ValidationError(
+        "`NormsPortfolios` must have a portfolio id."
+      )
     }
     if (!props.minAllocation) {
       throw new ValidationError(
@@ -289,12 +296,16 @@ export class NormsPortfolios {
         "`NormsPortfolios` must have a target allocation."
       )
     }
-    if (props.minAllocation.value.gt(props.targetAllocation.value)) {
+    if (
+      props.minAllocation.value.gt(props.targetAllocation.value)
+    ) {
       throw new ValidationError(
         "`NormsPortfolios` minimum allocation must not exceed target allocation."
       )
     }
-    if (props.targetAllocation.value.gt(props.maxAllocation.value)) {
+    if (
+      props.targetAllocation.value.gt(props.maxAllocation.value)
+    ) {
       throw new ValidationError(
         "`NormsPortfolios` target allocation must not exceed maximum allocation."
       )

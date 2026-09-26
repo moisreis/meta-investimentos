@@ -85,7 +85,8 @@ export class RecordCheckingAccountUseCase {
     }
     const PROPS = toCreateCheckingAccountProps(input)
     const ENTRY = CheckingAccount.create(PROPS)
-    const SAVED = await this.checkingAccountRepository.save(ENTRY)
+    const SAVED =
+      await this.checkingAccountRepository.save(ENTRY)
     return toResponseDTO(SAVED)
   }
 }

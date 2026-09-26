@@ -30,7 +30,9 @@ export interface GetPositionPerformanceInput {
  * @date 2026-09-15
  */
 export class GetPositionPerformanceUseCase {
-  constructor(private positionPerformanceRepository: IPositionPerformance) {}
+  constructor(
+    private positionPerformanceRepository: IPositionPerformance
+  ) {}
 
   /**
    * @summary
@@ -60,9 +62,10 @@ export class GetPositionPerformanceUseCase {
   async execute(
     input: GetPositionPerformanceInput
   ): Promise<PositionPerformanceResponseDTO> {
-    const PERFORMANCE = await this.positionPerformanceRepository.findById(
-      EntityId.create(input.id)
-    )
+    const PERFORMANCE =
+      await this.positionPerformanceRepository.findById(
+        EntityId.create(input.id)
+      )
     if (!PERFORMANCE) {
       throw new NotFoundError("`PositionPerformance` not found.")
     }

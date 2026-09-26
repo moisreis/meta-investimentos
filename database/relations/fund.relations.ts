@@ -1,5 +1,12 @@
 import { defineRelations } from "drizzle-orm"
-import { bank, benchmark, category, fund, position, quota } from "@db-schemas"
+import {
+  bank,
+  benchmark,
+  category,
+  fund,
+  position,
+  quota,
+} from "@db-schemas"
 
 // Connects a fund to its bank, benchmark, and category.
 // Also connects the fund to its quotas and positions.

@@ -23,7 +23,8 @@ function Marker({
   variant = "default",
   render,
   ...props
-}: useRender.ComponentProps<"div"> & VariantProps<typeof markerVariants>) {
+}: useRender.ComponentProps<"div"> &
+  VariantProps<typeof markerVariants>) {
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
@@ -40,7 +41,10 @@ function Marker({
   })
 }
 
-function MarkerIcon({ className, ...props }: React.ComponentProps<"span">) {
+function MarkerIcon({
+  className,
+  ...props
+}: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="marker-icon"
@@ -54,7 +58,10 @@ function MarkerIcon({ className, ...props }: React.ComponentProps<"span">) {
   )
 }
 
-function MarkerContent({ className, ...props }: React.ComponentProps<"span">) {
+function MarkerContent({
+  className,
+  ...props
+}: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="marker-content"

@@ -108,7 +108,10 @@ export interface IQuota {
    *
    * @date 2026-09-13
    */
-  findByFundIdAndDate(fundId: EntityId, date: Date): Promise<Quota | null>
+  findByFundIdAndDate(
+    fundId: EntityId,
+    date: Date
+  ): Promise<Quota | null>
 
   /**
    * @summary
@@ -264,7 +267,9 @@ export interface IQuota {
    *
    * @date 2026-09-13
    */
-  upsertMany(records: UpsertQuota[]): Promise<UpsertQuotaResult[]>
+  upsertMany(
+    records: UpsertQuota[]
+  ): Promise<UpsertQuotaResult[]>
 
   /**
    * @summary

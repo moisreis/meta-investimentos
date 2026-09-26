@@ -1,5 +1,9 @@
 import { defineRelations } from "drizzle-orm"
-import { position, transactionAllocation, withdrawal } from "@db-schemas"
+import {
+  position,
+  transactionAllocation,
+  withdrawal,
+} from "@db-schemas"
 
 // Connects a withdrawal to its position and allocations.
 export const withdrawalRelations = defineRelations(

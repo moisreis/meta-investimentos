@@ -57,7 +57,9 @@ export class GetQuotaUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: GetQuotaInput): Promise<QuotaResponseDTO> {
+  async execute(
+    input: GetQuotaInput
+  ): Promise<QuotaResponseDTO> {
     const ID = EntityId.create(input.quotaId)
     const QUOTA = await this.quotaRepository.findById(ID)
     if (!QUOTA) {

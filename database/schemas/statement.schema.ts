@@ -15,11 +15,15 @@ export const statement = pgSchema("report").table(
   "statement",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    portfolioId: uuid("portfolio_id").references(() => portfolio.id),
+    portfolioId: uuid("portfolio_id").references(
+      () => portfolio.id
+    ),
     periodStart: date("period_start").notNull(),
     periodEnd: date("period_end").notNull(),
     fileUrl: text("file_url").notNull(),
-    generatedByUserId: text("generated_by_user_id").references(() => user.id),
+    generatedByUserId: text("generated_by_user_id").references(
+      () => user.id
+    ),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -33,6 +37,8 @@ export const statement = pgSchema("report").table(
     ),
 
     // Speeds up lookups of statements by the generating user.
-    index("statement_generated_by_user_id_idx").on(table.generatedByUserId),
+    index("statement_generated_by_user_id_idx").on(
+      table.generatedByUserId
+    ),
   ]
 )

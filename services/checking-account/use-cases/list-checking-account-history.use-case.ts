@@ -30,7 +30,9 @@ export interface ListCheckingAccountHistoryInput {
  * @date 2026-09-15
  */
 export class ListCheckingAccountHistoryUseCase {
-  constructor(private checkingAccountRepository: ICheckingAccount) {}
+  constructor(
+    private checkingAccountRepository: ICheckingAccount
+  ) {}
 
   /**
    * @summary

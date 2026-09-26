@@ -59,16 +59,22 @@ export class BulkDeletePortfoliosUseCase {
    *
    * @date 2026-09-22
    */
-  async execute(input: BulkDeletePortfoliosInput): Promise<void> {
+  async execute(
+    input: BulkDeletePortfoliosInput
+  ): Promise<void> {
     if (input.portfolioIds.length === 0) {
       return
     }
 
-    const IDS = input.portfolioIds.map((id) => EntityId.create(id))
-    const PORTFOLIOS = await this.portfolioRepository.findAllByIds(IDS)
+    const IDS = input.portfolioIds.map((id) =>
+      EntityId.create(id)
+    )
+    const PORTFOLIOS =
+      await this.portfolioRepository.findAllByIds(IDS)
 
     const OWNED_IDS = PORTFOLIOS.filter(
-      (portfolio) => !input.userId || portfolio.userId === input.userId
+      (portfolio) =>
+        !input.userId || portfolio.userId === input.userId
     )
       .map((portfolio) => portfolio.id)
       .filter((id): id is EntityId => Boolean(id))

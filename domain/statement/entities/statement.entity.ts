@@ -196,7 +196,10 @@ export class Statement {
    *
    * @date 2026-09-13
    */
-  private constructor(props: Required<StatementProps>, id?: string) {
+  private constructor(
+    props: Required<StatementProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -238,17 +241,28 @@ export class Statement {
    *
    * @date 2026-09-13
    */
-  public static create(props: StatementProps, id?: string): Statement {
+  public static create(
+    props: StatementProps,
+    id?: string
+  ): Statement {
     if (!props.periodStart) {
-      throw new ValidationError("`Statement` must have a period start.")
+      throw new ValidationError(
+        "`Statement` must have a period start."
+      )
     }
     if (!props.periodEnd) {
-      throw new ValidationError("`Statement` must have a period end.")
+      throw new ValidationError(
+        "`Statement` must have a period end."
+      )
     }
     if (!props.fileUrl || props.fileUrl.trim() === "") {
-      throw new ValidationError("`Statement` must have a file url.")
+      throw new ValidationError(
+        "`Statement` must have a file url."
+      )
     }
-    if (props.periodStart.getTime() > props.periodEnd.getTime()) {
+    if (
+      props.periodStart.getTime() > props.periodEnd.getTime()
+    ) {
       throw new ValidationError(
         "`Statement` period start must not be after period end."
       )

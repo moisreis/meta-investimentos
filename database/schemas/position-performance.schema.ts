@@ -18,8 +18,14 @@ export const positionPerformance = pgSchema("performance").table(
       .notNull()
       .references(() => position.id),
     date: timestamp("date", { withTimezone: true }).notNull(),
-    quotasHeld: numeric("quotas_held", { precision: 18, scale: 6 }).notNull(),
-    patrimony: numeric("patrimony", { precision: 18, scale: 6 }).notNull(),
+    quotasHeld: numeric("quotas_held", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
+    patrimony: numeric("patrimony", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
     applicationTotal: numeric("application_total", {
       precision: 18,
       scale: 6,
@@ -32,7 +38,10 @@ export const positionPerformance = pgSchema("performance").table(
       precision: 18,
       scale: 6,
     }).notNull(),
-    earnings: numeric("earnings", { precision: 18, scale: 6 }).notNull(),
+    earnings: numeric("earnings", {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
     returnDaily: numeric("return_daily").notNull(),
     returnMonthly: numeric("return_monthly"),
     returnYearly: numeric("return_yearly"),

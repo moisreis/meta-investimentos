@@ -57,7 +57,9 @@ export class GetPositionUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: GetPositionInput): Promise<PositionResponseDTO> {
+  async execute(
+    input: GetPositionInput
+  ): Promise<PositionResponseDTO> {
     const ID = EntityId.create(input.positionId)
     const POSITION = await this.positionRepository.findById(ID)
     if (!POSITION) {

@@ -1,7 +1,10 @@
 import { Bank } from "@domain/bank/entities/bank.entity"
 import { IBank } from "@domain/bank/interfaces/bank.interface"
 import type { BankResponseDTO } from "../dto/bank-response.dto"
-import { toCreateBankProps, toResponseDTO } from "../mappers/bank.mapper"
+import {
+  toCreateBankProps,
+  toResponseDTO,
+} from "../mappers/bank.mapper"
 
 export interface CreateBankInput {
   code: string
@@ -59,7 +62,9 @@ export class CreateBankUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: CreateBankInput): Promise<BankResponseDTO> {
+  async execute(
+    input: CreateBankInput
+  ): Promise<BankResponseDTO> {
     const PROPS = toCreateBankProps(input)
     const BANK = Bank.create(PROPS)
     const SAVED = await this.bankRepository.save(BANK)

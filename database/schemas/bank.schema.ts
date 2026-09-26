@@ -1,4 +1,9 @@
-import { pgSchema, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import {
+  pgSchema,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core"
 
 // Stores the financial institutions on the platform.
 // Each bank carries a unique code and a display name.

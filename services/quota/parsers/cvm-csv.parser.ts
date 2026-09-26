@@ -64,7 +64,9 @@ export interface CvmCsvRow {
  *
  * @date 2026-09-17
  */
-export function parseCvmCsvBytes(bytes: Uint8Array): CvmCsvRow[] {
+export function parseCvmCsvBytes(
+  bytes: Uint8Array
+): CvmCsvRow[] {
   const TEXT = new TextDecoder("iso-8859-1").decode(bytes)
   const LINES = TEXT.split(/\r?\n/)
 
@@ -74,7 +76,10 @@ export function parseCvmCsvBytes(bytes: Uint8Array): CvmCsvRow[] {
 
   const HEADER = LINES[0].split(";").map((h) => h.trim())
 
-  const CNPJ_INDEX = headerIndex(HEADER, ["CNPJ_FUNDO", "CNPJ_FUNDO_CLASSE"])
+  const CNPJ_INDEX = headerIndex(HEADER, [
+    "CNPJ_FUNDO",
+    "CNPJ_FUNDO_CLASSE",
+  ])
   const DATE_INDEX = headerIndex(HEADER, ["DT_COMPTC"])
   const PRICE_INDEX = headerIndex(HEADER, ["VL_QUOTA"])
 
@@ -101,7 +106,8 @@ export function parseCvmCsvBytes(bytes: Uint8Array): CvmCsvRow[] {
     }
 
     const DATE_RAW = safeGet(CELLS, DATE_INDEX)
-    const DATE = DATE_RAW !== null ? parseUtcDate(DATE_RAW) : null
+    const DATE =
+      DATE_RAW !== null ? parseUtcDate(DATE_RAW) : null
 
     if (DATE === null) {
       continue
@@ -113,7 +119,10 @@ export function parseCvmCsvBytes(bytes: Uint8Array): CvmCsvRow[] {
       continue
     }
 
-    const PRICE_CLEANED = PRICE_RAW.replace(/\s/g, "").replace(/,/g, ".")
+    const PRICE_CLEANED = PRICE_RAW.replace(/\s/g, "").replace(
+      /,/g,
+      "."
+    )
 
     let DECIMAL: Decimal
 

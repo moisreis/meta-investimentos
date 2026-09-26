@@ -30,7 +30,9 @@ export interface DetachNormFromPortfolioInput {
  * @date 2026-09-15
  */
 export class DetachNormFromPortfolioUseCase {
-  constructor(private normsPortfoliosRepository: INormsPortfolios) {}
+  constructor(
+    private normsPortfoliosRepository: INormsPortfolios
+  ) {}
 
   /**
    * @summary
@@ -58,7 +60,9 @@ export class DetachNormFromPortfolioUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: DetachNormFromPortfolioInput): Promise<void> {
+  async execute(
+    input: DetachNormFromPortfolioInput
+  ): Promise<void> {
     const NORM_ID = EntityId.create(input.normId)
     const PORTFOLIO_ID = EntityId.create(input.portfolioId)
     const EXISTING =
@@ -67,8 +71,13 @@ export class DetachNormFromPortfolioUseCase {
         PORTFOLIO_ID
       )
     if (!EXISTING) {
-      throw new NotFoundError("`NormPortfolio` relation not found.")
+      throw new NotFoundError(
+        "`NormPortfolio` relation not found."
+      )
     }
-    await this.normsPortfoliosRepository.delete(NORM_ID, PORTFOLIO_ID)
+    await this.normsPortfoliosRepository.delete(
+      NORM_ID,
+      PORTFOLIO_ID
+    )
   }
 }

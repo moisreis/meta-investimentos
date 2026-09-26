@@ -62,7 +62,9 @@ export class CreateBenchmarkUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: CreateBenchmarkInput): Promise<BenchmarkResponseDTO> {
+  async execute(
+    input: CreateBenchmarkInput
+  ): Promise<BenchmarkResponseDTO> {
     const PROPS = toCreateBenchmarkProps(input)
     const BENCHMARK = Benchmark.create(PROPS)
     const SAVED = await this.benchmarkRepository.save(BENCHMARK)

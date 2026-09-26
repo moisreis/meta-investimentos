@@ -123,10 +123,16 @@ export async function runFundValuationMonth(
 // ---------------------------------
 
 // Enumerates every calendar month covered by the range.
-function enumerateMonths(range: ImportWindowRange): ImportPlanMonth[] {
+function enumerateMonths(
+  range: ImportWindowRange
+): ImportPlanMonth[] {
   const MONTHS: ImportPlanMonth[] = []
   let cursor = new Date(
-    Date.UTC(range.start.getUTCFullYear(), range.start.getUTCMonth(), 1)
+    Date.UTC(
+      range.start.getUTCFullYear(),
+      range.start.getUTCMonth(),
+      1
+    )
   )
 
   const END_YEAR = range.end.getUTCFullYear()
@@ -134,19 +140,26 @@ function enumerateMonths(range: ImportWindowRange): ImportPlanMonth[] {
 
   while (
     cursor.getUTCFullYear() < END_YEAR ||
-    (cursor.getUTCFullYear() === END_YEAR && cursor.getUTCMonth() <= END_MONTH)
+    (cursor.getUTCFullYear() === END_YEAR &&
+      cursor.getUTCMonth() <= END_MONTH)
   ) {
     const YEAR = cursor.getUTCFullYear()
     const MONTH = cursor.getUTCMonth()
 
     const MONTH_START = new Date(Date.UTC(YEAR, MONTH, 1))
-    const MONTH_END = new Date(Date.UTC(YEAR, MONTH + 1, 0, 23, 59, 59, 999))
+    const MONTH_END = new Date(
+      Date.UTC(YEAR, MONTH + 1, 0, 23, 59, 59, 999)
+    )
 
     MONTHS.push({
       year: YEAR,
       month: MONTH + 1,
-      start: new Date(Math.max(MONTH_START.getTime(), range.start.getTime())),
-      end: new Date(Math.min(MONTH_END.getTime(), range.end.getTime())),
+      start: new Date(
+        Math.max(MONTH_START.getTime(), range.start.getTime())
+      ),
+      end: new Date(
+        Math.min(MONTH_END.getTime(), range.end.getTime())
+      ),
     })
 
     cursor = new Date(Date.UTC(YEAR, MONTH + 1, 1))

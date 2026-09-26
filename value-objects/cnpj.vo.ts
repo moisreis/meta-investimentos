@@ -90,7 +90,9 @@ export class CNPJ {
     const DIGITS = value.replace(/\D/g, "")
 
     if (DIGITS.length !== CNPJ_LENGTH) {
-      throw new ValidationError("`CNPJ` must contain exactly 14 digits.")
+      throw new ValidationError(
+        "`CNPJ` must contain exactly 14 digits."
+      )
     }
 
     if (ALL_SAME_DIGIT.test(DIGITS)) {
@@ -100,7 +102,9 @@ export class CNPJ {
     }
 
     if (!CNPJ.isValid(DIGITS)) {
-      throw new ValidationError("`CNPJ` must pass the check-digit algorithm.")
+      throw new ValidationError(
+        "`CNPJ` must pass the check-digit algorithm."
+      )
     }
 
     return new CNPJ({ value: DIGITS })
@@ -163,13 +167,19 @@ export class CNPJ {
     const FIRST_TWELVE = digits.substring(0, 12)
 
     // Calculates the first verification digit using first weights.
-    const FIRST_CHECK = CNPJ.computeCheckDigit(FIRST_TWELVE, FIRST_WEIGHTS)
+    const FIRST_CHECK = CNPJ.computeCheckDigit(
+      FIRST_TWELVE,
+      FIRST_WEIGHTS
+    )
 
     // Combines the first twelve digits with the first check digit.
     const FIRST_THIRTEEN = FIRST_TWELVE + FIRST_CHECK
 
     // Calculates the second verification digit using second weights.
-    const SECOND_CHECK = CNPJ.computeCheckDigit(FIRST_THIRTEEN, SECOND_WEIGHTS)
+    const SECOND_CHECK = CNPJ.computeCheckDigit(
+      FIRST_THIRTEEN,
+      SECOND_WEIGHTS
+    )
 
     // Combines both calculated check digits for final verification.
     const EXPECTED = FIRST_CHECK + SECOND_CHECK
@@ -201,7 +211,10 @@ export class CNPJ {
    *
    * @date 2026-09-23
    */
-  private static computeCheckDigit(partial: string, weights: number[]): string {
+  private static computeCheckDigit(
+    partial: string,
+    weights: number[]
+  ): string {
     // Accumulates the weighted sum of partial digits.
     let SUM = 0
 

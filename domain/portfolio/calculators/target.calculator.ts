@@ -51,11 +51,15 @@ export function calculatePortfolioTarget({
     )
   }
 
-  const MONTHLY_PORTFOLIO_RATE = MONTHLY_PORTFOLIO_BASE.toPower(1 / 12).minus(1)
+  const MONTHLY_PORTFOLIO_RATE = MONTHLY_PORTFOLIO_BASE.toPower(
+    1 / 12
+  ).minus(1)
 
   const TARGET_RATE = new Decimal(1)
     .plus(MONTHLY_PORTFOLIO_RATE)
-    .times(new Decimal(1).plus(inflationRate.value.dividedBy(100)))
+    .times(
+      new Decimal(1).plus(inflationRate.value.dividedBy(100))
+    )
     .minus(1)
 
   return SignedPercentage.create(TARGET_RATE.times(100))

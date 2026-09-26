@@ -60,7 +60,10 @@ export class QuotaPriceRecorded {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(props: Required<QuotaPriceRecordedProps>, id?: string) {
+  private constructor(
+    props: Required<QuotaPriceRecordedProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -108,16 +111,24 @@ export class QuotaPriceRecorded {
     id?: string
   ): QuotaPriceRecorded {
     if (!props.quotaId) {
-      throw new ValidationError("`QuotaPriceRecorded` must have a quota id.")
+      throw new ValidationError(
+        "`QuotaPriceRecorded` must have a quota id."
+      )
     }
     if (!props.fundId) {
-      throw new ValidationError("`QuotaPriceRecorded` must have a fund id.")
+      throw new ValidationError(
+        "`QuotaPriceRecorded` must have a fund id."
+      )
     }
     if (!props.date) {
-      throw new ValidationError("`QuotaPriceRecorded` must have a date.")
+      throw new ValidationError(
+        "`QuotaPriceRecorded` must have a date."
+      )
     }
     if (!props.price) {
-      throw new ValidationError("`QuotaPriceRecorded` must have a price.")
+      throw new ValidationError(
+        "`QuotaPriceRecorded` must have a price."
+      )
     }
 
     const NOW = new Date()

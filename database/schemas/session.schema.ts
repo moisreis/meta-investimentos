@@ -1,5 +1,10 @@
 import { sql } from "drizzle-orm"
-import { index, pgSchema, text, timestamp } from "drizzle-orm/pg-core"
+import {
+  index,
+  pgSchema,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core"
 import { user } from "@db-schemas/user.schema"
 
 // Stores the authentication sessions issued to a user.
@@ -10,7 +15,9 @@ export const session = pgSchema("user").table(
     id: text("id")
       .primaryKey()
       .default(sql`gen_random_uuid()::text`),
-    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    expiresAt: timestamp("expires_at", {
+      withTimezone: true,
+    }).notNull(),
     token: text("token").notNull().unique(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()

@@ -91,7 +91,8 @@ export class AttachNormToPortfolioUseCase {
     if (!NORM) {
       throw new NotFoundError("`Norm` not found.")
     }
-    const PORTFOLIO = await this.portfolioRepository.findById(PORTFOLIO_ID)
+    const PORTFOLIO =
+      await this.portfolioRepository.findById(PORTFOLIO_ID)
     if (!PORTFOLIO) {
       throw new NotFoundError("`Portfolio` not found.")
     }
@@ -107,7 +108,8 @@ export class AttachNormToPortfolioUseCase {
     }
     const PROPS = toCreateNormsPortfoliosProps(input)
     const RELATION = NormsPortfolios.create(PROPS)
-    const SAVED = await this.normsPortfoliosRepository.save(RELATION)
+    const SAVED =
+      await this.normsPortfoliosRepository.save(RELATION)
     return toResponseDTO(SAVED)
   }
 }

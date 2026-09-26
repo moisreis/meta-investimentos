@@ -82,13 +82,15 @@ export class CreateApplicationUseCase {
     input: CreateApplicationInput
   ): Promise<ApplicationResponseDTO> {
     const POSITION_ID = EntityId.create(input.positionId)
-    const POSITION = await this.positionRepository.findById(POSITION_ID)
+    const POSITION =
+      await this.positionRepository.findById(POSITION_ID)
     if (!POSITION) {
       throw new NotFoundError("`Position` not found.")
     }
     const PROPS = toCreateApplicationProps(input)
     const APPLICATION = Application.create(PROPS)
-    const SAVED = await this.applicationRepository.save(APPLICATION)
+    const SAVED =
+      await this.applicationRepository.save(APPLICATION)
     return toResponseDTO(SAVED)
   }
 }

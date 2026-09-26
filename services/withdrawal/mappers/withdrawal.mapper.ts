@@ -2,7 +2,11 @@ import {
   Withdrawal,
   type WithdrawalProps,
 } from "@domain/withdrawal/entities/withdrawal.entity"
-import { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
+import {
+  EntityId,
+  PositiveMoney,
+  QuotaQuantity,
+} from "@/value-objects"
 import type { CreateWithdrawalDTO } from "../dto/create-withdrawal.dto"
 import type { WithdrawalResponseDTO } from "../dto/withdrawal-response.dto"
 import type { ReverseWithdrawalDTO } from "../dto/reverse-withdrawal.dto"
@@ -93,14 +97,18 @@ export function toReverseWithdrawalProps(
  *
  * @date 2026-09-22
  */
-export function toResponseDTO(entity: Withdrawal): WithdrawalResponseDTO {
+export function toResponseDTO(
+  entity: Withdrawal
+): WithdrawalResponseDTO {
   return {
     id: entity.id as string,
     positionId: entity.positionId,
     date: entity.date.toISOString(),
     amount: entity.amount.value.toString(),
     quotas: entity.quotas.value.toString(),
-    reversedAt: entity.reversedAt ? entity.reversedAt.toISOString() : null,
+    reversedAt: entity.reversedAt
+      ? entity.reversedAt.toISOString()
+      : null,
     reversedByUserId: entity.reversedByUserId,
     createdAt: entity.createdAt.toISOString(),
     updatedAt: entity.updatedAt.toISOString(),

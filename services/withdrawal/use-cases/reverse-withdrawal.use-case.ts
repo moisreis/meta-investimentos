@@ -62,13 +62,18 @@ export class ReverseWithdrawalUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: ReverseWithdrawalInput): Promise<WithdrawalResponseDTO> {
+  async execute(
+    input: ReverseWithdrawalInput
+  ): Promise<WithdrawalResponseDTO> {
     const ID = EntityId.create(input.withdrawalId)
-    const WITHDRAWAL = await this.withdrawalRepository.findById(ID)
+    const WITHDRAWAL =
+      await this.withdrawalRepository.findById(ID)
     if (!WITHDRAWAL) {
       throw new NotFoundError("`Withdrawal` not found.")
     }
-    const REVERSE_USER_ID = EntityId.create(input.reversedByUserId)
+    const REVERSE_USER_ID = EntityId.create(
+      input.reversedByUserId
+    )
     const REVERSED = WITHDRAWAL.reverse(REVERSE_USER_ID)
     const SAVED = await this.withdrawalRepository.save(REVERSED)
     return toResponseDTO(SAVED)

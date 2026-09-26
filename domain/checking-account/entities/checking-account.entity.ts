@@ -133,7 +133,10 @@ export class CheckingAccount {
    *
    * @date 2026-09-13
    */
-  private constructor(props: Required<CheckingAccountProps>, id?: string) {
+  private constructor(
+    props: Required<CheckingAccountProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze(props)
   }
@@ -175,16 +178,23 @@ export class CheckingAccount {
     props: CheckingAccountProps,
     id?: string
   ): CheckingAccount {
-    if (!props.bankAccountId || props.bankAccountId.trim() === "") {
+    if (
+      !props.bankAccountId ||
+      props.bankAccountId.trim() === ""
+    ) {
       throw new ValidationError(
         "`CheckingAccount` must have a bank account id."
       )
     }
     if (!props.date) {
-      throw new ValidationError("`CheckingAccount` must have a date.")
+      throw new ValidationError(
+        "`CheckingAccount` must have a date."
+      )
     }
     if (!props.value) {
-      throw new ValidationError("`CheckingAccount` must have a value.")
+      throw new ValidationError(
+        "`CheckingAccount` must have a value."
+      )
     }
 
     const NORMALIZED_PROPS: Required<CheckingAccountProps> = {
@@ -224,7 +234,9 @@ export class CheckingAccount {
    */
   public updateValue(value: SignedMoney): CheckingAccount {
     if (!value) {
-      throw new ValidationError("`CheckingAccount` must have a value.")
+      throw new ValidationError(
+        "`CheckingAccount` must have a value."
+      )
     }
 
     return new CheckingAccount(

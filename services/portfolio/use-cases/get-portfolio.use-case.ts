@@ -57,7 +57,9 @@ export class GetPortfolioUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: GetPortfolioInput): Promise<PortfolioResponseDTO> {
+  async execute(
+    input: GetPortfolioInput
+  ): Promise<PortfolioResponseDTO> {
     const ID = EntityId.create(input.portfolioId)
     const PORTFOLIO = await this.portfolioRepository.findById(ID)
     if (!PORTFOLIO) {

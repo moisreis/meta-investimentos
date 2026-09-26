@@ -57,9 +57,12 @@ export class GetWithdrawalUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: GetWithdrawalInput): Promise<WithdrawalResponseDTO> {
+  async execute(
+    input: GetWithdrawalInput
+  ): Promise<WithdrawalResponseDTO> {
     const ID = EntityId.create(input.withdrawalId)
-    const WITHDRAWAL = await this.withdrawalRepository.findById(ID)
+    const WITHDRAWAL =
+      await this.withdrawalRepository.findById(ID)
     if (!WITHDRAWAL) {
       throw new NotFoundError("`Withdrawal` not found.")
     }

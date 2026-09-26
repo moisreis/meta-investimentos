@@ -54,7 +54,10 @@ export class PositionOpened {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(props: Required<PositionOpenedProps>, id?: string) {
+  private constructor(
+    props: Required<PositionOpenedProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -102,13 +105,19 @@ export class PositionOpened {
     id?: string
   ): PositionOpened {
     if (!props.positionId) {
-      throw new ValidationError("`PositionOpened` must have a position id.")
+      throw new ValidationError(
+        "`PositionOpened` must have a position id."
+      )
     }
     if (!props.portfolioId) {
-      throw new ValidationError("`PositionOpened` must have a portfolio id.")
+      throw new ValidationError(
+        "`PositionOpened` must have a portfolio id."
+      )
     }
     if (!props.fundId) {
-      throw new ValidationError("`PositionOpened` must have a fund id.")
+      throw new ValidationError(
+        "`PositionOpened` must have a fund id."
+      )
     }
 
     const NOW = new Date()

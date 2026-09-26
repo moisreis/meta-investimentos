@@ -154,7 +154,10 @@ export class BenchmarkHistory {
    *
    * @date 2026-09-13
    */
-  private constructor(props: Required<BenchmarkHistoryProps>, id?: string) {
+  private constructor(
+    props: Required<BenchmarkHistoryProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -202,13 +205,19 @@ export class BenchmarkHistory {
     id?: string
   ): BenchmarkHistory {
     if (!props.benchmarkId || props.benchmarkId.trim() === "") {
-      throw new ValidationError("`BenchmarkHistory` must have a benchmark id.")
+      throw new ValidationError(
+        "`BenchmarkHistory` must have a benchmark id."
+      )
     }
     if (!props.date) {
-      throw new ValidationError("`BenchmarkHistory` must have a date.")
+      throw new ValidationError(
+        "`BenchmarkHistory` must have a date."
+      )
     }
     if (!props.rate) {
-      throw new ValidationError("`BenchmarkHistory` must have a rate.")
+      throw new ValidationError(
+        "`BenchmarkHistory` must have a rate."
+      )
     }
 
     const NOW = new Date()
@@ -250,7 +259,9 @@ export class BenchmarkHistory {
    */
   public updateRate(rate: SignedPercentage): BenchmarkHistory {
     if (!rate) {
-      throw new ValidationError("`BenchmarkHistory` must have a rate.")
+      throw new ValidationError(
+        "`BenchmarkHistory` must have a rate."
+      )
     }
 
     return new BenchmarkHistory(

@@ -60,7 +60,10 @@ export class TransactionAllocated {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(props: Required<TransactionAllocatedProps>, id?: string) {
+  private constructor(
+    props: Required<TransactionAllocatedProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,

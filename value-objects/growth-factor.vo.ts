@@ -85,7 +85,9 @@ export class GrowthFactor {
    */
   public static create(value: Decimal.Value): GrowthFactor {
     if (value === undefined || value === null) {
-      throw new ValidationError("`GrowthFactor` must be defined.")
+      throw new ValidationError(
+        "`GrowthFactor` must be defined."
+      )
     }
 
     let DECIMAL_VALUE: Decimal
@@ -93,11 +95,15 @@ export class GrowthFactor {
     try {
       DECIMAL_VALUE = new Decimal(value)
     } catch {
-      throw new ValidationError("`GrowthFactor` must be a valid number.")
+      throw new ValidationError(
+        "`GrowthFactor` must be a valid number."
+      )
     }
 
     if (!DECIMAL_VALUE.isFinite()) {
-      throw new ValidationError("`GrowthFactor` must be a finite number.")
+      throw new ValidationError(
+        "`GrowthFactor` must be a finite number."
+      )
     }
 
     if (DECIMAL_VALUE.lessThan(0)) {
@@ -137,7 +143,10 @@ export class GrowthFactor {
    *
    * @date 2026-09-23
    */
-  public static equals(a: GrowthFactor, b: GrowthFactor): boolean {
+  public static equals(
+    a: GrowthFactor,
+    b: GrowthFactor
+  ): boolean {
     return a.value.equals(b.value)
   }
 

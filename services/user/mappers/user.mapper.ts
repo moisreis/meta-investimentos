@@ -1,4 +1,7 @@
-import { User, type UserProps } from "@domain/user/entities/user.entity"
+import {
+  User,
+  type UserProps,
+} from "@domain/user/entities/user.entity"
 import { CPF } from "@/value-objects"
 import type { CreateUserDTO } from "../dto/create-user.dto"
 import type { UserResponseDTO } from "../dto/user-response.dto"
@@ -26,7 +29,9 @@ import type { UserResponseDTO } from "../dto/user-response.dto"
  *
  * @date 2026-09-22
  */
-export function toCreateUserProps(dto: CreateUserDTO): UserProps {
+export function toCreateUserProps(
+  dto: CreateUserDTO
+): UserProps {
   return {
     name: dto.name,
     email: dto.email,

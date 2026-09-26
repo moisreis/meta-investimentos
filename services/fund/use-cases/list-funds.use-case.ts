@@ -52,7 +52,9 @@ export class ListFundsUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: ListFundsInput): Promise<FundResponseDTO[]> {
+  async execute(
+    input: ListFundsInput
+  ): Promise<FundResponseDTO[]> {
     const FUNDS = await this.fundRepository.findAll({
       limit: input.limit,
       offset: input.offset,

@@ -84,7 +84,9 @@ export class CPF {
     const DIGITS = value.replace(/\D/g, "")
 
     if (DIGITS.length !== CPF_LENGTH) {
-      throw new ValidationError("`CPF` must contain exactly 11 digits.")
+      throw new ValidationError(
+        "`CPF` must contain exactly 11 digits."
+      )
     }
 
     if (ALL_SAME_DIGIT.test(DIGITS)) {
@@ -94,7 +96,9 @@ export class CPF {
     }
 
     if (!CPF.isValid(DIGITS)) {
-      throw new ValidationError("`CPF` must pass the check-digit algorithm.")
+      throw new ValidationError(
+        "`CPF` must pass the check-digit algorithm."
+      )
     }
 
     return new CPF({ value: DIGITS })
@@ -195,7 +199,10 @@ export class CPF {
    *
    * @date 2026-09-23
    */
-  private static computeCheckDigit(partial: string, weight: number): string {
+  private static computeCheckDigit(
+    partial: string,
+    weight: number
+  ): string {
     // Accumulates the weighted sum of partial digits.
     let SUM = 0
 

@@ -171,7 +171,9 @@ export class NormAttachedToPortfolio {
   }
 
   // Compares this event with another for equality.
-  public equals(object?: NormAttachedToPortfolio | null): boolean {
+  public equals(
+    object?: NormAttachedToPortfolio | null
+  ): boolean {
     if (object == null || object === undefined) {
       return false
     }

@@ -52,7 +52,9 @@ export class ListBanksUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: ListBanksInput): Promise<BankResponseDTO[]> {
+  async execute(
+    input: ListBanksInput
+  ): Promise<BankResponseDTO[]> {
     const BANKS = await this.bankRepository.findAll({
       limit: input.limit,
       offset: input.offset,

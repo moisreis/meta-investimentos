@@ -226,7 +226,10 @@ export class TransactionAllocation {
     props: TransactionAllocationProps,
     id?: string
   ): TransactionAllocation {
-    if (!props.applicationId || props.applicationId.trim() === "") {
+    if (
+      !props.applicationId ||
+      props.applicationId.trim() === ""
+    ) {
       throw new ValidationError(
         "`TransactionAllocation` must have an application id."
       )
@@ -244,11 +247,12 @@ export class TransactionAllocation {
 
     const NOW = new Date()
 
-    const NORMALIZED_PROPS: Required<TransactionAllocationProps> = {
-      ...props,
-      version: props.version ?? 0,
-      createdAt: props.createdAt ?? NOW,
-    }
+    const NORMALIZED_PROPS: Required<TransactionAllocationProps> =
+      {
+        ...props,
+        version: props.version ?? 0,
+        createdAt: props.createdAt ?? NOW,
+      }
 
     return new TransactionAllocation(NORMALIZED_PROPS, id)
   }

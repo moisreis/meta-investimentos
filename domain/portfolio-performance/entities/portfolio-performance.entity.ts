@@ -455,7 +455,10 @@ export class PortfolioPerformance {
    *
    * @date 2026-09-13
    */
-  private constructor(props: Required<PortfolioPerformanceProps>, id?: string) {
+  private constructor(
+    props: Required<PortfolioPerformanceProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -514,13 +517,19 @@ export class PortfolioPerformance {
       )
     }
     if (!props.date) {
-      throw new ValidationError("`PortfolioPerformance` must have a date.")
+      throw new ValidationError(
+        "`PortfolioPerformance` must have a date."
+      )
     }
     if (!props.quotasHeld) {
-      throw new ValidationError("`PortfolioPerformance` must have quotas held.")
+      throw new ValidationError(
+        "`PortfolioPerformance` must have quotas held."
+      )
     }
     if (!props.patrimony) {
-      throw new ValidationError("`PortfolioPerformance` must have patrimony.")
+      throw new ValidationError(
+        "`PortfolioPerformance` must have patrimony."
+      )
     }
     if (!props.applicationTotal) {
       throw new ValidationError(
@@ -538,7 +547,9 @@ export class PortfolioPerformance {
       )
     }
     if (!props.earnings) {
-      throw new ValidationError("`PortfolioPerformance` must have earnings.")
+      throw new ValidationError(
+        "`PortfolioPerformance` must have earnings."
+      )
     }
     if (!props.returnDaily) {
       throw new ValidationError(
@@ -548,18 +559,19 @@ export class PortfolioPerformance {
 
     const NOW = new Date()
 
-    const NORMALIZED_PROPS: Required<PortfolioPerformanceProps> = {
-      ...props,
-      returnMonthly: props.returnMonthly ?? null,
-      returnYearly: props.returnYearly ?? null,
-      returnLast12m: props.returnLast12m ?? null,
-      target: props.target ?? null,
-      cumulativeTarget: props.cumulativeTarget ?? null,
-      inflationSpread: props.inflationSpread ?? null,
-      riskFreeSpread: props.riskFreeSpread ?? null,
-      marketSpread: props.marketSpread ?? null,
-      createdAt: props.createdAt ?? NOW,
-    }
+    const NORMALIZED_PROPS: Required<PortfolioPerformanceProps> =
+      {
+        ...props,
+        returnMonthly: props.returnMonthly ?? null,
+        returnYearly: props.returnYearly ?? null,
+        returnLast12m: props.returnLast12m ?? null,
+        target: props.target ?? null,
+        cumulativeTarget: props.cumulativeTarget ?? null,
+        inflationSpread: props.inflationSpread ?? null,
+        riskFreeSpread: props.riskFreeSpread ?? null,
+        marketSpread: props.marketSpread ?? null,
+        createdAt: props.createdAt ?? NOW,
+      }
 
     return new PortfolioPerformance(NORMALIZED_PROPS, id)
   }

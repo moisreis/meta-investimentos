@@ -60,7 +60,10 @@ export class WithdrawalReversed {
     return new Date(this.props.occurredAt)
   }
 
-  private constructor(props: Required<WithdrawalReversedProps>, id?: string) {
+  private constructor(
+    props: Required<WithdrawalReversedProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -115,7 +118,9 @@ export class WithdrawalReversed {
       )
     }
     if (!props.positionId) {
-      throw new ValidationError("`WithdrawalReversed` must have a position id.")
+      throw new ValidationError(
+        "`WithdrawalReversed` must have a position id."
+      )
     }
     if (!props.reversedAt) {
       throw new ValidationError(
@@ -123,7 +128,9 @@ export class WithdrawalReversed {
       )
     }
     if (!props.reversedByUserId) {
-      throw new ValidationError("`WithdrawalReversed` must have a user id.")
+      throw new ValidationError(
+        "`WithdrawalReversed` must have a user id."
+      )
     }
 
     const NOW = new Date()

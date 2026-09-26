@@ -49,5 +49,7 @@ export function calculateWithdrawalQuotas({
     )
   }
 
-  return QuotaQuantity.create(withdrawal.value.dividedBy(quota.value))
+  return QuotaQuantity.create(
+    withdrawal.value.dividedBy(quota.value)
+  )
 }

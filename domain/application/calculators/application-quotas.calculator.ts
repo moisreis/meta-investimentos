@@ -48,5 +48,7 @@ export function calculateApplicationQuotas({
     )
   }
 
-  return QuotaQuantity.create(application.value.dividedBy(quota.value))
+  return QuotaQuantity.create(
+    application.value.dividedBy(quota.value)
+  )
 }
