@@ -1,35 +1,36 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { UserRepository } from "@/infrastructure/user/repositories/user.repository"
-import { UpdateUserUseCase } from "@/services/user/use-cases/update-user.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { UserContainer } from "@/presentation/composition/user.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 
-export interface UpdateUserActionInput {
-  userId: string
-  name: string
-  firstName: string
-  lastName: string
-}
+import { UPDATE_USER_SCHEMA } from "../validations/users-actions.validation"
 
 /**
  * @summary
  * Updates an existing user.
  *
  * @remarks
- * Resolves the session user from the request headers
- * and persists the updated entity through the service
- * use case. Returns a human-readable error when
- * anything fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the update use case. The
+ * acting user is derived from the session, never from the
+ * payload. Returns a human-readable error when anything
+ * fails. The updated user is deliberately not echoed back:
+ * the response payload of the use case carries the **CPF**,
+ * which must never travel to the client.
  *
  * @explanation
  * Use as the submit target of the edit user form.
  *
- * @param input - The user update payload.
+ * @param input - The untrusted user update payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns Nothing on success, or a failure result.
  *
  * @example
  * const RESULT = await updateUserAction({
@@ -44,34 +45,30 @@ export interface UpdateUserActionInput {
  * @date 2026-09-25
  */
 export async function updateUserAction(
-  input: UpdateUserActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<undefined>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = UPDATE_USER_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { update: UPDATE_USER } = UserContainer()
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
+    await UPDATE_USER.execute(PARSED.data)
 
-    const REPOSITORY = new UserRepository(db)
-    const USE_CASE = new UpdateUserUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      userId: input.userId,
-      name: input.name,
-      firstName: input.firstName,
-      lastName: input.lastName,
-    })
-
-    return { error: null }
+    return ActionSuccess(undefined)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível atualizar o usuário.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível atualizar o usuário."
+    )
   }
 }

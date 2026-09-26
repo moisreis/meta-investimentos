@@ -1,10 +1,6 @@
-import { headers } from "next/headers"
-
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { PortfolioRepository } from "@/infrastructure/portfolio/repositories/portfolio.repository"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import { ListPortfoliosUseCase } from "@/services/portfolio/use-cases/list-portfolios.use-case"
 
 export interface LoadSessionPortfoliosOutput {
   userId: string
@@ -16,10 +12,10 @@ export interface LoadSessionPortfoliosOutput {
  * Resolves the session user and their portfolios.
  *
  * @remarks
- * Fetches the session from the request headers, lists the
- * portfolios of the signed-in user, and returns both the
- * user id and the portfolio rows. Returns null when there
- * is no active session.
+ * Resolves the session through the shared auth helper, lists
+ * the portfolios of the signed-in user through the
+ * container, and returns both the user id and the portfolio
+ * rows. Returns null when there is no active session.
  *
  * @explanation
  * Use this helper from the page loader and the server
@@ -36,22 +32,17 @@ export interface LoadSessionPortfoliosOutput {
  * @date 2026-09-25
  */
 export async function LoadSessionPortfolios(): Promise<LoadSessionPortfoliosOutput | null> {
-  const SESSION = await auth.api.getSession({
-    headers: await headers(),
-  })
+  const USER = await RequireSessionUser()
 
-  if (!SESSION?.user) return null
+  if (!USER) return null
 
-  const PORTFOLIO_REPOSITORY = new PortfolioRepository(db)
-  const LIST_USE_CASE = new ListPortfoliosUseCase(
-    PORTFOLIO_REPOSITORY
-  )
-  const PORTFOLIOS = await LIST_USE_CASE.execute({
-    userId: SESSION.user.id,
+  const { list: LIST_PORTFOLIOS } = PortfolioContainer()
+  const PORTFOLIOS = await LIST_PORTFOLIOS.execute({
+    userId: USER.id,
   })
 
   return {
-    userId: SESSION.user.id,
+    userId: USER.id,
     portfolios: PORTFOLIOS,
   }
 }

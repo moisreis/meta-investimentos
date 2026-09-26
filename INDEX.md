@@ -11,6 +11,8 @@ responsibility, with a singular suffix.
 
 - `parts/hooks/` -> `*.hook.ts` (stateful hooks)
 - `routes/**/hooks/` -> `*.hook.ts` (route hooks)
+- `composition/` -> `*.container.ts` (use case wiring)
+- `types/` -> `*.types.ts` (shared type contracts)
 - `constants/` -> `*.constants.ts` (literal values)
 - `presenters/` -> `*.presenter.ts` (display logic)
 - `masks/` -> `*.mask.ts` (input masking)
@@ -20,6 +22,41 @@ responsibility, with a singular suffix.
 - `theme/` -> `*.tsx` (theme behavior)
 
 New suffixes must be documented here before use.
+
+## Composition layer
+
+`presentation/composition/*.container.ts` is the only
+place allowed to import `@/infrastructure/*`, `@domain/`
+or the database client. Actions, loaders and pages ask a
+container for the use case they need, so the delivery
+layer never reaches into the infrastructure layer and the
+wiring lives in a single spot.
+
+Each container exposes `<Name>UseCases` plus a
+`<Name>Container()` factory keyed by short verbs
+(`create`, `update`, `remove`, `bulkDelete`, `list`).
+Leave a use case out when nothing consumes it.
+
+## Server actions
+
+Every `*.action.ts`:
+
+- takes `input: unknown` and validates it with
+  `SCHEMA.safeParse`, never `parse`;
+- resolves the acting user through `RequireSessionUser()`
+  before touching the input, and takes the user id from
+  the session, never from the payload;
+- calls exactly one use case from a container;
+- returns `ActionResult<T>` from
+  `presentation/types/action-result.ts`, so callers
+  narrow on `success` instead of guessing from a nullable
+  error. Use cases that return nothing yield
+  `ActionResult<undefined>`.
+
+Action schemas live in
+`routes/<route>/validations/<route>-actions.validation.ts`
+and reuse the route form schema, so the client check and
+the server check cannot drift apart.
 
 ## Infrastructure suffixes
 
@@ -53,3 +90,20 @@ New suffixes must be documented here before use.
   may exceed the limit.
 - `npm run format` already enforces the width; run it
   on the changed files before committing.
+
+## Shared primitives
+
+Cross-cutting helpers live in `lib/`, one folder per
+concern, and every consumer imports them instead of
+keeping a private copy:
+
+- `lib/auth/` -> `RequireSessionUser()` (session gate)
+- `lib/money/` -> `MONEY_SCHEMA`, `POSITIVE_MONEY_SCHEMA`,
+  `IsValidMoney`, `NormalizeMoney`, `SumMoney`,
+  `SumQuotas`
+- `lib/validation/` -> `ID_SCHEMA`, `OPTIONAL_TEXT_SCHEMA`,
+  `DATE_SCHEMA`, `MONTH_SCHEMA`
+
+Money is held as an integer count of minor units and
+formatted in exactly one place, so no UI module does its
+own float arithmetic on a monetary total.

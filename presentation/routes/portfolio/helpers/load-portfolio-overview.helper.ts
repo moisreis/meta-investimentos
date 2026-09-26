@@ -1,12 +1,14 @@
-import { headers } from "next/headers"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
 
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { PortfolioRepository } from "@/infrastructure/portfolio/repositories/portfolio.repository"
-import { PortfolioPerformanceRepository } from "@/infrastructure/portfolio-performance/repositories/portfolio-performance.repository"
-import { GetPortfolioUseCase } from "@/services/portfolio/use-cases/get-portfolio.use-case"
-import { ListPortfolioPerformanceUseCase } from "@/services/portfolio-performance/use-cases/list-portfolio-performance.use-case"
+import { LoadPortfolioApplicationOptions } from "./load-portfolio-application-options.helper"
+import { LoadPortfolioWithdrawalOptions } from "./load-portfolio-withdrawal-options.helper"
 
+import { EMPTY_APPLICATION_ADD_OPTIONS } from "@/presentation/routes/application/types/application-add.types"
+import { EMPTY_WITHDRAWAL_ADD_OPTIONS } from "@/presentation/routes/withdrawal/types/withdrawal-add.types"
+
+import type { ApplicationAddOptions } from "@/presentation/routes/application/types/application-add.types"
+import type { WithdrawalAddOptions } from "@/presentation/routes/withdrawal/types/withdrawal-add.types"
 import type { PortfolioOverviewData } from "../types/portfolio-overview.types"
 
 /**
@@ -14,11 +16,13 @@ import type { PortfolioOverviewData } from "../types/portfolio-overview.types"
  * Resolves the portfolio detail screen data.
  *
  * @remarks
- * Fetches the session from the request headers, loads the
- * portfolio and rejects when it belongs to another user.
- * The daily snapshots of the portfolio are listed through
- * the service use case and the distinct UTC day keys are
- * derived from their dates. Returns null when there is no
+ * Resolves the session through the shared auth helper,
+ * loads the portfolio through the container and rejects
+ * when it belongs to another user. The daily snapshots of
+ * the portfolio are listed through the container too and
+ * the distinct UTC day keys are derived from their dates.
+ * The add application and add withdrawal option registries
+ * are loaded in parallel. Returns null when there is no
  * session, the portfolio is missing, or the portfolio is
  * not owned by the session user.
  *
@@ -42,28 +46,27 @@ export async function LoadPortfolioOverview(
   portfolioId: string
 ): Promise<PortfolioOverviewData | null> {
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const USER = await RequireSessionUser()
 
-    if (!SESSION?.user) return null
+    if (!USER) return null
 
-    const PORTFOLIO_REPOSITORY = new PortfolioRepository(db)
-    const GET_USE_CASE = new GetPortfolioUseCase(
-      PORTFOLIO_REPOSITORY
-    )
-    const PORTFOLIO = await GET_USE_CASE.execute({
+    const {
+      get: GET_PORTFOLIO,
+      listPerformance: LIST_PERFORMANCE,
+    } = PortfolioContainer()
+
+    const PORTFOLIO = await GET_PORTFOLIO.execute({
       portfolioId,
     })
 
-    if (PORTFOLIO.userId !== SESSION.user.id) return null
+    if (PORTFOLIO.userId !== USER.id) {
+      console.warn(
+        `[LoadPortfolioOverview] portfolio ${portfolioId} does not belong to the session user.`
+      )
+      return null
+    }
 
-    const PERFORMANCE_REPOSITORY =
-      new PortfolioPerformanceRepository(db)
-    const LIST_USE_CASE = new ListPortfolioPerformanceUseCase(
-      PERFORMANCE_REPOSITORY
-    )
-    const PERFORMANCES = await LIST_USE_CASE.execute({
+    const PERFORMANCES = await LIST_PERFORMANCE.execute({
       portfolioId,
     })
 
@@ -75,11 +78,70 @@ export async function LoadPortfolioOverview(
       ),
     ].sort()
 
+    const [APPLICATION_OPTIONS, WITHDRAWAL_OPTIONS] =
+      await LoadPortfolioAddOptions(portfolioId)
+
     return {
+      portfolioId,
       performances: PERFORMANCES,
       availableDates: AVAILABLE_DATES,
+      applicationOptions: APPLICATION_OPTIONS,
+      withdrawalOptions: WITHDRAWAL_OPTIONS,
     }
-  } catch {
+  } catch (cause) {
+    console.error(
+      "[LoadPortfolioOverview] failed to resolve the portfolio overview.",
+      cause
+    )
     return null
+  }
+}
+
+/**
+ * @summary
+ * Resolves the option registries of the add flows of the
+ * portfolio detail screen.
+ *
+ * @remarks
+ * Loads the funds of the add application flow and the
+ * positions of the add withdrawal flow in parallel. A
+ * failure here degrades to the empty option registries
+ * instead of failing the whole screen, so the KPIs stay
+ * visible and the add dialogs explain the missing options
+ * through their own empty copy.
+ *
+ * @explanation
+ * Use this helper from the portfolio detail loader to keep
+ * a registry outage isolated from the overview data.
+ *
+ * @param portfolioId - The portfolio whose positions are
+ * offered.
+ *
+ * @returns The application and withdrawal add options.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-25
+ */
+async function LoadPortfolioAddOptions(
+  portfolioId: string
+): Promise<[ApplicationAddOptions, WithdrawalAddOptions]> {
+  try {
+    const [APPLICATION_OPTIONS, WITHDRAWAL_OPTIONS] =
+      await Promise.all([
+        LoadPortfolioApplicationOptions(),
+        LoadPortfolioWithdrawalOptions(portfolioId),
+      ])
+
+    return [APPLICATION_OPTIONS, WITHDRAWAL_OPTIONS]
+  } catch (cause) {
+    console.error(
+      "[LoadPortfolioAddOptions] failed to resolve the add flow options.",
+      cause
+    )
+    return [
+      EMPTY_APPLICATION_ADD_OPTIONS,
+      EMPTY_WITHDRAWAL_ADD_OPTIONS,
+    ]
   }
 }

@@ -86,15 +86,12 @@ function useQuotaImport() {
         window: importWindow,
       })
 
-      if (RESULT.error || !RESULT.jobId) {
-        setStartError(
-          RESULT.error ??
-            "Não foi possível iniciar a importação."
-        )
+      if (!RESULT.success) {
+        setStartError(RESULT.error)
         return
       }
 
-      setJobId(RESULT.jobId)
+      setJobId(RESULT.data)
       setJob(null)
       setConfirmOpen(false)
       setProgressOpen(true)
@@ -110,16 +107,20 @@ function useQuotaImport() {
     let timer: number | null = null
 
     const TICK = async () => {
-      const NEXT = await getQuotaImportProgressAction({ jobId })
+      const RESULT = await getQuotaImportProgressAction({
+        jobId,
+      })
 
       if (!active) return
 
-      if (!NEXT) {
+      if (!RESULT.success || RESULT.data === null) {
         setJob(null)
         setJobId(null)
         setProgressOpen(false)
         return
       }
+
+      const NEXT = RESULT.data
 
       setJob(NEXT)
 

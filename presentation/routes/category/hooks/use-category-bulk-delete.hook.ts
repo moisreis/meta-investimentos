@@ -1,51 +1,33 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-
-import { useAuthFormToast } from "@/presentation/parts/hooks/use-auth-form-toast.hook"
+import { useEntityBulkDeleteAction } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
+import type { EntityBulkDeleteModel } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
 import { bulkDeleteCategoriesAction } from "@/presentation/routes/category/actions/bulk-delete-categories.action"
 import { CATEGORY_DATATABLE } from "@/presentation/routes/category/settings/labels.settings"
 import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
 
 /**
  * @summary
- * Manages the bulk delete flow of the category datatable.
+ * Binds the category bulk delete flow to the shared
+ * entity bulk delete action.
  *
  * @remarks
- * Runs the bulk delete server action with the ids of the
- * selected rows, toasts the outcome and refreshes the
- * server data after a successful deletion.
+ * Maps the selected row ids to the route bulk delete
+ * server action and reuses the route datatable copy for
+ * the outcome toast.
  *
- * @returns The callback invoked with the selected items.
+ * @returns The bulk delete callback for the datatable.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-25
+ * @date 2026-09-26
  */
-function useCategoryBulkDelete() {
-  const ROUTER = useRouter()
-  const { showSuccess, showError } = useAuthFormToast({
-    successTitle: CATEGORY_DATATABLE.BULK_DELETE_SUCCESS_TITLE,
-    successDescription:
-      CATEGORY_DATATABLE.BULK_DELETE_SUCCESS_DESCRIPTION,
-    errorTitle: CATEGORY_DATATABLE.BULK_DELETE_ERROR_TITLE,
+function useCategoryBulkDelete(): EntityBulkDeleteModel<CategoryResponseDTO> {
+  return useEntityBulkDeleteAction<CategoryResponseDTO>({
+    run: (ids) =>
+      bulkDeleteCategoriesAction({ categoryIds: ids }),
+    labels: CATEGORY_DATATABLE,
   })
-
-  async function HandleBulkDelete(items: CategoryResponseDTO[]) {
-    const RESULT = await bulkDeleteCategoriesAction({
-      categoryIds: items.map((item) => item.id),
-    })
-
-    if (RESULT.error) {
-      showError(RESULT.error)
-      return
-    }
-
-    showSuccess()
-    ROUTER.refresh()
-  }
-
-  return { handleBulkDelete: HandleBulkDelete }
 }
 
 export { useCategoryBulkDelete }

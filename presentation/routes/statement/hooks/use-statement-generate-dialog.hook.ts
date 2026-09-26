@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react"
 import { useRouter } from "next/navigation"
 
-import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 
 /**
  * @summary
@@ -30,8 +30,7 @@ import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfol
 function useStatementGenerateDialog() {
   const ROUTER = useRouter()
   const [OPEN, setOpen] = useState(false)
-  const [STATUS, setStatus] =
-    useState<PortfolioFormStatus>("idle")
+  const [STATUS, setStatus] = useState<EntityFormStatus>("idle")
   const [ERROR, setError] = useState<string | null>(null)
   const [FORM_KEY, setFormKey] = useState(0)
 
@@ -51,7 +50,7 @@ function useStatementGenerateDialog() {
   }, [])
 
   const HandleStatusChange = useCallback(
-    (status: PortfolioFormStatus, error: string | null) => {
+    (status: EntityFormStatus, error: string | null) => {
       setStatus(status)
       setError(error)
 

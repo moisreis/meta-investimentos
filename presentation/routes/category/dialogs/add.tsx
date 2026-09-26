@@ -2,8 +2,9 @@
 
 import { EntityAddDialog } from "@/presentation/parts/dialogs/entity-add"
 import { EntityAddToast } from "@/presentation/parts/toasts/entity-add-toast"
+import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
+import type { EntityAddDialogModel } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { AddCategoryForm } from "@/presentation/routes/category/forms/add"
-import { useCategoryAddDialog } from "@/presentation/routes/category/hooks/use-category-add-dialog.hook"
 import {
   CATEGORY_DIALOG,
   CATEGORY_FORM,
@@ -15,7 +16,7 @@ import { CategoryAddAnotherDialog } from "./add-another"
  * Props for the category add dialog.
  */
 export interface CategoryAddDialogProps {
-  dialog: ReturnType<typeof useCategoryAddDialog>
+  dialog: EntityAddDialogModel
 }
 
 /**

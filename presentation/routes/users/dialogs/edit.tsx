@@ -2,8 +2,10 @@
 
 import { EntityEditDialog } from "@/presentation/parts/dialogs/entity-edit"
 import { EntityEditToast } from "@/presentation/parts/toasts/entity-edit-toast"
+import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
+import type { EntityEditDialogModel } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
+import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
 import { EditUserForm } from "@/presentation/routes/users/forms/edit"
-import { useUserEditDialog } from "@/presentation/routes/users/hooks/use-user-edit-dialog.hook"
 import {
   USER_DIALOG,
   USER_FORM,
@@ -13,7 +15,7 @@ import {
  * Props for the user edit dialog.
  */
 export interface UserEditDialogProps {
-  dialog: ReturnType<typeof useUserEditDialog>
+  dialog: EntityEditDialogModel<UserResponseDTO>
 }
 
 /**

@@ -9,7 +9,7 @@ import { NativeSelect } from "@/presentation/ui/native-select"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
-import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { useGenerateStatementForm } from "@/presentation/routes/statement/hooks/use-statement-generate-form.hook"
 import {
   STATEMENT_DIALOG,
@@ -23,7 +23,7 @@ import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-re
 export interface GenerateStatementFormProps {
   portfolios: PortfolioResponseDTO[]
   onStatusChange?: (
-    status: PortfolioFormStatus,
+    status: EntityFormStatus,
     error: string | null
   ) => void
 }

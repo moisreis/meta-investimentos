@@ -8,13 +8,13 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
+import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
 import { CreatePortfolioTableColumns } from "../datatable/table-columns"
-import { usePortfolioAddDialog } from "./use-portfolio-add-dialog.hook"
 import { usePortfolioBulkDelete } from "./use-portfolio-bulk-delete.hook"
-import { usePortfolioEditDialog } from "./use-portfolio-edit-dialog.hook"
 import { usePortfolioRowActions } from "./use-portfolio-row-actions.hook"
 import type { PortfolioRowSummary } from "../types/portfolio-list.types"
 
@@ -56,8 +56,8 @@ function usePortfolioDatatable(
   ) => PortfolioPerformanceResponseDTO | null,
   summaries: Record<string, PortfolioRowSummary> | null = null
 ) {
-  const addDialog = usePortfolioAddDialog()
-  const editDialog = usePortfolioEditDialog()
+  const addDialog = useEntityAddDialog()
+  const editDialog = useEntityEditDialog<PortfolioResponseDTO>()
   const rowActions = usePortfolioRowActions()
   const bulkDelete = usePortfolioBulkDelete()
 

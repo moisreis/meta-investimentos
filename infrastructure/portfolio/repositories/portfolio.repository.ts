@@ -146,7 +146,7 @@ export class PortfolioRepository implements IPortfolio {
    * Retrieves all portfolios with optional pagination.
    *
    * @remarks
-   * Defaults to 100 rows when no limit is provided.
+   * Every row is returned unless `limit` is provided.
    *
    * @explanation
    * Use this method to list every portfolio, optionally
@@ -167,12 +167,20 @@ export class PortfolioRepository implements IPortfolio {
     limit?: number
     offset?: number
   }): Promise<Portfolio[]> {
-    const ROWS = await this.db
+    const QUERY = this.db
       .select()
       .from(portfolio)
       .orderBy(asc(portfolio.createdAt))
-      .limit(options?.limit ?? 100)
-      .offset(options?.offset ?? 0)
+
+    // Returns every row unless the caller asks for a
+    // window. A paginated caller must always set limit,
+    // because offset is only valid alongside it.
+    const ROWS =
+      options?.limit === undefined
+        ? await QUERY
+        : await QUERY.limit(options.limit).offset(
+            options.offset ?? 0
+          )
 
     return ROWS.map((row) => ToDomain(row))
   }

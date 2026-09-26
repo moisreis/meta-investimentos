@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 
-import { db } from "@/clients/database.client"
-import { PositionRepository } from "@/infrastructure/position/repositories/position.repository"
+import { FundContainer } from "@/presentation/composition/fund.container"
 import { BuildFundNameLookups } from "@/presentation/routes/fund/helpers/build-fund-name-lookups.helper"
 import { BuildFundRowSummaries } from "@/presentation/routes/fund/helpers/build-fund-row-summaries.helper"
 import { LoadFunds } from "@/presentation/routes/fund/helpers/load-funds.helper"
@@ -12,7 +11,6 @@ import type {
   FundSelectOptions,
 } from "@/presentation/routes/fund/types/fund-list.types"
 import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
-import { ListFundRowSummariesUseCase } from "@/services/fund/use-cases/list-fund-row-summaries.use-case"
 
 export const metadata: Metadata = {
   title: "Fundos",
@@ -43,10 +41,9 @@ export default async function FundsRoutePage() {
       LOADED.categories
     )
 
-    const SUMMARIES_USE_CASE = new ListFundRowSummariesUseCase(
-      new PositionRepository(db)
-    )
-    const ROW_SUMMARIES = await SUMMARIES_USE_CASE.execute({
+    const { listRowSummaries: LIST_ROW_SUMMARIES } =
+      FundContainer()
+    const ROW_SUMMARIES = await LIST_ROW_SUMMARIES.execute({
       fundIds: FUNDS.map((fund) => fund.id),
     })
 

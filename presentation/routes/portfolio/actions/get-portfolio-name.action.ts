@@ -1,29 +1,34 @@
 "use server"
 
-import { headers } from "next/headers"
-
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { PortfolioRepository } from "@/infrastructure/portfolio/repositories/portfolio.repository"
-import { GetPortfolioUseCase } from "@/services/portfolio/use-cases/get-portfolio.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { ID_SCHEMA } from "@/lib/validation/common.validation"
+import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 
 /**
  * @summary
  * Resolves the display name of a portfolio by its id.
  *
  * @remarks
- * Resolves the session user from the request headers and
- * fetches the portfolio through the service use case.
- * Returns null when there is no session or the portfolio
- * cannot be found.
+ * Validates the id with **Zod**, resolves the session, and
+ * fetches the portfolio through the service use case. A
+ * missing session, a rejected id and a portfolio that cannot
+ * be found all resolve to a failed result whose message the
+ * breadcrumb renders as a missing segment.
  *
  * @explanation
  * Use as the resolver of the dynamic breadcrumb segment
  * of the portfolio detail route.
  *
- * @param portfolioId - The portfolio id to resolve.
+ * @param input - The untrusted portfolio id.
  *
- * @returns The portfolio name or `null`.
+ * @returns The portfolio name, or a failure result.
  *
  * @example
  * const RESULT = await getPortfolioNameAction("portfolio-1");
@@ -33,23 +38,28 @@ import { GetPortfolioUseCase } from "@/services/portfolio/use-cases/get-portfoli
  * @date 2026-09-25
  */
 export async function getPortfolioNameAction(
-  portfolioId: string
-): Promise<{ name: string | null }> {
+  input: unknown
+): Promise<ActionResult<string | null>> {
+  const PARSED = ID_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
+    const { get: GET_PORTFOLIO } = PortfolioContainer()
+    const PORTFOLIO = await GET_PORTFOLIO.execute({
+      portfolioId: PARSED.data,
     })
 
-    if (!SESSION?.user) return { name: null }
-
-    const REPOSITORY = new PortfolioRepository(db)
-    const USE_CASE = new GetPortfolioUseCase(REPOSITORY)
-    const PORTFOLIO = await USE_CASE.execute({
-      portfolioId,
-    })
-
-    return { name: PORTFOLIO.name }
-  } catch {
-    return { name: null }
+    return ActionSuccess(PORTFOLIO.name ?? null)
+  } catch (cause) {
+    return ToActionFailure(cause, "Carteira não encontrada.")
   }
 }

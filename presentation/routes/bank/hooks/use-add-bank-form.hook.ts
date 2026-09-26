@@ -1,6 +1,6 @@
 "use client"
 
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { createBankAction } from "@/presentation/routes/bank/actions/create-bank.action"
 import { BANK_FORM_SCHEMA } from "@/presentation/routes/bank/validations/bank-form.validations"
 
@@ -10,7 +10,7 @@ import { BANK_FORM_SCHEMA } from "@/presentation/routes/bank/validations/bank-fo
  * submission.
  *
  * @remarks
- * Wraps `usePortfolioForm` with the bank schema and the
+ * Wraps `useEntityForm` with the bank schema and the
  * create bank server action.
  *
  * @explanation
@@ -40,7 +40,7 @@ function useAddBankForm() {
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: BANK_FORM_SCHEMA,
     initialValues: {
       code: "",

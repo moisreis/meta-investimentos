@@ -1,13 +1,11 @@
 import type { Metadata } from "next"
 
-import { db } from "@/clients/database.client"
-import { FundRepository } from "@/infrastructure/fund/repositories/fund.repository"
+import { CategoryContainer } from "@/presentation/composition/category.container"
 import { LoadCategories } from "@/presentation/routes/category/helpers/load-categories.helper"
 import { BuildCategoryRowSummaries } from "@/presentation/routes/category/helpers/build-category-row-summaries.helper"
 import { CategoryList } from "@/presentation/routes/category/pages/list"
 import type { CategoryRowSummary } from "@/presentation/routes/category/types/category-list.types"
 import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
-import { ListCategoryRowSummariesUseCase } from "@/services/category/use-cases/list-category-row-summaries.use-case"
 
 export const metadata: Metadata = {
   title: "Categorias",
@@ -25,9 +23,9 @@ export default async function CategoriesRoutePage() {
     const CATEGORY_IDS = CATEGORIES.map(
       (category) => category.id
     )
-    const SUMMARIES_USE_CASE =
-      new ListCategoryRowSummariesUseCase(new FundRepository(db))
-    const ROW_SUMMARIES = await SUMMARIES_USE_CASE.execute({
+    const { listRowSummaries: LIST_ROW_SUMMARIES } =
+      CategoryContainer()
+    const ROW_SUMMARIES = await LIST_ROW_SUMMARIES.execute({
       categoryIds: CATEGORY_IDS,
     })
 

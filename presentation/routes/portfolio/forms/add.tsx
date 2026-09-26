@@ -9,7 +9,7 @@ import { PortfolioPercentageInput } from "@/presentation/parts/components/portfo
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
-import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { useAddPortfolioForm } from "@/presentation/routes/portfolio/hooks/use-add-portfolio-form.hook"
 
 import { PORTFOLIO_FORM } from "@/presentation/routes/portfolio/settings/labels.settings"
@@ -19,7 +19,7 @@ import { PORTFOLIO_FORM } from "@/presentation/routes/portfolio/settings/labels.
  */
 export interface AddPortfolioFormProps {
   onStatusChange?: (
-    status: PortfolioFormStatus,
+    status: EntityFormStatus,
     error: string | null
   ) => void
 }

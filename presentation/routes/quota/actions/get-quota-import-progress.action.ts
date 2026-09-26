@@ -1,35 +1,40 @@
 "use server"
 
-import { headers } from "next/headers"
-
-import { auth } from "@/clients/better-auth.client"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import {
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 
 import type { QuotaImportProgress } from "../types/quota-list.types"
+import { GET_QUOTA_IMPORT_PROGRESS_SCHEMA } from "../validations/quota-actions.validation"
 import { getQuotaImportJob } from "./quota-import-job.store"
-
-export interface GetQuotaImportProgressActionInput {
-  jobId: string
-}
 
 /**
  * @summary
  * Returns the current snapshot of a quota import job.
  *
  * @remarks
- * Resolves the session user and reads the in-memory job
- * by id. Returns null when there is no active session or
- * the job no longer exists.
+ * Resolves the session first, then validates the job id
+ * with **Zod**, and only then reads the in-memory job. The
+ * acting user is derived from the session, never from the
+ * payload. The payload is preserved as-is: a successful
+ * result carries the job snapshot, and `null` is returned
+ * when there is no active session or the job no longer
+ * exists.
  *
  * @explanation
  * Use as the polling target of the quota import progress
  * dialog.
  *
- * @param input - The job id to read.
+ * @param input - The untrusted job id payload.
  *
- * @returns The job snapshot, or `null`.
+ * @returns The job snapshot, `null`, or a failure result.
  *
  * @example
- * const JOB = await getQuotaImportProgressAction({
+ * const RESULT = await getQuotaImportProgressAction({
  *   jobId: "job-1",
  * });
  *
@@ -38,13 +43,27 @@ export interface GetQuotaImportProgressActionInput {
  * @date 2026-09-25
  */
 export async function getQuotaImportProgressAction(
-  input: GetQuotaImportProgressActionInput
-): Promise<QuotaImportProgress | null> {
-  const SESSION = await auth.api.getSession({
-    headers: await headers(),
-  })
+  input: unknown
+): Promise<ActionResult<QuotaImportProgress | null>> {
+  const USER = await RequireSessionUser()
 
-  if (!SESSION?.user) return null
+  if (!USER) {
+    return ActionSuccess(null)
+  }
 
-  return getQuotaImportJob(input.jobId)
+  const PARSED =
+    GET_QUOTA_IMPORT_PROGRESS_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
+  try {
+    return ActionSuccess(getQuotaImportJob(PARSED.data.jobId))
+  } catch (cause) {
+    return ToActionFailure(
+      cause,
+      "Não foi possível consultar o progresso da importação."
+    )
+  }
 }

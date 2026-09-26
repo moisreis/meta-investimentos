@@ -8,6 +8,8 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
+import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
 
 import { CreateFundTableColumns } from "../datatable/table-columns"
@@ -15,9 +17,7 @@ import type {
   FundNameLookups,
   FundRowSummary,
 } from "../types/fund-list.types"
-import { useFundAddDialog } from "./use-fund-add-dialog.hook"
 import { useFundBulkDelete } from "./use-fund-bulk-delete.hook"
-import { useFundEditDialog } from "./use-fund-edit-dialog.hook"
 import { useFundRowActions } from "./use-fund-row-actions.hook"
 
 // Column helper bound to the entity table features.
@@ -60,8 +60,8 @@ function useFundDatatable(
     categories: {},
   }
 ) {
-  const addDialog = useFundAddDialog()
-  const editDialog = useFundEditDialog()
+  const addDialog = useEntityAddDialog()
+  const editDialog = useEntityEditDialog<FundResponseDTO>()
   const rowActions = useFundRowActions()
   const bulkDelete = useFundBulkDelete()
 

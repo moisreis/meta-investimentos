@@ -1,8 +1,6 @@
 import type { Metadata } from "next"
 
-import { db } from "@/clients/database.client"
-import { UserRepository } from "@/infrastructure/user/repositories/user.repository"
-import { GetUserUseCase } from "@/services/user/use-cases/get-user.use-case"
+import { UserContainer } from "@/presentation/composition/user.container"
 import { BuildStatementRowSummaries } from "@/presentation/routes/statement/helpers/build-statement-row-summaries.helper"
 import { LoadSessionStatements } from "@/presentation/routes/statement/helpers/load-session-statements.helper"
 import { StatementList } from "@/presentation/routes/statement/pages/list"
@@ -31,9 +29,8 @@ export default async function StatementsRoutePage() {
     STATEMENTS = STATEMENTS_LOADED
     PORTFOLIOS = PORTFOLIOS_LOADED
 
-    const USER_REPOSITORY = new UserRepository(db)
-    const GET_USER_USE_CASE = new GetUserUseCase(USER_REPOSITORY)
-    const USER = await GET_USER_USE_CASE.execute({
+    const { get: GET_USER } = UserContainer()
+    const USER = await GET_USER.execute({
       userId: USER_ID,
     })
 

@@ -118,7 +118,7 @@ function usePortfolioDatatableFilters(
     }).then((RESULT) => {
       if (REQUEST !== REQUEST_ID.current) return
       setPerformances(
-        RESULT.data ? BuildPerformanceIndex(RESULT.data) : {}
+        RESULT.success ? BuildPerformanceIndex(RESULT.data) : {}
       )
     })
   }, [RANGE])

@@ -1,7 +1,7 @@
 "use client"
 
 import { UnmaskPercentage } from "@/presentation/masks/percentage.mask"
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { updateFundAction } from "@/presentation/routes/fund/actions/update-fund.action"
 import { FUND_EDIT_FORM_SCHEMA } from "@/presentation/routes/fund/validations/fund-form.validations"
 import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
@@ -12,7 +12,7 @@ import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
  * submission.
  *
  * @remarks
- * Wraps `usePortfolioForm` with the fund edit schema
+ * Wraps `useEntityForm` with the fund edit schema
  * and the update fund server action. Seeds the initial
  * values from the provided fund.
  *
@@ -46,7 +46,7 @@ function useEditFundForm(fund: FundResponseDTO) {
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: FUND_EDIT_FORM_SCHEMA,
     initialValues: {
       name: fund.name,

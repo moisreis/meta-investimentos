@@ -2,6 +2,10 @@
 
 import { useCallback } from "react"
 
+import {
+  IsNegativeMoney,
+  IsPositiveMoney,
+} from "@/lib/money/money.validator"
 import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
@@ -21,8 +25,10 @@ interface UseCheckingAccountKpisInput {
  * @remarks
  * Tallies the registered balances, the bank accounts
  * linked to them and the number of positive and
- * negative balances. All values are formatted through
- * the count presenter.
+ * negative balances. The direction of a balance is read
+ * from the digits of the amount, so no binary float
+ * touches a monetary value. All counts are formatted
+ * through the count presenter.
  *
  * @param entries - The rows of the checking account list.
  *
@@ -39,12 +45,12 @@ export function BuildCheckingAccountKpis(
     entries.map((entry) => entry.bankAccountId)
   ).size
 
-  const POSITIVE = entries.filter(
-    (entry) => Number.parseFloat(entry.value) > 0
+  const POSITIVE = entries.filter((entry) =>
+    IsPositiveMoney(entry.value)
   ).length
 
-  const NEGATIVE = entries.filter(
-    (entry) => Number.parseFloat(entry.value) < 0
+  const NEGATIVE = entries.filter((entry) =>
+    IsNegativeMoney(entry.value)
   ).length
 
   return [

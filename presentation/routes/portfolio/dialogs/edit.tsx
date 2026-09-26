@@ -2,8 +2,10 @@
 
 import { EntityEditDialog } from "@/presentation/parts/dialogs/entity-edit"
 import { EntityEditToast } from "@/presentation/parts/toasts/entity-edit-toast"
+import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
+import type { EntityEditDialogModel } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
+import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 import { EditPortfolioForm } from "@/presentation/routes/portfolio/forms/edit"
-import { usePortfolioEditDialog } from "@/presentation/routes/portfolio/hooks/use-portfolio-edit-dialog.hook"
 import {
   PORTFOLIO_DIALOG,
   PORTFOLIO_FORM,
@@ -13,7 +15,7 @@ import {
  * Props for the portfolio edit dialog.
  */
 export interface PortfolioEditDialogProps {
-  dialog: ReturnType<typeof usePortfolioEditDialog>
+  dialog: EntityEditDialogModel<PortfolioResponseDTO>
 }
 
 /**

@@ -93,7 +93,10 @@ export interface IBenchmark {
    *
    * @date 2026-09-13
    */
-  findAll(options?: { limit?: number; offset?: number }): Promise<Benchmark[]>
+  findAll(options?: {
+    limit?: number
+    offset?: number
+  }): Promise<Benchmark[]>
 
   /**
    * @summary

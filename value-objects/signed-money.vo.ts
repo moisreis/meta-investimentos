@@ -45,7 +45,9 @@ export class SignedMoney {
 
   // Returns true if the monetary amount is positive (greater than zero).
   get isPositive(): boolean {
-    return this.props.value.isPositive() && !this.props.value.isZero()
+    return (
+      this.props.value.isPositive() && !this.props.value.isZero()
+    )
   }
 
   // Returns true if the monetary amount is zero.
@@ -93,15 +95,22 @@ export class SignedMoney {
     try {
       DECIMAL_VALUE = new Decimal(value)
     } catch {
-      throw new ValidationError("`SignedMoney` must be a valid number.")
+      throw new ValidationError(
+        "`SignedMoney` must be a valid number."
+      )
     }
 
     if (!DECIMAL_VALUE.isFinite()) {
-      throw new ValidationError("`SignedMoney` must be a finite number.")
+      throw new ValidationError(
+        "`SignedMoney` must be a finite number."
+      )
     }
 
     return new SignedMoney({
-      value: DECIMAL_VALUE.toDecimalPlaces(MONEY_DECIMAL_PLACES, ROUNDING_MODE),
+      value: DECIMAL_VALUE.toDecimalPlaces(
+        MONEY_DECIMAL_PLACES,
+        ROUNDING_MODE
+      ),
     })
   }
 

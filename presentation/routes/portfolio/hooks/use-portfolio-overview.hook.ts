@@ -1,12 +1,26 @@
 "use client"
 
-import { useCallback, useMemo, useState } from "react"
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 import type { DateRange } from "react-day-picker"
 
 import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
+import type { PortfolioPeriodReturnsDTO } from "@/services/portfolio-performance/use-cases/resolve-portfolio-period-returns.use-case"
 
+import { getPortfolioPeriodReturnsAction } from "../actions/get-portfolio-period-returns.action"
 import { BuildPortfolioOverviewKpis } from "../helpers/build-portfolio-overview-kpis.helper"
 import type { PortfolioOverviewData } from "../types/portfolio-overview.types"
+
+// Returns rendered before the server resolves the window.
+const EMPTY_PERIOD_RETURNS: PortfolioPeriodReturnsDTO = {
+  yearReturn: null,
+  monthReturn: null,
+}
 
 // Builds a local-midnight date from a UTC day key.
 function FromUtcDayKey(key: string): Date {
@@ -48,8 +62,12 @@ interface UsePortfolioOverviewOutput {
  * @remarks
  * Owns the date range and narrows the KPI computation to
  * the selected window. The range starts covering the full
- * span of available snapshot days and every change rebuilds
- * the KPI cards through the pure overview builder.
+ * span of available snapshot days and every change refetches
+ * the chained year and month returns through the server
+ * action, then rebuilds the KPI cards through the pure
+ * overview builder. The returns stay in a request-keyed cache
+ * so moving back to a window already seen does not refetch,
+ * and a slow response can never overwrite a newer one.
  * `isPerformanceDay` reports whether the portfolio holds a
  * snapshot on the given calendar day, so the date range
  * filter can keep only those days enabled.
@@ -77,6 +95,44 @@ function usePortfolioOverview(
     [data.availableDates]
   )
 
+  const [RETURNS_CACHE, setReturnsCache] = useState<
+    Record<string, PortfolioPeriodReturnsDTO>
+  >({})
+
+  const PERIOD_RETURNS = ResolveCachedReturns(
+    RETURNS_CACHE,
+    data.portfolioId,
+    DATE_RANGE
+  )
+
+  const REQUEST_ID = useRef(0)
+
+  useEffect(() => {
+    const FROM = DATE_RANGE?.from
+    const TO = DATE_RANGE?.to
+    const REQUEST = ++REQUEST_ID.current
+
+    if (!data.portfolioId || !FROM || !TO) return
+    if (
+      RETURNS_CACHE[BuildRangeKey(data.portfolioId, FROM, TO)]
+    ) {
+      return
+    }
+
+    getPortfolioPeriodReturnsAction({
+      portfolioId: data.portfolioId,
+      from: ToUtcDayKey(FROM),
+      to: ToUtcDayKey(TO),
+    }).then((RESULT) => {
+      if (REQUEST !== REQUEST_ID.current || !RESULT.success)
+        return
+      setReturnsCache((CACHE) => ({
+        ...CACHE,
+        [BuildRangeKey(data.portfolioId, FROM, TO)]: RESULT.data,
+      }))
+    })
+  }, [data.portfolioId, DATE_RANGE, RETURNS_CACHE])
+
   const isPerformanceDay = useCallback(
     (date: Date) => AVAILABLE_KEYS.has(ToUtcDayKey(date)),
     [AVAILABLE_KEYS]
@@ -84,8 +140,12 @@ function usePortfolioOverview(
 
   const KPIS = useMemo(
     () =>
-      BuildPortfolioOverviewKpis(data.performances, DATE_RANGE),
-    [data.performances, DATE_RANGE]
+      BuildPortfolioOverviewKpis(
+        data.performances,
+        DATE_RANGE,
+        PERIOD_RETURNS
+      ),
+    [data.performances, DATE_RANGE, PERIOD_RETURNS]
   )
 
   return {
@@ -94,6 +154,33 @@ function usePortfolioOverview(
     isPerformanceDay,
     kpis: KPIS,
   }
+}
+
+// Identifies a window, so its returns are fetched once.
+function BuildRangeKey(
+  portfolioId: string,
+  from: Date,
+  to: Date
+): string {
+  return `${portfolioId}:${ToUtcDayKey(from)}:${ToUtcDayKey(to)}`
+}
+
+// Reads the returns of the window from the cache, falling
+// back to the neutral payload while the server resolves it.
+function ResolveCachedReturns(
+  cache: Record<string, PortfolioPeriodReturnsDTO>,
+  portfolioId: string,
+  dateRange: DateRange | undefined
+): PortfolioPeriodReturnsDTO {
+  const FROM = dateRange?.from
+  const TO = dateRange?.to
+
+  if (!portfolioId || !FROM || !TO) return EMPTY_PERIOD_RETURNS
+
+  return (
+    cache[BuildRangeKey(portfolioId, FROM, TO)] ??
+    EMPTY_PERIOD_RETURNS
+  )
 }
 
 export { usePortfolioOverview }

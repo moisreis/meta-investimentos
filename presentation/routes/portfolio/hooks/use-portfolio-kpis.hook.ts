@@ -2,6 +2,7 @@
 
 import { useCallback } from "react"
 
+import { SumMoney } from "@/lib/money/sum-money"
 import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import {
   ResolveEntityKpiTrend,
@@ -36,10 +37,10 @@ function ToAmount(value: string | null | undefined): number {
  *
  * @remarks
  * Sums the patrimony and the earnings of the latest
- * snapshot of every portfolio, derives the trend badges
- * from the weighted daily return and the earnings ratio,
- * and tallies the portfolio and fund counts. All values
- * are formatted through the presenter files.
+ * snapshot of every portfolio exactly, derives the trend
+ * badges from the weighted daily return and the earnings
+ * ratio, and tallies the portfolio and fund counts. All
+ * values are formatted through the presenter files.
  *
  * @param portfolios - The rows of the portfolio list.
  * @param performanceFor - Resolves the range snapshot.
@@ -65,29 +66,34 @@ function BuildPortfolioKpis(
         snapshot !== null
     )
 
-  const TOTAL_PATRIMONY = SNAPSHOTS.reduce(
-    (sum, snapshot) => sum + ToAmount(snapshot.patrimony),
-    0
+  const TOTAL_PATRIMONY = SumMoney(
+    SNAPSHOTS.map((snapshot) => snapshot.patrimony)
   )
 
-  const TOTAL_EARNINGS = SNAPSHOTS.reduce(
-    (sum, snapshot) => sum + ToAmount(snapshot.earnings),
-    0
+  const TOTAL_EARNINGS = SumMoney(
+    SNAPSHOTS.map((snapshot) => snapshot.earnings)
   )
+
+  // The displayed totals above are exact. Only the two
+  // trend ratios below fall back to floating point, since a
+  // ratio drives a direction badge and not an amount the
+  // user reads as money.
+  const PATRIMONY_VALUE = ToAmount(TOTAL_PATRIMONY)
+  const EARNINGS_VALUE = ToAmount(TOTAL_EARNINGS)
 
   const WEIGHTED_RETURN =
-    TOTAL_PATRIMONY > 0
+    PATRIMONY_VALUE > 0
       ? SNAPSHOTS.reduce(
           (sum, snapshot) =>
             sum +
             ToAmount(snapshot.patrimony) *
               ToAmount(snapshot.returnDaily),
           0
-        ) / TOTAL_PATRIMONY
+        ) / PATRIMONY_VALUE
       : null
 
   const EARNINGS_RATIO =
-    TOTAL_PATRIMONY > 0 ? TOTAL_EARNINGS / TOTAL_PATRIMONY : null
+    PATRIMONY_VALUE > 0 ? EARNINGS_VALUE / PATRIMONY_VALUE : null
 
   const TOTAL_FUNDS = Object.values(summaries ?? {}).reduce(
     (sum, summary) => sum + summary.fundCount,

@@ -1,18 +1,12 @@
 import type { Metadata } from "next"
 
-import { db } from "@/clients/database.client"
-import { BankAccountRepository } from "@/infrastructure/bank-account/repositories/bank-account.repository"
-import { PortfolioPerformanceRepository } from "@/infrastructure/portfolio-performance/repositories/portfolio-performance.repository"
-import { PositionRepository } from "@/infrastructure/position/repositories/position.repository"
-import { UserRepository } from "@/infrastructure/user/repositories/user.repository"
+import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
+import { UserContainer } from "@/presentation/composition/user.container"
 import { BuildPortfolioRowSummaries } from "@/presentation/routes/portfolio/helpers/build-portfolio-row-summaries.helper"
 import { LoadSessionPortfolios } from "@/presentation/routes/portfolio/helpers/load-session-portfolios.helper"
 import { PortfolioList } from "@/presentation/routes/portfolio/pages/list"
 import type { PortfolioRowSummary } from "@/presentation/routes/portfolio/types/portfolio-list.types"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import { ListPortfolioPerformanceDatesUseCase } from "@/services/portfolio-performance/use-cases/list-portfolio-performance-dates.use-case"
-import { ListPortfolioRowSummariesUseCase } from "@/services/portfolio/use-cases/list-portfolio-row-summaries.use-case"
-import { GetUserUseCase } from "@/services/user/use-cases/get-user.use-case"
 
 export const metadata: Metadata = {
   title: "Carteiras",
@@ -34,32 +28,23 @@ export default async function PortfoliosRoutePage() {
       (portfolio) => portfolio.id
     )
 
-    const PERFORMANCE_REPOSITORY =
-      new PortfolioPerformanceRepository(db)
-    const DATES_USE_CASE =
-      new ListPortfolioPerformanceDatesUseCase(
-        PERFORMANCE_REPOSITORY
-      )
+    const {
+      listPerformanceDates: LIST_PERFORMANCE_DATES,
+      listRowSummaries: LIST_ROW_SUMMARIES,
+    } = PortfolioContainer()
+    const { get: GET_USER } = UserContainer()
 
-    PERFORMANCE_DATES = await DATES_USE_CASE.execute({
-      portfolioIds: PORTFOLIO_IDS,
-    })
-
-    const USER_REPOSITORY = new UserRepository(db)
-    const GET_USER_USE_CASE = new GetUserUseCase(USER_REPOSITORY)
-
-    const SUMMARIES_USE_CASE =
-      new ListPortfolioRowSummariesUseCase(
-        new PositionRepository(db),
-        new BankAccountRepository(db)
-      )
-
-    const [USER, ROW_SUMMARIES] = await Promise.all([
-      GET_USER_USE_CASE.execute({ userId: USER_ID }),
-      SUMMARIES_USE_CASE.execute({
+    const [DATES, USER, ROW_SUMMARIES] = await Promise.all([
+      LIST_PERFORMANCE_DATES.execute({
+        portfolioIds: PORTFOLIO_IDS,
+      }),
+      GET_USER.execute({ userId: USER_ID }),
+      LIST_ROW_SUMMARIES.execute({
         portfolioIds: PORTFOLIO_IDS,
       }),
     ])
+
+    PERFORMANCE_DATES = DATES
 
     SUMMARIES = BuildPortfolioRowSummaries(
       PORTFOLIOS,

@@ -1,4 +1,4 @@
-import { DomainError } from "@errors/domain.error";
+import { DomainError } from "@errors/domain.error"
 
 /**
  * @summary
@@ -28,7 +28,7 @@ import { DomainError } from "@errors/domain.error";
  */
 export class ValidationError extends DomainError {
   constructor(message: string) {
-    super(message);
-    this.name = "ValidationError";
+    super(message)
+    this.name = "ValidationError"
   }
 }

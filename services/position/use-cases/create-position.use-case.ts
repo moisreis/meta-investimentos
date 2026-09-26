@@ -11,6 +11,7 @@ export interface CreatePositionInput {
   fundId: string
   initialBalance?: string | null
   initialBalanceDate?: string | null
+  allocation?: string
 }
 
 /**
@@ -68,7 +69,9 @@ export class CreatePositionUseCase {
    *
    * @date 2026-09-15
    */
-  async execute(input: CreatePositionInput): Promise<PositionResponseDTO> {
+  async execute(
+    input: CreatePositionInput
+  ): Promise<PositionResponseDTO> {
     const PROPS = toCreatePositionProps(input)
     const POSITION = Position.create(PROPS)
     const SAVED = await this.positionRepository.save(POSITION)

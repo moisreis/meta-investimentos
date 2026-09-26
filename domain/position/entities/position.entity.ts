@@ -1,11 +1,20 @@
-﻿import { EntityId, type PositiveMoney } from "@/value-objects"
+﻿import {
+  EntityId,
+  type PositiveMoney,
+  type SignedPercentage,
+  SignedPercentage as Percentage,
+} from "@/value-objects"
 import { ValidationError } from "@/errors"
+
+// Share held by the only position of a portfolio.
+const FULL_ALLOCATION = 100
 
 export interface PositionProps {
   portfolioId: EntityId
   fundId: EntityId
   initialBalance?: PositiveMoney | null
   initialBalanceDate?: Date | null
+  allocation?: SignedPercentage
   version?: number
   createdAt?: Date
   updatedAt?: Date
@@ -141,6 +150,28 @@ export class Position {
 
   /**
    * @summary
+   * Returns the allocation of the position.
+   *
+   * @remarks
+   * SignedPercentage between 0% and 100%.
+   *
+   * @explanation
+   * Share of the portfolio the position represents.
+   * A new position starts at 100% and is split evenly
+   * with every other position of the portfolio.
+   *
+   * @returns The allocation percentage.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  get allocation(): SignedPercentage {
+    return this.props.allocation
+  }
+
+  /**
+   * @summary
    * Returns the optimistic-locking version of the position.
    *
    * @remarks
@@ -220,7 +251,10 @@ export class Position {
    *
    * @date 2026-09-13
    */
-  private constructor(props: Required<PositionProps>, id?: string) {
+  private constructor(
+    props: Required<PositionProps>,
+    id?: string
+  ) {
     this._id = id ? EntityId.create(id) : undefined
     this.props = Object.freeze({
       ...props,
@@ -268,12 +302,28 @@ export class Position {
    *
    * @date 2026-09-13
    */
-  public static create(props: PositionProps, id?: string): Position {
+  public static create(
+    props: PositionProps,
+    id?: string
+  ): Position {
     if (!props.portfolioId || props.portfolioId.trim() === "") {
-      throw new ValidationError("`Position` must have a portfolio id.")
+      throw new ValidationError(
+        "`Position` must have a portfolio id."
+      )
     }
     if (!props.fundId || props.fundId.trim() === "") {
-      throw new ValidationError("`Position` must have a fund id.")
+      throw new ValidationError(
+        "`Position` must have a fund id."
+      )
+    }
+    if (
+      props.allocation &&
+      (props.allocation.isNegative ||
+        props.allocation.value.greaterThan(FULL_ALLOCATION))
+    ) {
+      throw new ValidationError(
+        "`Position` allocation must be between 0% and 100%."
+      )
     }
 
     const NOW = new Date()
@@ -282,6 +332,8 @@ export class Position {
       ...props,
       initialBalance: props.initialBalance ?? null,
       initialBalanceDate: props.initialBalanceDate ?? null,
+      allocation:
+        props.allocation ?? Percentage.create(FULL_ALLOCATION),
       version: props.version ?? 0,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
@@ -333,7 +385,9 @@ export class Position {
       )
     }
     if (!initialBalance) {
-      throw new ValidationError("`Position` initial balance must be defined.")
+      throw new ValidationError(
+        "`Position` initial balance must be defined."
+      )
     }
     if (!date) {
       throw new ValidationError(
@@ -349,6 +403,60 @@ export class Position {
         initialBalance,
         initialBalanceDate: date,
         updatedAt: NOW,
+      },
+      this._id
+    )
+  }
+
+  /**
+   * @summary
+   * Sets the allocation of this position.
+   *
+   * @remarks
+   * Returns a new Position carrying the provided
+   * allocation. The version is unchanged so the
+   * repository keeps bumping it on persist.
+   *
+   * @explanation
+   * Records the share of the portfolio the position
+   * now represents. Call it after the even split of
+   * `calculatePositionAllocation` is computed for
+   * every position of a portfolio.
+   *
+   * @param allocation - The new allocation percentage.
+   * @param now - Update timestamp, defaults to now.
+   *
+   * @returns The updated Position.
+   *
+   * @example
+   * const UPDATED = position.changeAllocation(
+   *   SignedPercentage.create("50"),
+   * );
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  public changeAllocation(
+    allocation: SignedPercentage,
+    now?: Date
+  ): Position {
+    if (this._id === undefined) {
+      throw new ValidationError(
+        "Cannot change the allocation of a `Position` that has not been persisted."
+      )
+    }
+    if (!allocation) {
+      throw new ValidationError(
+        "`Position` allocation must be defined."
+      )
+    }
+
+    return new Position(
+      {
+        ...this.props,
+        allocation,
+        updatedAt: now ?? new Date(),
       },
       this._id
     )

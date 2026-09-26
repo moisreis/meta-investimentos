@@ -8,15 +8,15 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
+import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
 
 import { CreateCheckingAccountTableColumns } from "../datatable/table-columns"
 import { EMPTY_CHECKING_ACCOUNT_NAME_LOOKUPS } from "../helpers/build-checking-account-name-lookups.helper"
 import type { CheckingAccountNameLookups } from "../types/checking-account-list.types"
-import { useAddCheckingAccountDialog } from "./use-add-checking-account-dialog.hook"
 import { useCheckingAccountBulkDelete } from "./use-checking-account-bulk-delete.hook"
 import { useCheckingAccountRowActions } from "./use-checking-account-row-actions.hook"
-import { useEditCheckingAccountDialog } from "./use-edit-checking-account-dialog.hook"
 
 // Column helper bound to the entity table features.
 const COLUMN_HELPER = createColumnHelper<
@@ -52,8 +52,9 @@ function useCheckingAccountDatatable(
   entries: CheckingAccountResponseDTO[],
   names: CheckingAccountNameLookups = EMPTY_CHECKING_ACCOUNT_NAME_LOOKUPS
 ) {
-  const addDialog = useAddCheckingAccountDialog()
-  const editDialog = useEditCheckingAccountDialog()
+  const addDialog = useEntityAddDialog()
+  const editDialog =
+    useEntityEditDialog<CheckingAccountResponseDTO>()
   const rowActions = useCheckingAccountRowActions()
   const bulkDelete = useCheckingAccountBulkDelete()
 

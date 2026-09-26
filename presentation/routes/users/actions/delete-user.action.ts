@@ -1,68 +1,68 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { UserRepository } from "@/infrastructure/user/repositories/user.repository"
-import { DeleteUserUseCase } from "@/services/user/use-cases/delete-user.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { UserContainer } from "@/presentation/composition/user.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 
-export interface DeleteUserActionInput {
-  userId: string
-}
+import { DELETE_USER_SCHEMA } from "../validations/users-actions.validation"
 
 /**
  * @summary
  * Deletes a user.
  *
  * @remarks
- * Resolves the session user from the request headers
- * and runs the delete use case. Returns a
- * human-readable error when anything fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the delete use case. The
+ * acting user is derived from the session, never from the
+ * payload. Returns a human-readable error when anything
+ * fails.
  *
  * @explanation
- * Use as the submit target of the single-row delete
- * flow of the user datatable.
+ * Use as the submit target of the single-row delete flow
+ * of the user datatable.
  *
- * @param input - The user id to delete.
+ * @param input - The untrusted user id payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns Nothing on success, or a failure result.
  *
  * @example
- * const RESULT = await deleteUserAction({
- *   userId: "user-1",
- * });
+ * const RESULT = await deleteUserAction({ userId: "user-1" });
  *
  * @author Moisés Reis
  *
  * @date 2026-09-25
  */
 export async function deleteUserAction(
-  input: DeleteUserActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<undefined>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = DELETE_USER_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { remove: REMOVE_USER } = UserContainer()
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
+    await REMOVE_USER.execute(PARSED.data)
 
-    const REPOSITORY = new UserRepository(db)
-    const USE_CASE = new DeleteUserUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      userId: input.userId,
-    })
-
-    return { error: null }
+    return ActionSuccess(undefined)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível excluir o usuário.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível excluir o usuário."
+    )
   }
 }

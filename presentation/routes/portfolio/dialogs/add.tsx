@@ -2,8 +2,9 @@
 
 import { EntityAddDialog } from "@/presentation/parts/dialogs/entity-add"
 import { EntityAddToast } from "@/presentation/parts/toasts/entity-add-toast"
+import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
+import type { EntityAddDialogModel } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { AddPortfolioForm } from "@/presentation/routes/portfolio/forms/add"
-import { usePortfolioAddDialog } from "@/presentation/routes/portfolio/hooks/use-portfolio-add-dialog.hook"
 import {
   PORTFOLIO_DIALOG,
   PORTFOLIO_FORM,
@@ -15,7 +16,7 @@ import { PortfolioAddAnotherDialog } from "./add-another"
  * Props for the portfolio add dialog.
  */
 export interface PortfolioAddDialogProps {
-  dialog: ReturnType<typeof usePortfolioAddDialog>
+  dialog: EntityAddDialogModel
 }
 
 /**

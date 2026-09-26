@@ -251,6 +251,49 @@ export class WithdrawalRepository implements IWithdrawal {
 
   /**
    * @summary
+   * Retrieves all withdrawals of the provided positions.
+   *
+   * @remarks
+   * Batched lookup avoids an N+1 query pattern. Returns an
+   * empty array when no ids are provided or when none
+   * match. Rows are ordered oldest-first so **FIFO**
+   * consumption is deterministic.
+   *
+   * @explanation
+   * Use this method to hydrate the full withdrawal history
+   * of many positions in a single query, feeding registry
+   * screens that group rows from every portfolio.
+   *
+   * @param positionIds - The ids of the positions.
+   *
+   * @returns The matching entities.
+   *
+   * @example
+   * const WDS = await WITHDRAWAL_REPO
+   *   .findAllByPositionIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async findAllByPositionIds(
+    positionIds: EntityId[]
+  ): Promise<Withdrawal[]> {
+    if (positionIds.length === 0) {
+      return []
+    }
+
+    const ROWS = await this.db
+      .select()
+      .from(withdrawal)
+      .where(inArray(withdrawal.positionId, positionIds))
+      .orderBy(asc(withdrawal.date), asc(withdrawal.createdAt))
+
+    return ROWS.map((row) => ToDomain(row))
+  }
+
+  /**
+   * @summary
    * Sums amounts and quotas for a position in a
    * period.
    *

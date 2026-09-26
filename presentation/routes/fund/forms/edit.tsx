@@ -4,18 +4,19 @@ import * as React from "react"
 
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
-import { NativeSelect } from "@/presentation/ui/native-select"
 
 import { PortfolioPercentageInput } from "@/presentation/parts/components/portfolio-percentage-input"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
-import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { useEditFundForm } from "@/presentation/routes/fund/hooks/use-edit-fund-form.hook"
 
 import { FUND_FORM } from "@/presentation/routes/fund/settings/labels.settings"
 
 import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
+
+import { FundRegistryCombobox } from "./fund-registry-combobox"
 
 import type { FundSelectOptions } from "../types/fund-list.types"
 
@@ -26,7 +27,7 @@ export interface EditFundFormProps {
   fund: FundResponseDTO
   options: FundSelectOptions
   onStatusChange?: (
-    status: PortfolioFormStatus,
+    status: EntityFormStatus,
     error: string | null
   ) => void
 }
@@ -113,50 +114,44 @@ function EditFundForm({
           error={fieldErrors.benchmarkId}
           htmlFor="benchmarkId"
         >
-          <NativeSelect
+          <FundRegistryCombobox
             id="benchmarkId"
             name="benchmarkId"
             value={benchmarkId}
-            onChange={(e) => updateBenchmarkId(e.target.value)}
+            onValueChange={updateBenchmarkId}
+            placeholder={FUND_FORM.PLACEHOLDER_BENCHMARK}
+            items={options.benchmarks.map((benchmark) => ({
+              id: benchmark.id,
+              name: benchmark.name,
+            }))}
+            clearable
             disabled={pending}
             aria-invalid={
               fieldErrors.benchmarkId ? "true" : undefined
             }
-          >
-            <option value="">
-              {FUND_FORM.PLACEHOLDER_BENCHMARK}
-            </option>
-            {options.benchmarks.map((benchmark) => (
-              <option key={benchmark.id} value={benchmark.id}>
-                {benchmark.name}
-              </option>
-            ))}
-          </NativeSelect>
+          />
         </SharedFormField>
         <SharedFormField
           label={FUND_FORM.FIELD_CATEGORY}
           error={fieldErrors.categoryId}
           htmlFor="categoryId"
         >
-          <NativeSelect
+          <FundRegistryCombobox
             id="categoryId"
             name="categoryId"
             value={categoryId}
-            onChange={(e) => updateCategoryId(e.target.value)}
+            onValueChange={updateCategoryId}
+            placeholder={FUND_FORM.PLACEHOLDER_CATEGORY}
+            items={options.categories.map((category) => ({
+              id: category.id,
+              name: category.name,
+            }))}
+            clearable
             disabled={pending}
             aria-invalid={
               fieldErrors.categoryId ? "true" : undefined
             }
-          >
-            <option value="">
-              {FUND_FORM.PLACEHOLDER_CATEGORY}
-            </option>
-            {options.categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </NativeSelect>
+          />
         </SharedFormField>
         <SharedFormField
           label={FUND_FORM.FIELD_ADMINISTRATION_FEE}

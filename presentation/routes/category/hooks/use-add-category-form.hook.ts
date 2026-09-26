@@ -1,6 +1,6 @@
 "use client"
 
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { createCategoryAction } from "@/presentation/routes/category/actions/create-category.action"
 import { CATEGORY_FORM_SCHEMA } from "@/presentation/routes/category/validations/category-form.validations"
 
@@ -10,7 +10,7 @@ import { CATEGORY_FORM_SCHEMA } from "@/presentation/routes/category/validations
  * submission.
  *
  * @remarks
- * Wraps `usePortfolioForm` with the category schema and
+ * Wraps `useEntityForm` with the category schema and
  * the create category server action.
  *
  * @explanation
@@ -40,7 +40,7 @@ function useAddCategoryForm() {
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: CATEGORY_FORM_SCHEMA,
     initialValues: {
       name: "",

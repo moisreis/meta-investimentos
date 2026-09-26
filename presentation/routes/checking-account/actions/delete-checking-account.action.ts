@@ -1,32 +1,34 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { CheckingAccountRepository } from "@/infrastructure/checking-account/repositories/checking-account.repository"
-import { DeleteCheckingAccountUseCase } from "@/services/checking-account/use-cases/delete-checking-account.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { CheckingAccountContainer } from "@/presentation/composition/checking-account.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 
-export interface DeleteCheckingAccountActionInput {
-  checkingAccountId: string
-}
+import { DELETE_CHECKING_ACCOUNT_SCHEMA } from "../validations/checking-account-actions.validation"
 
 /**
  * @summary
  * Deletes an existing checking account balance.
  *
  * @remarks
- * Resolves the session user from the request headers
- * and removes the balance through the service use case.
- * Returns a human-readable error when anything fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the delete use case. The
+ * acting user is derived from the session, never from the
+ * payload. Returns a human-readable error when anything
+ * fails.
  *
  * @explanation
- * Use as the submit target of the confirm-delete
- * dialog.
+ * Use as the submit target of the confirm-delete dialog.
  *
- * @param input - The balance deletion payload.
+ * @param input - The untrusted balance id payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns Nothing on success, or a failure result.
  *
  * @example
  * const RESULT = await deleteCheckingAccountAction({
@@ -38,31 +40,31 @@ export interface DeleteCheckingAccountActionInput {
  * @date 2026-09-25
  */
 export async function deleteCheckingAccountAction(
-  input: DeleteCheckingAccountActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<undefined>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = DELETE_CHECKING_ACCOUNT_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { remove: REMOVE_CHECKING_ACCOUNT } =
+      CheckingAccountContainer()
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
+    await REMOVE_CHECKING_ACCOUNT.execute(PARSED.data)
 
-    const REPOSITORY = new CheckingAccountRepository(db)
-    const USE_CASE = new DeleteCheckingAccountUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      checkingAccountId: input.checkingAccountId,
-    })
-
-    return { error: null }
+    return ActionSuccess(undefined)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível excluir o saldo.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível excluir o saldo."
+    )
   }
 }

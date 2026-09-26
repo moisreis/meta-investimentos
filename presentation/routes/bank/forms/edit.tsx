@@ -8,7 +8,7 @@ import { Input } from "@/presentation/ui/input"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
-import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { useEditBankForm } from "@/presentation/routes/bank/hooks/use-edit-bank-form.hook"
 
 import { BANK_FORM } from "@/presentation/routes/bank/settings/labels.settings"
@@ -21,7 +21,7 @@ import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
 export interface EditBankFormProps {
   bank: BankResponseDTO
   onStatusChange?: (
-    status: PortfolioFormStatus,
+    status: EntityFormStatus,
     error: string | null
   ) => void
 }

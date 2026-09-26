@@ -1,32 +1,35 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { BankRepository } from "@/infrastructure/bank/repositories/bank.repository"
-import { BulkDeleteBanksUseCase } from "@/services/bank/use-cases/bulk-delete-banks.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { BankContainer } from "@/presentation/composition/bank.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 
-export interface BulkDeleteBanksActionInput {
-  bankIds: string[]
-}
+import { BULK_DELETE_BANKS_SCHEMA } from "../validations/bank-actions.validation"
 
 /**
  * @summary
  * Deletes multiple banks.
  *
  * @remarks
- * Resolves the session user from the request headers
- * and runs the bulk delete use case. Returns a
- * human-readable error when anything fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, including a non-empty cap on the selection,
+ * and only then runs the bulk delete use case. The acting
+ * user is derived from the session, never from the payload.
+ * Returns a human-readable error when anything fails.
  *
  * @explanation
- * Use as the submit target of the bulk delete flow of
- * the bank datatable.
+ * Use as the submit target of the bulk delete flow of the
+ * bank datatable.
  *
- * @param input - The bank ids to delete.
+ * @param input - The untrusted bank ids payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns Nothing on success, or a failure result.
  *
  * @example
  * const RESULT = await bulkDeleteBanksAction({
@@ -38,31 +41,30 @@ export interface BulkDeleteBanksActionInput {
  * @date 2026-09-25
  */
 export async function bulkDeleteBanksAction(
-  input: BulkDeleteBanksActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<undefined>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = BULK_DELETE_BANKS_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { bulkDelete: BULK_DELETE_BANKS } = BankContainer()
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
+    await BULK_DELETE_BANKS.execute(PARSED.data)
 
-    const REPOSITORY = new BankRepository(db)
-    const USE_CASE = new BulkDeleteBanksUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      bankIds: input.bankIds,
-    })
-
-    return { error: null }
+    return ActionSuccess(undefined)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível excluir os bancos.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível excluir os bancos."
+    )
   }
 }

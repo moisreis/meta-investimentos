@@ -2,8 +2,10 @@
 
 import { EntityEditDialog } from "@/presentation/parts/dialogs/entity-edit"
 import { EntityEditToast } from "@/presentation/parts/toasts/entity-edit-toast"
+import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
+import type { EntityEditDialogModel } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
+import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
 import { EditBankForm } from "@/presentation/routes/bank/forms/edit"
-import { useBankEditDialog } from "@/presentation/routes/bank/hooks/use-bank-edit-dialog.hook"
 import {
   BANK_DIALOG,
   BANK_FORM,
@@ -13,7 +15,7 @@ import {
  * Props for the bank edit dialog.
  */
 export interface BankEditDialogProps {
-  dialog: ReturnType<typeof useBankEditDialog>
+  dialog: EntityEditDialogModel<BankResponseDTO>
 }
 
 /**

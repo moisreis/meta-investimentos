@@ -1,0 +1,2 @@
+ALTER TABLE "portfolio"."position" ADD COLUMN "allocation" numeric(5,2) DEFAULT '100' NOT NULL;--> statement-breakpoint
+ALTER TABLE "portfolio"."position" ADD CONSTRAINT "position_allocation_range" CHECK ("allocation" >= 0 AND "allocation" <= 100);

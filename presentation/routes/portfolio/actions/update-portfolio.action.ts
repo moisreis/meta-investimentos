@@ -1,39 +1,36 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { PortfolioRepository } from "@/infrastructure/portfolio/repositories/portfolio.repository"
-import { UpdatePortfolioUseCase } from "@/services/portfolio/use-cases/update-portfolio.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
+import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
-export interface UpdatePortfolioActionInput {
-  portfolioId: string
-  acronym: string
-  name: string
-  annualInterestRate: string
-  minAllocation: string
-  maxAllocation: string
-  targetAllocation: string
-}
+import { UPDATE_PORTFOLIO_SCHEMA } from "../validations/portfolio-actions.validation"
 
 /**
  * @summary
  * Updates an existing portfolio of the signed-in user.
  *
  * @remarks
- * Resolves the session user id from the request headers,
- * enforces ownership through the use case and persists the
- * updated entity. Returns a human-readable error when
- * anything fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the update use case with
+ * the user id taken from the session, never from the
+ * payload. The caller sends unmasked decimal percentage
+ * strings. Returns a human-readable error when anything
+ * fails.
  *
  * @explanation
  * Use as the submit target of the edit portfolio form.
- * The caller sends unmasked decimal percentage strings.
  *
- * @param input - The portfolio update payload.
+ * @param input - The untrusted portfolio update payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns The updated portfolio, or a failure result.
  *
  * @example
  * const RESULT = await updatePortfolioAction({
@@ -51,32 +48,32 @@ export interface UpdatePortfolioActionInput {
  * @date 2026-09-24
  */
 export async function updatePortfolioAction(
-  input: UpdatePortfolioActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<PortfolioResponseDTO>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = UPDATE_PORTFOLIO_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
+    const { update: UPDATE_PORTFOLIO } = PortfolioContainer()
+    const PORTFOLIO = await UPDATE_PORTFOLIO.execute({
+      ...PARSED.data,
+      userId: USER.id,
     })
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
-
-    const REPOSITORY = new PortfolioRepository(db)
-    const USE_CASE = new UpdatePortfolioUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      ...input,
-      userId: SESSION.user.id,
-    })
-
-    return { error: null }
+    return ActionSuccess(PORTFOLIO)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível atualizar a carteira.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível atualizar a carteira."
+    )
   }
 }

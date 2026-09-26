@@ -1,24 +1,19 @@
-import { headers } from "next/headers"
-
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { UserRepository } from "@/infrastructure/user/repositories/user.repository"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { UserContainer } from "@/presentation/composition/user.container"
 import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
-import { ListUsersUseCase } from "@/services/user/use-cases/list-users.use-case"
 
 /**
  * @summary
  * Resolves the session user and the registered users.
  *
  * @remarks
- * Fetches the session from the request headers and lists
- * all users of the platform. Returns null when there is
- * no active session.
+ * Derives the acting user from the session and lists all
+ * users of the platform through the use case. Returns null
+ * when there is no active session.
  *
  * @explanation
  * Use this helper from the page loader so the session
- * resolution and the user listing stay in a single
- * composition point.
+ * resolution and the user listing stay in a single place.
  *
  * @returns The user rows, or `null`.
  *
@@ -32,15 +27,11 @@ import { ListUsersUseCase } from "@/services/user/use-cases/list-users.use-case"
 export async function LoadUsers(): Promise<
   UserResponseDTO[] | null
 > {
-  const SESSION = await auth.api.getSession({
-    headers: await headers(),
-  })
+  const USER = await RequireSessionUser()
 
-  if (!SESSION?.user) return null
+  if (!USER) return null
 
-  const USER_REPOSITORY = new UserRepository(db)
-  const LIST_USE_CASE = new ListUsersUseCase(USER_REPOSITORY)
-  const USERS = await LIST_USE_CASE.execute({})
+  const { list: LIST_USERS } = UserContainer()
 
-  return USERS
+  return await LIST_USERS.execute({})
 }

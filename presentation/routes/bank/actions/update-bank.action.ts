@@ -1,34 +1,35 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { BankRepository } from "@/infrastructure/bank/repositories/bank.repository"
-import { UpdateBankUseCase } from "@/services/bank/use-cases/update-bank.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { BankContainer } from "@/presentation/composition/bank.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
+import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
 
-export interface UpdateBankActionInput {
-  bankId: string
-  code: string
-  name: string
-}
+import { UPDATE_BANK_SCHEMA } from "../validations/bank-actions.validation"
 
 /**
  * @summary
  * Updates an existing bank.
  *
  * @remarks
- * Resolves the session user from the request headers
- * and persists the updated entity through the service
- * use case. Returns a human-readable error when
- * anything fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the update use case. The
+ * acting user is derived from the session, never from the
+ * payload. Returns a human-readable error when anything
+ * fails.
  *
  * @explanation
  * Use as the submit target of the edit bank form.
  *
- * @param input - The bank update payload.
+ * @param input - The untrusted bank update payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns The updated bank, or a failure result.
  *
  * @example
  * const RESULT = await updateBankAction({
@@ -42,33 +43,29 @@ export interface UpdateBankActionInput {
  * @date 2026-09-25
  */
 export async function updateBankAction(
-  input: UpdateBankActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<BankResponseDTO>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = UPDATE_BANK_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { update: UPDATE_BANK } = BankContainer()
+    const BANK = await UPDATE_BANK.execute(PARSED.data)
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
-
-    const REPOSITORY = new BankRepository(db)
-    const USE_CASE = new UpdateBankUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      bankId: input.bankId,
-      code: input.code,
-      name: input.name,
-    })
-
-    return { error: null }
+    return ActionSuccess(BANK)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível atualizar o banco.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível atualizar o banco."
+    )
   }
 }

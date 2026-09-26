@@ -1,9 +1,8 @@
 "use client"
 
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { createUserAction } from "@/presentation/routes/users/actions/create-user.action"
 import { USER_ADD_FORM_SCHEMA } from "@/presentation/routes/users/validations/user-form.validations"
-import type { UserRole } from "@/services/user/dto/create-user.dto"
 
 /**
  * @summary
@@ -11,7 +10,7 @@ import type { UserRole } from "@/services/user/dto/create-user.dto"
  * submission.
  *
  * @remarks
- * Wraps `usePortfolioForm` with the user schema and the
+ * Wraps `useEntityForm` with the user schema and the
  * create user server action.
  *
  * @explanation
@@ -41,7 +40,7 @@ function useAddUserForm() {
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: USER_ADD_FORM_SCHEMA,
     initialValues: {
       name: "",
@@ -51,15 +50,7 @@ function useAddUserForm() {
       cpf: "",
       role: "",
     },
-    submit: (values) =>
-      createUserAction({
-        name: values.name,
-        email: values.email,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        cpf: values.cpf,
-        role: values.role as UserRole,
-      }),
+    submit: (values) => createUserAction(values),
   })
 
   return {

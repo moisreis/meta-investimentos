@@ -4,17 +4,18 @@ import * as React from "react"
 
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
-import { NativeSelect } from "@/presentation/ui/native-select"
 
 import { FundCnpjInput } from "@/presentation/parts/components/fund-cnpj-input"
 import { PortfolioPercentageInput } from "@/presentation/parts/components/portfolio-percentage-input"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
-import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { useAddFundForm } from "@/presentation/routes/fund/hooks/use-add-fund-form.hook"
 
 import { FUND_FORM } from "@/presentation/routes/fund/settings/labels.settings"
+
+import { FundRegistryCombobox } from "./fund-registry-combobox"
 
 import type { FundSelectOptions } from "../types/fund-list.types"
 
@@ -24,7 +25,7 @@ import type { FundSelectOptions } from "../types/fund-list.types"
 export interface AddFundFormProps {
   options: FundSelectOptions
   onStatusChange?: (
-    status: PortfolioFormStatus,
+    status: EntityFormStatus,
     error: string | null
   ) => void
 }
@@ -127,76 +128,67 @@ function AddFundForm({
           error={fieldErrors.bankId}
           htmlFor="bankId"
         >
-          <NativeSelect
+          <FundRegistryCombobox
             id="bankId"
             name="bankId"
             required
             value={bankId}
-            onChange={(e) => updateBankId(e.target.value)}
+            onValueChange={updateBankId}
+            placeholder={FUND_FORM.PLACEHOLDER_BANK}
+            items={options.banks.map((bank) => ({
+              id: bank.id,
+              name: bank.name,
+              description: bank.code,
+            }))}
             disabled={pending}
             aria-invalid={
               fieldErrors.bankId ? "true" : undefined
             }
-          >
-            <option value="" disabled>
-              {FUND_FORM.PLACEHOLDER_BANK}
-            </option>
-            {options.banks.map((bank) => (
-              <option key={bank.id} value={bank.id}>
-                {bank.name}
-              </option>
-            ))}
-          </NativeSelect>
+          />
         </SharedFormField>
         <SharedFormField
           label={FUND_FORM.FIELD_BENCHMARK}
           error={fieldErrors.benchmarkId}
           htmlFor="benchmarkId"
         >
-          <NativeSelect
+          <FundRegistryCombobox
             id="benchmarkId"
             name="benchmarkId"
             value={benchmarkId}
-            onChange={(e) => updateBenchmarkId(e.target.value)}
+            onValueChange={updateBenchmarkId}
+            placeholder={FUND_FORM.PLACEHOLDER_BENCHMARK}
+            items={options.benchmarks.map((benchmark) => ({
+              id: benchmark.id,
+              name: benchmark.name,
+            }))}
+            clearable
             disabled={pending}
             aria-invalid={
               fieldErrors.benchmarkId ? "true" : undefined
             }
-          >
-            <option value="">
-              {FUND_FORM.PLACEHOLDER_BENCHMARK}
-            </option>
-            {options.benchmarks.map((benchmark) => (
-              <option key={benchmark.id} value={benchmark.id}>
-                {benchmark.name}
-              </option>
-            ))}
-          </NativeSelect>
+          />
         </SharedFormField>
         <SharedFormField
           label={FUND_FORM.FIELD_CATEGORY}
           error={fieldErrors.categoryId}
           htmlFor="categoryId"
         >
-          <NativeSelect
+          <FundRegistryCombobox
             id="categoryId"
             name="categoryId"
             value={categoryId}
-            onChange={(e) => updateCategoryId(e.target.value)}
+            onValueChange={updateCategoryId}
+            placeholder={FUND_FORM.PLACEHOLDER_CATEGORY}
+            items={options.categories.map((category) => ({
+              id: category.id,
+              name: category.name,
+            }))}
+            clearable
             disabled={pending}
             aria-invalid={
               fieldErrors.categoryId ? "true" : undefined
             }
-          >
-            <option value="">
-              {FUND_FORM.PLACEHOLDER_CATEGORY}
-            </option>
-            {options.categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </NativeSelect>
+          />
         </SharedFormField>
         <SharedFormField
           label={FUND_FORM.FIELD_ADMINISTRATION_FEE}

@@ -2,8 +2,9 @@
 
 import { EntityAddDialog } from "@/presentation/parts/dialogs/entity-add"
 import { EntityAddToast } from "@/presentation/parts/toasts/entity-add-toast"
+import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
+import type { EntityAddDialogModel } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { AddBankForm } from "@/presentation/routes/bank/forms/add"
-import { useBankAddDialog } from "@/presentation/routes/bank/hooks/use-bank-add-dialog.hook"
 import {
   BANK_DIALOG,
   BANK_FORM,
@@ -15,7 +16,7 @@ import { BankAddAnotherDialog } from "./add-another"
  * Props for the bank add dialog.
  */
 export interface BankAddDialogProps {
-  dialog: ReturnType<typeof useBankAddDialog>
+  dialog: EntityAddDialogModel
 }
 
 /**

@@ -135,8 +135,8 @@ export class CategoryRepository implements ICategory {
    * Retrieves all categories, optionally paginated.
    *
    * @remarks
-   * Results are sorted by `name` ascending. Defaults to
-   * a limit of 100 rows.
+   * Results are sorted by `name` ascending. Every row is
+   * returned unless `limit` is provided.
    *
    * @explanation
    * Use this method to list all categories. Pass pagination
@@ -160,12 +160,20 @@ export class CategoryRepository implements ICategory {
     limit?: number
     offset?: number
   }): Promise<Category[]> {
-    const ROWS = await this.db
+    const QUERY = this.db
       .select()
       .from(category)
       .orderBy(asc(category.name))
-      .limit(options?.limit ?? 100)
-      .offset(options?.offset ?? 0)
+
+    // Returns every row unless the caller asks for a
+    // window. A paginated caller must always set limit,
+    // because offset is only valid alongside it.
+    const ROWS =
+      options?.limit === undefined
+        ? await QUERY
+        : await QUERY.limit(options.limit).offset(
+            options.offset ?? 0
+          )
 
     return ROWS.map((row) => ToDomain(row))
   }

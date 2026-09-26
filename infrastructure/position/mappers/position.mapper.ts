@@ -1,5 +1,9 @@
 import { Position } from "@domain/position/entities/position.entity"
-import { EntityId, PositiveMoney } from "@/value-objects"
+import {
+  EntityId,
+  PositiveMoney,
+  SignedPercentage,
+} from "@/value-objects"
 import { position } from "@db-schemas/position.schema"
 
 /**
@@ -37,6 +41,7 @@ export function ToDomain(
         ? PositiveMoney.create(row.initialBalance)
         : null,
       initialBalanceDate: row.initialBalanceDate,
+      allocation: SignedPercentage.create(row.allocation),
       version: row.version,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
@@ -78,6 +83,7 @@ export function ToInsert(
     initialBalance:
       entity.initialBalance?.value.toString() ?? null,
     initialBalanceDate: entity.initialBalanceDate,
+    allocation: entity.allocation.value.toString(),
     version: entity.version,
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt,
@@ -121,5 +127,6 @@ export function ToUpdate(
     initialBalance:
       entity.initialBalance?.value.toString() ?? null,
     initialBalanceDate: entity.initialBalanceDate,
+    allocation: entity.allocation.value.toString(),
   }
 }

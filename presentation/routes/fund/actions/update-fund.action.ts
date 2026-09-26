@@ -1,37 +1,35 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { FundRepository } from "@/infrastructure/fund/repositories/fund.repository"
-import { UpdateFundUseCase } from "@/services/fund/use-cases/update-fund.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { FundContainer } from "@/presentation/composition/fund.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
+import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
 
-export interface UpdateFundActionInput {
-  fundId: string
-  name: string
-  administrationFee: string | null
-  performanceFee: string | null
-  benchmarkId: string | null
-  categoryId: string | null
-}
+import { UPDATE_FUND_SCHEMA } from "../validations/fund-actions.validation"
 
 /**
  * @summary
  * Updates an existing fund.
  *
  * @remarks
- * Resolves the session user from the request headers
- * and persists the updated entity through the service
- * use case. Returns a human-readable error when
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the update use case.
+ * The acting user is derived from the session, never from
+ * the payload. Returns a human-readable error when
  * anything fails.
  *
  * @explanation
  * Use as the submit target of the edit fund form.
  *
- * @param input - The fund update payload.
+ * @param input - The untrusted fund update payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns The updated fund, or a failure result.
  *
  * @example
  * const RESULT = await updateFundAction({
@@ -44,36 +42,29 @@ export interface UpdateFundActionInput {
  * @date 2026-09-25
  */
 export async function updateFundAction(
-  input: UpdateFundActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<FundResponseDTO>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = UPDATE_FUND_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { update: UPDATE_FUND } = FundContainer()
+    const FUND = await UPDATE_FUND.execute(PARSED.data)
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
-
-    const REPOSITORY = new FundRepository(db)
-    const USE_CASE = new UpdateFundUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      fundId: input.fundId,
-      name: input.name,
-      administrationFee: input.administrationFee,
-      performanceFee: input.performanceFee,
-      benchmarkId: input.benchmarkId,
-      categoryId: input.categoryId,
-    })
-
-    return { error: null }
+    return ActionSuccess(FUND)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível atualizar o fundo.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível atualizar o fundo."
+    )
   }
 }

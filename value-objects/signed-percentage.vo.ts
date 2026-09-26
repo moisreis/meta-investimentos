@@ -45,7 +45,9 @@ export class SignedPercentage {
 
   // Returns true if the percentage is positive (greater than zero).
   get isPositive(): boolean {
-    return this.props.value.isPositive() && !this.props.value.isZero()
+    return (
+      this.props.value.isPositive() && !this.props.value.isZero()
+    )
   }
 
   // Returns true if the percentage is zero.
@@ -85,7 +87,9 @@ export class SignedPercentage {
    */
   public static create(value: Decimal.Value): SignedPercentage {
     if (value === undefined || value === null) {
-      throw new ValidationError("`SignedPercentage` must be defined.")
+      throw new ValidationError(
+        "`SignedPercentage` must be defined."
+      )
     }
 
     let DECIMAL_VALUE: Decimal
@@ -93,11 +97,15 @@ export class SignedPercentage {
     try {
       DECIMAL_VALUE = new Decimal(value)
     } catch {
-      throw new ValidationError("`SignedPercentage` must be a valid number.")
+      throw new ValidationError(
+        "`SignedPercentage` must be a valid number."
+      )
     }
 
     if (!DECIMAL_VALUE.isFinite()) {
-      throw new ValidationError("`SignedPercentage` must be a finite number.")
+      throw new ValidationError(
+        "`SignedPercentage` must be a finite number."
+      )
     }
 
     return new SignedPercentage({
@@ -131,7 +139,10 @@ export class SignedPercentage {
    *
    * @date 2026-09-23
    */
-  public static equals(a: SignedPercentage, b: SignedPercentage): boolean {
+  public static equals(
+    a: SignedPercentage,
+    b: SignedPercentage
+  ): boolean {
     return a.value.equals(b.value)
   }
 }

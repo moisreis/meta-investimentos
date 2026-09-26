@@ -25,7 +25,9 @@ import type { NextRequest } from "next/server"
  *
  * @date 2026-09-23
  */
-export async function GET(request: NextRequest): Promise<Response> {
+export async function GET(
+  request: NextRequest
+): Promise<Response> {
   return auth.handler(request)
 }
 
@@ -53,6 +55,8 @@ export async function GET(request: NextRequest): Promise<Response> {
  *
  * @date 2026-09-23
  */
-export async function POST(request: NextRequest): Promise<Response> {
+export async function POST(
+  request: NextRequest
+): Promise<Response> {
   return auth.handler(request)
 }

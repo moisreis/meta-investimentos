@@ -1,6 +1,6 @@
 "use client"
 
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { updateBankAction } from "@/presentation/routes/bank/actions/update-bank.action"
 import { BANK_FORM_SCHEMA } from "@/presentation/routes/bank/validations/bank-form.validations"
 import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
@@ -11,7 +11,7 @@ import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
  * submission.
  *
  * @remarks
- * Wraps `usePortfolioForm` with the bank schema and the
+ * Wraps `useEntityForm` with the bank schema and the
  * update bank server action. Seeds the initial values
  * from the provided bank.
  *
@@ -45,7 +45,7 @@ function useEditBankForm(bank: BankResponseDTO) {
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: BANK_FORM_SCHEMA,
     initialValues: {
       code: bank.code,

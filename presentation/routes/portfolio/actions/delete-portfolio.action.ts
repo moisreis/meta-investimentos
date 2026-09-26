@@ -1,32 +1,35 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { PortfolioRepository } from "@/infrastructure/portfolio/repositories/portfolio.repository"
-import { DeletePortfolioUseCase } from "@/services/portfolio/use-cases/delete-portfolio.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 
-export interface DeletePortfolioActionInput {
-  portfolioId: string
-}
+import { DELETE_PORTFOLIO_SCHEMA } from "../validations/portfolio-actions.validation"
 
 /**
  * @summary
  * Deletes a portfolio owned by the signed-in user.
  *
  * @remarks
- * Resolves the session user id from the request headers
- * and runs the delete use case. Returns a human-readable
- * error when anything fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the delete use case with
+ * the user id taken from the session, never from the
+ * payload. Ownership is enforced by the use case, so a
+ * portfolio of another user is reported as missing.
  *
  * @explanation
  * Use as the submit target of the single-row delete flow
  * of the portfolio datatable.
  *
- * @param input - The portfolio id to delete.
+ * @param input - The untrusted portfolio id payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns Nothing on success, or a failure result.
  *
  * @example
  * const RESULT = await deletePortfolioAction({
@@ -38,32 +41,33 @@ export interface DeletePortfolioActionInput {
  * @date 2026-09-24
  */
 export async function deletePortfolioAction(
-  input: DeletePortfolioActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<undefined>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = DELETE_PORTFOLIO_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
+    const { remove: REMOVE_PORTFOLIO } = PortfolioContainer()
+
+    await REMOVE_PORTFOLIO.execute({
+      ...PARSED.data,
+      userId: USER.id,
     })
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
-
-    const REPOSITORY = new PortfolioRepository(db)
-    const USE_CASE = new DeletePortfolioUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      portfolioId: input.portfolioId,
-      userId: SESSION.user.id,
-    })
-
-    return { error: null }
+    return ActionSuccess(undefined)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível excluir a carteira.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível excluir a carteira."
+    )
   }
 }

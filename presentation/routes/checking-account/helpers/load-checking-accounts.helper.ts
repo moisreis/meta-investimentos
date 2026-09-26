@@ -1,16 +1,8 @@
-import { headers } from "next/headers"
-
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { BankRepository } from "@/infrastructure/bank/repositories/bank.repository"
-import { BankAccountRepository } from "@/infrastructure/bank-account/repositories/bank-account.repository"
-import { CheckingAccountRepository } from "@/infrastructure/checking-account/repositories/checking-account.repository"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { CheckingAccountContainer } from "@/presentation/composition/checking-account.container"
 import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
-import { ListBanksUseCase } from "@/services/bank/use-cases/list-banks.use-case"
 import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
-import { ListBankAccountsUseCase } from "@/services/bank-account/use-cases/list-bank-accounts.use-case"
 import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
-import { ListCheckingAccountsUseCase } from "@/services/checking-account/use-cases/list-checking-accounts.use-case"
 
 // Data resolved by the checking account list loader.
 export interface LoadedCheckingAccountList {
@@ -26,10 +18,11 @@ export interface LoadedCheckingAccountList {
  * linked by the rows.
  *
  * @remarks
- * Fetches the session from the request headers and
- * lists the balances plus the bank accounts and banks
- * used by the list and the form selects. Returns null
- * when there is no active session.
+ * Derives the acting user from the session and lists the
+ * balances plus the bank accounts and banks used by the
+ * list and the form selects, all through the checking
+ * account container. Returns null when there is no active
+ * session.
  *
  * @explanation
  * Use this helper from the page loader so the session
@@ -47,28 +40,19 @@ export interface LoadedCheckingAccountList {
  * @date 2026-09-25
  */
 export async function LoadCheckingAccounts(): Promise<LoadedCheckingAccountList | null> {
-  const SESSION = await auth.api.getSession({
-    headers: await headers(),
-  })
+  const USER = await RequireSessionUser()
 
-  if (!SESSION?.user) return null
+  if (!USER) return null
 
-  const CHECKING_ACCOUNT_REPOSITORY =
-    new CheckingAccountRepository(db)
-  const ENTRIES_USE_CASE = new ListCheckingAccountsUseCase(
-    CHECKING_ACCOUNT_REPOSITORY
-  )
-  const ENTRIES = await ENTRIES_USE_CASE.execute({})
+  const {
+    list: LIST_ENTRIES,
+    listBankAccounts: LIST_BANK_ACCOUNTS,
+    listBanks: LIST_BANKS,
+  } = CheckingAccountContainer()
 
-  const BANK_ACCOUNT_REPOSITORY = new BankAccountRepository(db)
-  const BANK_ACCOUNTS_USE_CASE = new ListBankAccountsUseCase(
-    BANK_ACCOUNT_REPOSITORY
-  )
-  const BANK_ACCOUNTS = await BANK_ACCOUNTS_USE_CASE.execute({})
-
-  const BANK_REPOSITORY = new BankRepository(db)
-  const BANKS_USE_CASE = new ListBanksUseCase(BANK_REPOSITORY)
-  const BANKS = await BANKS_USE_CASE.execute({})
+  const ENTRIES = await LIST_ENTRIES.execute({})
+  const BANK_ACCOUNTS = await LIST_BANK_ACCOUNTS.execute({})
+  const BANKS = await LIST_BANKS.execute({})
 
   return {
     entries: ENTRIES,

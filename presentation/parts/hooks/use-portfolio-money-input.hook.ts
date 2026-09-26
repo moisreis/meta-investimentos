@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { MaskMoney } from "@/presentation/masks/money.mask"
+import { MaskCurrency } from "@/presentation/masks/currency.mask"
 
 interface UsePortfolioMoneyInputParams {
   value?: string
@@ -47,7 +47,10 @@ function usePortfolioMoneyInput({
   function HandleChange(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
-    const MASKED = MaskMoney(event.target.value)
+    const MASKED = MaskCurrency(
+      event.target.value,
+      CURRENT_VALUE
+    )
 
     if (!IS_CONTROLLED) {
       setInternalValue(MASKED)

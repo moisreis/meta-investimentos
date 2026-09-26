@@ -1,24 +1,19 @@
-import { headers } from "next/headers"
-
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { CategoryRepository } from "@/infrastructure/category/repositories/category.repository"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { CategoryContainer } from "@/presentation/composition/category.container"
 import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
-import { ListCategoriesUseCase } from "@/services/category/use-cases/list-categories.use-case"
 
 /**
  * @summary
  * Resolves the session user and the registered categories.
  *
  * @remarks
- * Fetches the session from the request headers and lists
- * all categories of the platform. Returns null when there
- * is no active session.
+ * Derives the acting user from the session and lists all
+ * categories of the platform through the use case. Returns
+ * null when there is no active session.
  *
  * @explanation
  * Use this helper from the page loader so the session
- * resolution and the category listing stay in a single
- * composition point.
+ * resolution and the category listing stay in a single place.
  *
  * @returns The category rows, or `null`.
  *
@@ -32,17 +27,11 @@ import { ListCategoriesUseCase } from "@/services/category/use-cases/list-catego
 export async function LoadCategories(): Promise<
   CategoryResponseDTO[] | null
 > {
-  const SESSION = await auth.api.getSession({
-    headers: await headers(),
-  })
+  const USER = await RequireSessionUser()
 
-  if (!SESSION?.user) return null
+  if (!USER) return null
 
-  const CATEGORY_REPOSITORY = new CategoryRepository(db)
-  const LIST_USE_CASE = new ListCategoriesUseCase(
-    CATEGORY_REPOSITORY
-  )
-  const CATEGORIES = await LIST_USE_CASE.execute({})
+  const { list: LIST_CATEGORIES } = CategoryContainer()
 
-  return CATEGORIES
+  return await LIST_CATEGORIES.execute({})
 }

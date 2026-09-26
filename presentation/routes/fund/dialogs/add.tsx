@@ -2,8 +2,9 @@
 
 import { EntityAddDialog } from "@/presentation/parts/dialogs/entity-add"
 import { EntityAddToast } from "@/presentation/parts/toasts/entity-add-toast"
+import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
+import type { EntityAddDialogModel } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { AddFundForm } from "@/presentation/routes/fund/forms/add"
-import { useFundAddDialog } from "@/presentation/routes/fund/hooks/use-fund-add-dialog.hook"
 import {
   FUND_DIALOG,
   FUND_FORM,
@@ -16,7 +17,7 @@ import { FundAddAnotherDialog } from "./add-another"
  * Props for the fund add dialog.
  */
 export interface FundAddDialogProps {
-  dialog: ReturnType<typeof useFundAddDialog>
+  dialog: EntityAddDialogModel
   options: FundSelectOptions
 }
 

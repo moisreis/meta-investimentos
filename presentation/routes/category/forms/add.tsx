@@ -8,7 +8,7 @@ import { Input } from "@/presentation/ui/input"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
-import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { useAddCategoryForm } from "@/presentation/routes/category/hooks/use-add-category-form.hook"
 
 import { CATEGORY_FORM } from "@/presentation/routes/category/settings/labels.settings"
@@ -18,7 +18,7 @@ import { CATEGORY_FORM } from "@/presentation/routes/category/settings/labels.se
  */
 export interface AddCategoryFormProps {
   onStatusChange?: (
-    status: PortfolioFormStatus,
+    status: EntityFormStatus,
     error: string | null
   ) => void
 }

@@ -1,24 +1,19 @@
-import { headers } from "next/headers"
-
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { BankRepository } from "@/infrastructure/bank/repositories/bank.repository"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { BankContainer } from "@/presentation/composition/bank.container"
 import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
-import { ListBanksUseCase } from "@/services/bank/use-cases/list-banks.use-case"
 
 /**
  * @summary
  * Resolves the session user and the registered banks.
  *
  * @remarks
- * Fetches the session from the request headers and lists
- * all banks of the platform. Returns null when there is
- * no active session.
+ * Derives the acting user from the session and lists all
+ * banks of the platform through the use case. Returns null
+ * when there is no active session.
  *
  * @explanation
  * Use this helper from the page loader so the session
- * resolution and the bank listing stay in a single
- * composition point.
+ * resolution and the bank listing stay in a single place.
  *
  * @returns The bank rows, or `null`.
  *
@@ -32,15 +27,11 @@ import { ListBanksUseCase } from "@/services/bank/use-cases/list-banks.use-case"
 export async function LoadBanks(): Promise<
   BankResponseDTO[] | null
 > {
-  const SESSION = await auth.api.getSession({
-    headers: await headers(),
-  })
+  const USER = await RequireSessionUser()
 
-  if (!SESSION?.user) return null
+  if (!USER) return null
 
-  const BANK_REPOSITORY = new BankRepository(db)
-  const LIST_USE_CASE = new ListBanksUseCase(BANK_REPOSITORY)
-  const BANKS = await LIST_USE_CASE.execute({})
+  const { list: LIST_BANKS } = BankContainer()
 
-  return BANKS
+  return await LIST_BANKS.execute({})
 }

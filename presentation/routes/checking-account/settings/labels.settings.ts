@@ -39,6 +39,7 @@ export const CHECKING_ACCOUNT_FORM = {
 
   // Select placeholders.
   PLACEHOLDER_BANK_ACCOUNT: "Selecione a conta bancária",
+  PLACEHOLDER_DATE: "Selecione a data",
   PLACEHOLDER_VALUE: "0,00",
 
   // Registry combobox empty copy.

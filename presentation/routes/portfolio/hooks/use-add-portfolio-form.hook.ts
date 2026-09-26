@@ -1,7 +1,7 @@
 "use client"
 
 import { UnmaskPercentage } from "@/presentation/masks/percentage.mask"
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { createPortfolioAction } from "@/presentation/routes/portfolio/actions/create-portfolio.action"
 import { PORTFOLIO_FORM_SCHEMA } from "@/presentation/routes/portfolio/validations/portfolio-form.validations"
 
@@ -11,7 +11,7 @@ import { PORTFOLIO_FORM_SCHEMA } from "@/presentation/routes/portfolio/validatio
  * submission.
  *
  * @remarks
- * Wraps `usePortfolioForm` with the portfolio schema and the
+ * Wraps `useEntityForm` with the portfolio schema and the
  * create portfolio server action, unmasking the percentage
  * fields before they are sent.
  *
@@ -41,7 +41,7 @@ function useAddPortfolioForm() {
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: PORTFOLIO_FORM_SCHEMA,
     initialValues: {
       acronym: "",

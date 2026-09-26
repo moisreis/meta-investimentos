@@ -8,12 +8,12 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
+import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
 
 import { CreateUserTableColumns } from "../datatable/table-columns"
-import { useUserAddDialog } from "./use-user-add-dialog.hook"
 import { useUserBulkDelete } from "./use-user-bulk-delete.hook"
-import { useUserEditDialog } from "./use-user-edit-dialog.hook"
 import { useUserRowActions } from "./use-user-row-actions.hook"
 
 // Column helper bound to the entity table features.
@@ -45,8 +45,8 @@ const COLUMN_HELPER = createColumnHelper<
  * @date 2026-09-25
  */
 function useUserDatatable(users: UserResponseDTO[]) {
-  const addDialog = useUserAddDialog()
-  const editDialog = useUserEditDialog()
+  const addDialog = useEntityAddDialog()
+  const editDialog = useEntityEditDialog<UserResponseDTO>()
   const rowActions = useUserRowActions()
   const bulkDelete = useUserBulkDelete()
 

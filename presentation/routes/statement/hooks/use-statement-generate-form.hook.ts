@@ -1,6 +1,6 @@
 "use client"
 
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 
 import { generateStatementAction } from "../actions/generate-statement.action"
 import { GENERATE_STATEMENT_SCHEMA } from "../validations/generate-statement.validations"
@@ -38,17 +38,13 @@ function useGenerateStatementForm() {
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: GENERATE_STATEMENT_SCHEMA,
     initialValues: {
       portfolioId: "",
       month: "",
     },
-    submit: (values) =>
-      generateStatementAction({
-        portfolioId: values.portfolioId,
-        month: values.month,
-      }),
+    submit: (values) => generateStatementAction(values),
   })
 
   return {

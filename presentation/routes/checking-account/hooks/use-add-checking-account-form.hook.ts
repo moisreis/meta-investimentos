@@ -1,7 +1,7 @@
 "use client"
 
-import { UnmaskMoney } from "@/presentation/masks/money.mask"
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import { UnmaskCurrency } from "@/presentation/masks/currency.mask"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { createCheckingAccountAction } from "@/presentation/routes/checking-account/actions/create-checking-account.action"
 import { CHECKING_ACCOUNT_FORM_SCHEMA } from "@/presentation/routes/checking-account/validations/checking-account-form.validations"
 
@@ -11,7 +11,7 @@ import { CHECKING_ACCOUNT_FORM_SCHEMA } from "@/presentation/routes/checking-acc
  * validation and submission.
  *
  * @remarks
- * Wraps `usePortfolioForm` with the checking account
+ * Wraps `useEntityForm` with the checking account
  * schema and the record server action.
  *
  * @explanation
@@ -42,7 +42,7 @@ function useAddCheckingAccountForm() {
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: CHECKING_ACCOUNT_FORM_SCHEMA,
     initialValues: {
       bankAccountId: "",
@@ -53,7 +53,7 @@ function useAddCheckingAccountForm() {
       createCheckingAccountAction({
         bankAccountId: values.bankAccountId,
         date: values.date,
-        value: UnmaskMoney(values.value),
+        value: UnmaskCurrency(values.value),
       }),
   })
 

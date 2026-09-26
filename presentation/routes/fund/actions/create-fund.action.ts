@@ -1,38 +1,35 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { FundRepository } from "@/infrastructure/fund/repositories/fund.repository"
-import { CreateFundUseCase } from "@/services/fund/use-cases/create-fund.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { FundContainer } from "@/presentation/composition/fund.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
+import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
 
-export interface CreateFundActionInput {
-  cnpj: string
-  name: string
-  administrationFee: string | null
-  performanceFee: string | null
-  bankId: string
-  benchmarkId: string | null
-  categoryId: string | null
-}
+import { CREATE_FUND_SCHEMA } from "../validations/fund-actions.validation"
 
 /**
  * @summary
  * Creates a new fund.
  *
  * @remarks
- * Resolves the session user from the request headers,
- * builds the create payload and runs the service use
- * case. Returns a human-readable error when anything
- * fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the create use case.
+ * The acting user is derived from the session, never from
+ * the payload. Returns a human-readable error when
+ * anything fails.
  *
  * @explanation
  * Use as the submit target of the add fund form.
  *
- * @param input - The fund creation payload.
+ * @param input - The untrusted fund creation payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns The created fund, or a failure result.
  *
  * @example
  * const RESULT = await createFundAction({
@@ -46,37 +43,29 @@ export interface CreateFundActionInput {
  * @date 2026-09-25
  */
 export async function createFundAction(
-  input: CreateFundActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<FundResponseDTO>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = CREATE_FUND_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { create: CREATE_FUND } = FundContainer()
+    const FUND = await CREATE_FUND.execute(PARSED.data)
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
-
-    const REPOSITORY = new FundRepository(db)
-    const USE_CASE = new CreateFundUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      cnpj: input.cnpj,
-      name: input.name,
-      administrationFee: input.administrationFee,
-      performanceFee: input.performanceFee,
-      bankId: input.bankId,
-      benchmarkId: input.benchmarkId,
-      categoryId: input.categoryId,
-    })
-
-    return { error: null }
+    return ActionSuccess(FUND)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível criar o fundo.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível criar o fundo."
+    )
   }
 }

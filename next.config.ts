@@ -1,9 +1,9 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 // Stores the application configuration.
 const nextConfig: NextConfig = {
-  devIndicators: false
-};
+  devIndicators: false,
+}
 
 /**
  * @summary
@@ -22,4 +22,4 @@ const nextConfig: NextConfig = {
  *
  * @date 2026-09-13
  */
-export default nextConfig;
+export default nextConfig

@@ -6,10 +6,9 @@ import { PortfolioMoneyInput } from "@/presentation/parts/components/portfolio-m
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
-import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
-import { FormatDate } from "@/presentation/presenters/date.presenter"
 import { ResolveBankAccountLabel } from "@/presentation/routes/checking-account/helpers/build-checking-account-name-lookups.helper"
 
 import { CHECKING_ACCOUNT_FORM } from "../settings/labels.settings"
@@ -17,6 +16,7 @@ import { CHECKING_ACCOUNT_FORM } from "../settings/labels.settings"
 import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
 import type { CheckingAccountNameLookups } from "../types/checking-account-list.types"
 import { useEditCheckingAccountForm } from "../hooks/use-edit-checking-account-form.hook"
+import { CheckingAccountDateInput } from "./checking-account-date-input"
 
 /**
  * Props for the edit checking account form.
@@ -25,7 +25,7 @@ export interface EditCheckingAccountFormProps {
   entry: CheckingAccountResponseDTO
   names: CheckingAccountNameLookups
   onStatusChange?: (
-    status: PortfolioFormStatus,
+    status: EntityFormStatus,
     error: string | null
   ) => void
 }
@@ -102,12 +102,11 @@ function EditCheckingAccountForm({
           label={CHECKING_ACCOUNT_FORM.FIELD_DATE}
           htmlFor="edit-checking-account-date"
         >
-          <Input
+          <CheckingAccountDateInput
             id="edit-checking-account-date"
-            type="text"
-            readOnly
+            name="date"
+            value={entry.date}
             disabled
-            value={FormatDate(entry.date)}
           />
         </SharedFormField>
         <SharedFormField

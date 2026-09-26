@@ -1,32 +1,35 @@
 "use server"
 
-import { headers } from "next/headers"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { StatementContainer } from "@/presentation/composition/statement.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { StatementRepository } from "@/infrastructure/statement/repositories/statement.repository"
-import { DeleteStatementUseCase } from "@/services/statement/use-cases/delete-statement.use-case"
-
-export interface DeleteStatementActionInput {
-  statementId: string
-}
+import { DELETE_STATEMENT_SCHEMA } from "../validations/statement-actions.validation"
 
 /**
  * @summary
  * Deletes a single statement.
  *
  * @remarks
- * Resolves the session and runs the delete use case. Returns
- * a human-readable error when anything fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the delete use case. The
+ * acting user is derived from the session, never from the
+ * payload. Returns a human-readable error when anything
+ * fails.
  *
  * @explanation
  * Use as the submit target of the single-row delete flow of
  * the statement datatable.
  *
- * @param input - The statement id to delete.
+ * @param input - The untrusted statement id payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns Nothing on success, or a failure result.
  *
  * @example
  * const RESULT = await deleteStatementAction({
@@ -38,31 +41,30 @@ export interface DeleteStatementActionInput {
  * @date 2026-09-25
  */
 export async function deleteStatementAction(
-  input: DeleteStatementActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<undefined>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = DELETE_STATEMENT_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { remove: REMOVE_STATEMENT } = StatementContainer()
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
+    await REMOVE_STATEMENT.execute(PARSED.data)
 
-    const REPOSITORY = new StatementRepository(db)
-    const USE_CASE = new DeleteStatementUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      statementId: input.statementId,
-    })
-
-    return { error: null }
+    return ActionSuccess(undefined)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível excluir o relatório.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível excluir o relatório."
+    )
   }
 }

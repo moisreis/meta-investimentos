@@ -24,10 +24,19 @@ export const position = pgSchema("portfolio").table(
     fundId: uuid("fund_id")
       .notNull()
       .references(() => fund.id),
-    initialBalance: numeric("initial_balance", { precision: 18, scale: 6 }),
+    initialBalance: numeric("initial_balance", {
+      precision: 18,
+      scale: 6,
+    }),
     initialBalanceDate: timestamp("initial_balance_date", {
       withTimezone: true,
     }),
+    allocation: numeric("allocation", {
+      precision: 5,
+      scale: 2,
+    })
+      .default("100")
+      .notNull(),
     version: integer("version").default(0).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
@@ -38,7 +47,16 @@ export const position = pgSchema("portfolio").table(
   },
   (table) => [
     // Enforces that the initial balance is non-negative.
-    check("position_initial_balance_nonneg", sql`${table.initialBalance} >= 0`),
+    check(
+      "position_initial_balance_nonneg",
+      sql`${table.initialBalance} >= 0`
+    ),
+
+    // Enforces that the allocation is a valid share.
+    check(
+      "position_allocation_range",
+      sql`${table.allocation} >= 0 AND ${table.allocation} <= 100`
+    ),
 
     // Enforces that a portfolio holds one position per fund.
     uniqueIndex("position_portfolio_fund_uidx").on(

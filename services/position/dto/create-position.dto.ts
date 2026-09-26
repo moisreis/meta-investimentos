@@ -5,6 +5,8 @@
  * @remarks
  * The initial balance defaults to null when omitted.
  * The balance is a decimal string; the date is ISO 8601.
+ * The allocation is a percentage string and defaults
+ * to the full share of the portfolio.
  *
  * @explanation
  * Use this DTO to create a position through the service
@@ -25,4 +27,5 @@ export interface CreatePositionDTO {
   fundId: string
   initialBalance?: string | null
   initialBalanceDate?: string | null
+  allocation?: string
 }

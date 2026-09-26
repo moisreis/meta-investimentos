@@ -1,5 +1,9 @@
 import type { Application } from "@domain/application/entities/application.entity"
-import type { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
+import type {
+  EntityId,
+  PositiveMoney,
+  QuotaQuantity,
+} from "@/value-objects"
 
 /**
  * @summary
@@ -96,7 +100,9 @@ export interface IApplication {
    *
    * @date 2026-09-13
    */
-  findAllByPositionId(positionId: EntityId): Promise<Application[]>
+  findAllByPositionId(
+    positionId: EntityId
+  ): Promise<Application[]>
 
   /**
    * @summary
@@ -160,6 +166,36 @@ export interface IApplication {
     positionIds: EntityId[],
     startDate: Date,
     endDate: Date
+  ): Promise<Application[]>
+
+  /**
+   * @summary
+   * Retrieves all applications of the provided positions.
+   *
+   * @remarks
+   * Returns an empty array when no applications match or
+   * when the input list is empty. Rows are ordered
+   * oldest-first so **FIFO** consumption is deterministic.
+   *
+   * @explanation
+   * Use this method to list applications across many
+   * positions in a single query, feeding registry screens
+   * that group rows from every portfolio.
+   *
+   * @param positionIds - The identifiers of the positions.
+   *
+   * @returns The matching entries.
+   *
+   * @example
+   * const APPS = await APP_REPO
+   *   .findAllByPositionIds(POS_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  findAllByPositionIds(
+    positionIds: EntityId[]
   ): Promise<Application[]>
 
   /**

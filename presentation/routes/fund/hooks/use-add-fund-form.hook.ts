@@ -2,7 +2,7 @@
 
 import { UnmaskCNPJ } from "@/presentation/masks/cnpj.mask"
 import { UnmaskPercentage } from "@/presentation/masks/percentage.mask"
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { createFundAction } from "@/presentation/routes/fund/actions/create-fund.action"
 import { FUND_FORM_SCHEMA } from "@/presentation/routes/fund/validations/fund-form.validations"
 
@@ -12,7 +12,7 @@ import { FUND_FORM_SCHEMA } from "@/presentation/routes/fund/validations/fund-fo
  * submission.
  *
  * @remarks
- * Wraps `usePortfolioForm` with the fund schema and
+ * Wraps `useEntityForm` with the fund schema and
  * the create fund server action.
  *
  * @explanation
@@ -42,7 +42,7 @@ function useAddFundForm() {
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: FUND_FORM_SCHEMA,
     initialValues: {
       cnpj: "",

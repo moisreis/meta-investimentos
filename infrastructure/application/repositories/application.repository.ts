@@ -247,6 +247,49 @@ export class ApplicationRepository implements IApplication {
 
   /**
    * @summary
+   * Retrieves all applications of the provided positions.
+   *
+   * @remarks
+   * Batched lookup avoids an N+1 query pattern. Returns an
+   * empty array when no ids are provided or when none
+   * match. Rows are ordered oldest-first so **FIFO**
+   * consumption is deterministic.
+   *
+   * @explanation
+   * Use this method to hydrate the full application
+   * history of many positions in a single query, feeding
+   * registry screens that group rows from every portfolio.
+   *
+   * @param positionIds - The ids of the positions.
+   *
+   * @returns The matching entities.
+   *
+   * @example
+   * const APPS = await APP_REPO
+   *   .findAllByPositionIds(IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async findAllByPositionIds(
+    positionIds: EntityId[]
+  ): Promise<Application[]> {
+    if (positionIds.length === 0) {
+      return []
+    }
+
+    const ROWS = await this.db
+      .select()
+      .from(application)
+      .where(inArray(application.positionId, positionIds))
+      .orderBy(asc(application.date), asc(application.createdAt))
+
+    return ROWS.map((row) => ToDomain(row))
+  }
+
+  /**
+   * @summary
    * Sums the amounts and quotas of a position in a period.
    *
    * @remarks

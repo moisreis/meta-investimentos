@@ -141,7 +141,10 @@ export interface IUser {
    *
    * @date 2026-09-13
    */
-  findAll(options?: { limit?: number; offset?: number }): Promise<User[]>
+  findAll(options?: {
+    limit?: number
+    offset?: number
+  }): Promise<User[]>
 
   /**
    * @summary

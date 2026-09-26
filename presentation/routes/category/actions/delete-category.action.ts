@@ -1,32 +1,35 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { CategoryRepository } from "@/infrastructure/category/repositories/category.repository"
-import { DeleteCategoryUseCase } from "@/services/category/use-cases/delete-category.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { CategoryContainer } from "@/presentation/composition/category.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 
-export interface DeleteCategoryActionInput {
-  categoryId: string
-}
+import { DELETE_CATEGORY_SCHEMA } from "../validations/category-actions.validation"
 
 /**
  * @summary
  * Deletes a category.
  *
  * @remarks
- * Resolves the session user from the request headers
- * and runs the delete use case. Returns a
- * human-readable error when anything fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the delete use case. The
+ * acting user is derived from the session, never from the
+ * payload. Returns a human-readable error when anything
+ * fails.
  *
  * @explanation
  * Use as the submit target of the single-row delete
  * flow of the category datatable.
  *
- * @param input - The category id to delete.
+ * @param input - The untrusted category id payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns Nothing on success, or a failure result.
  *
  * @example
  * const RESULT = await deleteCategoryAction({
@@ -38,31 +41,30 @@ export interface DeleteCategoryActionInput {
  * @date 2026-09-25
  */
 export async function deleteCategoryAction(
-  input: DeleteCategoryActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<undefined>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = DELETE_CATEGORY_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { remove: REMOVE_CATEGORY } = CategoryContainer()
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
+    await REMOVE_CATEGORY.execute(PARSED.data)
 
-    const REPOSITORY = new CategoryRepository(db)
-    const USE_CASE = new DeleteCategoryUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      categoryId: input.categoryId,
-    })
-
-    return { error: null }
+    return ActionSuccess(undefined)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível excluir a categoria.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível excluir a categoria."
+    )
   }
 }

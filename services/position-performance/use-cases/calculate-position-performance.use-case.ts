@@ -108,22 +108,28 @@ export class CalculatePositionPerformanceUseCase {
     const TARGET_DATE = new Date(input.date)
     const POSITION_ID = EntityId.create(input.positionId)
 
-    const POSITION = await this.positionRepository.findById(POSITION_ID)
+    const POSITION =
+      await this.positionRepository.findById(POSITION_ID)
     if (!POSITION) {
       throw new NotFoundError("`Position` not found.")
     }
 
-    const FUND = await this.fundRepository.findById(POSITION.fundId)
+    const FUND = await this.fundRepository.findById(
+      POSITION.fundId
+    )
     if (!FUND) {
       throw new NotFoundError("`Fund` not found.")
     }
 
-    const CURRENT_QUOTA = await this.quotaRepository.findByFundIdAndDate(
-      POSITION.fundId,
-      TARGET_DATE
-    )
+    const CURRENT_QUOTA =
+      await this.quotaRepository.findByFundIdAndDate(
+        POSITION.fundId,
+        TARGET_DATE
+      )
     if (!CURRENT_QUOTA) {
-      throw new ValidationError("`Quota` is required for the target date.")
+      throw new ValidationError(
+        "`Quota` is required for the target date."
+      )
     }
 
     const PREVIOUS =
@@ -153,8 +159,10 @@ export class CalculatePositionPerformanceUseCase {
       lastPeriodQuotaQuantity: PREVIOUS
         ? PREVIOUS.quotasHeld
         : QuotaQuantity.create("0"),
-      applicationQuotasQuantity: DAILY_CALCULATION.applicationQuotas,
-      withdrawalQuotasQuantity: DAILY_CALCULATION.withdrawalQuotas,
+      applicationQuotasQuantity:
+        DAILY_CALCULATION.applicationQuotas,
+      withdrawalQuotasQuantity:
+        DAILY_CALCULATION.withdrawalQuotas,
     })
 
     const PATRIMONY = PositiveMoney.create(
@@ -212,7 +220,8 @@ export class CalculatePositionPerformanceUseCase {
       }),
     })
 
-    const SAVED = await this.positionPerformanceRepository.save(PERFORMANCE)
+    const SAVED =
+      await this.positionPerformanceRepository.save(PERFORMANCE)
     return toResponseDTO(SAVED)
   }
 
@@ -223,8 +232,12 @@ export class CalculatePositionPerformanceUseCase {
     applicationTotal: ReturnType<typeof calculateApplicationSum>
     redemptionTotal: ReturnType<typeof calculateWithdrawalSum>
     cashFlowNet: ReturnType<typeof calculateCashFlowNet>
-    applicationQuotas: ReturnType<typeof calculateApplicationQuotasSum>
-    withdrawalQuotas: ReturnType<typeof calculateWithdrawalQuotasSum>
+    applicationQuotas: ReturnType<
+      typeof calculateApplicationQuotasSum
+    >
+    withdrawalQuotas: ReturnType<
+      typeof calculateWithdrawalQuotasSum
+    >
   } {
     const APPLICATION_TOTAL = calculateApplicationSum({
       application: input.applications.map((application) => ({
@@ -271,18 +284,20 @@ export class CalculatePositionPerformanceUseCase {
     }
 
     const PREVIOUS_DATE = this.addDays(input.targetDate, -1)
-    const PREVIOUS_QUOTA = await this.quotaRepository.findByFundIdAndDate(
-      input.fundId,
-      PREVIOUS_DATE
-    )
+    const PREVIOUS_QUOTA =
+      await this.quotaRepository.findByFundIdAndDate(
+        input.fundId,
+        PREVIOUS_DATE
+      )
     if (!PREVIOUS_QUOTA) {
       return SignedPercentage.create("0")
     }
 
-    const CURRENT_QUOTA = await this.quotaRepository.findByFundIdAndDate(
-      input.fundId,
-      input.targetDate
-    )
+    const CURRENT_QUOTA =
+      await this.quotaRepository.findByFundIdAndDate(
+        input.fundId,
+        input.targetDate
+      )
     if (!CURRENT_QUOTA) {
       return SignedPercentage.create("0")
     }
@@ -307,8 +322,10 @@ export class CalculatePositionPerformanceUseCase {
 
     const QUOTAS_TODAY = calculateQuotasHeld({
       lastPeriodQuotaQuantity: input.previousQuotasHeld,
-      applicationQuotasQuantity: DAILY_CALCULATION.applicationQuotas,
-      withdrawalQuotasQuantity: DAILY_CALCULATION.withdrawalQuotas,
+      applicationQuotasQuantity:
+        DAILY_CALCULATION.applicationQuotas,
+      withdrawalQuotasQuantity:
+        DAILY_CALCULATION.withdrawalQuotas,
     })
 
     const DAILY_FACTOR = calculateDailyFactor({
@@ -329,12 +346,16 @@ export class CalculatePositionPerformanceUseCase {
     targetDate: Date
     months: number
   }): Promise<SignedPercentage | null> {
-    const WINDOW_START = this.addMonths(input.targetDate, -input.months)
-    const QUOTAS = await this.quotaRepository.findAllByFundIdsInPeriod(
-      [input.fundId],
-      WINDOW_START,
-      input.targetDate
+    const WINDOW_START = this.addMonths(
+      input.targetDate,
+      -input.months
     )
+    const QUOTAS =
+      await this.quotaRepository.findAllByFundIdsInPeriod(
+        [input.fundId],
+        WINDOW_START,
+        input.targetDate
+      )
     if (QUOTAS.length < 2) {
       return null
     }
@@ -346,7 +367,9 @@ export class CalculatePositionPerformanceUseCase {
     for (let index = 1; index < SORTED.length; index++) {
       FACTORS.push({
         value: GrowthFactor.create(
-          SORTED[index].price.value.dividedBy(SORTED[index - 1].price.value)
+          SORTED[index].price.value.dividedBy(
+            SORTED[index - 1].price.value
+          )
         ),
       })
     }
@@ -360,25 +383,33 @@ export class CalculatePositionPerformanceUseCase {
     previousAllocation: SignedPercentage | null
   }): Promise<SignedPercentage> {
     if (!input.categoryId) {
-      return input.previousAllocation ?? SignedPercentage.create("0")
+      return (
+        input.previousAllocation ?? SignedPercentage.create("0")
+      )
     }
 
-    const RELATIONS = await this.normsPortfoliosRepository.findAllByPortfolioId(
-      input.portfolioId
-    )
+    const RELATIONS =
+      await this.normsPortfoliosRepository.findAllByPortfolioId(
+        input.portfolioId
+      )
     if (RELATIONS.length === 0) {
-      return input.previousAllocation ?? SignedPercentage.create("0")
+      return (
+        input.previousAllocation ?? SignedPercentage.create("0")
+      )
     }
 
     const NORMS = await this.normRepository.findAllByCategoryId(
       input.categoryId
     )
     const NORM_IDS = new Set(NORMS.map((norm) => norm.id))
-    const MATCHING = RELATIONS.find((relation) => NORM_IDS.has(relation.normId))
+    const MATCHING = RELATIONS.find((relation) =>
+      NORM_IDS.has(relation.normId)
+    )
 
     return MATCHING
       ? MATCHING.targetAllocation
-      : (input.previousAllocation ?? SignedPercentage.create("0"))
+      : (input.previousAllocation ??
+          SignedPercentage.create("0"))
   }
 
   private addDays(date: Date, days: number): Date {

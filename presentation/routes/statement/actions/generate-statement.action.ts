@@ -1,39 +1,40 @@
 "use server"
 
-import { headers } from "next/headers"
-
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { PortfolioRepository } from "@/infrastructure/portfolio/repositories/portfolio.repository"
-import { StatementRepository } from "@/infrastructure/statement/repositories/statement.repository"
-import { ListPortfoliosUseCase } from "@/services/portfolio/use-cases/list-portfolios.use-case"
-import { GenerateStatementUseCase } from "@/services/statement/use-cases/generate-statement.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
+import { StatementContainer } from "@/presentation/composition/statement.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
+import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
 
 import { BuildStatementFileUrl } from "../helpers/build-statement-file-url.helper"
 import { BuildStatementPeriod } from "../helpers/build-statement-period.helper"
-import { STATEMENT_MONTH_PATTERN } from "../validations/generate-statement.validations"
-
-export interface GenerateStatementActionInput {
-  portfolioId: string
-  month: string
-}
+import { GENERATE_STATEMENT_SCHEMA } from "../validations/statement-actions.validation"
 
 /**
  * @summary
  * Generates a statement for the signed-in user.
  *
  * @remarks
- * Validates the month key and the portfolio ownership, builds
- * the UTC period range and the placeholder file url, then
- * persists the statement through the generate use case.
+ * Resolves the session first, then validates the portfolio
+ * id and the month key with **Zod**. The acting user comes
+ * from the session, never from the payload, and the same
+ * session scopes the portfolio ownership check before the
+ * UTC period range and the placeholder file url are built.
+ * Only then does the generate use case run. Returns a
+ * human-readable error when anything fails.
  *
  * @explanation
  * Use as the submit target of the generate report form.
  *
- * @param input - The portfolio id and month key.
+ * @param input - The untrusted portfolio and month payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns The generated statement, or a failure result.
  *
  * @example
  * const RESULT = await generateStatementAction({
@@ -46,61 +47,57 @@ export interface GenerateStatementActionInput {
  * @date 2026-09-25
  */
 export async function generateStatementAction(
-  input: GenerateStatementActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<StatementResponseDTO>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = GENERATE_STATEMENT_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { portfolioId: PORTFOLIO_ID, month: MONTH } =
+      PARSED.data
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
-
-    if (!STATEMENT_MONTH_PATTERN.test(input.month)) {
-      return { error: "Selecione um mês de referência." }
-    }
-
-    const PORTFOLIO_REPOSITORY = new PortfolioRepository(db)
-    const PORTFOLIOS_USE_CASE = new ListPortfoliosUseCase(
-      PORTFOLIO_REPOSITORY
-    )
-    const PORTFOLIOS = await PORTFOLIOS_USE_CASE.execute({
-      userId: SESSION.user.id,
+    const { list: LIST_PORTFOLIOS } = PortfolioContainer()
+    const PORTFOLIOS = await LIST_PORTFOLIOS.execute({
+      userId: USER.id,
     })
 
     const OWNS_PORTFOLIO = PORTFOLIOS.some(
-      (portfolio) => portfolio.id === input.portfolioId
+      (portfolio) => portfolio.id === PORTFOLIO_ID
     )
 
     if (!OWNS_PORTFOLIO) {
-      return { error: "Selecione uma carteira válida." }
+      return ActionFailure("Selecione uma carteira válida.")
     }
 
-    const PERIOD = BuildStatementPeriod(input.month)
+    const PERIOD = BuildStatementPeriod(MONTH)
     const FILE_URL = BuildStatementFileUrl({
-      portfolioId: input.portfolioId,
-      month: input.month,
+      portfolioId: PORTFOLIO_ID,
+      month: MONTH,
     })
 
-    const REPOSITORY = new StatementRepository(db)
-    const USE_CASE = new GenerateStatementUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      portfolioId: input.portfolioId,
+    const { generate: GENERATE_STATEMENT } = StatementContainer()
+    const STATEMENT = await GENERATE_STATEMENT.execute({
+      portfolioId: PORTFOLIO_ID,
       periodStart: PERIOD.periodStart,
       periodEnd: PERIOD.periodEnd,
-      generatedByUserId: SESSION.user.id,
+      generatedByUserId: USER.id,
       fileUrl: FILE_URL,
     })
 
-    return { error: null }
+    return ActionSuccess(STATEMENT)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível gerar o relatório.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível gerar o relatório."
+    )
   }
 }

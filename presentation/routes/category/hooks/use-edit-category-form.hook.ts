@@ -1,6 +1,6 @@
 "use client"
 
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { updateCategoryAction } from "@/presentation/routes/category/actions/update-category.action"
 import { CATEGORY_FORM_SCHEMA } from "@/presentation/routes/category/validations/category-form.validations"
 import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
@@ -11,7 +11,7 @@ import type { CategoryResponseDTO } from "@/services/category/dto/category-respo
  * submission.
  *
  * @remarks
- * Wraps `usePortfolioForm` with the category schema and
+ * Wraps `useEntityForm` with the category schema and
  * the update category server action. Seeds the initial
  * values from the provided category.
  *
@@ -44,7 +44,7 @@ function useEditCategoryForm(category: CategoryResponseDTO) {
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: CATEGORY_FORM_SCHEMA,
     initialValues: {
       name: category.name,

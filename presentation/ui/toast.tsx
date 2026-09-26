@@ -5,19 +5,33 @@ import { Toast as ToastPrimitive } from "@base-ui/react/toast"
 import { cn } from "cn"
 
 import { Button } from "@/presentation/ui/button"
-import { IconX, IconCircleCheck, IconInfoCircle, IconAlertTriangle, IconAlertOctagon, IconLoader } from "@tabler/icons-react"
+import {
+  IconX,
+  IconCircleCheck,
+  IconInfoCircle,
+  IconAlertTriangle,
+  IconAlertOctagon,
+  IconLoader,
+} from "@tabler/icons-react"
 
 const toast = ToastPrimitive.createToastManager()
 
-function ToastProvider({ ...props }: ToastPrimitive.Provider.Props) {
+function ToastProvider({
+  ...props
+}: ToastPrimitive.Provider.Props) {
   return <ToastPrimitive.Provider {...props} />
 }
 
 function ToastPortal({ ...props }: ToastPrimitive.Portal.Props) {
-  return <ToastPrimitive.Portal data-slot="toast-portal" {...props} />
+  return (
+    <ToastPrimitive.Portal data-slot="toast-portal" {...props} />
+  )
 }
 
-function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
+function ToastViewport({
+  className,
+  ...props
+}: ToastPrimitive.Viewport.Props) {
   return (
     <ToastPrimitive.Viewport
       data-slot="toast-viewport"
@@ -30,7 +44,10 @@ function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
   )
 }
 
-function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
+function Toast({
+  className,
+  ...props
+}: ToastPrimitive.Root.Props) {
   return (
     <ToastPrimitive.Root
       data-slot="toast"
@@ -57,7 +74,10 @@ function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
   )
 }
 
-function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
+function ToastContent({
+  className,
+  ...props
+}: ToastPrimitive.Content.Props) {
   return (
     <ToastPrimitive.Content
       data-slot="toast-content"
@@ -70,7 +90,10 @@ function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
   )
 }
 
-function ToastTitle({ className, ...props }: ToastPrimitive.Title.Props) {
+function ToastTitle({
+  className,
+  ...props
+}: ToastPrimitive.Title.Props) {
   return (
     <ToastPrimitive.Title
       data-slot="toast-title"
@@ -125,9 +148,7 @@ function ToastClose({
       )}
       {...props}
     >
-      {children ?? (
-        <IconX aria-hidden="true" />
-      )}
+      {children ?? <IconX aria-hidden="true" />}
     </ToastPrimitive.Close>
   )
 }
@@ -136,26 +157,23 @@ function ToastIcon({ type }: { type: string | undefined }) {
   let icon: React.ReactNode = null
 
   if (type === "success") {
-    icon = (
-      <IconCircleCheck aria-hidden="true" />
-    )
+    icon = <IconCircleCheck aria-hidden="true" />
   }
 
   if (type === "info") {
-    icon = (
-      <IconInfoCircle aria-hidden="true" />
-    )
+    icon = <IconInfoCircle aria-hidden="true" />
   }
 
   if (type === "warning") {
-    icon = (
-      <IconAlertTriangle aria-hidden="true" />
-    )
+    icon = <IconAlertTriangle aria-hidden="true" />
   }
 
   if (type === "error") {
     icon = (
-      <IconAlertOctagon className="text-destructive" aria-hidden="true" />
+      <IconAlertOctagon
+        className="text-destructive"
+        aria-hidden="true"
+      />
     )
   }
 

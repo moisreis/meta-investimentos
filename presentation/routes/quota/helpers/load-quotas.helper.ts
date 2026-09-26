@@ -1,13 +1,7 @@
-import { headers } from "next/headers"
-
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { FundRepository } from "@/infrastructure/fund/repositories/fund.repository"
-import { QuotaRepository } from "@/infrastructure/quota/repositories/quota.repository"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { QuotaContainer } from "@/presentation/composition/quota.container"
 import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
-import { ListFundsUseCase } from "@/services/fund/use-cases/list-funds.use-case"
 import type { QuotaResponseDTO } from "@/services/quota/dto/quota-response.dto"
-import { ListAllQuotasUseCase } from "@/services/quota/use-cases/list-all-quotas.use-case"
 
 // Data resolved by the quota list loader.
 export interface LoadedQuotaList {
@@ -21,10 +15,11 @@ export interface LoadedQuotaList {
  * the quotas imported across those funds.
  *
  * @remarks
- * Fetches the session from the request headers, lists
- * all funds and delegates the quota query to the bulk
- * lookup use case. Returns null when there is no
- * active session.
+ * Derives the acting user from the session, lists all funds
+ * and delegates the quota query to the bulk lookup use
+ * case. Every read goes through the container, so the
+ * delivery layer never touches a repository. Returns null
+ * when there is no active session.
  *
  * @explanation
  * Use this helper from the page loader so the session
@@ -41,21 +36,17 @@ export interface LoadedQuotaList {
  * @date 2026-09-25
  */
 export async function LoadQuotas(): Promise<LoadedQuotaList | null> {
-  const SESSION = await auth.api.getSession({
-    headers: await headers(),
-  })
+  const USER = await RequireSessionUser()
 
-  if (!SESSION?.user) return null
+  if (!USER) return null
 
-  const FUND_REPOSITORY = new FundRepository(db)
-  const FUNDS_USE_CASE = new ListFundsUseCase(FUND_REPOSITORY)
-  const FUNDS = await FUNDS_USE_CASE.execute({})
+  const {
+    listAllQuotas: LIST_ALL_QUOTAS,
+    listFunds: LIST_FUNDS,
+  } = QuotaContainer()
 
-  const QUOTA_REPOSITORY = new QuotaRepository(db)
-  const QUOTAS_USE_CASE = new ListAllQuotasUseCase(
-    QUOTA_REPOSITORY
-  )
-  const QUOTAS = await QUOTAS_USE_CASE.execute({
+  const FUNDS = await LIST_FUNDS.execute({})
+  const QUOTAS = await LIST_ALL_QUOTAS.execute({
     fundIds: FUNDS.map((fund) => fund.id),
   })
 

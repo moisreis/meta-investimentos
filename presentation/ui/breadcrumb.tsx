@@ -4,7 +4,10 @@ import { useRender } from "@base-ui/react/use-render"
 import { cn } from "cn"
 import { IconChevronRight, IconDots } from "@tabler/icons-react"
 
-function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
+function Breadcrumb({
+  className,
+  ...props
+}: React.ComponentProps<"nav">) {
   return (
     <nav
       aria-label="breadcrumb"
@@ -15,7 +18,10 @@ function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
   )
 }
 
-function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
+function BreadcrumbList({
+  className,
+  ...props
+}: React.ComponentProps<"ol">) {
   return (
     <ol
       data-slot="breadcrumb-list"
@@ -28,7 +34,10 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
   )
 }
 
-function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
+function BreadcrumbItem({
+  className,
+  ...props
+}: React.ComponentProps<"li">) {
   return (
     <li
       data-slot="breadcrumb-item"
@@ -47,7 +56,10 @@ function BreadcrumbLink({
     defaultTagName: "a",
     props: mergeProps<"a">(
       {
-        className: cn("transition-colors hover:text-foreground", className),
+        className: cn(
+          "transition-colors hover:text-foreground",
+          className
+        ),
       },
       props
     ),
@@ -58,7 +70,10 @@ function BreadcrumbLink({
   })
 }
 
-function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
+function BreadcrumbPage({
+  className,
+  ...props
+}: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="breadcrumb-page"
@@ -84,9 +99,7 @@ function BreadcrumbSeparator({
       className={cn("[&>svg]:size-3.5", className)}
       {...props}
     >
-      {children ?? (
-        <IconChevronRight />
-      )}
+      {children ?? <IconChevronRight />}
     </li>
   )
 }
@@ -106,8 +119,7 @@ function BreadcrumbEllipsis({
       )}
       {...props}
     >
-      <IconDots
-      />
+      <IconDots />
       <span className="sr-only">More</span>
     </span>
   )

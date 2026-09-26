@@ -8,13 +8,13 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
+import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
 
 import { CreateBankTableColumns } from "../datatable/table-columns"
 import type { BankRowSummary } from "../types/bank-list.types"
-import { useBankAddDialog } from "./use-bank-add-dialog.hook"
 import { useBankBulkDelete } from "./use-bank-bulk-delete.hook"
-import { useBankEditDialog } from "./use-bank-edit-dialog.hook"
 import { useBankRowActions } from "./use-bank-row-actions.hook"
 
 // Column helper bound to the entity table features.
@@ -50,8 +50,8 @@ function useBankDatatable(
   banks: BankResponseDTO[],
   summaries: Record<string, BankRowSummary> | null = null
 ) {
-  const addDialog = useBankAddDialog()
-  const editDialog = useBankEditDialog()
+  const addDialog = useEntityAddDialog()
+  const editDialog = useEntityEditDialog<BankResponseDTO>()
   const rowActions = useBankRowActions()
   const bulkDelete = useBankBulkDelete()
 

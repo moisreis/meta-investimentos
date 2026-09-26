@@ -2,9 +2,16 @@ import {
   Position,
   type PositionProps,
 } from "@domain/position/entities/position.entity"
-import { EntityId, PositiveMoney } from "@/value-objects"
+import {
+  EntityId,
+  PositiveMoney,
+  SignedPercentage,
+} from "@/value-objects"
 import type { CreatePositionDTO } from "../dto/create-position.dto"
 import type { PositionResponseDTO } from "../dto/position-response.dto"
+
+// Share held by the only position of a portfolio.
+const FULL_ALLOCATION = "100"
 
 /**
  * @summary
@@ -29,7 +36,9 @@ import type { PositionResponseDTO } from "../dto/position-response.dto"
  *
  * @date 2026-09-22
  */
-export function toCreatePositionProps(dto: CreatePositionDTO): PositionProps {
+export function toCreatePositionProps(
+  dto: CreatePositionDTO
+): PositionProps {
   return {
     portfolioId: EntityId.create(dto.portfolioId),
     fundId: EntityId.create(dto.fundId),
@@ -39,6 +48,9 @@ export function toCreatePositionProps(dto: CreatePositionDTO): PositionProps {
     initialBalanceDate: dto.initialBalanceDate
       ? new Date(dto.initialBalanceDate)
       : null,
+    allocation: SignedPercentage.create(
+      dto.allocation ?? FULL_ALLOCATION
+    ),
   }
 }
 
@@ -64,7 +76,9 @@ export function toCreatePositionProps(dto: CreatePositionDTO): PositionProps {
  *
  * @date 2026-09-22
  */
-export function toResponseDTO(entity: Position): PositionResponseDTO {
+export function toResponseDTO(
+  entity: Position
+): PositionResponseDTO {
   return {
     id: entity.id as string,
     portfolioId: entity.portfolioId,
@@ -75,6 +89,7 @@ export function toResponseDTO(entity: Position): PositionResponseDTO {
     initialBalanceDate: entity.initialBalanceDate
       ? entity.initialBalanceDate.toISOString()
       : null,
+    allocation: entity.allocation.value.toString(),
     version: entity.version,
     createdAt: entity.createdAt.toISOString(),
     updatedAt: entity.updatedAt.toISOString(),

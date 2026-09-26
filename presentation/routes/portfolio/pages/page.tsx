@@ -14,8 +14,8 @@ import {
   EMPTY_PORTFOLIO_OVERVIEW,
   type PortfolioOverviewData,
 } from "../types/portfolio-overview.types"
-import { EntityDatatableAddItemButton } from "@/presentation/parts/components/entity-datatable-add-item-button"
-import { ChartBarDefault } from "../charts/bar-chart"
+import { AddApplicationButton } from "@/presentation/routes/application/components/add-application-button"
+import { AddWithdrawalButton } from "@/presentation/routes/withdrawal/components/add-withdrawal-button"
 
 interface PortfolioPageProps {
   data: PortfolioOverviewData | null
@@ -31,6 +31,12 @@ interface PortfolioPageProps {
  * selects the window the KPIs are computed from; KPI
  * values, trends and comparisons come from the overview
  * hook and never from component-local logic.
+ *
+ * The toolbar actions host the entry points of the
+ * add application and add withdrawal flows. Each button
+ * owns its own dialog, toast and add-another prompt, so
+ * the screen only supplies the options loaded for this
+ * portfolio.
  *
  * @param props - Props of the portfolio detail screen.
  * @param props.data - The overview data, or `null` when
@@ -70,7 +76,15 @@ function PortfolioPage({ data }: PortfolioPageProps) {
           />
         }
         actions={
-            <EntityDatatableAddItemButton />
+          <>
+            <AddApplicationButton
+              portfolioId={DATA.portfolioId}
+              options={DATA.applicationOptions}
+            />
+            <AddWithdrawalButton
+              options={DATA.withdrawalOptions}
+            />
+          </>
         }
       />
 
@@ -103,15 +117,6 @@ function PortfolioPage({ data }: PortfolioPageProps) {
               />
             ))}
           </EntityDatatableKpiGroup>
-
-<div className="flex flex-col gap-2 p-4">
-<h2>Histórico de performance</h2>
-
-          <div className="grid grid-cols-2 gap-4">
-            <ChartBarDefault />
-            <ChartBarDefault />
-          </div>
-          </div>
         </>
       ) : (
         <EntityEmptyTable

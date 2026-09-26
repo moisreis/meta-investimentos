@@ -2,8 +2,9 @@
 
 import { EntityAddDialog } from "@/presentation/parts/dialogs/entity-add"
 import { EntityAddToast } from "@/presentation/parts/toasts/entity-add-toast"
+import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
+import type { EntityAddDialogModel } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { AddUserForm } from "@/presentation/routes/users/forms/add"
-import { useUserAddDialog } from "@/presentation/routes/users/hooks/use-user-add-dialog.hook"
 import {
   USER_DIALOG,
   USER_FORM,
@@ -15,7 +16,7 @@ import { UserAddAnotherDialog } from "./add-another"
  * Props for the user add dialog.
  */
 export interface UserAddDialogProps {
-  dialog: ReturnType<typeof useUserAddDialog>
+  dialog: EntityAddDialogModel
 }
 
 /**

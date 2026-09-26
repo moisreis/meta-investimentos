@@ -4,7 +4,7 @@ import {
   MaskPercentage,
   UnmaskPercentage,
 } from "@/presentation/masks/percentage.mask"
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { updatePortfolioAction } from "@/presentation/routes/portfolio/actions/update-portfolio.action"
 import { PORTFOLIO_FORM_SCHEMA } from "@/presentation/routes/portfolio/validations/portfolio-form.validations"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
@@ -15,7 +15,7 @@ import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-re
  * submission.
  *
  * @remarks
- * Wraps `usePortfolioForm` with the portfolio schema and the
+ * Wraps `useEntityForm` with the portfolio schema and the
  * update portfolio server action. Seeds the initial values
  * from the provided portfolio, masking its percentages, and
  * unmask them before they are sent back.
@@ -49,7 +49,7 @@ function useEditPortfolioForm(portfolio: PortfolioResponseDTO) {
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: PORTFOLIO_FORM_SCHEMA,
     initialValues: {
       acronym: portfolio.acronym,

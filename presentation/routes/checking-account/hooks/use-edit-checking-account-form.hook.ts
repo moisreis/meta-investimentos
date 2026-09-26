@@ -1,10 +1,10 @@
 "use client"
 
 import {
-  MaskMoney,
-  UnmaskMoney,
-} from "@/presentation/masks/money.mask"
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+  MaskCurrency,
+  UnmaskCurrency,
+} from "@/presentation/masks/currency.mask"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { updateCheckingAccountAction } from "@/presentation/routes/checking-account/actions/update-checking-account.action"
 import { CHECKING_ACCOUNT_EDIT_FORM_SCHEMA } from "@/presentation/routes/checking-account/validations/checking-account-form.validations"
 import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
@@ -15,7 +15,7 @@ import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto
  * validation and submission.
  *
  * @remarks
- * Wraps `usePortfolioForm` with the checking account
+ * Wraps `useEntityForm` with the checking account
  * edit schema and the update server action. Seeds the
  * initial value from the provided balance.
  *
@@ -50,15 +50,15 @@ function useEditCheckingAccountForm(
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: CHECKING_ACCOUNT_EDIT_FORM_SCHEMA,
     initialValues: {
-      value: MaskMoney(entry.value),
+      value: MaskCurrency(entry.value),
     },
     submit: (values) =>
       updateCheckingAccountAction({
         checkingAccountId: entry.id,
-        value: UnmaskMoney(values.value),
+        value: UnmaskCurrency(values.value),
       }),
   })
 

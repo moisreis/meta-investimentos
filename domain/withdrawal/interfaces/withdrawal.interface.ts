@@ -1,5 +1,9 @@
 import type { Withdrawal } from "@domain/withdrawal/entities/withdrawal.entity"
-import type { EntityId, PositiveMoney, QuotaQuantity } from "@/value-objects"
+import type {
+  EntityId,
+  PositiveMoney,
+  QuotaQuantity,
+} from "@/value-objects"
 
 /**
  * @summary
@@ -95,7 +99,9 @@ export interface IWithdrawal {
    *
    * @date 2026-09-13
    */
-  findAllByPositionId(positionId: EntityId): Promise<Withdrawal[]>
+  findAllByPositionId(
+    positionId: EntityId
+  ): Promise<Withdrawal[]>
 
   /**
    * @summary
@@ -159,6 +165,36 @@ export interface IWithdrawal {
     positionIds: EntityId[],
     startDate: Date,
     endDate: Date
+  ): Promise<Withdrawal[]>
+
+  /**
+   * @summary
+   * Retrieves all withdrawals of the provided positions.
+   *
+   * @remarks
+   * Returns an empty array when no withdrawals match or
+   * when the input list is empty. Rows are ordered
+   * oldest-first so **FIFO** consumption is deterministic.
+   *
+   * @explanation
+   * Use this method to list withdrawals across many
+   * positions in a single query, feeding registry screens
+   * that group rows from every portfolio.
+   *
+   * @param positionIds - The identifiers of the positions.
+   *
+   * @returns The matching entries.
+   *
+   * @example
+   * const WDS = await WITHDRAWAL_REPO
+   *   .findAllByPositionIds(POS_IDS);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  findAllByPositionIds(
+    positionIds: EntityId[]
   ): Promise<Withdrawal[]>
 
   /**

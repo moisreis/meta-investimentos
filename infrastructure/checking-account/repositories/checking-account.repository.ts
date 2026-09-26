@@ -132,12 +132,20 @@ export class CheckingAccountRepository implements ICheckingAccount {
     limit?: number
     offset?: number
   }): Promise<CheckingAccount[]> {
-    const ROWS = await this.db
+    const QUERY = this.db
       .select()
       .from(checkingAccount)
       .orderBy(desc(checkingAccount.date))
-      .limit(options?.limit ?? 100)
-      .offset(options?.offset ?? 0)
+
+    // Returns every row unless the caller asks for a
+    // window. A paginated caller must always set limit,
+    // because offset is only valid alongside it.
+    const ROWS =
+      options?.limit === undefined
+        ? await QUERY
+        : await QUERY.limit(options.limit).offset(
+            options.offset ?? 0
+          )
 
     return ROWS.map((row) => ToDomain(row))
   }

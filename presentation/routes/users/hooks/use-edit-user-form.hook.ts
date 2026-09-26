@@ -1,6 +1,6 @@
 "use client"
 
-import { usePortfolioForm } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { updateUserAction } from "@/presentation/routes/users/actions/update-user.action"
 import { USER_EDIT_FORM_SCHEMA } from "@/presentation/routes/users/validations/user-form.validations"
 import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
@@ -11,7 +11,7 @@ import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
  * submission.
  *
  * @remarks
- * Wraps `usePortfolioForm` with the user schema and the
+ * Wraps `useEntityForm` with the user schema and the
  * update user server action. Seeds the initial values
  * from the provided user.
  *
@@ -45,7 +45,7 @@ function useEditUserForm(user: UserResponseDTO) {
     status: STATUS,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
-  } = usePortfolioForm({
+  } = useEntityForm({
     schema: USER_EDIT_FORM_SCHEMA,
     initialValues: {
       name: user.name,

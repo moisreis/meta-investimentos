@@ -9,7 +9,7 @@ import { NativeSelect } from "@/presentation/ui/native-select"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
-import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { useAddUserForm } from "@/presentation/routes/users/hooks/use-add-user-form.hook"
 import {
   USER_FORM,
@@ -21,7 +21,7 @@ import {
  */
 export interface AddUserFormProps {
   onStatusChange?: (
-    status: PortfolioFormStatus,
+    status: EntityFormStatus,
     error: string | null
   ) => void
 }

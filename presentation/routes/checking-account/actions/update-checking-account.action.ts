@@ -1,34 +1,36 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { CheckingAccountRepository } from "@/infrastructure/checking-account/repositories/checking-account.repository"
-import { UpdateCheckingAccountUseCase } from "@/services/checking-account/use-cases/update-checking-account.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { CheckingAccountContainer } from "@/presentation/composition/checking-account.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
+import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
 
-export interface UpdateCheckingAccountActionInput {
-  checkingAccountId: string
-  value: string
-}
+import { UPDATE_CHECKING_ACCOUNT_SCHEMA } from "../validations/checking-account-actions.validation"
 
 /**
  * @summary
  * Updates the value of an existing checking account.
  *
  * @remarks
- * Resolves the session user from the request headers
- * and persists the updated balance through the service
- * use case. Returns a human-readable error when
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the update use case.
+ * The acting user is derived from the session, never from
+ * the payload. Returns a human-readable error when
  * anything fails.
  *
  * @explanation
  * Use as the submit target of the edit checking account
  * form.
  *
- * @param input - The balance update payload.
+ * @param input - The untrusted balance update payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns The updated balance, or a failure result.
  *
  * @example
  * const RESULT = await updateCheckingAccountAction({
@@ -41,32 +43,32 @@ export interface UpdateCheckingAccountActionInput {
  * @date 2026-09-25
  */
 export async function updateCheckingAccountAction(
-  input: UpdateCheckingAccountActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<CheckingAccountResponseDTO>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = UPDATE_CHECKING_ACCOUNT_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { update: UPDATE_CHECKING_ACCOUNT } =
+      CheckingAccountContainer()
+    const ENTRY = await UPDATE_CHECKING_ACCOUNT.execute(
+      PARSED.data
+    )
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
-
-    const REPOSITORY = new CheckingAccountRepository(db)
-    const USE_CASE = new UpdateCheckingAccountUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      checkingAccountId: input.checkingAccountId,
-      value: input.value,
-    })
-
-    return { error: null }
+    return ActionSuccess(ENTRY)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível atualizar o saldo.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível atualizar o saldo."
+    )
   }
 }

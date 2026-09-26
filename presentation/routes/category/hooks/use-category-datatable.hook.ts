@@ -8,13 +8,13 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
+import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
 
 import { CreateCategoryTableColumns } from "../datatable/table-columns"
 import type { CategoryRowSummary } from "../types/category-list.types"
-import { useCategoryAddDialog } from "./use-category-add-dialog.hook"
 import { useCategoryBulkDelete } from "./use-category-bulk-delete.hook"
-import { useCategoryEditDialog } from "./use-category-edit-dialog.hook"
 import { useCategoryRowActions } from "./use-category-row-actions.hook"
 
 // Column helper bound to the entity table features.
@@ -50,8 +50,8 @@ function useCategoryDatatable(
   categories: CategoryResponseDTO[],
   summaries: Record<string, CategoryRowSummary> | null = null
 ) {
-  const addDialog = useCategoryAddDialog()
-  const editDialog = useCategoryEditDialog()
+  const addDialog = useEntityAddDialog()
+  const editDialog = useEntityEditDialog<CategoryResponseDTO>()
   const rowActions = useCategoryRowActions()
   const bulkDelete = useCategoryBulkDelete()
 

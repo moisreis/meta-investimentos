@@ -2,8 +2,10 @@
 
 import { EntityEditDialog } from "@/presentation/parts/dialogs/entity-edit"
 import { EntityEditToast } from "@/presentation/parts/toasts/entity-edit-toast"
+import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
+import type { EntityEditDialogModel } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
+import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
 import { EditCategoryForm } from "@/presentation/routes/category/forms/edit"
-import { useCategoryEditDialog } from "@/presentation/routes/category/hooks/use-category-edit-dialog.hook"
 import {
   CATEGORY_DIALOG,
   CATEGORY_FORM,
@@ -13,7 +15,7 @@ import {
  * Props for the category edit dialog.
  */
 export interface CategoryEditDialogProps {
-  dialog: ReturnType<typeof useCategoryEditDialog>
+  dialog: EntityEditDialogModel<CategoryResponseDTO>
 }
 
 /**

@@ -45,6 +45,9 @@ export const FUND_FORM = {
   PLACEHOLDER_BANK: "Selecione o banco",
   PLACEHOLDER_BENCHMARK: "Sem benchmark",
   PLACEHOLDER_CATEGORY: "Sem categoria",
+
+  // Registry combobox empty copy.
+  SEARCH_EMPTY: "Nenhum resultado encontrado",
 } as const
 
 // Dialog copy for the fund add/edit flows.

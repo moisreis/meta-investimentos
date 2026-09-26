@@ -1,12 +1,6 @@
-import { headers } from "next/headers"
-
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { AuditLogRepository } from "@/infrastructure/audit-log/repositories/audit-log.repository"
-import { UserRepository } from "@/infrastructure/user/repositories/user.repository"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { AuditLogContainer } from "@/presentation/composition/audit-log.container"
 import type { AuditLogResponseDTO } from "@/services/audit-log/dto/audit-log-response.dto"
-import { ListAuditLogsUseCase } from "@/services/audit-log/use-cases/list-audit-logs.use-case"
-import { ListUsersByIdsUseCase } from "@/services/user/use-cases/list-users-by-ids.use-case"
 
 import { BuildAuditLogRowSummaries } from "./build-audit-log-row-summaries.helper"
 import type { AuditLogRowSummary } from "../types/audit-log-list.types"
@@ -41,17 +35,14 @@ export interface LoadSessionAuditLogsOutput {
  * @date 2026-09-25
  */
 export async function LoadSessionAuditLogs(): Promise<LoadSessionAuditLogsOutput | null> {
-  const SESSION = await auth.api.getSession({
-    headers: await headers(),
-  })
+  const USER = await RequireSessionUser()
 
-  if (!SESSION?.user) return null
+  if (!USER) return null
 
-  const AUDIT_LOG_REPOSITORY = new AuditLogRepository(db)
-  const LIST_USE_CASE = new ListAuditLogsUseCase(
-    AUDIT_LOG_REPOSITORY
-  )
-  const LOGS = await LIST_USE_CASE.execute()
+  const { list: LIST_LOGS, listUsers: LIST_USERS } =
+    AuditLogContainer()
+
+  const LOGS = await LIST_LOGS.execute()
 
   const ACTOR_IDS = Array.from(
     new Set(
@@ -61,11 +52,7 @@ export async function LoadSessionAuditLogs(): Promise<LoadSessionAuditLogsOutput
     )
   )
 
-  const USER_REPOSITORY = new UserRepository(db)
-  const LIST_USERS_USE_CASE = new ListUsersByIdsUseCase(
-    USER_REPOSITORY
-  )
-  const USERS = await LIST_USERS_USE_CASE.execute({
+  const USERS = await LIST_USERS.execute({
     userIds: ACTOR_IDS,
   })
 

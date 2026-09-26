@@ -1,41 +1,48 @@
 "use server"
 
-import { db } from "@/clients/database.client"
-import { PortfolioPerformanceRepository } from "@/infrastructure/portfolio-performance/repositories/portfolio-performance.repository"
-import { LoadSessionPortfolios } from "@/presentation/routes/portfolio/helpers/load-session-portfolios.helper"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
-import { ListPortfolioPerformanceByRangeUseCase } from "@/services/portfolio-performance/use-cases/list-portfolio-performance-by-range.use-case"
 
-export interface ListPortfolioPerformanceActionInput {
-  from: string
-  to: string
-}
+import { LIST_PORTFOLIO_PERFORMANCE_SCHEMA } from "../validations/portfolio-actions.validation"
 
-export interface ListPortfolioPerformanceActionOutput {
-  data: PortfolioPerformanceResponseDTO[] | null
-  error?: string | null
-}
+// Closes the `to` boundary on the last millisecond of the
+// UTC day, so a snapshot of that day is inside the range.
+const END_OF_DAY = "T23:59:59.999Z"
+
+// Opens the `from` boundary on the first millisecond of the
+// UTC day.
+const START_OF_DAY = "T00:00:00.000Z"
 
 /**
  * @summary
  * Lists the portfolio performances within a date range.
  *
  * @remarks
- * Resolves the session user and the user portfolios
- * through the shared loader, then returns the latest
- * `portfolio_performance` snapshot of each portfolio that
- * falls inside `[from, to]`. The boundaries are UTC day
- * keys (`YYYY-MM-DD`) mapped to UTC midnight and the last
- * millisecond of the day.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then lists the portfolios of the
+ * acting user and the latest `portfolio_performance`
+ * snapshot of each one that falls inside `[from, to]`. The
+ * boundaries are UTC day keys (`YYYY-MM-DD`) mapped to UTC
+ * midnight and to the last millisecond of the day. The
+ * range never crosses user boundaries because the ids come
+ * from the session, never from the payload.
  *
  * @explanation
  * Use as the fetch target of the portfolio date range
- * filter. The range never crosses user boundaries because
- * the action scopes the query to the signed-in user.
+ * filter.
  *
- * @param input - The inclusive day boundaries.
+ * @param input - The untrusted inclusive day boundaries.
  *
- * @returns The action outcome with an optional error.
+ * @returns The latest snapshots in the range, or a failure
+ *          result.
  *
  * @example
  * const RESULT = await listPortfolioPerformanceAction({
@@ -48,35 +55,46 @@ export interface ListPortfolioPerformanceActionOutput {
  * @date 2026-09-25
  */
 export async function listPortfolioPerformanceAction(
-  input: ListPortfolioPerformanceActionInput
-): Promise<ListPortfolioPerformanceActionOutput> {
+  input: unknown
+): Promise<ActionResult<PortfolioPerformanceResponseDTO[]>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED =
+    LIST_PORTFOLIO_PERFORMANCE_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION_BUNDLE = await LoadSessionPortfolios()
+    const {
+      list: LIST_PORTFOLIOS,
+      listPerformanceByRange: LIST_RANGE,
+    } = PortfolioContainer()
 
-    if (!SESSION_BUNDLE) {
-      return { data: null, error: "Faça login para continuar." }
-    }
-
-    const { portfolios: PORTFOLIOS } = SESSION_BUNDLE
-
-    const PERFORMANCE_REPOSITORY =
-      new PortfolioPerformanceRepository(db)
-    const RANGE_USE_CASE =
-      new ListPortfolioPerformanceByRangeUseCase(
-        PERFORMANCE_REPOSITORY
-      )
-
-    const DATA = await RANGE_USE_CASE.execute({
-      portfolioIds: PORTFOLIOS.map((portfolio) => portfolio.id),
-      from: new Date(`${input.from}T00:00:00.000Z`),
-      to: new Date(`${input.to}T23:59:59.999Z`),
+    const PORTFOLIOS = await LIST_PORTFOLIOS.execute({
+      userId: USER.id,
     })
 
-    return { data: DATA, error: null }
-  } catch (cause) {
-    return {
-      data: null,
-      error: "Não foi possível carregar o desempenho.",
+    if (PORTFOLIOS.length === 0) {
+      return ActionSuccess([])
     }
+
+    const DATA = await LIST_RANGE.execute({
+      portfolioIds: PORTFOLIOS.map((portfolio) => portfolio.id),
+      from: new Date(`${PARSED.data.from}${START_OF_DAY}`),
+      to: new Date(`${PARSED.data.to}${END_OF_DAY}`),
+    })
+
+    return ActionSuccess(DATA)
+  } catch (cause) {
+    return ToActionFailure(
+      cause,
+      "Não foi possível carregar o desempenho."
+    )
   }
 }

@@ -1,68 +1,68 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { BankRepository } from "@/infrastructure/bank/repositories/bank.repository"
-import { DeleteBankUseCase } from "@/services/bank/use-cases/delete-bank.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { BankContainer } from "@/presentation/composition/bank.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 
-export interface DeleteBankActionInput {
-  bankId: string
-}
+import { DELETE_BANK_SCHEMA } from "../validations/bank-actions.validation"
 
 /**
  * @summary
  * Deletes a bank.
  *
  * @remarks
- * Resolves the session user from the request headers
- * and runs the delete use case. Returns a
- * human-readable error when anything fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the delete use case. The
+ * acting user is derived from the session, never from the
+ * payload. Returns a human-readable error when anything
+ * fails.
  *
  * @explanation
- * Use as the submit target of the single-row delete
- * flow of the bank datatable.
+ * Use as the submit target of the single-row delete flow
+ * of the bank datatable.
  *
- * @param input - The bank id to delete.
+ * @param input - The untrusted bank id payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns Nothing on success, or a failure result.
  *
  * @example
- * const RESULT = await deleteBankAction({
- *   bankId: "bank-1",
- * });
+ * const RESULT = await deleteBankAction({ bankId: "bank-1" });
  *
  * @author Moisés Reis
  *
  * @date 2026-09-25
  */
 export async function deleteBankAction(
-  input: DeleteBankActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<undefined>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = DELETE_BANK_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { remove: REMOVE_BANK } = BankContainer()
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
+    await REMOVE_BANK.execute(PARSED.data)
 
-    const REPOSITORY = new BankRepository(db)
-    const USE_CASE = new DeleteBankUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      bankId: input.bankId,
-    })
-
-    return { error: null }
+    return ActionSuccess(undefined)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível excluir o banco.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível excluir o banco."
+    )
   }
 }

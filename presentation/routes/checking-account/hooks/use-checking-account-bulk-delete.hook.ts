@@ -1,57 +1,35 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-
-import { useAuthFormToast } from "@/presentation/parts/hooks/use-auth-form-toast.hook"
+import { useEntityBulkDeleteAction } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
+import type { EntityBulkDeleteModel } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
 import { bulkDeleteCheckingAccountsAction } from "@/presentation/routes/checking-account/actions/bulk-delete-checking-accounts.action"
 import { CHECKING_ACCOUNT_DATATABLE } from "@/presentation/routes/checking-account/settings/labels.settings"
 import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
 
 /**
  * @summary
- * Manages the bulk delete flow of the checking account
- * datatable.
+ * Binds the checking account bulk delete flow to the shared
+ * entity bulk delete action.
  *
  * @remarks
- * Runs the bulk delete server action with the ids of
- * the selected rows, toasts the outcome and refreshes
- * the server data after a successful deletion.
+ * Maps the selected row ids to the route bulk delete
+ * server action and reuses the route datatable copy for
+ * the outcome toast.
  *
- * @returns The callback invoked with the selected
- *          items.
+ * @returns The bulk delete callback for the datatable.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-25
+ * @date 2026-09-26
  */
-function useCheckingAccountBulkDelete() {
-  const ROUTER = useRouter()
-  const { showSuccess, showError } = useAuthFormToast({
-    successTitle:
-      CHECKING_ACCOUNT_DATATABLE.BULK_DELETE_SUCCESS_TITLE,
-    successDescription:
-      CHECKING_ACCOUNT_DATATABLE.BULK_DELETE_SUCCESS_DESCRIPTION,
-    errorTitle:
-      CHECKING_ACCOUNT_DATATABLE.BULK_DELETE_ERROR_TITLE,
+function useCheckingAccountBulkDelete(): EntityBulkDeleteModel<CheckingAccountResponseDTO> {
+  return useEntityBulkDeleteAction<CheckingAccountResponseDTO>({
+    run: (ids) =>
+      bulkDeleteCheckingAccountsAction({
+        checkingAccountIds: ids,
+      }),
+    labels: CHECKING_ACCOUNT_DATATABLE,
   })
-
-  async function HandleBulkDelete(
-    items: CheckingAccountResponseDTO[]
-  ) {
-    const RESULT = await bulkDeleteCheckingAccountsAction({
-      checkingAccountIds: items.map((item) => item.id),
-    })
-
-    if (RESULT.error) {
-      showError(RESULT.error)
-      return
-    }
-
-    showSuccess()
-    ROUTER.refresh()
-  }
-
-  return { handleBulkDelete: HandleBulkDelete }
 }
 
 export { useCheckingAccountBulkDelete }

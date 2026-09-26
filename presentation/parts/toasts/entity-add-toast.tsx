@@ -3,13 +3,13 @@
 import * as React from "react"
 
 import { useAuthFormToast } from "@/presentation/parts/hooks/use-auth-form-toast.hook"
-import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 
 /**
  * Props for the entity add result toast.
  */
 export interface EntityAddToastProps {
-  status: PortfolioFormStatus
+  status: EntityFormStatus
   errorMessage?: string | null
   successTitle: string
   successDescription: string

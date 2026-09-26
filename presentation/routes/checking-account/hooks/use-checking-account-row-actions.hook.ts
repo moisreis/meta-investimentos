@@ -1,90 +1,31 @@
 "use client"
 
-import { useCallback, useState } from "react"
-import { useRouter } from "next/navigation"
-
-import type { EntityDeleteToastStatus } from "@/presentation/parts/toasts/entity-delete-toast"
+import { useEntityRowActions } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
+import type { EntityRowActionsModel } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
 import { deleteCheckingAccountAction } from "@/presentation/routes/checking-account/actions/delete-checking-account.action"
 import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
 
 /**
  * @summary
- * Manages the delete row action of the checking account
- * datatable.
+ * Binds the checking account row actions to the shared
+ * entity row actions hook.
  *
  * @remarks
- * Exposes the delete target selection and the confirmed
- * delete flow. The confirm handler runs the server
- * action, reports the delete status for the result
- * toast and refreshes the server data after a
- * successful deletion.
+ * Maps the row id to the route delete server action
+ * only. The shared hook owns the confirm dialog
+ * state and the delete result toast status.
  *
- * @returns The row action and single-delete dialog
- *          state.
+ * @returns The row actions and delete dialog state.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-25
+ * @date 2026-09-26
  */
-function useCheckingAccountRowActions() {
-  const ROUTER = useRouter()
-  const [DELETE_TARGET, setDeleteTarget] =
-    useState<CheckingAccountResponseDTO | null>(null)
-  const [DELETE_PENDING, setDeletePending] = useState(false)
-  const [DELETE_STATUS, setDeleteStatus] =
-    useState<EntityDeleteToastStatus>("idle")
-  const [DELETE_ERROR, setDeleteError] = useState<string | null>(
-    null
-  )
-
-  const HandleDelete = useCallback(
-    (entry: CheckingAccountResponseDTO) => {
-      setDeleteTarget(entry)
-      setDeleteStatus("idle")
-      setDeleteError(null)
-    },
-    []
-  )
-
-  const HandleConfirmDelete = useCallback(async () => {
-    if (!DELETE_TARGET) return
-
-    setDeletePending(true)
-    const RESULT = await deleteCheckingAccountAction({
-      checkingAccountId: DELETE_TARGET.id,
-    })
-    setDeletePending(false)
-
-    if (RESULT.error) {
-      setDeleteError(RESULT.error)
-      setDeleteStatus("error")
-      setDeleteTarget(null)
-      return
-    }
-
-    setDeleteStatus("success")
-    setDeleteTarget(null)
-    ROUTER.refresh()
-  }, [DELETE_TARGET, ROUTER])
-
-  const UpdateDeleteOpen = useCallback((open: boolean) => {
-    if (!open) {
-      setDeleteTarget(null)
-      setDeleteStatus("idle")
-      setDeleteError(null)
-    }
-  }, [])
-
-  return {
-    handleDelete: HandleDelete,
-    handleConfirmDelete: HandleConfirmDelete,
-    deleteTarget: DELETE_TARGET,
-    deleteOpen: DELETE_TARGET !== null,
-    deletePending: DELETE_PENDING,
-    deleteStatus: DELETE_STATUS,
-    deleteError: DELETE_ERROR,
-    setDeleteOpen: UpdateDeleteOpen,
-  }
+function useCheckingAccountRowActions(): EntityRowActionsModel<CheckingAccountResponseDTO> {
+  return useEntityRowActions<CheckingAccountResponseDTO>({
+    runDelete: (id) =>
+      deleteCheckingAccountAction({ checkingAccountId: id }),
+  })
 }
 
 export { useCheckingAccountRowActions }

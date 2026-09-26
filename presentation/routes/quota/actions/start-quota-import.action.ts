@@ -1,62 +1,48 @@
 "use server"
 
-import { headers } from "next/headers"
-
-import { auth } from "@/clients/better-auth.client"
-import { DomainError } from "@/errors"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 import {
   buildImportPlan,
   runFundValuationMonth,
   type FundValuationImportPlan,
 } from "@/jobs/fund-valuation-import.job"
-import {
-  FUND_SLICE_SIZE,
-  type CvmImportWindow,
-} from "@/services/quota/use-cases/import-fund-valuations.use-case"
+import { FUND_SLICE_SIZE } from "@/services/quota/use-cases/import-fund-valuations.use-case"
 
+import { START_QUOTA_IMPORT_SCHEMA } from "../validations/quota-actions.validation"
 import {
   completeQuotaImportJob,
   createQuotaImportJob,
   updateQuotaImportJob,
 } from "./quota-import-job.store"
 
-// Import windows accepted by the start action.
-const IMPORT_WINDOWS: readonly CvmImportWindow[] = [
-  "today",
-  "week",
-  "month",
-  "year-to-date",
-  "last-2-months",
-  "last-6-months",
-]
-
-export interface StartQuotaImportActionInput {
-  window: string
-}
-
-export interface StartQuotaImportActionResult {
-  jobId: string | null
-  error: string | null
-}
-
 /**
  * @summary
  * Starts a real-time quota import for the given window.
  *
  * @remarks
- * Resolves the session user, validates the window option,
- * builds the import plan and registers a job. The actual
- * import runs asynchronously in the background, updating
- * the job store while the client polls the progress.
+ * Resolves the session first, then validates the import
+ * window with **Zod**, builds the import plan and registers
+ * a job. The acting user is derived from the session, never
+ * from the payload. The actual import runs asynchronously in
+ * the background through the fund valuation job, which owns
+ * its own composition root, updating the job store while the
+ * client polls the progress.
  *
  * @explanation
  * Use as the submit target of the quota confirm-import
  * dialog. The returned job id feeds the progress dialog
  * polling loop.
  *
- * @param input - The import window to process.
+ * @param input - The untrusted import window payload.
  *
- * @returns The job id and an optional error.
+ * @returns The id of the created job, or a failure result.
  *
  * @example
  * const RESULT = await startQuotaImportAction({
@@ -68,49 +54,36 @@ export interface StartQuotaImportActionResult {
  * @date 2026-09-25
  */
 export async function startQuotaImportAction(
-  input: StartQuotaImportActionInput
-): Promise<StartQuotaImportActionResult> {
+  input: unknown
+): Promise<ActionResult<string>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = START_QUOTA_IMPORT_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
-
-    if (!SESSION?.user) {
-      return { jobId: null, error: "Faça login para continuar." }
-    }
-
-    if (!isCvmImportWindow(input.window)) {
-      return {
-        jobId: null,
-        error: "Período de importação inválido.",
-      }
-    }
-
-    const PLAN = buildImportPlan(input.window)
+    const PLAN = buildImportPlan(PARSED.data.window)
     const JOB_ID = createQuotaImportJob(
-      input.window,
+      PARSED.data.window,
       PLAN.months.length
     )
 
     void runQuotaImportJob(JOB_ID, PLAN)
 
-    return { jobId: JOB_ID, error: null }
+    return ActionSuccess(JOB_ID)
   } catch (cause) {
-    return {
-      jobId: null,
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível iniciar a importação.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível iniciar a importação."
+    )
   }
-}
-
-// Returns whether the provided value is a valid window.
-function isCvmImportWindow(
-  value: string
-): value is CvmImportWindow {
-  return IMPORT_WINDOWS.includes(value as CvmImportWindow)
 }
 
 // Runs the full import plan and publishes the progress

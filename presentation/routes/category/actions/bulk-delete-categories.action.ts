@@ -1,32 +1,35 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { CategoryRepository } from "@/infrastructure/category/repositories/category.repository"
-import { BulkDeleteCategoriesUseCase } from "@/services/category/use-cases/bulk-delete-categories.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { CategoryContainer } from "@/presentation/composition/category.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
 
-export interface BulkDeleteCategoriesActionInput {
-  categoryIds: string[]
-}
+import { BULK_DELETE_CATEGORIES_SCHEMA } from "../validations/category-actions.validation"
 
 /**
  * @summary
  * Deletes multiple categories.
  *
  * @remarks
- * Resolves the session user from the request headers
- * and runs the bulk delete use case. Returns a
- * human-readable error when anything fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, including a non-empty cap on the selection,
+ * and only then runs the bulk delete use case. The acting
+ * user is derived from the session, never from the payload.
+ * Returns a human-readable error when anything fails.
  *
  * @explanation
  * Use as the submit target of the bulk delete flow of
  * the category datatable.
  *
- * @param input - The category ids to delete.
+ * @param input - The untrusted category ids payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns Nothing on success, or a failure result.
  *
  * @example
  * const RESULT = await bulkDeleteCategoriesAction({
@@ -38,31 +41,31 @@ export interface BulkDeleteCategoriesActionInput {
  * @date 2026-09-25
  */
 export async function bulkDeleteCategoriesAction(
-  input: BulkDeleteCategoriesActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<undefined>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = BULK_DELETE_CATEGORIES_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { bulkDelete: BULK_DELETE_CATEGORIES } =
+      CategoryContainer()
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
+    await BULK_DELETE_CATEGORIES.execute(PARSED.data)
 
-    const REPOSITORY = new CategoryRepository(db)
-    const USE_CASE = new BulkDeleteCategoriesUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      categoryIds: input.categoryIds,
-    })
-
-    return { error: null }
+    return ActionSuccess(undefined)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível excluir as categorias.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível excluir as categorias."
+    )
   }
 }

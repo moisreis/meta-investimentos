@@ -1,8 +1,16 @@
 "use client"
 
 import type * as React from "react"
-import { Input } from "@/presentation/ui/input"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@/presentation/ui/input-group"
 import { usePortfolioMoneyInput } from "../hooks/use-portfolio-money-input.hook"
+
+// Shows the currency on the input group addon.
+const BRL_CURRENCY_SYMBOL = "R$"
 
 /**
  * @summary
@@ -10,7 +18,10 @@ import { usePortfolioMoneyInput } from "../hooks/use-portfolio-money-input.hook"
  *
  * @remarks
  * Supports both controlled and uncontrolled modes.
- * Formats input as a signed value with comma decimals.
+ * Formats input in real time as a signed **BRL**
+ * value with dot thousand separators and comma
+ * decimals. Prefixes the input with the **BRL**
+ * symbol as an addon.
  *
  * @explanation
  * Use as the money field of any portfolio form.
@@ -40,7 +51,7 @@ function PortfolioMoneyInput({
   disabled,
   ...props
 }: Omit<
-  React.ComponentProps<typeof Input>,
+  React.ComponentProps<typeof InputGroupInput>,
   "defaultValue" | "onChange"
 > & {
   value?: string
@@ -53,17 +64,24 @@ function PortfolioMoneyInput({
   })
 
   return (
-    <Input
-      {...props}
-      name={name}
-      inputMode="decimal"
-      autoComplete="off"
-      maxLength={16}
-      placeholder={placeholder}
-      value={currentValue}
-      onChange={handleChange}
-      disabled={disabled}
-    />
+    <InputGroup>
+      <InputGroupAddon align="inline-start">
+        <InputGroupText aria-hidden="true">
+          {BRL_CURRENCY_SYMBOL}
+        </InputGroupText>
+      </InputGroupAddon>
+      <InputGroupInput
+        {...props}
+        name={name}
+        inputMode="decimal"
+        autoComplete="off"
+        maxLength={24}
+        placeholder={placeholder}
+        value={currentValue}
+        onChange={handleChange}
+        disabled={disabled}
+      />
+    </InputGroup>
   )
 }
 

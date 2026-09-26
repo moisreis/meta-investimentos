@@ -44,7 +44,7 @@ function EntitySearchFilter({
   label = "Buscar",
 }: EntitySearchFilterProps) {
   return (
-    <InputGroup className="w-52 rounded-full">
+    <InputGroup className="w-52 border-none">
       <InputGroupAddon align="inline-start">
         <InputGroupText aria-hidden="true">
           <IconSearch />

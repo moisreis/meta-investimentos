@@ -24,6 +24,8 @@ export interface PositionResponseDTO {
   fundId: string
   initialBalance: string | null
   initialBalanceDate: string | null
+  // Share of the portfolio the position represents (%).
+  allocation: string
   // Optimistic lock version, incremented on updates.
   version: number
   createdAt: string

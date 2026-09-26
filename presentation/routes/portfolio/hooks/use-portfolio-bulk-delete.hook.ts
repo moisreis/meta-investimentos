@@ -1,53 +1,33 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-
-import { useAuthFormToast } from "@/presentation/parts/hooks/use-auth-form-toast.hook"
+import { useEntityBulkDeleteAction } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
+import type { EntityBulkDeleteModel } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
 import { bulkDeletePortfoliosAction } from "@/presentation/routes/portfolio/actions/bulk-delete-portfolios.action"
 import { PORTFOLIO_DATATABLE } from "@/presentation/routes/portfolio/settings/labels.settings"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
 /**
  * @summary
- * Manages the bulk delete flow of the portfolio datatable.
+ * Binds the portfolio bulk delete flow to the shared
+ * entity bulk delete action.
  *
  * @remarks
- * Runs the bulk delete server action with the ids of the
- * selected rows, toasts the outcome and refreshes the
- * server data after a successful deletion.
+ * Maps the selected row ids to the route bulk delete
+ * server action and reuses the route datatable copy for
+ * the outcome toast.
  *
- * @returns The callback invoked with the selected items.
+ * @returns The bulk delete callback for the datatable.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-24
+ * @date 2026-09-26
  */
-function usePortfolioBulkDelete() {
-  const ROUTER = useRouter()
-  const { showSuccess, showError } = useAuthFormToast({
-    successTitle: PORTFOLIO_DATATABLE.BULK_DELETE_SUCCESS_TITLE,
-    successDescription:
-      PORTFOLIO_DATATABLE.BULK_DELETE_SUCCESS_DESCRIPTION,
-    errorTitle: PORTFOLIO_DATATABLE.BULK_DELETE_ERROR_TITLE,
+function usePortfolioBulkDelete(): EntityBulkDeleteModel<PortfolioResponseDTO> {
+  return useEntityBulkDeleteAction<PortfolioResponseDTO>({
+    run: (ids) =>
+      bulkDeletePortfoliosAction({ portfolioIds: ids }),
+    labels: PORTFOLIO_DATATABLE,
   })
-
-  async function HandleBulkDelete(
-    items: PortfolioResponseDTO[]
-  ) {
-    const RESULT = await bulkDeletePortfoliosAction({
-      portfolioIds: items.map((item) => item.id),
-    })
-
-    if (RESULT.error) {
-      showError(RESULT.error)
-      return
-    }
-
-    showSuccess()
-    ROUTER.refresh()
-  }
-
-  return { handleBulkDelete: HandleBulkDelete }
 }
 
 export { usePortfolioBulkDelete }

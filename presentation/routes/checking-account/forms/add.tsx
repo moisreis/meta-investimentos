@@ -6,9 +6,8 @@ import { PortfolioMoneyInput } from "@/presentation/parts/components/portfolio-m
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
-import type { PortfolioFormStatus } from "@/presentation/parts/hooks/use-portfolio-form.hook"
+import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { FieldGroup } from "@/presentation/ui/field"
-import { Input } from "@/presentation/ui/input"
 import { FormatBankAccountLabel } from "@/presentation/routes/checking-account/helpers/build-checking-account-name-lookups.helper"
 
 import { CHECKING_ACCOUNT_FORM } from "../settings/labels.settings"
@@ -16,6 +15,7 @@ import { CHECKING_ACCOUNT_FORM } from "../settings/labels.settings"
 import type { CheckingAccountSelectOptions } from "../types/checking-account-list.types"
 import { useAddCheckingAccountForm } from "../hooks/use-add-checking-account-form.hook"
 import { BankAccountCombobox } from "./bank-account-combobox"
+import { CheckingAccountDateInput } from "./checking-account-date-input"
 
 /**
  * Props for the add checking account form.
@@ -23,7 +23,7 @@ import { BankAccountCombobox } from "./bank-account-combobox"
 export interface AddCheckingAccountFormProps {
   options: CheckingAccountSelectOptions
   onStatusChange?: (
-    status: PortfolioFormStatus,
+    status: EntityFormStatus,
     error: string | null
   ) => void
 }
@@ -124,13 +124,13 @@ function AddCheckingAccountForm({
           error={fieldErrors.date}
           htmlFor="checking-account-date"
         >
-          <Input
+          <CheckingAccountDateInput
             id="checking-account-date"
-            type="date"
             name="date"
             required
             value={date}
-            onChange={(e) => updateDate(e.target.value)}
+            onValueChange={updateDate}
+            placeholder={CHECKING_ACCOUNT_FORM.PLACEHOLDER_DATE}
             disabled={pending}
             aria-invalid={fieldErrors.date ? "true" : undefined}
           />

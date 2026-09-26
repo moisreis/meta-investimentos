@@ -1,33 +1,35 @@
 "use server"
 
-import { headers } from "next/headers"
-import { auth } from "@/clients/better-auth.client"
-import { db } from "@/clients/database.client"
-import { DomainError } from "@/errors"
-import { CategoryRepository } from "@/infrastructure/category/repositories/category.repository"
-import { UpdateCategoryUseCase } from "@/services/category/use-cases/update-category.use-case"
+import { RequireSessionUser } from "@/lib/auth/require-session"
+import { CategoryContainer } from "@/presentation/composition/category.container"
+import {
+  ActionFailure,
+  ActionSuccess,
+  RejectInput,
+  ToActionFailure,
+  type ActionResult,
+} from "@/presentation/types/action-result"
+import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
 
-export interface UpdateCategoryActionInput {
-  categoryId: string
-  name: string
-}
+import { UPDATE_CATEGORY_SCHEMA } from "../validations/category-actions.validation"
 
 /**
  * @summary
  * Updates an existing category.
  *
  * @remarks
- * Resolves the session user from the request headers
- * and persists the updated entity through the service
- * use case. Returns a human-readable error when
- * anything fails.
+ * Resolves the session first, then validates the payload
+ * with **Zod**, and only then runs the update use case. The
+ * acting user is derived from the session, never from the
+ * payload. Returns a human-readable error when anything
+ * fails.
  *
  * @explanation
  * Use as the submit target of the edit category form.
  *
- * @param input - The category update payload.
+ * @param input - The untrusted category update payload.
  *
- * @returns The action outcome with an optional error.
+ * @returns The updated category, or a failure result.
  *
  * @example
  * const RESULT = await updateCategoryAction({
@@ -40,32 +42,29 @@ export interface UpdateCategoryActionInput {
  * @date 2026-09-25
  */
 export async function updateCategoryAction(
-  input: UpdateCategoryActionInput
-): Promise<{ error?: string | null }> {
+  input: unknown
+): Promise<ActionResult<CategoryResponseDTO>> {
+  const USER = await RequireSessionUser()
+
+  if (!USER) {
+    return ActionFailure("Faça login para continuar.")
+  }
+
+  const PARSED = UPDATE_CATEGORY_SCHEMA.safeParse(input)
+
+  if (!PARSED.success) {
+    return RejectInput(PARSED.error)
+  }
+
   try {
-    const SESSION = await auth.api.getSession({
-      headers: await headers(),
-    })
+    const { update: UPDATE_CATEGORY } = CategoryContainer()
+    const CATEGORY = await UPDATE_CATEGORY.execute(PARSED.data)
 
-    if (!SESSION?.user) {
-      return { error: "Faça login para continuar." }
-    }
-
-    const REPOSITORY = new CategoryRepository(db)
-    const USE_CASE = new UpdateCategoryUseCase(REPOSITORY)
-
-    await USE_CASE.execute({
-      categoryId: input.categoryId,
-      name: input.name,
-    })
-
-    return { error: null }
+    return ActionSuccess(CATEGORY)
   } catch (cause) {
-    return {
-      error:
-        cause instanceof DomainError
-          ? cause.message
-          : "Não foi possível atualizar a categoria.",
-    }
+    return ToActionFailure(
+      cause,
+      "Não foi possível atualizar a categoria."
+    )
   }
 }
