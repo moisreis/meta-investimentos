@@ -1,4 +1,4 @@
-import { and, eq, inArray } from "drizzle-orm"
+import { and, desc, eq, inArray } from "drizzle-orm"
 import type {
   PgAsyncDatabase,
   PgQueryResultHKT,
@@ -90,6 +90,37 @@ export class AuditLogRepository implements IAuditLog {
       .limit(1)
 
     return ROW ? ToDomain(ROW) : null
+  }
+
+  /**
+   * @summary
+   * Retrieves all audit logs ordered by most recent first.
+   *
+   * @remarks
+   * Orders by creation timestamp descending so the newest
+   * entry appears first. Returns an empty array when the
+   * table has no rows.
+   *
+   * @explanation
+   * Use this method to render the system-wide audit trail
+   * in a read-only registry screen.
+   *
+   * @returns All audit log entries.
+   *
+   * @example
+   * const LOGS = await AUDIT_LOG_REPO.findAll();
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  async findAll(): Promise<AuditLog[]> {
+    const ROWS = await this.db
+      .select()
+      .from(auditLog)
+      .orderBy(desc(auditLog.createdAt))
+
+    return ROWS.map((row) => ToDomain(row))
   }
 
   /**

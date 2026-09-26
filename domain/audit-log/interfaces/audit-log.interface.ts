@@ -48,6 +48,31 @@ export interface IAuditLog {
 
   /**
    * @summary
+   * Retrieves all audit logs ordered by most recent first.
+   *
+   * @remarks
+   * Returns an empty array when no logs exist. Orders by
+   * creation timestamp descending so the newest activity
+   * appears first.
+   *
+   * @explanation
+   * Use this method to render the system-wide audit trail
+   * in a read-only registry. Returns an empty array for an
+   * empty table.
+   *
+   * @returns All audit log entries.
+   *
+   * @example
+   * const LOGS = await AUDIT_LOG_REPO.findAll();
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-25
+   */
+  findAll(): Promise<AuditLog[]>
+
+  /**
+   * @summary
    * Retrieves all logs that refer to the provided entity.
    *
    * @remarks
