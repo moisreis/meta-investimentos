@@ -1,7 +1,9 @@
 import type { Metadata } from "next"
 
 import { LoadPortfolioAcronym } from "@/presentation/routes/portfolio/helpers/load-portfolio-acronym.helper"
+import { LoadPortfolioOverview } from "@/presentation/routes/portfolio/helpers/load-portfolio-overview.helper"
 import PortfolioPage from "@/presentation/routes/portfolio/pages/page"
+import type { PortfolioOverviewData } from "@/presentation/routes/portfolio/types/portfolio-overview.types"
 
 // Title shown when the portfolio cannot be resolved.
 const FALLBACK_TITLE = "Carteira"
@@ -40,6 +42,14 @@ export async function generateMetadata({
   return { title: ACRONYM ?? FALLBACK_TITLE }
 }
 
-export default function PortfoliosIdPage() {
-  return <PortfolioPage />
+export default async function PortfoliosIdPage({
+  params,
+}: {
+  params: Promise<PortfolioIdPageParams>
+}) {
+  const { id: PORTFOLIO_ID } = await params
+  const DATA: PortfolioOverviewData | null =
+    await LoadPortfolioOverview(PORTFOLIO_ID)
+
+  return <PortfolioPage data={DATA} />
 }

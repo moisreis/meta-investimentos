@@ -130,6 +130,32 @@ export const PORTFOLIO_KPI = {
   FUND_COUNT_COMPARISON: "fundos nas carteiras",
 } as const
 
+// KPI and filter copy for the portfolio detail screen.
+export const PORTFOLIO_OVERVIEW = {
+  // KPI card titles.
+  KPI_PATRIMONY_TITLE: "Patrimônio da Carteira",
+  KPI_YEAR_GAIN_TITLE: "Ganho Acumulado no Ano",
+  KPI_MONTH_GAIN_TITLE: "Ganhos do Mês",
+  KPI_YEAR_RETURN_TITLE: "Rendimento Acumulado do Ano",
+  KPI_MONTH_RETURN_TITLE: "Rendimento do Mês",
+
+  // Comparison prefixes.
+  COMPARISON_VS: "vs.",
+  COMPARISON_SINCE: "desde",
+  COMPARISON_YEAR: "no ano de",
+  COMPARISON_MONTH: "em",
+
+  // Toolbar filter copy.
+  FILTER_DATE_PLACEHOLDER:
+    PORTFOLIO_DATATABLE.FILTER_DATE_RANGE_PLACEHOLDER,
+
+  // Empty state copy for the detail screen.
+  EMPTY_TITLE: "Sem desempenho calculado",
+  EMPTY_DESCRIPTION:
+    "Os indicadores da carteira aparecem após o " +
+    "cálculo do desempenho.",
+} as const
+
 // Formats the delete dialog description with the name.
 function FormatDeletePortfolioDescription(name: string): string {
   return (
