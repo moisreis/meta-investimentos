@@ -34,7 +34,7 @@ export function EntityDetailKpiGroup({
   children,
 }: EntityDetailKpiGroupProps): JSX.Element {
   return (
-    <section className="grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 xl:grid-cols-3">
+    <section className="grid grid-cols-1 gap-3 p-6 sm:grid-cols-2 xl:grid-cols-3">
       {children}
     </section>
   )

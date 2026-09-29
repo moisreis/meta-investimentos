@@ -50,7 +50,7 @@ const OVERVIEW_HEADER_ICONS: Record<
  *
  * @remarks
  * Composes the toolbar with the date range filter, the
- * data-driven KPI groups, the sectioned charts, the positions
+ * data-driven KPI group, the sectioned charts, the positions
  * datatable, the recent activity datatable and the empty
  * state. The filter selects the window the KPIs, the
  * performance charts and the activity rows are computed
@@ -62,8 +62,8 @@ const OVERVIEW_HEADER_ICONS: Record<
  * about the portfolio today, and the year is a fixed
  * horizon, so they ignore the window.
  *
- * The KPI groups render only over a performance snapshot
- * window; without one the friendly empty state takes their
+ * The KPI group renders only over a performance snapshot
+ * window; without one the friendly empty state takes its
  * place. The chart sections, the positions and the activity
  * table render either way when they have data, because they
  * describe what the portfolio holds and has moved, not only
@@ -93,8 +93,6 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
   const HAS_PERFORMANCES = DATA.performances.length > 0
 
   const overview = usePortfolioOverview(DATA)
-  const FIRST_KPI_GROUP = overview.kpis.slice(0, 3)
-  const SECOND_KPI_GROUP = overview.kpis.slice(3)
 
   return (
     <div className="min-h-full overflow-auto">
@@ -129,39 +127,20 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
       </div>
 
       {HAS_PERFORMANCES ? (
-        <>
-          <EntityDetailKpiGroup>
-            {FIRST_KPI_GROUP.map((kpi) => (
-              <EntityDetailKpiCard
-                key={kpi.key}
-                title={kpi.title}
-                value={kpi.value}
-                trend={kpi.trend}
-                comparison={kpi.comparison}
-                dotIndicator={kpi.dotIndicator}
-                icon={kpi.icon}
-                headerIcon={OVERVIEW_HEADER_ICONS[kpi.key]}
-              />
-            ))}
-          </EntityDetailKpiGroup>
-
-          {SECOND_KPI_GROUP.length > 0 && (
-            <EntityDetailKpiGroup>
-              {SECOND_KPI_GROUP.map((kpi) => (
-                <EntityDetailKpiCard
-                  key={kpi.key}
-                  title={kpi.title}
-                  value={kpi.value}
-                  trend={kpi.trend}
-                  comparison={kpi.comparison}
-                  dotIndicator={kpi.dotIndicator}
-                  icon={kpi.icon}
-                  headerIcon={OVERVIEW_HEADER_ICONS[kpi.key]}
-                />
-              ))}
-            </EntityDetailKpiGroup>
-          )}
-        </>
+        <EntityDetailKpiGroup>
+          {overview.kpis.map((kpi) => (
+            <EntityDetailKpiCard
+              key={kpi.key}
+              title={kpi.title}
+              value={kpi.value}
+              trend={kpi.trend}
+              comparison={kpi.comparison}
+              dotIndicator={kpi.dotIndicator}
+              icon={kpi.icon}
+              headerIcon={OVERVIEW_HEADER_ICONS[kpi.key]}
+            />
+          ))}
+        </EntityDetailKpiGroup>
       ) : (
         <EntityEmptyTable
           icon={IconChartLine}
