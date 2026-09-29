@@ -2,8 +2,8 @@
 
 import { IconChartLine } from "@tabler/icons-react"
 
-import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
-import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
+import { EntityDetailKpiCard } from "@/presentation/parts/components/entity-detail-kpi-card"
+import { EntityDetailKpiGroup } from "@/presentation/parts/components/entity-detail-kpi-group"
 import { EntityDatatableToolbar } from "@/presentation/parts/components/entity-datatable-toolbar"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
 import { EntityDateRangeFilter } from "@/presentation/parts/filters/date-range"
@@ -78,41 +78,41 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
 
   return (
     <div className="min-h-full overflow-auto">
-      <div className="w-full h-11 top-0 sticky bg-background z-50">
-      <EntityDatatableToolbar
-        filters={
-          <EntityDateRangeFilter
-            value={overview.dateRange}
-            onChange={overview.onDateRangeChange}
-            isDateDisabled={(date) =>
-              !overview.isPerformanceDay(date)
-            }
-            placeholder={
-              PORTFOLIO_OVERVIEW.FILTER_DATE_PLACEHOLDER
-            }
-            numberOfMonths={1}
-          />
-        }
-        actions={
-          <>
-            <AddApplicationButton
-              portfolioId={DATA.portfolioId}
-              options={DATA.applicationOptions}
+      <div className="sticky top-0 z-50 h-11 w-full bg-background">
+        <EntityDatatableToolbar
+          filters={
+            <EntityDateRangeFilter
+              value={overview.dateRange}
+              onChange={overview.onDateRangeChange}
+              isDateDisabled={(date) =>
+                !overview.isPerformanceDay(date)
+              }
+              placeholder={
+                PORTFOLIO_OVERVIEW.FILTER_DATE_PLACEHOLDER
+              }
+              numberOfMonths={1}
             />
-            <AddWithdrawalButton
-              portfolioId={DATA.portfolioId}
-              options={DATA.withdrawalOptions}
-            />
-          </>
-        }
-      />
+          }
+          actions={
+            <>
+              <AddApplicationButton
+                portfolioId={DATA.portfolioId}
+                options={DATA.applicationOptions}
+              />
+              <AddWithdrawalButton
+                portfolioId={DATA.portfolioId}
+                options={DATA.withdrawalOptions}
+              />
+            </>
+          }
+        />
       </div>
 
       {HAS_PERFORMANCES ? (
         <>
-          <EntityDatatableKpiGroup>
+          <EntityDetailKpiGroup>
             {FIRST_KPI_GROUP.map((kpi) => (
-              <EntityDatatableKpiCard
+              <EntityDetailKpiCard
                 key={kpi.key}
                 title={kpi.title}
                 value={kpi.value}
@@ -122,21 +122,23 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
                 icon={kpi.icon}
               />
             ))}
-          </EntityDatatableKpiGroup>
+          </EntityDetailKpiGroup>
 
-          <EntityDatatableKpiGroup>
-            {SECOND_KPI_GROUP.map((kpi) => (
-              <EntityDatatableKpiCard
-                key={kpi.key}
-                title={kpi.title}
-                value={kpi.value}
-                trend={kpi.trend}
-                comparison={kpi.comparison}
-                dotIndicator={kpi.dotIndicator}
-                icon={kpi.icon}
-              />
-            ))}
-          </EntityDatatableKpiGroup>
+          {SECOND_KPI_GROUP.length > 0 && (
+            <EntityDetailKpiGroup>
+              {SECOND_KPI_GROUP.map((kpi) => (
+                <EntityDetailKpiCard
+                  key={kpi.key}
+                  title={kpi.title}
+                  value={kpi.value}
+                  trend={kpi.trend}
+                  comparison={kpi.comparison}
+                  dotIndicator={kpi.dotIndicator}
+                  icon={kpi.icon}
+                />
+              ))}
+            </EntityDetailKpiGroup>
+          )}
         </>
       ) : (
         <EntityEmptyTable

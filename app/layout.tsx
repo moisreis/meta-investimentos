@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import { Geist, Geist_Mono, Roboto_Slab, Inter } from "next/font/google"
+import { Geist, Geist_Mono, Roboto_Slab, Inter, Manrope } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/presentation/theme/theme-provider"
 import { TooltipProvider } from "@/presentation/ui/tooltip"
@@ -8,13 +8,10 @@ import { cn } from "@/lib/utils"
 import BRAND from "@/presentation/constants/brand.constants"
 
 // Stores the **Roboto Slab** heading font configuration.
-const ROBOTO_SLAB_HEADING = Roboto_Slab({
-  subsets: ["latin"],
-  variable: "--font-heading",
-})
+const manropeHeading = Manrope({subsets:['latin'],variable:'--font-heading'})
 
 // Stores the **Geist** sans-serif font configuration.
-const inter = Inter({subsets:['latin'],variable:'--font-sans'})
+const geist = Geist({subsets:['latin'],variable:'--font-sans'})
 
 // Stores the **Geist Mono** font configuration.
 const FONT_MONO = Geist_Mono({
@@ -71,8 +68,8 @@ export default function RootLayout({
         "antialiased",
         FONT_MONO.variable,
         "font-sans",
-        inter.variable,
-        ROBOTO_SLAB_HEADING.variable
+        geist.variable,
+        manropeHeading.variable
       )}
     >
       <body>
