@@ -1,6 +1,14 @@
 "use client"
 
-import { IconChartLine } from "@tabler/icons-react"
+import type { ComponentType } from "react"
+import {
+  IconCalendarDollar,
+  IconCalendarMonth,
+  IconCash,
+  IconChartLine,
+  IconPercentage,
+  IconWallet,
+} from "@tabler/icons-react"
 
 import { EntityDetailKpiCard } from "@/presentation/parts/components/entity-detail-kpi-card"
 import { EntityDetailKpiGroup } from "@/presentation/parts/components/entity-detail-kpi-group"
@@ -22,6 +30,18 @@ import { AddWithdrawalButton } from "@/presentation/routes/withdrawal/components
 
 interface PortfolioDetailProps {
   data: PortfolioOverviewData | null
+}
+
+// Entity icon decorating the header of each overview card.
+const OVERVIEW_HEADER_ICONS: Record<
+  string,
+  ComponentType<{ size?: number; stroke?: number }>
+> = {
+  patrimony: IconWallet,
+  "year-gain": IconCalendarDollar,
+  "month-gain": IconCash,
+  "year-return": IconPercentage,
+  "month-return": IconCalendarMonth,
 }
 
 /**
@@ -120,6 +140,7 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
                 comparison={kpi.comparison}
                 dotIndicator={kpi.dotIndicator}
                 icon={kpi.icon}
+                headerIcon={OVERVIEW_HEADER_ICONS[kpi.key]}
               />
             ))}
           </EntityDetailKpiGroup>
@@ -135,6 +156,7 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
                   comparison={kpi.comparison}
                   dotIndicator={kpi.dotIndicator}
                   icon={kpi.icon}
+                  headerIcon={OVERVIEW_HEADER_ICONS[kpi.key]}
                 />
               ))}
             </EntityDetailKpiGroup>

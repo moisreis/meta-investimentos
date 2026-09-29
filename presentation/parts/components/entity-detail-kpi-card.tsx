@@ -12,6 +12,7 @@ interface EntityDetailKpiCardProps {
   comparison?: string
   dotIndicator?: KpiDotIndicator
   icon?: ComponentType<{ size?: number; stroke?: number }>
+  headerIcon?: ComponentType<{ size?: number; stroke?: number }>
 }
 
 const DOT_INDICATOR_CLASSES: Record<KpiDotIndicator, string> = {
@@ -28,11 +29,11 @@ const DOT_INDICATOR_CLASSES: Record<KpiDotIndicator, string> = {
  * The card is fully data-driven: every piece of copy comes
  * from the caller, so a card label and its value can never
  * be divorced from the data behind them. The title sits in
- * the header next to the status dot, the value fills the
- * body and the footer carries the signed trend badge with
- * its direction icon and the comparison caption. Rendering
- * nothing when the trend or the comparison is absent keeps
- * sparse cards from collapsing.
+ * the header next to its entity icon, the status dot leads
+ * the value in the body and the footer carries the signed
+ * trend badge with its direction icon and the comparison
+ * caption. Rendering nothing when the trend or the
+ * comparison is absent keeps sparse cards from collapsing.
  *
  * @param props - Props of the detail KPI card.
  * @param props.title - The card title, as `uppercase` copy.
@@ -42,9 +43,11 @@ const DOT_INDICATOR_CLASSES: Record<KpiDotIndicator, string> = {
  * @param props.comparison - The comparison caption of the
  *                           value, shown when present.
  * @param props.dotIndicator - The sign of the card, painted
- *                             as the header status dot.
+ *                             as the dot beside the value.
  * @param props.icon - The direction icon rendered beside
  *                     the trend text.
+ * @param props.headerIcon - The entity icon decorating the
+ *                           header, opposite the title.
  *
  * @returns The detail KPI card.
  *
@@ -56,6 +59,7 @@ const DOT_INDICATOR_CLASSES: Record<KpiDotIndicator, string> = {
  *   comparison="desde 30/06/2026"
  *   dotIndicator="success"
  *   icon={IconTrendingUp}
+ *   headerIcon={IconWallet}
  * />
  *
  * @author Moisés Reis
@@ -69,6 +73,7 @@ export function EntityDetailKpiCard({
   comparison,
   dotIndicator,
   icon: Icon,
+  headerIcon: HeaderIcon,
 }: EntityDetailKpiCardProps): JSX.Element {
   return (
     <div className="rounded-md border border-border bg-sidebar p-1.5">
@@ -77,22 +82,30 @@ export function EntityDetailKpiCard({
           {title}
         </h2>
 
-        {dotIndicator && (
-          <div
-            className={cn(
-              "size-3 rounded-full",
-              DOT_INDICATOR_CLASSES[dotIndicator]
-            )}
-            role="img"
-            aria-label={`Status: ${dotIndicator}`}
-          />
+        {HeaderIcon && (
+          <span className="text-muted-foreground">
+            <HeaderIcon size={16} stroke={2} />
+          </span>
         )}
       </div>
 
       <div className="flex h-24 flex-col justify-between gap-2 rounded-md border border-border bg-background p-3">
-        <span className="font-heading text-2xl font-semibold">
-          {value}
-        </span>
+        <div className="flex flex-row items-center gap-2">
+          {dotIndicator && (
+            <div
+              className={cn(
+                "size-3 rounded-full",
+                DOT_INDICATOR_CLASSES[dotIndicator]
+              )}
+              role="img"
+              aria-label={`Status: ${dotIndicator}`}
+            />
+          )}
+
+          <span className="font-heading text-2xl font-semibold">
+            {value}
+          </span>
+        </div>
 
         {(trend || comparison) && (
           <div className="flex flex-row items-center justify-between gap-2">
