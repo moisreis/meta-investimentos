@@ -2,14 +2,14 @@
 
 import { useMemo, useState } from "react"
 
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
 
 import type { BankAccountNameLookups } from "../types/bank-account-list.types"
 
 interface UseBankAccountDatatableFiltersOutput {
   query: string
   onQueryChange: (query: string) => void
-  filteredAccounts: BankAccountResponseDTO[]
+  filteredAccounts: BankAccountRow[]
 }
 
 /**
@@ -32,7 +32,7 @@ interface UseBankAccountDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function useBankAccountDatatableFilters(
-  bankAccounts: BankAccountResponseDTO[],
+  bankAccounts: BankAccountRow[],
   names: BankAccountNameLookups
 ): UseBankAccountDatatableFiltersOutput {
   const [QUERY, setQuery] = useState("")

@@ -1,6 +1,8 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { CategoryContainer } from "@/presentation/composition/category.container"
 import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
+import { ToCategoryRows } from "@/presentation/mappers/category-row.mapper"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 /**
  * @summary
@@ -25,7 +27,7 @@ import type { CategoryResponseDTO } from "@/services/category/dto/category-respo
  * @date 2026-09-25
  */
 export async function LoadCategories(): Promise<
-  CategoryResponseDTO[] | null
+  CategoryRow[] | null
 > {
   const USER = await RequireSessionUser()
 
@@ -33,5 +35,5 @@ export async function LoadCategories(): Promise<
 
   const { list: LIST_CATEGORIES } = CategoryContainer()
 
-  return await LIST_CATEGORIES.execute({})
+  return ToCategoryRows(await LIST_CATEGORIES.execute({}))
 }

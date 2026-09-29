@@ -5,6 +5,7 @@ import type { DateRange } from "react-day-picker"
 import { EntityDateRangeFilter } from "@/presentation/parts/filters/date-range"
 import type { EntitySelectFilterOption } from "@/presentation/parts/filters/entity-select-filter"
 import { EntitySelectFilter } from "@/presentation/parts/filters/entity-select-filter"
+import { EntityDatatableToolbarSeparator } from "@/presentation/parts/components/entity-datatable-toolbar-separator"
 
 import { POSITION_DATATABLE } from "../settings/labels.settings"
 
@@ -65,6 +66,7 @@ function PositionDatatableFilters({
         }
         label={POSITION_DATATABLE.FILTER_PORTFOLIO_LABEL}
       />
+      <EntityDatatableToolbarSeparator />
       <EntitySelectFilter
         value={fundId}
         onChange={onFundChange}
@@ -72,6 +74,7 @@ function PositionDatatableFilters({
         placeholder={POSITION_DATATABLE.FILTER_FUND_PLACEHOLDER}
         label={POSITION_DATATABLE.FILTER_FUND_LABEL}
       />
+      <EntityDatatableToolbarSeparator />
       <EntityDateRangeFilter
         value={dateRange}
         onChange={onDateRangeChange}

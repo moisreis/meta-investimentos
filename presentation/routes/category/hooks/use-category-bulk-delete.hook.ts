@@ -1,10 +1,9 @@
 "use client"
 
 import { useEntityBulkDeleteAction } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
-import type { EntityBulkDeleteModel } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
 import { bulkDeleteCategoriesAction } from "@/presentation/routes/category/actions/bulk-delete-categories.action"
 import { CATEGORY_DATATABLE } from "@/presentation/routes/category/settings/labels.settings"
-import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 /**
  * @summary
@@ -22,8 +21,8 @@ import type { CategoryResponseDTO } from "@/services/category/dto/category-respo
  *
  * @date 2026-09-26
  */
-function useCategoryBulkDelete(): EntityBulkDeleteModel<CategoryResponseDTO> {
-  return useEntityBulkDeleteAction<CategoryResponseDTO>({
+function useCategoryBulkDelete() {
+  return useEntityBulkDeleteAction<CategoryRow>({
     run: (ids) =>
       bulkDeleteCategoriesAction({ categoryIds: ids }),
     labels: CATEGORY_DATATABLE,

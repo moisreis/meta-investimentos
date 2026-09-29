@@ -1,6 +1,8 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { BankContainer } from "@/presentation/composition/bank.container"
 import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
+import { ToBankRows } from "@/presentation/mappers/bank-row.mapper"
+import type { BankRow } from "@/presentation/types/bank-row.types"
 
 /**
  * @summary
@@ -24,14 +26,12 @@ import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
  *
  * @date 2026-09-25
  */
-export async function LoadBanks(): Promise<
-  BankResponseDTO[] | null
-> {
+export async function LoadBanks(): Promise<BankRow[] | null> {
   const USER = await RequireSessionUser()
 
   if (!USER) return null
 
   const { list: LIST_BANKS } = BankContainer()
 
-  return await LIST_BANKS.execute({})
+  return ToBankRows(await LIST_BANKS.execute({}))
 }

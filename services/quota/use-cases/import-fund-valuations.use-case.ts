@@ -3,6 +3,7 @@ import { IQuota } from "@domain/quota/interfaces/quota.interface"
 import { IFund } from "@domain/fund/interfaces/fund.interface"
 import type { ICvmClient } from "@/domain/quota/interfaces/cvm-client.interface"
 import type { UpsertQuota } from "@domain/quota/interfaces/quota.interface"
+import type { CvmImportWindow } from "@/lib/quota/cvm-import-window"
 import { parseCvmCsvBytes } from "../parsers/cvm-csv.parser"
 import { extractCvmCsvFiles } from "../parsers/cvm-zip.parser"
 
@@ -20,13 +21,6 @@ export const UPSERT_CHUNK_SIZE = 100
 // TYPES
 // ---------------------------------
 
-export type CvmImportWindow =
-  | "today"
-  | "week"
-  | "month"
-  | "year-to-date"
-  | "last-2-months"
-  | "last-6-months"
 
 /**
  * @summary

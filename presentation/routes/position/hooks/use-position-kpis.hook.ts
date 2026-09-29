@@ -7,7 +7,7 @@ import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
-import type { PositionResponseDTO } from "@/services/position/dto/position-response.dto"
+import type { PositionRow } from "@/presentation/types/position-row.types"
 
 import { POSITION_KPI } from "../settings/labels.settings"
 
@@ -31,7 +31,7 @@ import { POSITION_KPI } from "../settings/labels.settings"
  * @date 2026-09-25
  */
 export function BuildPositionKpis(
-  positions: readonly PositionResponseDTO[]
+  positions: readonly PositionRow[]
 ): EntityKpi[] {
   const TOTAL_BALANCE = SumMoney(
     positions.map((position) => position.initialBalance)
@@ -82,11 +82,10 @@ export function BuildPositionKpis(
 function usePositionKpis({
   positions,
 }: {
-  positions: readonly PositionResponseDTO[]
+  positions: readonly PositionRow[]
 }): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly PositionResponseDTO[]) =>
-      BuildPositionKpis(items),
+    (items: readonly PositionRow[]) => BuildPositionKpis(items),
     []
   )
 

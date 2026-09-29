@@ -5,13 +5,13 @@ import { useCallback } from "react"
 import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
+import type { BankRow } from "@/presentation/types/bank-row.types"
 
 import { BANK_KPI } from "../settings/labels.settings"
 import type { BankRowSummary } from "../types/bank-list.types"
 
 interface UseBankKpisInput {
-  banks: BankResponseDTO[]
+  banks: BankRow[]
   summaries: Record<string, BankRowSummary> | null
 }
 
@@ -35,7 +35,7 @@ interface UseBankKpisInput {
  * @date 2026-09-25
  */
 function BuildBankKpis(
-  banks: readonly BankResponseDTO[],
+  banks: readonly BankRow[],
   summaries: Record<string, BankRowSummary> | null
 ): EntityKpi[] {
   const TOTAL_ACCOUNTS = Object.values(summaries ?? {}).reduce(
@@ -96,7 +96,7 @@ function useBankKpis({
   summaries,
 }: UseBankKpisInput): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly BankResponseDTO[]) =>
+    (items: readonly BankRow[]) =>
       BuildBankKpis(items, summaries),
     [summaries]
   )

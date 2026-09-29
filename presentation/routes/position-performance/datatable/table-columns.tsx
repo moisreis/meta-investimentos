@@ -5,12 +5,15 @@ import type {
   ColumnHelper,
 } from "@tanstack/react-table"
 
+import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
+import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
+import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatDate } from "@/presentation/presenters/date.presenter"
 import { FormatPercentage } from "@/presentation/presenters/percentage.presenter"
 import { FormatQuotaQuantity } from "@/presentation/presenters/quota-quantity.presenter"
-import type { PositionPerformanceResponseDTO } from "@/services/position-performance/dto/position-performance-response.dto"
+import type { PositionPerformanceRow } from "@/presentation/types/position-performance-row.types"
 
 import { POSITION_PERFORMANCE_DATATABLE } from "../settings/labels.settings"
 import type { PositionPerformanceRowLookup } from "../types/position-performance-list.types"
@@ -19,6 +22,7 @@ export interface PositionPerformanceTableColumnOptions {
   rowFor: (
     performanceId: string
   ) => PositionPerformanceRowLookup | null
+  onDelete: (performance: PositionPerformanceRow) => void
 }
 
 /**
@@ -27,35 +31,40 @@ export interface PositionPerformanceTableColumnOptions {
  * performance datatable.
  *
  * @remarks
- * Renders a read-only list: the position column resolves
- * its fund and portfolio display data through `rowFor`,
- * the date column uses the date presenter and the
- * patrimony, quotas and daily return columns render the
- * decimal strings aligned to the end. No selection or
- * actions columns, since performances are produced by
- * the calculation flow instead of manual edits.
+ * Renders a selectable list with row actions: the
+ * selection column is pinned to the start, the
+ * position column resolves its fund and portfolio
+ * display data through `rowFor` and renders it through
+ * the shared lookup cell, with the portfolio name below
+ * the fund name, the date column uses the date presenter
+ * and the patrimony, quotas and daily return columns
+ * render the decimal strings aligned to the end. The
+ * actions column is pinned to the end and offers a
+ * delete action for each row.
  *
  * @param columnHelper - The entity column helper.
- * @param options - The row lookup resolver.
+ * @param options - The row lookup resolver and delete callback.
  *
  * @returns The position performance column definitions.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-25
+ * @date 2026-09-27
  */
 export function CreatePositionPerformanceTableColumns(
   columnHelper: ColumnHelper<
     EntityTableFeatures,
-    PositionPerformanceResponseDTO
+    PositionPerformanceRow
   >,
   options: PositionPerformanceTableColumnOptions
 ): ColumnDef<
   EntityTableFeatures,
-  PositionPerformanceResponseDTO,
+  PositionPerformanceRow,
   any
 >[] {
   return [
+    CreateEntitySelectColumn(columnHelper),
+
     columnHelper.accessor((row) => options.rowFor(row.id), {
       id: "position",
       header: POSITION_PERFORMANCE_DATATABLE.COLUMN_POSITION,
@@ -64,19 +73,11 @@ export function CreatePositionPerformanceTableColumns(
       cell: (info) => {
         const LOOKUP = info.getValue()
 
-        if (!LOOKUP) {
-          return <span className="text-muted-foreground">—</span>
-        }
-
         return (
-          <div className="min-w-0">
-            <p className="truncate font-medium">
-              {LOOKUP.fundName}
-            </p>
-            <p className="truncate text-xs text-muted-foreground">
-              {LOOKUP.portfolioAcronym || LOOKUP.portfolioName}
-            </p>
-          </div>
+          <EntityLookupCell
+            title={LOOKUP?.fundName}
+            subtitle={LOOKUP?.portfolioName}
+          />
         )
       },
     }),
@@ -107,6 +108,29 @@ export function CreatePositionPerformanceTableColumns(
       size: 130,
       meta: { align: "end", fluid: true },
       cell: (info) => FormatPercentage(info.getValue()),
+    }),
+
+    columnHelper.display({
+      id: "actions",
+      enableSorting: false,
+      enableHiding: false,
+      size: 50,
+      minSize: 50,
+      maxSize: 50,
+      meta: { pinned: "end", align: "center" },
+      cell: ({ row }) => (
+        <EntityTableRowMenuDropdown
+          label={POSITION_PERFORMANCE_DATATABLE.ROW_ACTIONS_LABEL}
+          actions={[
+            {
+              key: "delete",
+              label: POSITION_PERFORMANCE_DATATABLE.ROW_DELETE_LABEL,
+              variant: "destructive",
+              onSelect: () => options.onDelete(row.original),
+            },
+          ]}
+        />
+      ),
     }),
   ]
 }

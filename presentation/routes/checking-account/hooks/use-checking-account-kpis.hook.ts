@@ -9,12 +9,12 @@ import {
 import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
-import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
+import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 
 import { CHECKING_ACCOUNT_KPI } from "../settings/labels.settings"
 
 interface UseCheckingAccountKpisInput {
-  entries: CheckingAccountResponseDTO[]
+  entries: CheckingAccountRow[]
 }
 
 /**
@@ -39,7 +39,7 @@ interface UseCheckingAccountKpisInput {
  * @date 2026-09-25
  */
 export function BuildCheckingAccountKpis(
-  entries: readonly CheckingAccountResponseDTO[]
+  entries: readonly CheckingAccountRow[]
 ): EntityKpi[] {
   const ACCOUNTS = new Set(
     entries.map((entry) => entry.bankAccountId)
@@ -101,7 +101,7 @@ function useCheckingAccountKpis({
   entries,
 }: UseCheckingAccountKpisInput): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly CheckingAccountResponseDTO[]) =>
+    (items: readonly CheckingAccountRow[]) =>
       BuildCheckingAccountKpis(items),
     []
   )

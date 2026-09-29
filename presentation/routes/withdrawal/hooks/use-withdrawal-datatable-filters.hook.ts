@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { endOfDay, startOfDay } from "date-fns"
 import type { DateRange } from "react-day-picker"
 
-import type { WithdrawalResponseDTO } from "@/services/withdrawal/dto/withdrawal-response.dto"
+import type { WithdrawalRow } from "@/presentation/types/withdrawal-row.types"
 
 import { EMPTY_WITHDRAWAL_LOOKUPS } from "../helpers/build-withdrawal-lookups.helper"
 import type { WithdrawalLookups } from "../types/withdrawal-list.types"
@@ -16,7 +16,7 @@ interface UseWithdrawalDatatableFiltersOutput {
   onPortfolioChange: (value: string | undefined) => void
   onFundChange: (value: string | undefined) => void
   onDateRangeChange: (range: DateRange | undefined) => void
-  filteredWithdrawals: WithdrawalResponseDTO[]
+  filteredWithdrawals: WithdrawalRow[]
 }
 
 /**
@@ -39,7 +39,7 @@ interface UseWithdrawalDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function useWithdrawalDatatableFilters(
-  withdrawals: WithdrawalResponseDTO[],
+  withdrawals: WithdrawalRow[],
   lookups: WithdrawalLookups = EMPTY_WITHDRAWAL_LOOKUPS
 ): UseWithdrawalDatatableFiltersOutput {
   const [PORTFOLIO_ID, setPortfolioId] = useState<

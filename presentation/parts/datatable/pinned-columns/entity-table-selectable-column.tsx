@@ -16,7 +16,7 @@ import {
 } from "../settings/entity-table-labels.settings"
 
 // Id shared by the selection column definition.
-const ENTITY_TABLE_SELECT_COLUMN_ID = "select"
+export const ENTITY_TABLE_SELECT_COLUMN_ID = "select"
 
 // Fixed width of the selection column. Locked through
 // equal min and max sizes so it never gets resized.

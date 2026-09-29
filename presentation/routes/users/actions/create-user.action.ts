@@ -10,7 +10,7 @@ import {
   type ActionResult,
 } from "@/presentation/types/action-result"
 
-import { CREATE_USER_SCHEMA } from "../validations/users-actions.validation"
+import { CREATE_USER_SCHEMA } from "../validations/user-actions.validation"
 
 /**
  * @summary

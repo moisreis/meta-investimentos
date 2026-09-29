@@ -2,12 +2,12 @@
 
 import { useCallback, useMemo, useState } from "react"
 
-import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 interface UseCategoryDatatableFiltersOutput {
   query: string
   onQueryChange: (query: string) => void
-  filteredCategories: CategoryResponseDTO[]
+  filteredCategories: CategoryRow[]
 }
 
 /**
@@ -27,7 +27,7 @@ interface UseCategoryDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function useCategoryDatatableFilters(
-  categories: CategoryResponseDTO[]
+  categories: CategoryRow[]
 ): UseCategoryDatatableFiltersOutput {
   const [QUERY, setQuery] = useState("")
 

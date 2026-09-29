@@ -1,4 +1,3 @@
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 import type { PortfolioRowSummaryDTO } from "@/services/portfolio/use-cases/list-portfolio-row-summaries.use-case"
 import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
 
@@ -7,6 +6,8 @@ import type {
   PortfolioRowSummary,
 } from "../types/portfolio-list.types"
 
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { UserRow } from "@/presentation/types/user-row.types"
 /**
  * @summary
  * Composes the derived data of the portfolio rows.
@@ -41,10 +42,10 @@ import type {
  * @date 2026-09-25
  */
 export function BuildPortfolioRowSummaries(
-  portfolios: PortfolioResponseDTO[],
+  portfolios: PortfolioRow[],
   counts: PortfolioRowSummaryDTO[],
   userId: string,
-  user: UserResponseDTO
+  user: UserRow
 ): Record<string, PortfolioRowSummary> {
   const COUNTS_BY_PORTFOLIO = new Map(
     counts.map((entry) => [entry.portfolioId, entry])

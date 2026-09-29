@@ -1,6 +1,6 @@
 import { User } from "@domain/user/entities/user.entity"
 import { IUser } from "@domain/user/interfaces/user.interface"
-import type { UserRole } from "../dto/create-user.dto"
+import type { UserRole } from "@/lib/auth/user-role"
 import type { UserResponseDTO } from "../dto/user-response.dto"
 import {
   toCreateUserProps,

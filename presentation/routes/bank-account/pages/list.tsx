@@ -5,7 +5,7 @@ import { IconPigMoney } from "@tabler/icons-react"
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
 
 import { BankAccountDatatableFilters } from "../datatable/filters"
 import { BankAccountDatatableTable } from "../datatable/table"
@@ -30,8 +30,8 @@ const EMPTY_OPTIONS: BankAccountSelectOptions = {
   banks: [],
 }
 
-interface BankAccountListProps {
-  data: BankAccountResponseDTO[] | null
+export interface BankAccountListProps {
+  data: BankAccountRow[] | null
   options?: BankAccountSelectOptions | null
   names?: BankAccountNameLookups
   summaries?: Record<string, BankAccountRowSummary> | null

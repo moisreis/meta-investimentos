@@ -8,16 +8,17 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { PositionResponseDTO } from "@/services/position/dto/position-response.dto"
+import type { PositionRow } from "@/presentation/types/position-row.types"
 
 import { CreatePositionTableColumns } from "../datatable/table-columns"
 import { EMPTY_POSITION_LOOKUPS } from "../helpers/build-position-lookups.helper"
 import type { PositionLookups } from "../types/position-list.types"
+import { usePositionRowActions } from "./use-position-row-actions.hook"
 
 // Column helper bound to the entity table features.
 const COLUMN_HELPER = createColumnHelper<
   EntityTableFeatures,
-  PositionResponseDTO
+  PositionRow
 >()
 
 /**
@@ -34,16 +35,18 @@ const COLUMN_HELPER = createColumnHelper<
  * @param positions - The rows rendered by the table.
  * @param lookups - The position lookups.
  *
- * @returns The shared table instance.
+ * @returns The shared table instance and row actions.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-25
+ * @date 2026-09-27
  */
 function usePositionDatatable(
-  positions: PositionResponseDTO[],
+  positions: PositionRow[],
   lookups: PositionLookups = EMPTY_POSITION_LOOKUPS
 ) {
+  const rowActions = usePositionRowActions()
+
   const rowFor = useCallback(
     (positionId: string) => lookups.rows[positionId] ?? null,
     [lookups]
@@ -53,8 +56,9 @@ function usePositionDatatable(
     () =>
       CreatePositionTableColumns(COLUMN_HELPER, {
         rowFor,
+        onDelete: rowActions.handleDelete,
       }),
-    [rowFor]
+    [rowFor, rowActions.handleDelete]
   )
 
   const TABLE = useTable({
@@ -67,7 +71,7 @@ function usePositionDatatable(
     },
   })
 
-  return { table: TABLE }
+  return { table: TABLE, rowActions }
 }
 
 export { usePositionDatatable }

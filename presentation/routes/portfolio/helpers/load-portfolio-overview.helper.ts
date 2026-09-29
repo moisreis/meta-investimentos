@@ -1,15 +1,55 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { ApplicationContainer } from "@/presentation/composition/application.container"
+import { BankAccountContainer } from "@/presentation/composition/bank-account.container"
+import { BankContainer } from "@/presentation/composition/bank.container"
+import { CheckingAccountContainer } from "@/presentation/composition/checking-account.container"
+import { FundContainer } from "@/presentation/composition/fund.container"
 import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
+import { PositionContainer } from "@/presentation/composition/position.container"
+import { WithdrawalContainer } from "@/presentation/composition/withdrawal.container"
 
+import { BuildPortfolioActivityRows } from "./build-portfolio-activity-rows.helper"
 import { LoadPortfolioApplicationOptions } from "./load-portfolio-application-options.helper"
 import { LoadPortfolioWithdrawalOptions } from "./load-portfolio-withdrawal-options.helper"
 
 import { EMPTY_APPLICATION_ADD_OPTIONS } from "@/presentation/routes/application/types/application-add.types"
 import { EMPTY_WITHDRAWAL_ADD_OPTIONS } from "@/presentation/routes/withdrawal/types/withdrawal-add.types"
+import { BuildPortfolioBankAccountViews } from "@/presentation/mappers/portfolio-bank-account.mapper"
+import { BuildPortfolioHoldings } from "@/presentation/mappers/portfolio-holding.mapper"
 
+import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
 import type { ApplicationAddOptions } from "@/presentation/routes/application/types/application-add.types"
 import type { WithdrawalAddOptions } from "@/presentation/routes/withdrawal/types/withdrawal-add.types"
+import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
+import type { PortfolioBankAccountView } from "@/presentation/types/portfolio-checking.types"
+import type { PortfolioHolding } from "@/presentation/types/portfolio-holding.types"
 import type { PortfolioOverviewData } from "../types/portfolio-overview.types"
+
+// Data resolved by the portfolio detail loader beyond the
+// daily snapshots and the add flow options.
+export interface LoadedPortfolioOverviewExtras {
+  // Holdings of the portfolio, resolved down to the
+  // custodian bank of each fund.
+  holdings: PortfolioHolding[]
+  // Applications and withdrawals of the portfolio, newest
+  // first, still unfiltered by the selected window.
+  activity: PortfolioActivityRow[]
+  // Bank accounts of the portfolio, resolved down to the
+  // bank that hosts each one.
+  bankAccounts: PortfolioBankAccountView[]
+  // Daily balance snapshots of the portfolio bank accounts.
+  balances: CheckingAccountResponseDTO[]
+}
+
+// Neutral extras rendered while the registries cannot be
+// resolved.
+const EMPTY_PORTFOLIO_OVERVIEW_EXTRAS: LoadedPortfolioOverviewExtras =
+  {
+    holdings: [],
+    activity: [],
+    bankAccounts: [],
+    balances: [],
+  }
 
 /**
  * @summary
@@ -21,10 +61,14 @@ import type { PortfolioOverviewData } from "../types/portfolio-overview.types"
  * when it belongs to another user. The daily snapshots of
  * the portfolio are listed through the container too and
  * the distinct UTC day keys are derived from their dates.
- * The add application and add withdrawal option registries
- * are loaded in parallel. Returns null when there is no
- * session, the portfolio is missing, or the portfolio is
- * not owned by the session user.
+ * The add application and add withdrawal option registries,
+ * the holdings and the activity are all loaded in parallel.
+ * A failure of the registers degrades to the empty extras,
+ * so the KPIs and the performance charts stay visible while
+ * the distributions and the activity table explain the
+ * missing records through their own empty copy. Returns null
+ * when there is no session, the portfolio is missing, or the
+ * portfolio is not owned by the session user.
  *
  * @explanation
  * Use this helper from the page loader so the session
@@ -52,7 +96,7 @@ export async function LoadPortfolioOverview(
 
     const {
       get: GET_PORTFOLIO,
-      listPerformance: LIST_PERFORMANCE,
+      listPerformances: LIST_PERFORMANCES,
     } = PortfolioContainer()
 
     const PORTFOLIO = await GET_PORTFOLIO.execute({
@@ -66,7 +110,7 @@ export async function LoadPortfolioOverview(
       return null
     }
 
-    const PERFORMANCES = await LIST_PERFORMANCE.execute({
+    const PERFORMANCES = await LIST_PERFORMANCES.execute({
       portfolioId,
     })
 
@@ -78,13 +122,20 @@ export async function LoadPortfolioOverview(
       ),
     ].sort()
 
-    const [APPLICATION_OPTIONS, WITHDRAWAL_OPTIONS] =
-      await LoadPortfolioAddOptions(portfolioId)
+    const [[APPLICATION_OPTIONS, WITHDRAWAL_OPTIONS], EXTRAS] =
+      await Promise.all([
+        LoadPortfolioAddOptions(portfolioId),
+        LoadPortfolioOverviewExtras(portfolioId),
+      ])
 
     return {
       portfolioId,
       performances: PERFORMANCES,
       availableDates: AVAILABLE_DATES,
+      holdings: EXTRAS.holdings,
+      activity: EXTRAS.activity,
+      bankAccounts: EXTRAS.bankAccounts,
+      balances: EXTRAS.balances,
       applicationOptions: APPLICATION_OPTIONS,
       withdrawalOptions: WITHDRAWAL_OPTIONS,
     }
@@ -143,5 +194,102 @@ async function LoadPortfolioAddOptions(
       EMPTY_APPLICATION_ADD_OPTIONS,
       EMPTY_WITHDRAWAL_ADD_OPTIONS,
     ]
+  }
+}
+
+/**
+ * @summary
+ * Resolves the holdings, the activity, the bank accounts and
+ * the checking balances of the portfolio detail screen.
+ *
+ * @remarks
+ * Lists the position weights of the portfolio and the fund,
+ * bank and bank account registries in parallel, resolves the
+ * holdings and the bank account views from them, and then
+ * lists the applications, the withdrawals and the checking
+ * balances of the resolved positions and accounts in parallel
+ * too. The activity rows are built from the same holdings
+ * that drive the distribution charts, so a fund name can
+ * never differ between the ring and the table. A failure
+ * here degrades to the empty extras, so a registry outage
+ * does not take the KPIs and the performance charts down
+ * with it.
+ *
+ * @explanation
+ * Use this helper from the portfolio detail loader. It keeps
+ * the movement listing out of the option helper, because the
+ * withdrawals list would query the positions of the portfolio
+ * a second time when the options were already resolved.
+ *
+ * @param portfolioId - The portfolio whose holdings and
+ * movements are resolved.
+ *
+ * @returns The holdings, the activity, the bank accounts and
+ *   the checking balances.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-28
+ */
+async function LoadPortfolioOverviewExtras(
+  portfolioId: string
+): Promise<LoadedPortfolioOverviewExtras> {
+  try {
+    const { listWeights: LIST_WEIGHTS } = PositionContainer()
+    const { list: LIST_FUNDS } = FundContainer()
+    const { list: LIST_BANKS } = BankContainer()
+    const { list: LIST_BANK_ACCOUNTS } = BankAccountContainer()
+    const { listAllApplications: LIST_APPLICATIONS } =
+      ApplicationContainer()
+    const { listAllWithdrawals: LIST_WITHDRAWALS } =
+      WithdrawalContainer()
+    const { listByBankAccounts: LIST_CHECKING_BY_ACCOUNTS } =
+      CheckingAccountContainer()
+
+    const [WEIGHTS, FUNDS, BANKS, BANK_ACCOUNTS] =
+      await Promise.all([
+        LIST_WEIGHTS.execute({ portfolioIds: [portfolioId] }),
+        LIST_FUNDS.execute({}),
+        LIST_BANKS.execute({}),
+        LIST_BANK_ACCOUNTS.execute({}),
+      ])
+
+    const HOLDINGS = BuildPortfolioHoldings(WEIGHTS, FUNDS, BANKS)
+    const BANK_ACCOUNT_VIEWS = BuildPortfolioBankAccountViews(
+      BANK_ACCOUNTS,
+      BANKS,
+      portfolioId
+    )
+
+    const POSITION_IDS = HOLDINGS.map((holding) => holding.positionId)
+    const BANK_ACCOUNT_IDS = BANK_ACCOUNT_VIEWS.map(
+      (account) => account.id
+    )
+
+    const [APPLICATIONS, WITHDRAWALS, BALANCES] =
+      await Promise.all([
+        LIST_APPLICATIONS.execute({ positionIds: POSITION_IDS }),
+        LIST_WITHDRAWALS.execute({ positionIds: POSITION_IDS }),
+        LIST_CHECKING_BY_ACCOUNTS.execute({
+          bankAccountIds: BANK_ACCOUNT_IDS,
+        }),
+      ])
+
+    return {
+      holdings: HOLDINGS,
+      activity: BuildPortfolioActivityRows(
+        HOLDINGS,
+        APPLICATIONS,
+        WITHDRAWALS
+      ),
+      bankAccounts: BANK_ACCOUNT_VIEWS,
+      balances: BALANCES,
+    }
+  } catch (cause) {
+    console.error(
+      "[LoadPortfolioOverviewExtras] failed to resolve the holdings, the activity, the bank accounts and the balances.",
+      cause
+    )
+    return EMPTY_PORTFOLIO_OVERVIEW_EXTRAS
   }
 }

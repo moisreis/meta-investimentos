@@ -141,12 +141,13 @@ export interface IApplication {
    * Retrieves the positions' applications in the period.
    *
    * @remarks
-   * The period is inclusive of both dates. Returns an
-   * empty array when no applications match.
+   * The period is inclusive of both dates. Reversed
+   * applications are excluded. Returns an empty
+   * array when no active applications match.
    *
    * @explanation
-   * Use this method to list applications for many positions
-   * inside a date range in a single query.
+   * Use this method to list active applications for many
+   * positions inside a date range in a single query.
    *
    * @param positionIds - The identifiers of the positions.
    * @param startDate - The start of the period, inclusive.

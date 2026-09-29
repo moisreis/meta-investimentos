@@ -5,12 +5,12 @@ import { useCallback } from "react"
 import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
-import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
+import type { UserRow } from "@/presentation/types/user-row.types"
 
 import { USER_KPI } from "../settings/labels.settings"
 
 interface UseUserKpisInput {
-  users: UserResponseDTO[]
+  users: UserRow[]
 }
 
 /**
@@ -30,9 +30,7 @@ interface UseUserKpisInput {
  *
  * @date 2026-09-25
  */
-function BuildUserKpis(
-  users: readonly UserResponseDTO[]
-): EntityKpi[] {
+function BuildUserKpis(users: readonly UserRow[]): EntityKpi[] {
   const MANAGERS = users.filter(
     (user) => user.role === "MANAGER"
   ).length
@@ -87,7 +85,7 @@ function BuildUserKpis(
  */
 function useUserKpis({ users }: UseUserKpisInput): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly UserResponseDTO[]) => BuildUserKpis(items),
+    (items: readonly UserRow[]) => BuildUserKpis(items),
     []
   )
 

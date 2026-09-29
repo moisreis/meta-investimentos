@@ -21,7 +21,7 @@ interface PortfolioUseCases {
   create: CreatePortfolioUseCase
   get: GetPortfolioUseCase
   list: ListPortfoliosUseCase
-  listPerformance: ListPortfolioPerformanceUseCase
+  listPerformances: ListPortfolioPerformanceUseCase
   listPerformanceByRange: ListPortfolioPerformanceByRangeUseCase
   listPerformanceDates: ListPortfolioPerformanceDatesUseCase
   listRowSummaries: ListPortfolioRowSummariesUseCase
@@ -66,7 +66,7 @@ function PortfolioContainer(): PortfolioUseCases {
     create: new CreatePortfolioUseCase(REPOSITORY),
     get: new GetPortfolioUseCase(REPOSITORY),
     list: new ListPortfoliosUseCase(REPOSITORY),
-    listPerformance: new ListPortfolioPerformanceUseCase(
+    listPerformances: new ListPortfolioPerformanceUseCase(
       PERFORMANCE_REPOSITORY
     ),
     listPerformanceByRange:

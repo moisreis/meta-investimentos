@@ -4,7 +4,7 @@ import { EntityEditDialog } from "@/presentation/parts/dialogs/entity-edit"
 import { EntityEditToast } from "@/presentation/parts/toasts/entity-edit-toast"
 import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { EntityEditDialogModel } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
+import type { FundRow } from "@/presentation/types/fund-row.types"
 import { EditFundForm } from "@/presentation/routes/fund/forms/edit"
 import {
   FUND_DIALOG,
@@ -17,7 +17,7 @@ import type { FundSelectOptions } from "../types/fund-list.types"
  * Props for the fund edit dialog.
  */
 export interface FundEditDialogProps {
-  dialog: EntityEditDialogModel<FundResponseDTO>
+  dialog: EntityEditDialogModel<FundRow>
   options: FundSelectOptions
 }
 

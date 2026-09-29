@@ -4,13 +4,21 @@ import type { ApplicationResponseDTO } from "@/services/application/dto/applicat
 import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 import type { PositionResponseDTO } from "@/services/position/dto/position-response.dto"
+import { ToApplicationRows } from "@/presentation/mappers/application-row.mapper"
+import { ToFundRows } from "@/presentation/mappers/fund-row.mapper"
+import { ToPortfolioRows } from "@/presentation/mappers/portfolio-row.mapper"
+import { ToPositionRows } from "@/presentation/mappers/position-row.mapper"
+import type { ApplicationRow } from "@/presentation/types/application-row.types"
+import type { FundRow } from "@/presentation/types/fund-row.types"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { PositionRow } from "@/presentation/types/position-row.types"
 
 // Data resolved by the application list loader.
 export interface LoadedApplicationList {
-  applications: ApplicationResponseDTO[]
-  portfolios: PortfolioResponseDTO[]
-  funds: FundResponseDTO[]
-  positions: PositionResponseDTO[]
+  applications: ApplicationRow[]
+  portfolios: PortfolioRow[]
+  funds: FundRow[]
+  positions: PositionRow[]
 }
 
 /**
@@ -66,9 +74,9 @@ export async function LoadApplications(): Promise<LoadedApplicationList | null> 
   })
 
   return {
-    applications: APPLICATIONS,
-    portfolios: PORTFOLIOS,
-    funds: FUNDS,
-    positions: POSITIONS,
+    applications: ToApplicationRows(APPLICATIONS),
+    portfolios: ToPortfolioRows(PORTFOLIOS),
+    funds: ToFundRows(FUNDS),
+    positions: ToPositionRows(POSITIONS),
   }
 }

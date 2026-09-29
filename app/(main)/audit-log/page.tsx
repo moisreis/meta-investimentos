@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { LoadSessionAuditLogs } from "@/presentation/routes/audit-log/helpers/load-session-audit-logs.helper"
+import { LoadAuditLogPageProps } from "@/presentation/routes/audit-log/helpers/load-audit-log-page-props.helper"
 import { AuditLogList } from "@/presentation/routes/audit-log/pages/list"
 
 export const metadata: Metadata = {
@@ -8,14 +8,7 @@ export const metadata: Metadata = {
 }
 
 export default async function AuditLogsRoutePage() {
-  const BUNDLE = await LoadSessionAuditLogs()
+  const PROPS = await LoadAuditLogPageProps()
 
-  return (
-    <>
-      <AuditLogList
-        data={BUNDLE?.auditLogs ?? null}
-        summaries={BUNDLE?.summaries ?? null}
-      />
-    </>
-  )
+  return <AuditLogList {...PROPS} />
 }

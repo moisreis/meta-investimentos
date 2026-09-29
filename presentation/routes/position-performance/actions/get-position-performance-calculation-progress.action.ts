@@ -9,9 +9,9 @@ import {
 } from "@/presentation/types/action-result"
 
 import type { PositionPerformanceCalculationProgress } from "../types/position-performance-list.types"
-import { GET_POSITION_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA } from "../validations/position-performance-actions.validation"
+import { GET_POSITION_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA as PROGRESS_SCHEMA } from "../validations/position-performance-actions.validation"
 
-import { getPositionPerformanceCalculationJob } from "./position-performance-calculation-job.store"
+import { getPositionPerformanceCalculationJob } from "../jobs/calculate-job.store"
 
 /**
  * @summary
@@ -52,10 +52,7 @@ export async function getPositionPerformanceCalculationProgressAction(
     return ActionSuccess(null)
   }
 
-  const PARSED =
-    GET_POSITION_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA.safeParse(
-      input
-    )
+  const PARSED = PROGRESS_SCHEMA.safeParse(input)
 
   if (!PARSED.success) {
     return RejectInput(PARSED.error)

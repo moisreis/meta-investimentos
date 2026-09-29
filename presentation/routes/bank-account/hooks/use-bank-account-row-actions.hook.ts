@@ -1,9 +1,8 @@
 "use client"
 
 import { useEntityRowActions } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
-import type { EntityRowActionsModel } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
 import { deleteBankAccountAction } from "@/presentation/routes/bank-account/actions/delete-bank-account.action"
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
 
 /**
  * @summary
@@ -21,8 +20,8 @@ import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-ac
  *
  * @date 2026-09-26
  */
-function useBankAccountRowActions(): EntityRowActionsModel<BankAccountResponseDTO> {
-  return useEntityRowActions<BankAccountResponseDTO>({
+function useBankAccountRowActions() {
+  return useEntityRowActions<BankAccountRow>({
     runDelete: (id) =>
       deleteBankAccountAction({ bankAccountId: id }),
   })

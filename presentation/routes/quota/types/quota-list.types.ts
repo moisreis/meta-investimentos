@@ -1,6 +1,13 @@
-import type { CvmImportWindow } from "@/services/quota/use-cases/import-fund-valuations.use-case"
+import type { CvmImportWindow } from "@/lib/quota/cvm-import-window"
 
-// Fund data resolved for a quota row.
+/**
+ * @summary
+ * Fund data resolved for a quota row.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export interface QuotaFundLookup {
   // Fund name displayed as the row title.
   name: string

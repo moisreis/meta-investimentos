@@ -19,6 +19,8 @@ import { WithdrawalAddAnotherDialog } from "./add-another"
 export interface WithdrawalAddDialogProps {
   dialog: EntityAddDialogModel
   options: WithdrawalAddOptions
+  defaultPortfolioId?: string
+  lockedPortfolioId?: string
 }
 
 /**
@@ -34,7 +36,13 @@ export interface WithdrawalAddDialogProps {
  *
  * @param props - Props of the withdrawal add dialog.
  * @param props.dialog - The add dialog flow state.
- * @param props.options - The position options.
+ * @param props.options - The portfolio and position
+ * options.
+ * @param props.defaultPortfolioId - Portfolio preselected
+ * in the form.
+ * @param props.lockedPortfolioId - Portfolio the flow is
+ * locked to. Passed by the portfolio detail screen, which
+ * hides the portfolio field and swaps the description.
  *
  * @returns The withdrawal add dialog flow.
  *
@@ -45,6 +53,8 @@ export interface WithdrawalAddDialogProps {
 function WithdrawalAddDialog({
   dialog,
   options,
+  defaultPortfolioId,
+  lockedPortfolioId,
 }: WithdrawalAddDialogProps) {
   return (
     <>
@@ -52,11 +62,17 @@ function WithdrawalAddDialog({
         open={dialog.open}
         onOpenChange={dialog.setOpen}
         title={WITHDRAWAL_DIALOG.ADD_TITLE}
-        description={WITHDRAWAL_DIALOG.ADD_DESCRIPTION}
+        description={
+          lockedPortfolioId
+            ? WITHDRAWAL_DIALOG.ADD_DESCRIPTION_LOCKED
+            : WITHDRAWAL_DIALOG.ADD_DESCRIPTION
+        }
       >
         <AddWithdrawalForm
           key={dialog.formKey}
           options={options}
+          defaultPortfolioId={defaultPortfolioId}
+          lockedPortfolioId={lockedPortfolioId}
           onStatusChange={dialog.handleStatusChange}
         />
       </EntityAddDialog>

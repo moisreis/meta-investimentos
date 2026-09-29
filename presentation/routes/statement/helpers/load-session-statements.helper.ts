@@ -4,10 +4,15 @@ import { StatementContainer } from "@/presentation/composition/statement.contain
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
 
+import { ToPortfolioRows } from "@/presentation/mappers/portfolio-row.mapper"
+import { ToStatementRows } from "@/presentation/mappers/statement-row.mapper"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { StatementRow } from "@/presentation/types/statement-row.types"
+
 export interface LoadSessionStatementsOutput {
   userId: string
-  portfolios: PortfolioResponseDTO[]
-  statements: StatementResponseDTO[]
+  portfolios: PortfolioRow[]
+  statements: StatementRow[]
 }
 
 /**

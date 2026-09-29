@@ -1,5 +1,5 @@
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
+import type { BankRow } from "@/presentation/types/bank-row.types"
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
 
 import type { CheckingAccountNameLookups } from "../types/checking-account-list.types"
 
@@ -140,8 +140,8 @@ export function ResolveBankAccountLabel(
  * @date 2026-09-25
  */
 export function BuildCheckingAccountNameLookups(
-  bankAccounts: BankAccountResponseDTO[],
-  banks: BankResponseDTO[]
+  bankAccounts: BankAccountRow[],
+  banks: BankRow[]
 ): CheckingAccountNameLookups {
   const BANK_NAMES = Object.fromEntries(
     banks.map((bank) => [bank.id, bank.name])

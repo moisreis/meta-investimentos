@@ -1,4 +1,11 @@
-// Display data of the user who generated a statement.
+/**
+ * @summary
+ * Display data of the user who generated a statement.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export interface StatementGeneratedBy {
   // First name of the generating user.
   firstName: string

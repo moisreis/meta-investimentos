@@ -1,7 +1,6 @@
 "use client"
 
 import { useEntityRowActions } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
-import type { EntityRowActionsModel } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
 import { deleteStatementAction } from "@/presentation/routes/statement/actions/delete-statement.action"
 import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
 
@@ -22,7 +21,7 @@ import type { StatementResponseDTO } from "@/services/statement/dto/statement-re
  *
  * @date 2026-09-26
  */
-function useStatementRowActions(): EntityRowActionsModel<StatementResponseDTO> {
+function useStatementRowActions() {
   return useEntityRowActions<StatementResponseDTO>({
     runDelete: (id) =>
       deleteStatementAction({ statementId: id }),

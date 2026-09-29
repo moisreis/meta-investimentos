@@ -7,6 +7,7 @@ import { ListBankAccountsUseCase } from "@/services/bank-account/use-cases/list-
 import { BulkDeleteCheckingAccountsUseCase } from "@/services/checking-account/use-cases/bulk-delete-checking-accounts.use-case"
 import { DeleteCheckingAccountUseCase } from "@/services/checking-account/use-cases/delete-checking-account.use-case"
 import { ListCheckingAccountsUseCase } from "@/services/checking-account/use-cases/list-checking-accounts.use-case"
+import { ListCheckingAccountsByBankAccountsUseCase } from "@/services/checking-account/use-cases/list-checking-accounts-by-bank-accounts.use-case"
 import { RecordCheckingAccountUseCase } from "@/services/checking-account/use-cases/record-checking-account.use-case"
 import { UpdateCheckingAccountUseCase } from "@/services/checking-account/use-cases/update-checking-account.use-case"
 
@@ -20,6 +21,9 @@ interface CheckingAccountUseCases {
   record: RecordCheckingAccountUseCase
   remove: DeleteCheckingAccountUseCase
   update: UpdateCheckingAccountUseCase
+  // Batches the balance series of many bank accounts, used
+  // by the portfolio detail charts.
+  listByBankAccounts: ListCheckingAccountsByBankAccountsUseCase
 }
 
 /**
@@ -76,6 +80,10 @@ function CheckingAccountContainer(): CheckingAccountUseCases {
     ),
     remove: new DeleteCheckingAccountUseCase(REPOSITORY),
     update: new UpdateCheckingAccountUseCase(REPOSITORY),
+    listByBankAccounts:
+      new ListCheckingAccountsByBankAccountsUseCase(
+        REPOSITORY
+      ),
   }
 }
 

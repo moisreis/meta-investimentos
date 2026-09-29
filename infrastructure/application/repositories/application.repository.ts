@@ -153,12 +153,16 @@ export class ApplicationRepository implements IApplication {
    * Retrieves applications of a position in a period.
    *
    * @remarks
-   * The period is inclusive of both dates. Rows are ordered
-   * oldest-first so **FIFO** consumption is deterministic.
+   * The period is inclusive of both dates. Reversed
+   * applications are excluded, keeping period queries of
+   * active rows consistent with the summed totals. Rows
+   * are ordered oldest-first so **FIFO** consumption is
+   * deterministic.
    *
    * @explanation
-   * Use this method to list the applications of a position
-   * inside a date range for processing or reporting.
+   * Use this method to list the active applications of a
+   * position inside a date range for processing or
+   * reporting.
    *
    * @param positionId - The id of the position.
    * @param startDate - The start of the period, inclusive.
@@ -186,7 +190,8 @@ export class ApplicationRepository implements IApplication {
         and(
           eq(application.positionId, positionId),
           gte(application.date, startDate),
-          lte(application.date, endDate)
+          lte(application.date, endDate),
+          isNull(application.reversedAt)
         )
       )
       .orderBy(asc(application.date), asc(application.createdAt))
@@ -199,13 +204,18 @@ export class ApplicationRepository implements IApplication {
    * Retrieves applications of multiple positions in a period.
    *
    * @remarks
-   * The period is inclusive of both dates. Batched lookup
-   * avoids an N+1 query pattern. Returns an empty array
-   * when no ids match.
+   * The period is inclusive of both dates. Reversed
+   * applications are excluded, so period queries of active
+   * rows stay consistent with the summed totals. Batched
+   * lookup avoids an N+1 query pattern. Returns an empty
+   * array when no ids match.
    *
    * @explanation
-   * Use this method to hydrate applications across many
-   * positions in one query instead of one per position.
+   * Use this method to hydrate active applications across
+   * many positions in one query instead of one per
+   * position. The reversed exclusion keeps performance
+   * calculations from valuing movements that were
+   * reversed.
    *
    * @param positionIds - The ids of the positions.
    * @param startDate - The start of the period, inclusive.
@@ -237,7 +247,8 @@ export class ApplicationRepository implements IApplication {
         and(
           inArray(application.positionId, positionIds),
           gte(application.date, startDate),
-          lte(application.date, endDate)
+          lte(application.date, endDate),
+          isNull(application.reversedAt)
         )
       )
       .orderBy(asc(application.date), asc(application.createdAt))

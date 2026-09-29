@@ -2,10 +2,9 @@ import type {
   StatementGeneratedBy,
   StatementRowSummary,
 } from "../types/statement-list.types"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
-import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
-
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { StatementRow } from "@/presentation/types/statement-row.types"
+import type { UserRow } from "@/presentation/types/user-row.types"
 /**
  * @summary
  * Composes the derived data of the statement rows.
@@ -40,10 +39,10 @@ import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
  * @date 2026-09-25
  */
 export function BuildStatementRowSummaries(
-  statements: StatementResponseDTO[],
-  portfolios: PortfolioResponseDTO[],
+  statements: StatementRow[],
+  portfolios: PortfolioRow[],
   userId: string,
-  user: UserResponseDTO
+  user: UserRow
 ): Record<string, StatementRowSummary> {
   const PORTFOLIOS_BY_ID = new Map(
     portfolios.map((portfolio) => [portfolio.id, portfolio])

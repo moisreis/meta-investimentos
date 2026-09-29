@@ -13,16 +13,16 @@ import { ResolveBankAccountLabel } from "@/presentation/routes/checking-account/
 
 import { CHECKING_ACCOUNT_FORM } from "../settings/labels.settings"
 
-import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
+import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 import type { CheckingAccountNameLookups } from "../types/checking-account-list.types"
-import { useEditCheckingAccountForm } from "../hooks/use-edit-checking-account-form.hook"
-import { CheckingAccountDateInput } from "./checking-account-date-input"
+import { useCheckingAccountEditForm } from "../hooks/use-checking-account-edit-form.hook"
+import { CheckingAccountDateInput } from "./date-input"
 
 /**
  * Props for the edit checking account form.
  */
 export interface EditCheckingAccountFormProps {
-  entry: CheckingAccountResponseDTO
+  entry: CheckingAccountRow
   names: CheckingAccountNameLookups
   onStatusChange?: (
     status: EntityFormStatus,
@@ -74,7 +74,7 @@ function EditCheckingAccountForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useEditCheckingAccountForm(entry)
+  } = useCheckingAccountEditForm(entry)
 
   React.useEffect(() => {
     onStatusChange?.(status, error)

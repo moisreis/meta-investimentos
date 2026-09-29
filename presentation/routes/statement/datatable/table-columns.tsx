@@ -6,19 +6,20 @@ import type {
 } from "@tanstack/react-table"
 
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
+import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatDateTime } from "@/presentation/presenters/date.presenter"
 import { UserAvatar } from "@/presentation/presenters/user-avatar.presenter"
 import { STATEMENT_DATATABLE } from "@/presentation/routes/statement/settings/labels.settings"
-import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
+import type { StatementRow } from "@/presentation/types/statement-row.types"
 
 import { FormatStatementPeriod } from "../helpers/format-statement-period.helper"
 import type { StatementRowSummary } from "../types/statement-list.types"
 
 export interface StatementTableColumnOptions {
-  onView: (statement: StatementResponseDTO) => void
-  onDelete: (statement: StatementResponseDTO) => void
+  onView: (statement: StatementRow) => void
+  onDelete: (statement: StatementRow) => void
   summaryFor: (statementId: string) => StatementRowSummary | null
 }
 
@@ -29,9 +30,12 @@ export interface StatementTableColumnOptions {
  * @remarks
  * Pins the selection and the period columns to the start and
  * the actions column to the end. The period column sorts by
- * the raw ISO value so rows order chronologically. Portfolio
- * and generating-user columns resolve their derived data per
- * row through `summaryFor`.
+ * the raw ISO value so rows order chronologically. The
+ * portfolio column renders the resolved name through the
+ * shared lookup cell, with the portfolio acronym below the
+ * name, and the generating-user column resolves its derived
+ * data per row through `summaryFor` and renders it through
+ * the user avatar presenter.
  *
  * @param columnHelper - The entity column helper.
  * @param options - The row action callbacks.
@@ -43,12 +47,9 @@ export interface StatementTableColumnOptions {
  * @date 2026-09-25
  */
 export function CreateStatementTableColumns(
-  columnHelper: ColumnHelper<
-    EntityTableFeatures,
-    StatementResponseDTO
-  >,
+  columnHelper: ColumnHelper<EntityTableFeatures, StatementRow>,
   options: StatementTableColumnOptions
-): ColumnDef<EntityTableFeatures, StatementResponseDTO, any>[] {
+): ColumnDef<EntityTableFeatures, StatementRow, any>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 
@@ -74,19 +75,11 @@ export function CreateStatementTableColumns(
         cell: (info) => {
           const SUMMARY = info.getValue()
 
-          if (!SUMMARY) {
-            return (
-              <span className="text-muted-foreground">-</span>
-            )
-          }
-
           return (
-            <div className="flex flex-col">
-              <span>{SUMMARY.portfolioAcronym}</span>
-              <span className="text-muted-foreground">
-                {SUMMARY.portfolioName}
-              </span>
-            </div>
+            <EntityLookupCell
+              title={SUMMARY?.portfolioName}
+              subtitle={SUMMARY?.portfolioAcronym}
+            />
           )
         },
       }

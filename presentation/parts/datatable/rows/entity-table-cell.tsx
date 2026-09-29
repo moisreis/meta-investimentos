@@ -56,7 +56,7 @@ function EntityTableCell<TData extends RowData>({
     <TableCell
       style={style}
       className={cn(
-        "h-11 border-r border-b border-border text-sm font-normal",
+        "h-11 border-r border-b border-border text-sm font-normal text-muted-foreground",
         !IS_FLUID && "truncate",
         FormatEntityTableAlignClass(align),
         className

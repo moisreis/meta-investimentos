@@ -1,16 +1,17 @@
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import type { PositionPerformanceResponseDTO } from "@/services/position-performance/dto/position-performance-response.dto"
-import type { PositionResponseDTO } from "@/services/position/dto/position-response.dto"
+import { FormatCnpjOptional } from "@/presentation/presenters/cnpj.presenter"
+import type { FundRow } from "@/presentation/types/fund-row.types"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { PositionPerformanceRow } from "@/presentation/types/position-performance-row.types"
+import type { PositionRow } from "@/presentation/types/position-row.types"
 
 import type { PositionPerformanceLookups } from "../types/position-performance-list.types"
 
 // Input resolved by the position performance loader.
 export interface BuildPositionPerformanceLookupsInput {
-  performances: PositionPerformanceResponseDTO[]
-  positions: PositionResponseDTO[]
-  portfolios: PortfolioResponseDTO[]
-  funds: FundResponseDTO[]
+  performances: PositionPerformanceRow[]
+  positions: PositionRow[]
+  portfolios: PortfolioRow[]
+  funds: FundRow[]
 }
 
 // Empty lookups used before the loader resolves.
@@ -31,7 +32,9 @@ export const EMPTY_POSITION_PERFORMANCE_LOOKUPS: PositionPerformanceLookups =
  * filters from the positions that actually hold
  * performance records, and builds the calculation
  * options offered by the confirm dialog from every
- * position of the user. Options are ordered by label.
+ * position of the user. Options are ordered by label and
+ * the filter options carry the formatted fund CNPJ, so
+ * the picker reads the same way as the `Fundo` column.
  *
  * @explanation
  * Use this helper in loaders that need the lookup
@@ -87,27 +90,41 @@ export function BuildPositionPerformanceLookups(
   }
 
   const POSITION_OPTIONS = [...SEEN_POSITIONS]
-    .map((positionId) => ({
-      value: positionId,
-      label:
+    .map((positionId) => {
+      const FUND =
         FUND_BY_ID[POSITION_BY_ID[positionId]?.fundId ?? ""]
-          ?.name ?? "Fundo",
-    }))
+
+      return {
+        value: positionId,
+        label: FUND?.name ?? "Fundo",
+        description: FormatCnpjOptional(FUND?.cnpj),
+      }
+    })
     .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"))
 
   const CALCULATION_OPTIONS = input.positions
     .map((position) => {
       const FUND_NAME =
         FUND_BY_ID[position.fundId]?.name ?? "Fundo"
-      const PORTFOLIO_NAME =
-        PORTFOLIO_BY_ID[position.portfolioId]?.name ?? "Carteira"
+      const PORTFOLIO = PORTFOLIO_BY_ID[position.portfolioId]
+      // An acronym is what the user scans the list for, so it
+      // leads the option. Fall back to the full name before
+      // giving up, otherwise the top line of the option would
+      // render empty.
+      const PORTFOLIO_ACRONYM =
+        PORTFOLIO?.acronym || PORTFOLIO?.name || "Carteira"
 
       return {
         value: position.id,
-        label: `${FUND_NAME} · ${PORTFOLIO_NAME}`,
+        label: PORTFOLIO_ACRONYM,
+        description: FUND_NAME,
       }
     })
-    .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"))
+    .sort(
+      (a, b) =>
+        a.label.localeCompare(b.label, "pt-BR") ||
+        a.description.localeCompare(b.description, "pt-BR")
+    )
 
   return {
     rows: ROWS,

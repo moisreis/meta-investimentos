@@ -5,7 +5,7 @@ import { IconWallet } from "@tabler/icons-react"
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 import { PortfolioDatatableFilters } from "../datatable/filters"
 import { PortfolioDatatableTable } from "../datatable/table"
@@ -20,7 +20,7 @@ import { PORTFOLIO_EMPTY } from "../settings/labels.settings"
 import type { PortfolioRowSummary } from "../types/portfolio-list.types"
 
 interface PortfolioListProps {
-  data: PortfolioResponseDTO[] | null
+  data: PortfolioRow[] | null
   availableDates?: string[]
   summaries?: Record<string, PortfolioRowSummary> | null
 }

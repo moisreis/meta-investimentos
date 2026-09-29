@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo } from "react"
 import {
+  ColumnHelper,
   createColumnHelper,
   useTable,
 } from "@tanstack/react-table"
@@ -10,7 +11,7 @@ import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/e
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
 
 import { CreateBankAccountTableColumns } from "../datatable/table-columns"
 import { EMPTY_BANK_ACCOUNT_NAME_LOOKUPS } from "../helpers/build-bank-account-name-lookups.helper"
@@ -22,10 +23,10 @@ import { useBankAccountBulkDelete } from "./use-bank-account-bulk-delete.hook"
 import { useBankAccountRowActions } from "./use-bank-account-row-actions.hook"
 
 // Column helper bound to the entity table features.
-const COLUMN_HELPER = createColumnHelper<
+const COLUMN_HELPER: ColumnHelper<
   EntityTableFeatures,
-  BankAccountResponseDTO
->()
+  BankAccountRow
+> = createColumnHelper<EntityTableFeatures, BankAccountRow>()
 
 /**
  * @summary
@@ -54,13 +55,12 @@ const COLUMN_HELPER = createColumnHelper<
  * @date 2026-09-25
  */
 function useBankAccountDatatable(
-  bankAccounts: BankAccountResponseDTO[],
+  bankAccounts: BankAccountRow[],
   names: BankAccountNameLookups = EMPTY_BANK_ACCOUNT_NAME_LOOKUPS,
   summaries: Record<string, BankAccountRowSummary> | null = null
 ) {
   const addDialog = useEntityAddDialog()
-  const editDialog =
-    useEntityEditDialog<BankAccountResponseDTO>()
+  const editDialog = useEntityEditDialog<BankAccountRow>()
   const rowActions = useBankAccountRowActions()
   const bulkDelete = useBankAccountBulkDelete()
 

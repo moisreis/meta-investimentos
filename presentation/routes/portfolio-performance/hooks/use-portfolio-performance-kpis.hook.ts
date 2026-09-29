@@ -7,7 +7,7 @@ import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
-import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
+import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-performance-row.types"
 
 import { PORTFOLIO_PERFORMANCE_KPI } from "../settings/labels.settings"
 
@@ -32,11 +32,11 @@ import { PORTFOLIO_PERFORMANCE_KPI } from "../settings/labels.settings"
  * @date 2026-09-25
  */
 export function BuildPortfolioPerformanceKpis(
-  performances: readonly PortfolioPerformanceResponseDTO[]
+  performances: readonly PortfolioPerformanceRow[]
 ): EntityKpi[] {
   const LATEST_BY_PORTFOLIO = new Map<
     string,
-    PortfolioPerformanceResponseDTO
+    PortfolioPerformanceRow
   >()
 
   for (const performance of performances) {
@@ -105,10 +105,10 @@ export function BuildPortfolioPerformanceKpis(
 function usePortfolioPerformanceKpis({
   performances,
 }: {
-  performances: readonly PortfolioPerformanceResponseDTO[]
+  performances: readonly PortfolioPerformanceRow[]
 }): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly PortfolioPerformanceResponseDTO[]) =>
+    (items: readonly PortfolioPerformanceRow[]) =>
       BuildPortfolioPerformanceKpis(items),
     []
   )

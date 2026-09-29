@@ -13,18 +13,18 @@ import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatPercentage } from "@/presentation/presenters/percentage.presenter"
 import { UserAvatar } from "@/presentation/presenters/user-avatar.presenter"
 import { PORTFOLIO_DATATABLE } from "@/presentation/routes/portfolio/settings/labels.settings"
-import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-performance-row.types"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 import type { PortfolioRowSummary } from "../types/portfolio-list.types"
 
 export interface PortfolioTableColumnOptions {
-  onEdit: (portfolio: PortfolioResponseDTO) => void
-  onDelete: (portfolio: PortfolioResponseDTO) => void
-  onView: (portfolio: PortfolioResponseDTO) => void
+  onEdit: (portfolio: PortfolioRow) => void
+  onDelete: (portfolio: PortfolioRow) => void
+  onView: (portfolio: PortfolioRow) => void
   performanceFor: (
     portfolioId: string
-  ) => PortfolioPerformanceResponseDTO | null
+  ) => PortfolioPerformanceRow | null
   summaryFor: (portfolioId: string) => PortfolioRowSummary | null
 }
 
@@ -43,24 +43,23 @@ export interface PortfolioTableColumnOptions {
  * aligned to the end. Counting and owner columns resolve
  * their derived data per row through `summaryFor`, while
  * performance columns resolve the snapshot of the selected
- * range through `performanceFor`.
+ * range through `performanceFor`. The owner column renders
+ * the owning user through the user avatar presenter, which
+ * falls back to initials when no image is registered.
  *
  * @param columnHelper - The entity column helper.
  * @param options - The row action callbacks.
  *
  * @returns The portfolio column definitions.
  *
- * @author Moisés Reis
+ * @author MoisAcs Reis
  *
  * @date 2026-09-25
  */
 export function CreatePortfolioTableColumns(
-  columnHelper: ColumnHelper<
-    EntityTableFeatures,
-    PortfolioResponseDTO
-  >,
+  columnHelper: ColumnHelper<EntityTableFeatures, PortfolioRow>,
   options: PortfolioTableColumnOptions
-): ColumnDef<EntityTableFeatures, PortfolioResponseDTO, any>[] {
+): ColumnDef<EntityTableFeatures, PortfolioRow, any>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 
@@ -116,13 +115,11 @@ export function CreatePortfolioTableColumns(
         size: 200,
         enableSorting: false,
         meta: { fluid: true },
-        cell: (info) => {
-          const OWNER = info.getValue()
+        cell: ({ row }) => {
+          const OWNER = options.summaryFor(row.id)?.owner ?? null
 
           if (!OWNER) {
-            return (
-              <span className="text-muted-foreground">-</span>
-            )
+            return <span className="text-muted-foreground">-</span>
           }
 
           return (

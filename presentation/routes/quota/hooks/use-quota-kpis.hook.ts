@@ -6,7 +6,7 @@ import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { FormatDate } from "@/presentation/presenters/date.presenter"
-import type { QuotaResponseDTO } from "@/services/quota/dto/quota-response.dto"
+import type { QuotaRow } from "@/presentation/types/quota-row.types"
 
 import { QUOTA_KPI } from "../settings/labels.settings"
 
@@ -29,7 +29,7 @@ import { QUOTA_KPI } from "../settings/labels.settings"
  * @date 2026-09-25
  */
 export function BuildQuotaKpis(
-  quotas: readonly QuotaResponseDTO[]
+  quotas: readonly QuotaRow[]
 ): EntityKpi[] {
   const FUNDS = new Set(quotas.map((quota) => quota.fundId)).size
 
@@ -80,11 +80,10 @@ export function BuildQuotaKpis(
 function useQuotaKpis({
   quotas,
 }: {
-  quotas: readonly QuotaResponseDTO[]
+  quotas: readonly QuotaRow[]
 }): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly QuotaResponseDTO[]) =>
-      BuildQuotaKpis(items),
+    (items: readonly QuotaRow[]) => BuildQuotaKpis(items),
     []
   )
 

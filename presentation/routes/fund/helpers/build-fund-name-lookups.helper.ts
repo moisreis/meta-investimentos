@@ -1,6 +1,6 @@
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
-import type { BenchmarkResponseDTO } from "@/services/benchmark/dto/benchmark-response.dto"
-import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
+import type { BankRow } from "@/presentation/types/bank-row.types"
+import type { BenchmarkRow } from "@/presentation/types/benchmark-row.types"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 import type { FundNameLookups } from "../types/fund-list.types"
 
@@ -39,9 +39,9 @@ export const EMPTY_FUND_NAME_LOOKUPS: FundNameLookups = {
  * @date 2026-09-25
  */
 export function BuildFundNameLookups(
-  banks: BankResponseDTO[],
-  benchmarks: BenchmarkResponseDTO[],
-  categories: CategoryResponseDTO[]
+  banks: BankRow[],
+  benchmarks: BenchmarkRow[],
+  categories: CategoryRow[]
 ): FundNameLookups {
   return {
     banks: Object.fromEntries(

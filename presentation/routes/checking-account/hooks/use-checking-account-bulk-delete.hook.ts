@@ -1,10 +1,9 @@
 "use client"
 
 import { useEntityBulkDeleteAction } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
-import type { EntityBulkDeleteModel } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
 import { bulkDeleteCheckingAccountsAction } from "@/presentation/routes/checking-account/actions/bulk-delete-checking-accounts.action"
 import { CHECKING_ACCOUNT_DATATABLE } from "@/presentation/routes/checking-account/settings/labels.settings"
-import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
+import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 
 /**
  * @summary
@@ -22,8 +21,8 @@ import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto
  *
  * @date 2026-09-26
  */
-function useCheckingAccountBulkDelete(): EntityBulkDeleteModel<CheckingAccountResponseDTO> {
-  return useEntityBulkDeleteAction<CheckingAccountResponseDTO>({
+function useCheckingAccountBulkDelete() {
+  return useEntityBulkDeleteAction<CheckingAccountRow>({
     run: (ids) =>
       bulkDeleteCheckingAccountsAction({
         checkingAccountIds: ids,

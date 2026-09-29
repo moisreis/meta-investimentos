@@ -3,12 +3,18 @@ import { CheckingAccountContainer } from "@/presentation/composition/checking-ac
 import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
 import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
 import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
+import { ToCheckingAccountRows } from "@/presentation/mappers/checking-account-row.mapper"
+import { ToBankAccountRows } from "@/presentation/mappers/bank-account-row.mapper"
+import { ToBankRows } from "@/presentation/mappers/bank-row.mapper"
+import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
+import type { BankRow } from "@/presentation/types/bank-row.types"
 
 // Data resolved by the checking account list loader.
 export interface LoadedCheckingAccountList {
-  entries: CheckingAccountResponseDTO[]
-  bankAccounts: BankAccountResponseDTO[]
-  banks: BankResponseDTO[]
+  entries: CheckingAccountRow[]
+  bankAccounts: BankAccountRow[]
+  banks: BankRow[]
 }
 
 /**
@@ -55,8 +61,8 @@ export async function LoadCheckingAccounts(): Promise<LoadedCheckingAccountList 
   const BANKS = await LIST_BANKS.execute({})
 
   return {
-    entries: ENTRIES,
-    bankAccounts: BANK_ACCOUNTS,
-    banks: BANKS,
+    entries: ToCheckingAccountRows(ENTRIES),
+    bankAccounts: ToBankAccountRows(BANK_ACCOUNTS),
+    banks: ToBankRows(BANKS),
   }
 }

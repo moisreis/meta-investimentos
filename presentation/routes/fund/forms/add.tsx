@@ -11,11 +11,11 @@ import { SharedFormField } from "@/presentation/parts/components/shared-form-fie
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { useAddFundForm } from "@/presentation/routes/fund/hooks/use-add-fund-form.hook"
+import { useFundAddForm } from "@/presentation/routes/fund/hooks/use-fund-add-form.hook"
 
 import { FUND_FORM } from "@/presentation/routes/fund/settings/labels.settings"
 
-import { FundRegistryCombobox } from "./fund-registry-combobox"
+import { FundRegistryCombobox } from "./registry-combobox"
 
 import type { FundSelectOptions } from "../types/fund-list.types"
 
@@ -81,7 +81,7 @@ function AddFundForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useAddFundForm()
+  } = useFundAddForm()
 
   React.useEffect(() => {
     onStatusChange?.(status, error)

@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo } from "react"
 import {
+  ColumnHelper,
   createColumnHelper,
   useTable,
 } from "@tanstack/react-table"
@@ -10,7 +11,7 @@ import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/e
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
-import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
+import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 
 import { CreateCheckingAccountTableColumns } from "../datatable/table-columns"
 import { EMPTY_CHECKING_ACCOUNT_NAME_LOOKUPS } from "../helpers/build-checking-account-name-lookups.helper"
@@ -19,10 +20,10 @@ import { useCheckingAccountBulkDelete } from "./use-checking-account-bulk-delete
 import { useCheckingAccountRowActions } from "./use-checking-account-row-actions.hook"
 
 // Column helper bound to the entity table features.
-const COLUMN_HELPER = createColumnHelper<
+const COLUMN_HELPER: ColumnHelper<
   EntityTableFeatures,
-  CheckingAccountResponseDTO
->()
+  CheckingAccountRow
+> = createColumnHelper<EntityTableFeatures, CheckingAccountRow>()
 
 /**
  * @summary
@@ -49,12 +50,11 @@ const COLUMN_HELPER = createColumnHelper<
  * @date 2026-09-25
  */
 function useCheckingAccountDatatable(
-  entries: CheckingAccountResponseDTO[],
+  entries: CheckingAccountRow[],
   names: CheckingAccountNameLookups = EMPTY_CHECKING_ACCOUNT_NAME_LOOKUPS
 ) {
   const addDialog = useEntityAddDialog()
-  const editDialog =
-    useEntityEditDialog<CheckingAccountResponseDTO>()
+  const editDialog = useEntityEditDialog<CheckingAccountRow>()
   const rowActions = useCheckingAccountRowActions()
   const bulkDelete = useCheckingAccountBulkDelete()
 

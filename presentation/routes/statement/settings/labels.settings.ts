@@ -1,4 +1,11 @@
-// Form copy for the statement generate screen.
+﻿/**
+ * @summary
+ * Form copy for the statement generate screen.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export const STATEMENT_FORM = {
   // Generate button content.
   GENERATE_BUTTON: "Gerar Relatório",
@@ -29,7 +36,11 @@ export const STATEMENT_DIALOG = {
   FIELD_PORTFOLIO_PLACEHOLDER: "Selecione uma carteira",
 
   // Month field copy.
-  FIELD_MONTH: "Mês de referência",
+  FIELD_MONTH: "Data de referência",
+  FIELD_MONTH_PLACEHOLDER: "Selecione a data",
+
+  // Accessible label of the reference date calendar grid.
+  FIELD_MONTH_GRID_LABEL: "Calendário da data de referência",
 } as const
 
 // Datatable copy for the statement list screen.
@@ -130,3 +141,4 @@ export const STATEMENT_EMPTY = {
 } as const
 
 export { FormatDeleteStatementDescription }
+

@@ -1,16 +1,26 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { PositionContainer } from "@/presentation/composition/position.container"
 import { WithdrawalContainer } from "@/presentation/composition/withdrawal.container"
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import type { PositionResponseDTO } from "@/services/position/dto/position-response.dto"
-import type { WithdrawalResponseDTO } from "@/services/withdrawal/dto/withdrawal-response.dto"
+import { ToWithdrawalRows } from "@/presentation/mappers/withdrawal-row.mapper"
+import { ToPortfolioRows } from "@/presentation/mappers/portfolio-row.mapper"
+import { ToFundRows } from "@/presentation/mappers/fund-row.mapper"
+import { ToPositionRows } from "@/presentation/mappers/position-row.mapper"
+import { ToPositionWeightRows } from "@/presentation/mappers/position-weight-row.mapper"
+import type { FundRow } from "@/presentation/types/fund-row.types"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { PositionRow } from "@/presentation/types/position-row.types"
+import type { PositionWeightRow } from "@/presentation/types/position-weight-row.types"
+import type { WithdrawalRow } from "@/presentation/types/withdrawal-row.types"
 
 // Data resolved by the withdrawal list loader.
 export interface LoadedWithdrawalList {
-  withdrawals: WithdrawalResponseDTO[]
-  portfolios: PortfolioResponseDTO[]
-  funds: FundResponseDTO[]
-  positions: PositionResponseDTO[]
+  withdrawals: WithdrawalRow[]
+  portfolios: PortfolioRow[]
+  funds: FundRow[]
+  positions: PositionRow[]
+  // Share each position holds of its portfolio, driving the
+  // add dialog options.
+  weights: PositionWeightRow[]
 }
 
 /**
@@ -53,22 +63,28 @@ export async function LoadWithdrawals(): Promise<LoadedWithdrawalList | null> {
     listFunds: LIST_FUNDS,
     listPortfolios: LIST_PORTFOLIOS,
   } = WithdrawalContainer()
+  const { listWeights: LIST_WEIGHTS } = PositionContainer()
 
   const PORTFOLIOS = await LIST_PORTFOLIOS.execute({
     userId: USER.id,
   })
-  const FUNDS = await LIST_FUNDS.execute({})
-  const POSITIONS = await LIST_ALL_POSITIONS.execute({
-    portfolioIds: PORTFOLIOS.map((portfolio) => portfolio.id),
-  })
+  const PORTFOLIO_IDS = PORTFOLIOS.map((portfolio) => portfolio.id)
+
+  const [FUNDS, POSITIONS, WEIGHTS] = await Promise.all([
+    LIST_FUNDS.execute({}),
+    LIST_ALL_POSITIONS.execute({ portfolioIds: PORTFOLIO_IDS }),
+    LIST_WEIGHTS.execute({ portfolioIds: PORTFOLIO_IDS }),
+  ])
+
   const WITHDRAWALS = await LIST_ALL_WITHDRAWALS.execute({
     positionIds: POSITIONS.map((position) => position.id),
   })
 
   return {
-    withdrawals: WITHDRAWALS,
-    portfolios: PORTFOLIOS,
-    funds: FUNDS,
-    positions: POSITIONS,
+    withdrawals: ToWithdrawalRows(WITHDRAWALS),
+    portfolios: ToPortfolioRows(PORTFOLIOS),
+    funds: ToFundRows(FUNDS),
+    positions: ToPositionRows(POSITIONS),
+    weights: ToPositionWeightRows(WEIGHTS),
   }
 }

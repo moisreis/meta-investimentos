@@ -1,52 +1,60 @@
 import * as React from "react"
 import { cn } from "cn"
+import { IconSelector } from "@tabler/icons-react"
 
-/**
- * @summary
- * Renders a native **select** element.
- *
- * @remarks
- * A plain styled `<select>` that matches the input
- * height, border, and focus ring so it can sit side
- * by side with the form text fields. Stays native to
- * keep full keyboard and screen-reader support.
- *
- * @explanation
- * Use as the option picker of entity forms that link
- * to a registry such as a bank or a category. Render
- * the choices as `option` children and control the
- * selection through `value` and `onChange`.
- *
- * @param props - Props forwarded to the select.
- *
- * @returns The native select element.
- *
- * @example
- * <NativeSelect value={bankId} onChange={onChange}>
- *   <option value="">Selecione</option>
- * </NativeSelect>
- *
- * @author Moisés Reis
- *
- * @date 2026-09-25
- */
+type NativeSelectProps = Omit<React.ComponentProps<"select">, "size"> & {
+  size?: "sm" | "default"
+}
+
 function NativeSelect({
   className,
-  children,
+  size = "default",
   ...props
-}: React.ComponentProps<"select">) {
+}: NativeSelectProps) {
   return (
-    <select
-      data-slot="select"
+    <div
       className={cn(
-        "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+        "group/native-select relative w-fit has-[select:disabled]:opacity-50",
         className
       )}
-      {...props}
+      data-slot="native-select-wrapper"
+      data-size={size}
     >
-      {children}
-    </select>
+      <select
+        data-slot="native-select"
+        data-size={size}
+        className="h-7 w-full min-w-0 appearance-none rounded-md border border-input bg-input/20 py-0.5 pr-6 pl-2 text-xs/relaxed transition-colors outline-none select-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:cursor-not-allowed aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 data-[size=sm]:h-6 data-[size=sm]:text-[0.625rem] dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
+        {...props}
+      />
+      <IconSelector className="pointer-events-none absolute top-1/2 right-1.5 size-3.5 -translate-y-1/2 text-muted-foreground select-none group-data-[size=sm]/native-select:size-3 group-data-[size=sm]/native-select:-translate-y-[calc(--spacing(1.25))]" aria-hidden="true" data-slot="native-select-icon" />
+    </div>
   )
 }
 
-export { NativeSelect }
+function NativeSelectOption({
+  className,
+  ...props
+}: React.ComponentProps<"option">) {
+  return (
+    <option
+      data-slot="native-select-option"
+      className={cn("bg-[Canvas] text-[CanvasText]", className)}
+      {...props}
+    />
+  )
+}
+
+function NativeSelectOptGroup({
+  className,
+  ...props
+}: React.ComponentProps<"optgroup">) {
+  return (
+    <optgroup
+      data-slot="native-select-optgroup"
+      className={cn("bg-[Canvas] text-[CanvasText]", className)}
+      {...props}
+    />
+  )
+}
+
+export { NativeSelect, NativeSelectOptGroup, NativeSelectOption }

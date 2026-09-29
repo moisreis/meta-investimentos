@@ -2,13 +2,11 @@
 
 import { EntityDatatable } from "@/presentation/parts/datatable/layout/entity-datatable"
 import type { EntityTable } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 interface CategoryDatatableTableProps {
-  table: EntityTable<CategoryResponseDTO>
-  onBulkDelete: (
-    items: CategoryResponseDTO[]
-  ) => void | Promise<void>
+  table: EntityTable<CategoryRow>
+  onBulkDelete: (items: CategoryRow[]) => void | Promise<void>
 }
 
 /**

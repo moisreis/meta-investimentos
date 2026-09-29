@@ -4,13 +4,21 @@ import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
 import type { BenchmarkResponseDTO } from "@/services/benchmark/dto/benchmark-response.dto"
 import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
 import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
+import { ToFundRows } from "@/presentation/mappers/fund-row.mapper"
+import { ToBankRows } from "@/presentation/mappers/bank-row.mapper"
+import { ToBenchmarkRows } from "@/presentation/mappers/benchmark-row.mapper"
+import { ToCategoryRows } from "@/presentation/mappers/category-row.mapper"
+import type { FundRow } from "@/presentation/types/fund-row.types"
+import type { BankRow } from "@/presentation/types/bank-row.types"
+import type { BenchmarkRow } from "@/presentation/types/benchmark-row.types"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 // Data resolved by the fund list loader.
 export interface LoadedFundList {
-  funds: FundResponseDTO[]
-  banks: BankResponseDTO[]
-  benchmarks: BenchmarkResponseDTO[]
-  categories: CategoryResponseDTO[]
+  funds: FundRow[]
+  banks: BankRow[]
+  benchmarks: BenchmarkRow[]
+  categories: CategoryRow[]
 }
 
 /**
@@ -57,9 +65,9 @@ export async function LoadFunds(): Promise<LoadedFundList | null> {
   const CATEGORIES = await LIST_CATEGORIES.execute({})
 
   return {
-    funds: FUNDS,
-    banks: BANKS,
-    benchmarks: BENCHMARKS,
-    categories: CATEGORIES,
+    funds: ToFundRows(FUNDS),
+    banks: ToBankRows(BANKS),
+    benchmarks: ToBenchmarkRows(BENCHMARKS),
+    categories: ToCategoryRows(CATEGORIES),
   }
 }

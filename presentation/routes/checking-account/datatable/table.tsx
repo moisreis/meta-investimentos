@@ -2,12 +2,12 @@
 
 import { EntityDatatable } from "@/presentation/parts/datatable/layout/entity-datatable"
 import type { EntityTable } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
+import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 
 interface CheckingAccountDatatableTableProps {
-  table: EntityTable<CheckingAccountResponseDTO>
+  table: EntityTable<CheckingAccountRow>
   onBulkDelete: (
-    items: CheckingAccountResponseDTO[]
+    items: CheckingAccountRow[]
   ) => void | Promise<void>
 }
 

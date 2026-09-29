@@ -1,10 +1,16 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 
 import { ID_SCHEMA } from "@/lib/validation/common.validation"
 import { DATE_SCHEMA } from "@/lib/validation/date.validation"
-
-// Longest period accepted by the start calculation action,
-// in calendar days.
+/**
+ * @summary
+ * Longest period accepted by the start calculation action, in
+ * calendar days.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 const MAX_CALCULATION_DAYS = 366
 
 // Milliseconds in a single calendar day.
@@ -61,9 +67,21 @@ type GetPositionPerformanceCalculationProgressValues = z.infer<
   typeof GET_POSITION_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA
 >
 
+// The payload accepted by the delete position performance action.
+const DELETE_POSITION_PERFORMANCE_SCHEMA = z.object({
+  performanceId: ID_SCHEMA,
+})
+
+// Values of the delete position performance action payload.
+type DeletePositionPerformanceValues = z.infer<
+  typeof DELETE_POSITION_PERFORMANCE_SCHEMA
+>
+
 export {
+  DELETE_POSITION_PERFORMANCE_SCHEMA,
   GET_POSITION_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA,
   START_POSITION_PERFORMANCE_CALCULATION_SCHEMA,
+  type DeletePositionPerformanceValues,
   type GetPositionPerformanceCalculationProgressValues,
   type StartPositionPerformanceCalculationValues,
 }

@@ -10,17 +10,17 @@ import { SharedFormField } from "@/presentation/parts/components/shared-form-fie
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { useEditPortfolioForm } from "@/presentation/routes/portfolio/hooks/use-edit-portfolio-form.hook"
+import { usePortfolioEditForm } from "../hooks/use-portfolio-edit-form.hook"
 
 import { PORTFOLIO_FORM } from "@/presentation/routes/portfolio/settings/labels.settings"
 
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 /**
  * Props for the edit portfolio form.
  */
 export interface EditPortfolioFormProps {
-  portfolio: PortfolioResponseDTO
+  portfolio: PortfolioRow
   onStatusChange?: (
     status: EntityFormStatus,
     error: string | null
@@ -81,7 +81,7 @@ function EditPortfolioForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useEditPortfolioForm(portfolio)
+  } = usePortfolioEditForm(portfolio)
 
   React.useEffect(() => {
     onStatusChange?.(status, error)

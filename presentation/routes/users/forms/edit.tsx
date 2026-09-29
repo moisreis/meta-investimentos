@@ -9,16 +9,16 @@ import { SharedFormField } from "@/presentation/parts/components/shared-form-fie
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { useEditUserForm } from "@/presentation/routes/users/hooks/use-edit-user-form.hook"
+import { useUserEditForm } from "../hooks/use-user-edit-form.hook"
 import { USER_FORM } from "@/presentation/routes/users/settings/labels.settings"
 
-import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
+import type { UserRow } from "@/presentation/types/user-row.types"
 
 /**
  * Props for the edit user form.
  */
 export interface EditUserFormProps {
-  user: UserResponseDTO
+  user: UserRow
   onStatusChange?: (
     status: EntityFormStatus,
     error: string | null
@@ -69,7 +69,7 @@ function EditUserForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useEditUserForm(user)
+  } = useUserEditForm(user)
 
   React.useEffect(() => {
     onStatusChange?.(status, error)

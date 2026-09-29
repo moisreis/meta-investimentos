@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo } from "react"
 import {
+  ColumnHelper,
   createColumnHelper,
   useTable,
 } from "@tanstack/react-table"
@@ -10,8 +11,8 @@ import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/e
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
-import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-performance-row.types"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 import { CreatePortfolioTableColumns } from "../datatable/table-columns"
 import { usePortfolioBulkDelete } from "./use-portfolio-bulk-delete.hook"
@@ -19,10 +20,10 @@ import { usePortfolioRowActions } from "./use-portfolio-row-actions.hook"
 import type { PortfolioRowSummary } from "../types/portfolio-list.types"
 
 // Column helper bound to the entity table features.
-const COLUMN_HELPER = createColumnHelper<
+const COLUMN_HELPER: ColumnHelper<
   EntityTableFeatures,
-  PortfolioResponseDTO
->()
+  PortfolioRow
+> = createColumnHelper<EntityTableFeatures, PortfolioRow>()
 
 /**
  * @summary
@@ -50,14 +51,14 @@ const COLUMN_HELPER = createColumnHelper<
  * @date 2026-09-25
  */
 function usePortfolioDatatable(
-  portfolios: PortfolioResponseDTO[],
+  portfolios: PortfolioRow[],
   performanceFor: (
     portfolioId: string
-  ) => PortfolioPerformanceResponseDTO | null,
+  ) => PortfolioPerformanceRow | null,
   summaries: Record<string, PortfolioRowSummary> | null = null
 ) {
   const addDialog = useEntityAddDialog()
-  const editDialog = useEntityEditDialog<PortfolioResponseDTO>()
+  const editDialog = useEntityEditDialog<PortfolioRow>()
   const rowActions = usePortfolioRowActions()
   const bulkDelete = usePortfolioBulkDelete()
 

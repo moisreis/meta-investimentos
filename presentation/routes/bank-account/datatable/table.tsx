@@ -2,13 +2,11 @@
 
 import { EntityDatatable } from "@/presentation/parts/datatable/layout/entity-datatable"
 import type { EntityTable } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
 
 interface BankAccountDatatableTableProps {
-  table: EntityTable<BankAccountResponseDTO>
-  onBulkDelete: (
-    items: BankAccountResponseDTO[]
-  ) => void | Promise<void>
+  table: EntityTable<BankAccountRow>
+  onBulkDelete: (items: BankAccountRow[]) => void | Promise<void>
 }
 
 /**

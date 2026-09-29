@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 
 import { LoadPortfolioAcronym } from "@/presentation/routes/portfolio/helpers/load-portfolio-acronym.helper"
 import { LoadPortfolioOverview } from "@/presentation/routes/portfolio/helpers/load-portfolio-overview.helper"
-import PortfolioPage from "@/presentation/routes/portfolio/pages/page"
+import { PortfolioDetail } from "@/presentation/routes/portfolio/pages/detail"
 import type { PortfolioOverviewData } from "@/presentation/routes/portfolio/types/portfolio-overview.types"
 
 // Title shown when the portfolio cannot be resolved.
@@ -51,5 +51,5 @@ export default async function PortfoliosIdPage({
   const DATA: PortfolioOverviewData | null =
     await LoadPortfolioOverview(PORTFOLIO_ID)
 
-  return <PortfolioPage data={DATA} />
+  return <PortfolioDetail data={DATA} />
 }

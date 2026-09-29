@@ -26,7 +26,6 @@ export const MAIN_NAVIGATION: MainNavigationGroup[] = [
       { label: "Posições", href: "/position" },
       { label: "Aplicações", href: "/application" },
       { label: "Resgates", href: "/withdrawal" },
-      { label: "Transações", href: "/transaction" },
       { label: "Relatórios", href: "/statement" },
     ],
   },

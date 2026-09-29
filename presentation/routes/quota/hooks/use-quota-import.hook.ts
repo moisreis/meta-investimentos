@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
-import type { CvmImportWindow } from "@/services/quota/use-cases/import-fund-valuations.use-case"
+import type { CvmImportWindow } from "@/lib/quota/cvm-import-window"
 
 import { getQuotaImportProgressAction } from "../actions/get-quota-import-progress.action"
 import { startQuotaImportAction } from "../actions/start-quota-import.action"

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { endOfDay, startOfDay } from "date-fns"
 import type { DateRange } from "react-day-picker"
 
-import type { ApplicationResponseDTO } from "@/services/application/dto/application-response.dto"
+import type { ApplicationRow } from "@/presentation/types/application-row.types"
 
 import { EMPTY_APPLICATION_LOOKUPS } from "../helpers/build-application-lookups.helper"
 import type { ApplicationLookups } from "../types/application-list.types"
@@ -16,7 +16,7 @@ interface UseApplicationDatatableFiltersOutput {
   onPortfolioChange: (value: string | undefined) => void
   onFundChange: (value: string | undefined) => void
   onDateRangeChange: (range: DateRange | undefined) => void
-  filteredApplications: ApplicationResponseDTO[]
+  filteredApplications: ApplicationRow[]
 }
 
 /**
@@ -39,7 +39,7 @@ interface UseApplicationDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function useApplicationDatatableFilters(
-  applications: ApplicationResponseDTO[],
+  applications: ApplicationRow[],
   lookups: ApplicationLookups = EMPTY_APPLICATION_LOOKUPS
 ): UseApplicationDatatableFiltersOutput {
   const [PORTFOLIO_ID, setPortfolioId] = useState<

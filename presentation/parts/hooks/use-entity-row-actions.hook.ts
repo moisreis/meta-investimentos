@@ -4,6 +4,7 @@ import { useCallback, useState } from "react"
 import { useRouter } from "next/navigation"
 
 import type { EntityDeleteToastStatus } from "@/presentation/parts/toasts/entity-delete-toast"
+import type { EntityReverseToastStatus } from "@/presentation/parts/toasts/entity-reverse-toast"
 import type { ActionResult } from "@/presentation/types/action-result"
 
 // Router instance returned by the navigation use router hook.
@@ -18,6 +19,8 @@ export interface EntityRowActionsConfig<
   TData extends { id: string },
 > {
   runDelete: (id: string) => Promise<ActionResult<undefined>>
+  /** Marks the row as reversed instead of deleting it. */
+  runReverse?: (id: string) => Promise<ActionResult<undefined>>
   onView?: (row: TData, router: EntityRouter) => void
 }
 
@@ -36,6 +39,14 @@ export interface EntityRowActionsModel<TData> {
   deleteStatus: EntityDeleteToastStatus
   deleteError: string | null
   setDeleteOpen: (open: boolean) => void
+  handleReverse: (row: TData) => void
+  handleConfirmReverse: () => Promise<void>
+  reverseTarget: TData | null
+  reverseOpen: boolean
+  reversePending: boolean
+  reverseStatus: EntityReverseToastStatus
+  reverseError: string | null
+  setReverseOpen: (open: boolean) => void
 }
 
 /**
@@ -44,10 +55,11 @@ export interface EntityRowActionsModel<TData> {
  *
  * @remarks
  * Exposes the optional view navigation callback, the
- * delete target selection and the confirmed delete flow.
- * The confirm handler runs the server action, reports the
- * delete status for the result toast and refreshes the
- * server data after a successful deletion.
+ * delete target selection with the confirmed delete flow
+ * and the reverse target selection with the confirmed
+ * reverse flow. Each confirm handler runs its server
+ * action, reports the result status for the matching
+ * toast and refreshes the server data after a success.
  *
  * @explanation
  * Use inside the route datatable to keep the row action
@@ -55,7 +67,9 @@ export interface EntityRowActionsModel<TData> {
  * detail screen omit `onView` and leave `handleView` as a
  * no-op, so the column builders decide whether to render a
  * view action. Routes with a detail screen pass `onView`
- * to push a route or open an external file.
+ * to push a route or open an external file. Routes with a
+ * reverse flow pass `runReverse` so the row menu can offer
+ * a reversal next to the deletion.
  *
  * @typeParam TData - Row type of the datatable.
  *
@@ -63,9 +77,12 @@ export interface EntityRowActionsModel<TData> {
  *   navigation.
  * @param config.runDelete - Maps the row id to the route
  *   delete action.
+ * @param config.runReverse - Maps the row id to the route
+ *   reverse action, when the route supports reversals.
  * @param config.onView - Optional detail screen navigation.
  *
- * @returns The row actions and single-delete dialog state.
+ * @returns The row actions and the single-delete and
+ *   single-reverse dialog state.
  *
  * @example
  * const ROW_ACTIONS = useEntityRowActions<BankResponseDTO>({
@@ -78,6 +95,7 @@ export interface EntityRowActionsModel<TData> {
  */
 function useEntityRowActions<TData extends { id: string }>({
   runDelete,
+  runReverse,
   onView,
 }: EntityRowActionsConfig<TData>): EntityRowActionsModel<TData> {
   const ROUTER = useRouter()
@@ -87,6 +105,14 @@ function useEntityRowActions<TData extends { id: string }>({
   const [DELETE_STATUS, setDeleteStatus] =
     useState<EntityDeleteToastStatus>("idle")
   const [DELETE_ERROR, setDeleteError] = useState<string | null>(
+    null
+  )
+  const [REVERSE_TARGET, setReverseTarget] =
+    useState<TData | null>(null)
+  const [REVERSE_PENDING, setReversePending] = useState(false)
+  const [REVERSE_STATUS, setReverseStatus] =
+    useState<EntityReverseToastStatus>("idle")
+  const [REVERSE_ERROR, setReverseError] = useState<string | null>(
     null
   )
 
@@ -130,6 +156,39 @@ function useEntityRowActions<TData extends { id: string }>({
     }
   }, [])
 
+  const HandleReverse = useCallback((row: TData) => {
+    setReverseTarget(row)
+    setReverseStatus("idle")
+    setReverseError(null)
+  }, [])
+
+  const HandleConfirmReverse = useCallback(async () => {
+    if (!REVERSE_TARGET || !runReverse) return
+
+    setReversePending(true)
+    const RESULT = await runReverse(REVERSE_TARGET.id)
+    setReversePending(false)
+
+    if (!RESULT.success) {
+      setReverseError(RESULT.error)
+      setReverseStatus("error")
+      setReverseTarget(null)
+      return
+    }
+
+    setReverseStatus("success")
+    setReverseTarget(null)
+    ROUTER.refresh()
+  }, [REVERSE_TARGET, runReverse, ROUTER])
+
+  const UpdateReverseOpen = useCallback((open: boolean) => {
+    if (!open) {
+      setReverseTarget(null)
+      setReverseStatus("idle")
+      setReverseError(null)
+    }
+  }, [])
+
   return {
     handleView: HandleView,
     handleDelete: HandleDelete,
@@ -140,6 +199,14 @@ function useEntityRowActions<TData extends { id: string }>({
     deleteStatus: DELETE_STATUS,
     deleteError: DELETE_ERROR,
     setDeleteOpen: UpdateDeleteOpen,
+    handleReverse: HandleReverse,
+    handleConfirmReverse: HandleConfirmReverse,
+    reverseTarget: REVERSE_TARGET,
+    reverseOpen: REVERSE_TARGET !== null,
+    reversePending: REVERSE_PENDING,
+    reverseStatus: REVERSE_STATUS,
+    reverseError: REVERSE_ERROR,
+    setReverseOpen: UpdateReverseOpen,
   }
 }
 

@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import { Geist, Geist_Mono, Roboto_Slab } from "next/font/google"
+import { Geist, Geist_Mono, Roboto_Slab, Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/presentation/theme/theme-provider"
 import { TooltipProvider } from "@/presentation/ui/tooltip"
@@ -14,10 +14,7 @@ const ROBOTO_SLAB_HEADING = Roboto_Slab({
 })
 
 // Stores the **Geist** sans-serif font configuration.
-const GEIST = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
+const inter = Inter({subsets:['latin'],variable:'--font-sans'})
 
 // Stores the **Geist Mono** font configuration.
 const FONT_MONO = Geist_Mono({
@@ -74,7 +71,7 @@ export default function RootLayout({
         "antialiased",
         FONT_MONO.variable,
         "font-sans",
-        GEIST.variable,
+        inter.variable,
         ROBOTO_SLAB_HEADING.variable
       )}
     >

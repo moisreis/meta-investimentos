@@ -2,13 +2,11 @@
 
 import { EntityDatatable } from "@/presentation/parts/datatable/layout/entity-datatable"
 import type { EntityTable } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
+import type { UserRow } from "@/presentation/types/user-row.types"
 
 interface UserDatatableTableProps {
-  table: EntityTable<UserResponseDTO>
-  onBulkDelete: (
-    items: UserResponseDTO[]
-  ) => void | Promise<void>
+  table: EntityTable<UserRow>
+  onBulkDelete: (items: UserRow[]) => void | Promise<void>
 }
 
 /**

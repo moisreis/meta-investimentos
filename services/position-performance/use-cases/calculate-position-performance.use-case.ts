@@ -27,7 +27,6 @@ import {
   SignedPercentage,
 } from "@/value-objects"
 import { NotFoundError } from "@errors/not-found.error"
-import { ValidationError } from "@errors/validation.error"
 import type { PositionPerformanceResponseDTO } from "../dto/position-performance-response.dto"
 import { toResponseDTO } from "../mappers/position-performance.mapper"
 
@@ -88,9 +87,17 @@ export class CalculatePositionPerformanceUseCase {
    * after inflows and outflows. Longer horizons chain the
    * fund NAV growth factors when enough history exists.
    *
+   * A target date with no quota is a non-trading day, not a
+   * failure: the position cannot be valued without a price,
+   * so the day is skipped and `null` is returned. A day on
+   * which the position holds no quotas is skipped as well,
+   * rather than stored as a zero snapshot.
+   *
    * @param input - Position id and target date.
    *
-   * @returns The saved performance.
+   * @returns The saved performance, or `null` when the day
+   * has no quote or the position holds nothing, and was
+   * therefore skipped.
    *
    * @example
    * const RESULT = await USE_CASE.execute({
@@ -104,7 +111,7 @@ export class CalculatePositionPerformanceUseCase {
    */
   async execute(
     input: CalculatePositionPerformanceInput
-  ): Promise<PositionPerformanceResponseDTO> {
+  ): Promise<PositionPerformanceResponseDTO | null> {
     const TARGET_DATE = new Date(input.date)
     const POSITION_ID = EntityId.create(input.positionId)
 
@@ -127,14 +134,18 @@ export class CalculatePositionPerformanceUseCase {
         TARGET_DATE
       )
     if (!CURRENT_QUOTA) {
-      throw new ValidationError(
-        "`Quota` is required for the target date."
-      )
+      return null
     }
 
+    // Bounded by TARGET_DATE so a recalculated day reads the
+    // snapshot before it, never its own. Without the bound, a
+    // re-run of a period that already has data would carry the
+    // day twice and then trip the `(position_id, date)`
+    // unique index.
     const PREVIOUS =
       await this.positionPerformanceRepository.findLatestByPositionId(
-        POSITION_ID
+        POSITION_ID,
+        TARGET_DATE
       )
 
     const APPLICATIONS =
@@ -164,6 +175,14 @@ export class CalculatePositionPerformanceUseCase {
       withdrawalQuotasQuantity:
         DAILY_CALCULATION.withdrawalQuotas,
     })
+
+    // A position holding nothing has nothing to value. Writing
+    // a zero snapshot would also poison the next day, which
+    // needs a non-zero opening balance to compute a daily
+    // return, so the day is skipped instead.
+    if (QUOTAS_TODAY.value.isZero()) {
+      return null
+    }
 
     const PATRIMONY = PositiveMoney.create(
       CURRENT_QUOTA.price.value.times(QUOTAS_TODAY.value)
@@ -279,7 +298,15 @@ export class CalculatePositionPerformanceUseCase {
     targetDate: Date
     previousQuotasHeld: QuotaQuantity | null
   }): Promise<SignedPercentage> {
-    if (!input.previousQuotasHeld) {
+    // A position that held nothing yesterday had no capital at
+    // risk, so it has no daily return. This must be caught
+    // here: `calculateDailyFactor` rejects a zero previous
+    // quantity, and an empty position legitimately produces
+    // one.
+    if (
+      !input.previousQuotasHeld ||
+      input.previousQuotasHeld.value.isZero()
+    ) {
       return SignedPercentage.create("0")
     }
 

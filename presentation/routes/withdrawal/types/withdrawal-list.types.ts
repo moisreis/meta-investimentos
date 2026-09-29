@@ -2,7 +2,14 @@ import type { DateRange } from "react-day-picker"
 
 import type { EntitySelectFilterOption } from "@/presentation/parts/filters/entity-select-filter"
 
-// Display data resolved for a withdrawal row.
+/**
+ * @summary
+ * Display data resolved for a withdrawal row.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export interface WithdrawalRowLookup {
   // Position portfolio id used by the filters.
   portfolioId: string

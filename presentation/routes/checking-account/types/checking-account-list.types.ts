@@ -1,10 +1,17 @@
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
+import type { BankRow } from "@/presentation/types/bank-row.types"
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
 
-// Options consumed by the checking account forms.
+/**
+ * @summary
+ * Options consumed by the checking account forms.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export interface CheckingAccountSelectOptions {
-  bankAccounts: BankAccountResponseDTO[]
-  banks: BankResponseDTO[]
+  bankAccounts: BankAccountRow[]
+  banks: BankRow[]
 }
 
 // Account data rendered on a checking account row.

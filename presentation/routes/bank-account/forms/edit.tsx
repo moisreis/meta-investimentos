@@ -12,14 +12,14 @@ import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-for
 
 import { BANK_ACCOUNT_FORM } from "../settings/labels.settings"
 import type { BankAccountNameLookups } from "../types/bank-account-list.types"
-import { useEditBankAccountForm } from "../hooks/use-edit-bank-account-form.hook"
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
+import { useBankAccountEditForm } from "../hooks/use-bank-account-edit-form.hook"
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
 
 /**
  * Props for the edit bank account form.
  */
 export interface EditBankAccountFormProps {
-  bankAccount: BankAccountResponseDTO
+  bankAccount: BankAccountRow
   names: BankAccountNameLookups
   onStatusChange?: (
     status: EntityFormStatus,
@@ -75,7 +75,7 @@ function EditBankAccountForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useEditBankAccountForm(bankAccount)
+  } = useBankAccountEditForm(bankAccount)
 
   const LOOKUP = names.bankAccounts[bankAccount.id]
 

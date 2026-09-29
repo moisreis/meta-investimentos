@@ -19,6 +19,7 @@ import {
 } from "@/presentation/ui/dropdown-menu"
 
 import { EntityBulkDeleteDialog } from "../dialogs/entity-bulk-delete-dialog"
+import { ENTITY_TABLE_SELECT_COLUMN_ID } from "../pinned-columns/entity-table-selectable-column"
 import type { EntityTable } from "../settings/entity-table-features.settings"
 import {
   ENTITY_TABLE_NEXT_PAGE_LABEL,
@@ -64,26 +65,38 @@ function EntityTablePagination<TData extends RowData>({
   const pagination = useEntityDatatablePagination(table)
   const bulkDelete = useEntityBulkDelete(table, onBulkDelete)
 
+  // Whether the table renders a selection column. The summary
+  // of selected rows and the bulk delete button only describe
+  // a table that can select, so a read-only table keeps the
+  // pagination controls on their own.
+  const HAS_SELECTION = table
+    .getAllLeafColumns()
+    .some((column) => column.id === ENTITY_TABLE_SELECT_COLUMN_ID)
+
   return (
     <div className="flex h-11 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border px-3">
       <div className="flex flex-1 items-center gap-3 text-sm text-muted-foreground">
-        <span>
-          {FormatSelectedRowsLabel(
-            pagination.selectedRowsCount,
-            pagination.rowCount
-          )}
-        </span>
+        {HAS_SELECTION ? (
+          <>
+            <span>
+              {FormatSelectedRowsLabel(
+                pagination.selectedRowsCount,
+                pagination.rowCount
+              )}
+            </span>
 
-        {onBulkDelete && pagination.selectedRowsCount > 0 ? (
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => bulkDelete.setOpen(true)}
-          >
-            {FormatBulkDeleteButtonLabel(
-              pagination.selectedRowsCount
-            )}
-          </Button>
+            {onBulkDelete && pagination.selectedRowsCount > 0 ? (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => bulkDelete.setOpen(true)}
+              >
+                {FormatBulkDeleteButtonLabel(
+                  pagination.selectedRowsCount
+                )}
+              </Button>
+            ) : null}
+          </>
         ) : null}
       </div>
 

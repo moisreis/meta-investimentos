@@ -2,27 +2,33 @@
 
 import { useCallback, useMemo } from "react"
 import {
+  ColumnHelper,
   createColumnHelper,
   useTable,
 } from "@tanstack/react-table"
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
+import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-performance-row.types"
 
 import { CreatePortfolioPerformanceTableColumns } from "../datatable/table-columns"
 import { EMPTY_PORTFOLIO_PERFORMANCE_LOOKUPS } from "../helpers/build-portfolio-performance-lookups.helper"
 import type { PortfolioPerformanceLookups } from "../types/portfolio-performance-list.types"
+import { usePortfolioPerformanceRowActions } from "./use-portfolio-performance-row-actions.hook"
 
 // Column helper bound to the entity table features.
-const COLUMN_HELPER = createColumnHelper<
+const COLUMN_HELPER: ColumnHelper<
   EntityTableFeatures,
-  PortfolioPerformanceResponseDTO
+  PortfolioPerformanceRow
+> = createColumnHelper<
+  EntityTableFeatures,
+  PortfolioPerformanceRow
 >()
 
 /**
  * @summary
- * Coordinates the performance datatable instance.
+ * Coordinates the portfolio performance datatable
+ * instance.
  *
  * @remarks
  * Creates the shared table instance used by the
@@ -34,19 +40,20 @@ const COLUMN_HELPER = createColumnHelper<
  * @param performances - The rows rendered by the table.
  * @param lookups - The performance lookups.
  *
- * @returns The shared table instance.
+ * @returns The shared table instance and row actions.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-25
+ * @date 2026-09-27
  */
 function usePortfolioPerformanceDatatable(
-  performances: PortfolioPerformanceResponseDTO[],
+  performances: PortfolioPerformanceRow[],
   lookups: PortfolioPerformanceLookups = EMPTY_PORTFOLIO_PERFORMANCE_LOOKUPS
 ) {
+  const rowActions = usePortfolioPerformanceRowActions()
+
   const rowFor = useCallback(
-    (performanceId: string) =>
-      lookups.rows[performanceId] ?? null,
+    (performanceId: string) => lookups.rows[performanceId] ?? null,
     [lookups]
   )
 
@@ -54,8 +61,9 @@ function usePortfolioPerformanceDatatable(
     () =>
       CreatePortfolioPerformanceTableColumns(COLUMN_HELPER, {
         rowFor,
+        onDelete: rowActions.handleDelete,
       }),
-    [rowFor]
+    [rowFor, rowActions.handleDelete]
   )
 
   const TABLE = useTable({
@@ -68,7 +76,7 @@ function usePortfolioPerformanceDatatable(
     },
   })
 
-  return { table: TABLE }
+  return { table: TABLE, rowActions }
 }
 
 export { usePortfolioPerformanceDatatable }

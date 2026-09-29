@@ -88,7 +88,8 @@ export function buildPositionPerformanceCalculationPlan(input: {
  * leaks between runs.
  *
  * @param input - The position and date to calculate.
- * @returns The calculated performance snapshot.
+ * @returns The calculated performance snapshot, or `null`
+ * when the day has no quote and was skipped.
  *
  * @example
  * const RESULT = await runPositionPerformanceCalculation({
@@ -102,7 +103,7 @@ export function buildPositionPerformanceCalculationPlan(input: {
  */
 export async function runPositionPerformanceCalculation(
   input: PositionPerformanceCalculationUnit
-): Promise<PositionPerformanceResponseDTO> {
+): Promise<PositionPerformanceResponseDTO | null> {
   const POSITION_REPO = new PositionRepository(db)
   const FUND_REPO = new FundRepository(db)
   const QUOTA_REPO = new QuotaRepository(db)

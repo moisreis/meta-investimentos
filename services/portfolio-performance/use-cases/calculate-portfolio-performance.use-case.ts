@@ -24,6 +24,7 @@ import { calculatePortfolioWithdrawalSum } from "@domain/portfolio/calculators/w
 import { calculatePortfolioInflationSpread } from "@domain/benchmark/calculators/inflation-spread.calculator"
 import { calculatePortfolioRiskFreeSpread } from "@domain/benchmark/calculators/risk-free-spread.calculator"
 import { calculatePortfolioMarketSpread } from "@domain/benchmark/calculators/market-spread.calculator"
+import { CalculatePositionPerformanceUseCase } from "@/services/position-performance/use-cases/calculate-position-performance.use-case"
 import {
   EntityId,
   GrowthFactor,
@@ -54,6 +55,13 @@ export interface CalculatePortfolioPerformanceInput {
  * and previous snapshots to produce a fresh daily portfolio
  * performance record using the domain calculators.
  *
+ * Each position is valued for the target day before the
+ * portfolio is aggregated, so the opening balance this use
+ * case carries forward is always present. That makes the
+ * calculation self-contained: it does not require the
+ * position performance route to have been run over the same
+ * period first.
+ *
  * @explanation
  * Patrimony aggregates the position values for the date.
  * The optional rates feed the target and the benchmark
@@ -78,7 +86,8 @@ export class CalculatePortfolioPerformanceUseCase {
     private applicationRepository: IApplication,
     private withdrawalRepository: IWithdrawal,
     private positionPerformanceRepository: IPositionPerformance,
-    private portfolioPerformanceRepository: IPortfolioPerformance
+    private portfolioPerformanceRepository: IPortfolioPerformance,
+    private calculatePositionPerformanceUseCase: CalculatePositionPerformanceUseCase
   ) {}
 
   /**
@@ -95,9 +104,20 @@ export class CalculatePortfolioPerformanceUseCase {
    * The optional rates feed the target and the benchmark
    * spreads, remaining null when not provided.
    *
+   * A day on which no fund of the portfolio publishes a
+   * quota is a non-trading day, not a failure: there is no
+   * price to value the portfolio against, so the day is
+   * skipped and `null` is returned. A day that prices *some*
+   * funds but not a fund whose position actually holds
+   * quotas is a genuine data gap and still throws. A day on
+   * which the portfolio holds nothing is skipped too, rather
+   * than stored as a zero snapshot.
+   *
    * @param input - Portfolio id, target date and optional rates.
    *
-   * @returns The saved performance.
+   * @returns The saved performance, or `null` when the day
+   * has no quotes, or the portfolio holds nothing, and was
+   * therefore skipped.
    *
    * @example
    * const RESULT = await USE_CASE.execute({
@@ -112,7 +132,7 @@ export class CalculatePortfolioPerformanceUseCase {
    */
   async execute(
     input: CalculatePortfolioPerformanceInput
-  ): Promise<PortfolioPerformanceResponseDTO> {
+  ): Promise<PortfolioPerformanceResponseDTO | null> {
     const TARGET_DATE = new Date(input.date)
     const PORTFOLIO_ID = EntityId.create(input.portfolioId)
 
@@ -151,6 +171,25 @@ export class CalculatePortfolioPerformanceUseCase {
       return toResponseDTO(SAVED)
     }
 
+    // A portfolio snapshot is the aggregate of its positions'
+    // snapshots, and the carry-forward below reads those rows
+    // for the opening balance. Calculating the positions here
+    // is what makes this use case correct on its own: without
+    // it, every day after the first with no movement would
+    // value the portfolio at zero.
+    //
+    // A position that returns `null` is skipped, either
+    // because its fund has no quote that day or because it
+    // holds nothing. Either way it contributes nothing to the
+    // total, and a portfolio made only of such positions is
+    // skipped below.
+    for (const POSITION_ID of POSITION_IDS) {
+      await this.calculatePositionPerformanceUseCase.execute({
+        positionId: POSITION_ID,
+        date: input.date,
+      })
+    }
+
     const APPLICATIONS =
       await this.applicationRepository.findAllByPositionIdsInPeriod(
         POSITION_IDS,
@@ -169,9 +208,15 @@ export class CalculatePortfolioPerformanceUseCase {
       withdrawals: WITHDRAWALS,
     })
 
+    // Bounded by TARGET_DATE so a recalculated day reads the
+    // snapshot before it, never its own. Without the bound, a
+    // re-run of a period that already has data would carry the
+    // day twice and then trip the `(portfolio_id, date)`
+    // unique index.
     const PREVIOUS_POSITIONS =
       await this.positionPerformanceRepository.findLatestByPositionIds(
-        POSITION_IDS
+        POSITION_IDS,
+        TARGET_DATE
       )
     const PREVIOUS_POSITIONS_BY_ID = new Map(
       PREVIOUS_POSITIONS.map((performance) => [
@@ -227,9 +272,17 @@ export class CalculatePortfolioPerformanceUseCase {
       targetDate: TARGET_DATE,
     })
 
+    if (!PATRIMONY) {
+      return null
+    }
+
+    // Same exclusive bound as the position lookup: the opening
+    // balance for a day is the day before it, never the day
+    // itself.
     const PREVIOUS_PORTFOLIO =
       await this.portfolioPerformanceRepository.findLatestByPortfolioId(
-        PORTFOLIO_ID
+        PORTFOLIO_ID,
+        TARGET_DATE
       )
 
     const EARNINGS = calculatePortfolioEarnings({
@@ -382,6 +435,40 @@ export class CalculatePortfolioPerformanceUseCase {
     }
   }
 
+  /**
+   * @summary
+   * Values the portfolio on the target date.
+   *
+   * @remarks
+   * Loads every fund quote of the day in a single query
+   * instead of one query per position, then sums the quote
+   * price times the held quotas.
+   *
+   * A position holding nothing is skipped: it contributes
+   * zero to the patrimony, so it has no business demanding a
+   * price. That is what lets a portfolio keep calculating on
+   * days when only some of its funds are quoted.
+   *
+   * @explanation
+   * Returns `null` when no fund of the portfolio has a quote
+   * on the target date, which marks the day as a non-trading
+   * day for the caller to skip. Also returns `null` when the
+   * portfolio holds no quotas at all, because a snapshot of
+   * an empty portfolio carries no information and would leave
+   * the next day with a zero opening balance. Throws when a
+   * fund whose position *does* hold quotas is missing its
+   * quote, since that is a gap in the price series rather
+   * than a holiday.
+   *
+   * @param input - The positions, their balances and the day.
+   *
+   * @returns The portfolio patrimony, or `null` when the day
+   * has no quotes or the portfolio holds nothing.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-28
+   */
   private async calculatePatrimony(input: {
     positions: {
       id: EntityId | undefined
@@ -389,26 +476,60 @@ export class CalculatePortfolioPerformanceUseCase {
     }[]
     quotasByPosition: Map<string, QuotaQuantity>
     targetDate: Date
-  }): Promise<PositiveMoney> {
+  }): Promise<PositiveMoney | null> {
+    const FUND_IDS = [
+      ...new Set(
+        input.positions.map((position) => position.fundId)
+      ),
+    ]
+
+    const QUOTAS =
+      await this.quotaRepository.findAllByFundIdsInPeriod(
+        FUND_IDS,
+        input.targetDate,
+        input.targetDate
+      )
+
+    if (QUOTAS.length === 0) {
+      return null
+    }
+
+    const PRICE_BY_FUND = new Map(
+      QUOTAS.map((quota) => [
+        quota.fundId as string,
+        quota.price,
+      ])
+    )
+
     let TOTAL = new Decimal(0)
     for (const position of input.positions) {
-      const positionId = position.id as string
-      const QUOTAS = input.quotasByPosition.get(positionId)
-      if (!QUOTAS) {
+      const HELD = input.quotasByPosition.get(
+        position.id as string
+      )
+
+      if (!HELD || HELD.value.isZero()) {
         continue
       }
-      const QUOTA =
-        await this.quotaRepository.findByFundIdAndDate(
-          position.fundId,
-          input.targetDate
-        )
-      if (!QUOTA) {
+
+      const PRICE = PRICE_BY_FUND.get(
+        position.fundId as string
+      )
+      if (!PRICE) {
         throw new ValidationError(
           "`Quota` is required for the target date."
         )
       }
-      TOTAL = TOTAL.plus(QUOTA.price.value.times(QUOTAS.value))
+
+      TOTAL = TOTAL.plus(PRICE.value.times(HELD.value))
     }
+
+    // An empty portfolio has nothing to snapshot. Writing a
+    // zero row would also poison the next day, which needs a
+    // non-zero opening balance to compute a daily return.
+    if (TOTAL.isZero()) {
+      return null
+    }
+
     return PositiveMoney.create(TOTAL)
   }
 
@@ -421,7 +542,15 @@ export class CalculatePortfolioPerformanceUseCase {
     >
     previousDayPortfolioValue: PositiveMoney | null
   }): Promise<SignedPercentage> {
-    if (!input.previousDayPortfolioValue) {
+    // A portfolio that held nothing yesterday had no capital
+    // at risk, so it has no daily return. This must be caught
+    // here: `calculatePortfolioDailyFactor` rejects a zero
+    // previous value, and an empty portfolio legitimately
+    // produces one.
+    if (
+      !input.previousDayPortfolioValue ||
+      input.previousDayPortfolioValue.value.isZero()
+    ) {
       return SignedPercentage.create("0")
     }
 

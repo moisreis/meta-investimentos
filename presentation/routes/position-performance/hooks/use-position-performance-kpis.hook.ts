@@ -7,7 +7,7 @@ import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
-import type { PositionPerformanceResponseDTO } from "@/services/position-performance/dto/position-performance-response.dto"
+import type { PositionPerformanceRow } from "@/presentation/types/position-performance-row.types"
 
 import { POSITION_PERFORMANCE_KPI } from "../settings/labels.settings"
 
@@ -32,11 +32,11 @@ import { POSITION_PERFORMANCE_KPI } from "../settings/labels.settings"
  * @date 2026-09-25
  */
 export function BuildPositionPerformanceKpis(
-  performances: readonly PositionPerformanceResponseDTO[]
+  performances: readonly PositionPerformanceRow[]
 ): EntityKpi[] {
   const LATEST_BY_POSITION = new Map<
     string,
-    PositionPerformanceResponseDTO
+    PositionPerformanceRow
   >()
 
   for (const performance of performances) {
@@ -103,10 +103,10 @@ export function BuildPositionPerformanceKpis(
 function usePositionPerformanceKpis({
   performances,
 }: {
-  performances: readonly PositionPerformanceResponseDTO[]
+  performances: readonly PositionPerformanceRow[]
 }): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly PositionPerformanceResponseDTO[]) =>
+    (items: readonly PositionPerformanceRow[]) =>
       BuildPositionPerformanceKpis(items),
     []
   )

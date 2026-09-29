@@ -1,3 +1,5 @@
+import { StripDocumentDigits } from "@/lib/validation/document.validation"
+
 // Maximum length for CPF digits.
 const CPF_DIGITS_LENGTH = 11
 
@@ -25,9 +27,10 @@ const CPF_DIGITS_LENGTH = 11
  */
 function MaskCPF(value: string): string {
   // Keeps only the first 11 digit characters.
-  const DIGITS = value
-    .replace(/\D/g, "")
-    .slice(0, CPF_DIGITS_LENGTH)
+  const DIGITS = StripDocumentDigits(value).slice(
+    0,
+    CPF_DIGITS_LENGTH
+  )
 
   // Groups the digits as `000.000.000-00`.
   return DIGITS.replace(/^(\d{3})(\d)/, "$1.$2")
@@ -58,7 +61,7 @@ function MaskCPF(value: string): string {
  */
 function UnmaskCPF(value: string): string {
   // Keeps only the digit characters.
-  return value.replace(/\D/g, "")
+  return StripDocumentDigits(value)
 }
 
 export { MaskCPF, UnmaskCPF }

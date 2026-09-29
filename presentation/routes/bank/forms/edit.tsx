@@ -9,17 +9,17 @@ import { SharedFormField } from "@/presentation/parts/components/shared-form-fie
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { useEditBankForm } from "@/presentation/routes/bank/hooks/use-edit-bank-form.hook"
+import { useBankEditForm } from "../hooks/use-bank-edit-form.hook"
 
 import { BANK_FORM } from "@/presentation/routes/bank/settings/labels.settings"
 
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
+import type { BankRow } from "@/presentation/types/bank-row.types"
 
 /**
  * Props for the edit bank form.
  */
 export interface EditBankFormProps {
-  bank: BankResponseDTO
+  bank: BankRow
   onStatusChange?: (
     status: EntityFormStatus,
     error: string | null
@@ -68,7 +68,7 @@ function EditBankForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useEditBankForm(bank)
+  } = useBankEditForm(bank)
 
   React.useEffect(() => {
     onStatusChange?.(status, error)

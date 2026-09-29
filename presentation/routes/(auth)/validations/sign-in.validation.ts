@@ -1,6 +1,13 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 
-// Validates the sign-in form fields.
+/**
+ * @summary
+ * Validates the sign-in form fields.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 const SIGN_IN_FORM_SCHEMA = z.object({
   email: z
     .string()
@@ -14,3 +21,4 @@ const SIGN_IN_FORM_SCHEMA = z.object({
 type SignInFormValues = z.infer<typeof SIGN_IN_FORM_SCHEMA>
 
 export { SIGN_IN_FORM_SCHEMA, type SignInFormValues }
+

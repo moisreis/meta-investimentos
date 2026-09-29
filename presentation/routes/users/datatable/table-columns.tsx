@@ -14,12 +14,12 @@ import {
   USER_EMAIL_VERIFIED_LABELS,
   USER_ROLE_LABELS,
 } from "@/presentation/routes/users/settings/labels.settings"
-import type { UserRole } from "@/services/user/dto/create-user.dto"
-import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
+import type { UserRole } from "@/lib/auth/user-role"
+import type { UserRow } from "@/presentation/types/user-row.types"
 
 export interface UserTableColumnOptions {
-  onEdit: (user: UserResponseDTO) => void
-  onDelete: (user: UserResponseDTO) => void
+  onEdit: (user: UserRow) => void
+  onDelete: (user: UserRow) => void
 }
 
 /**
@@ -43,12 +43,9 @@ export interface UserTableColumnOptions {
  * @date 2026-09-25
  */
 export function CreateUserTableColumns(
-  columnHelper: ColumnHelper<
-    EntityTableFeatures,
-    UserResponseDTO
-  >,
+  columnHelper: ColumnHelper<EntityTableFeatures, UserRow>,
   options: UserTableColumnOptions
-): ColumnDef<EntityTableFeatures, UserResponseDTO, any>[] {
+): ColumnDef<EntityTableFeatures, UserRow, any>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 

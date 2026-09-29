@@ -20,7 +20,7 @@ import {
   completeQuotaImportJob,
   createQuotaImportJob,
   updateQuotaImportJob,
-} from "./quota-import-job.store"
+} from "../jobs/import-job.store"
 
 /**
  * @summary

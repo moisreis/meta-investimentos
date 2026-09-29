@@ -1,11 +1,10 @@
-import type { AuditLogResponseDTO } from "@/services/audit-log/dto/audit-log-response.dto"
-import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
-
 import type {
   AuditLogActor,
   AuditLogRowSummary,
 } from "../types/audit-log-list.types"
 
+import type { AuditLogRow } from "@/presentation/types/audit-log-row.types"
+import type { UserRow } from "@/presentation/types/user-row.types"
 /**
  * @summary
  * Composes the derived data of the audit log rows.
@@ -35,8 +34,8 @@ import type {
  * @date 2026-09-25
  */
 export function BuildAuditLogRowSummaries(
-  auditLogs: AuditLogResponseDTO[],
-  users: UserResponseDTO[]
+  auditLogs: AuditLogRow[],
+  users: UserRow[]
 ): Record<string, AuditLogRowSummary> {
   const USERS_BY_ID = new Map(
     users.map((user) => [user.id, user])

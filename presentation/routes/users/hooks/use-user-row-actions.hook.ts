@@ -1,9 +1,8 @@
 "use client"
 
 import { useEntityRowActions } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
-import type { EntityRowActionsModel } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
 import { deleteUserAction } from "@/presentation/routes/users/actions/delete-user.action"
-import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
+import type { UserRow } from "@/presentation/types/user-row.types"
 
 /**
  * @summary
@@ -21,8 +20,8 @@ import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
  *
  * @date 2026-09-26
  */
-function useUserRowActions(): EntityRowActionsModel<UserResponseDTO> {
-  return useEntityRowActions<UserResponseDTO>({
+function useUserRowActions() {
+  return useEntityRowActions<UserRow>({
     runDelete: (id) => deleteUserAction({ userId: id }),
   })
 }

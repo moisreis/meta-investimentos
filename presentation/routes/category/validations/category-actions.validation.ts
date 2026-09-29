@@ -2,11 +2,17 @@ import { z } from "zod"
 
 import { ID_SCHEMA } from "@/lib/validation/common.validation"
 
-import { CATEGORY_FORM_SCHEMA } from "./category-form.validations"
-
-// The payload accepted by the create category action. The
-// form and the action share this schema, so the client check
-// and the server check can never drift apart.
+import { CATEGORY_FORM_SCHEMA } from "./category-form.validation"
+/**
+ * @summary
+ * The payload accepted by the create category action. The form
+ * and the action share this schema, so the client check and the
+ * server check can never drift apart.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 const CREATE_CATEGORY_SCHEMA = CATEGORY_FORM_SCHEMA
 
 // Values of the create category action payload.

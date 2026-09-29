@@ -1,12 +1,12 @@
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-performance-row.types"
 
 import type { PortfolioPerformanceLookups } from "../types/portfolio-performance-list.types"
 
 // Input resolved by the performance list loader.
 export interface BuildPortfolioPerformanceLookupsInput {
-  performances: PortfolioPerformanceResponseDTO[]
-  portfolios: PortfolioResponseDTO[]
+  performances: PortfolioPerformanceRow[]
+  portfolios: PortfolioRow[]
 }
 
 // Empty lookups used before the loader resolves.
@@ -71,6 +71,8 @@ export function BuildPortfolioPerformanceLookups(
     .map((portfolioId) => ({
       value: portfolioId,
       label: PORTFOLIO_BY_ID[portfolioId]?.name ?? "Carteira",
+      description:
+        PORTFOLIO_BY_ID[portfolioId]?.acronym ?? "",
     }))
     .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"))
 

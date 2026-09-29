@@ -37,6 +37,10 @@ interface PositionComboboxProps {
   required?: boolean
   disabled?: boolean
   "aria-invalid"?: boolean | "true" | "false"
+  // Copy shown when no option matches. The form overrides it
+  // while no portfolio is picked, so the empty list explains
+  // the missing filter instead of looking like a failure.
+  emptyLabel?: string
 }
 
 /**
@@ -54,6 +58,13 @@ interface PositionComboboxProps {
  * Pass the display options through `items` and read the
  * selection through `onValueChange`.
  *
+ * @param props - Props of the position combobox.
+ * @param props.items - The position options to offer.
+ * @param props.emptyLabel - Copy shown when no option
+ * matches, defaulting to the generic position copy.
+ *
+ * @returns The position combobox.
+ *
  * @author Moisés Reis
  *
  * @date 2026-09-25
@@ -68,6 +79,7 @@ function PositionCombobox({
   required = false,
   disabled = false,
   "aria-invalid": ariaInvalid,
+  emptyLabel = WITHDRAWAL_FORM.SEARCH_EMPTY,
 }: PositionComboboxProps) {
   const SELECTED =
     items.find((item) => item.id === value) ?? null
@@ -102,9 +114,7 @@ function PositionCombobox({
         aria-invalid={ariaInvalid}
       />
       <ComboboxContent>
-        <ComboboxEmpty>
-          {WITHDRAWAL_FORM.SEARCH_EMPTY}
-        </ComboboxEmpty>
+        <ComboboxEmpty>{emptyLabel}</ComboboxEmpty>
         <ComboboxList>
           {(item) => (
             <ComboboxItem key={item.id} value={item}>

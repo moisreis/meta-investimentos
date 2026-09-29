@@ -1,6 +1,6 @@
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { BankRow } from "@/presentation/types/bank-row.types"
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 import type { BankAccountNameLookups } from "../types/bank-account-list.types"
 
@@ -82,8 +82,8 @@ export function FormatBankAccountFullLabel(
  *
  * @remarks
  * Maps each bank account id to its display data so the
- * datatable can resolve the portfolio and bank columns
- * without joining tables.
+ * datatable can resolve the portfolio name, the portfolio
+ * acronym and the bank columns without joining tables.
  *
  * @explanation
  * Use this helper in loaders that need the lookup
@@ -105,16 +105,16 @@ export function FormatBankAccountFullLabel(
  * @date 2026-09-25
  */
 export function BuildBankAccountNameLookups(
-  bankAccounts: BankAccountResponseDTO[],
-  banks: BankResponseDTO[],
-  portfolios: PortfolioResponseDTO[]
+  bankAccounts: BankAccountRow[],
+  banks: BankRow[],
+  portfolios: PortfolioRow[]
 ): BankAccountNameLookups {
   const BANK_NAMES = Object.fromEntries(
     banks.map((bank) => [bank.id, bank.name])
   )
 
-  const PORTFOLIO_NAMES = Object.fromEntries(
-    portfolios.map((portfolio) => [portfolio.id, portfolio.name])
+  const PORTFOLIO_BY_ID = Object.fromEntries(
+    portfolios.map((portfolio) => [portfolio.id, portfolio])
   )
 
   return {
@@ -123,7 +123,9 @@ export function BuildBankAccountNameLookups(
         account.id,
         {
           portfolioName:
-            PORTFOLIO_NAMES[account.portfolioId] ?? "Carteira",
+            PORTFOLIO_BY_ID[account.portfolioId]?.name ?? "Carteira",
+          portfolioAcronym:
+            PORTFOLIO_BY_ID[account.portfolioId]?.acronym ?? "",
           bankName: BANK_NAMES[account.bankId] ?? "Banco",
         },
       ])

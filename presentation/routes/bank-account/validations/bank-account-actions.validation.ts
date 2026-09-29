@@ -5,11 +5,17 @@ import { ID_SCHEMA } from "@/lib/validation/common.validation"
 import {
   BANK_ACCOUNT_EDIT_FORM_SCHEMA,
   BANK_ACCOUNT_FORM_SCHEMA,
-} from "./bank-account-form.validations"
-
-// The payload accepted by the create bank account action.
-// The form and the action share this schema, so the client
-// check and the server check can never drift apart.
+} from "./bank-account-form.validation"
+/**
+ * @summary
+ * The payload accepted by the create bank account action. The
+ * form and the action share this schema, so the client check and
+ * the server check can never drift apart.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 const CREATE_BANK_ACCOUNT_SCHEMA = BANK_ACCOUNT_FORM_SCHEMA
 
 // Values of the create bank account action payload.

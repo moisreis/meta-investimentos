@@ -9,12 +9,16 @@ import {
 } from "react"
 import type { DateRange } from "react-day-picker"
 
-import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import type { PortfolioPeriodReturnsDTO } from "@/services/portfolio-performance/use-cases/resolve-portfolio-period-returns.use-case"
+import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 
 import { getPortfolioPeriodReturnsAction } from "../actions/get-portfolio-period-returns.action"
+import { FilterPortfolioActivity } from "../activity/helpers/filter-portfolio-activity.helper"
+import { BuildPortfolioChartSections } from "../charts/build-portfolio-chart-sections.helper"
 import { BuildPortfolioOverviewKpis } from "../helpers/build-portfolio-overview-kpis.helper"
 import type { PortfolioOverviewData } from "../types/portfolio-overview.types"
+import type { PortfolioChartSection } from "../types/portfolio-chart-section.types"
+import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
 
 // Returns rendered before the server resolves the window.
 const EMPTY_PERIOD_RETURNS: PortfolioPeriodReturnsDTO = {
@@ -53,6 +57,15 @@ interface UsePortfolioOverviewOutput {
   isPerformanceDay: (date: Date) => boolean
   // The KPI cards of the detail screen.
   kpis: EntityKpi[]
+  // The charts of the detail screen, grouped into titled
+  // sections: the performance series clamped to the same
+  // window as the cards, and the distributions, the checking
+  // accounts and the annual monthly history, which describe
+  // the portfolio as it is today and are not window-clamped.
+  chartSections: PortfolioChartSection[]
+  // The activity rows inside the selected window, newest
+  // first, fed to the recent activity datatable.
+  activityRows: PortfolioActivityRow[]
 }
 
 /**
@@ -64,8 +77,9 @@ interface UsePortfolioOverviewOutput {
  * the selected window. The range starts covering the full
  * span of available snapshot days and every change refetches
  * the chained year and month returns through the server
- * action, then rebuilds the KPI cards through the pure
- * overview builder. The returns stay in a request-keyed cache
+ * action, then rebuilds the KPI cards and the chart models
+ * through their pure builders, both clamped to the same
+ * window. The returns stay in a request-keyed cache
  * so moving back to a window already seen does not refetch,
  * and a slow response can never overwrite a newer one.
  * `isPerformanceDay` reports whether the portfolio holds a
@@ -74,7 +88,8 @@ interface UsePortfolioOverviewOutput {
  *
  * @param data - The performance series and its day index.
  *
- * @returns The filter state, the day matcher and the KPIs.
+ * @returns The filter state, the day matcher, the KPIs and
+ *   the chart models.
  *
  * @example
  * const OVERVIEW = usePortfolioOverview(DATA);
@@ -148,11 +163,54 @@ function usePortfolioOverview(
     [data.performances, DATE_RANGE, PERIOD_RETURNS]
   )
 
+  // The charts are clamped by the same period window the
+  // cards are, so a plotted point can never fall outside the
+  // window the numbers above it describe. The distributions,
+  // the checking balances and the annual monthly history
+  // follow in their own sections, but they are not clamped: a
+  // holding and a balance are facts about the portfolio today,
+  // and the year is a fixed horizon, so narrowing the range
+  // must not re-slice the money or the months.
+  const CURRENT_YEAR = useMemo(
+    () => new Date().getUTCFullYear(),
+    []
+  )
+
+  const CHART_SECTIONS = useMemo(
+    () =>
+      BuildPortfolioChartSections({
+        performances: data.performances,
+        holdings: data.holdings,
+        bankAccounts: data.bankAccounts,
+        balances: data.balances,
+        dateRange: DATE_RANGE,
+        year: CURRENT_YEAR,
+      }),
+    [
+      data.performances,
+      data.holdings,
+      data.bankAccounts,
+      data.balances,
+      DATE_RANGE,
+      CURRENT_YEAR,
+    ]
+  )
+
+  // The activity is clamped to the same window as the KPIs
+  // and the performance charts, so the table always describes
+  // the movements behind the numbers above it.
+  const ACTIVITY_ROWS = useMemo(
+    () => FilterPortfolioActivity(data.activity, DATE_RANGE),
+    [data.activity, DATE_RANGE]
+  )
+
   return {
     dateRange: DATE_RANGE,
     onDateRangeChange: setDateRange,
     isPerformanceDay,
     kpis: KPIS,
+    chartSections: CHART_SECTIONS,
+    activityRows: ACTIVITY_ROWS,
   }
 }
 

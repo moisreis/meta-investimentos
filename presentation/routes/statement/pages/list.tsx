@@ -5,8 +5,8 @@ import { IconFileText } from "@tabler/icons-react"
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { StatementRow } from "@/presentation/types/statement-row.types"
 
 import { StatementDatatableFilters } from "../datatable/filters"
 import { StatementDatatableTable } from "../datatable/table"
@@ -19,9 +19,9 @@ import { useStatementKpis } from "../hooks/use-statement-kpis.hook"
 import { STATEMENT_EMPTY } from "../settings/labels.settings"
 import type { StatementRowSummary } from "../types/statement-list.types"
 
-interface StatementListProps {
-  data: StatementResponseDTO[] | null
-  portfolios: PortfolioResponseDTO[]
+export interface StatementListProps {
+  data: StatementRow[] | null
+  portfolios: PortfolioRow[]
   summaries: Record<string, StatementRowSummary> | null
 }
 

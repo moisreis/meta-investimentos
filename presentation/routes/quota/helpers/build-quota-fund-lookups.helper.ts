@@ -1,5 +1,5 @@
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
-import type { QuotaResponseDTO } from "@/services/quota/dto/quota-response.dto"
+import type { FundRow } from "@/presentation/types/fund-row.types"
+import type { QuotaRow } from "@/presentation/types/quota-row.types"
 
 import type { QuotaFundLookups } from "../types/quota-list.types"
 
@@ -34,8 +34,8 @@ export const EMPTY_QUOTA_FUND_LOOKUPS: QuotaFundLookups = {
  * @date 2026-09-25
  */
 export function BuildQuotaFundLookups(
-  quotas: QuotaResponseDTO[],
-  funds: FundResponseDTO[]
+  quotas: QuotaRow[],
+  funds: FundRow[]
 ): QuotaFundLookups {
   const FUND_BY_ID = Object.fromEntries(
     funds.map((fund) => [fund.id, fund])

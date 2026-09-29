@@ -2,6 +2,9 @@ import "dotenv/config"
 
 import { db } from "@/clients/database.client"
 import { ApplicationRepository } from "@/infrastructure/application/repositories/application.repository"
+import { FundRepository } from "@/infrastructure/fund/repositories/fund.repository"
+import { NormRepository } from "@/infrastructure/norm/repositories/norm.repository"
+import { NormsPortfoliosRepository } from "@/infrastructure/norms-portfolio/repositories/norms-portfolios.repository"
 import { PortfolioRepository } from "@/infrastructure/portfolio/repositories/portfolio.repository"
 import { PortfolioPerformanceRepository } from "@/infrastructure/portfolio-performance/repositories/portfolio-performance.repository"
 import { PositionRepository } from "@/infrastructure/position/repositories/position.repository"
@@ -10,6 +13,7 @@ import { QuotaRepository } from "@/infrastructure/quota/repositories/quota.repos
 import { WithdrawalRepository } from "@/infrastructure/withdrawal/repositories/withdrawal.repository"
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 import { CalculatePortfolioPerformanceUseCase } from "@/services/portfolio-performance/use-cases/calculate-portfolio-performance.use-case"
+import { CalculatePositionPerformanceUseCase } from "@/services/position-performance/use-cases/calculate-position-performance.use-case"
 
 // ---------------------------------
 // TYPES
@@ -77,9 +81,9 @@ export function buildPerformanceCalculationPlan(input: {
  * Runs the performance calculation for a single unit.
  *
  * @remarks
- * Instantiates the seven repositories and the use case,
- * then delegates to `execute`. This is the composition
- * root called by the background job.
+ * Instantiates the repositories and the use cases, then
+ * delegates to `execute`. This is the composition root
+ * called by the background job.
  *
  * @explanation
  * Use this function to wire dependencies once per
@@ -87,7 +91,8 @@ export function buildPerformanceCalculationPlan(input: {
  * leaks between runs.
  *
  * @param input - The portfolio and date to calculate.
- * @returns The calculated performance snapshot.
+ * @returns The calculated performance snapshot, or `null`
+ * when the day has no quotes and was skipped.
  *
  * @example
  * const RESULT = await runPortfolioPerformanceCalculation({
@@ -101,7 +106,7 @@ export function buildPerformanceCalculationPlan(input: {
  */
 export async function runPortfolioPerformanceCalculation(
   input: PortfolioPerformanceCalculationUnit
-): Promise<PortfolioPerformanceResponseDTO> {
+): Promise<PortfolioPerformanceResponseDTO | null> {
   const PORTFOLIO_REPO = new PortfolioRepository(db)
   const POSITION_REPO = new PositionRepository(db)
   const QUOTA_REPO = new QuotaRepository(db)
@@ -119,7 +124,17 @@ export async function runPortfolioPerformanceCalculation(
     APPLICATION_REPO,
     WITHDRAWAL_REPO,
     POSITION_PERFORMANCE_REPO,
-    PORTFOLIO_PERFORMANCE_REPO
+    PORTFOLIO_PERFORMANCE_REPO,
+    new CalculatePositionPerformanceUseCase(
+      POSITION_REPO,
+      new FundRepository(db),
+      QUOTA_REPO,
+      APPLICATION_REPO,
+      WITHDRAWAL_REPO,
+      POSITION_PERFORMANCE_REPO,
+      new NormRepository(db),
+      new NormsPortfoliosRepository(db)
+    )
   )
 
   return USE_CASE.execute({

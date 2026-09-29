@@ -5,12 +5,12 @@ import { useCallback } from "react"
 import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
-import type { AuditLogResponseDTO } from "@/services/audit-log/dto/audit-log-response.dto"
+import type { AuditLogRow } from "@/presentation/types/audit-log-row.types"
 
 import { AUDIT_LOG_KPI } from "../settings/labels.settings"
 
 interface UseAuditLogKpisInput {
-  auditLogs: AuditLogResponseDTO[]
+  auditLogs: AuditLogRow[]
 }
 
 // Duration in milliseconds of the recent window.
@@ -18,7 +18,7 @@ const RECENT_WINDOW_MS = 24 * 60 * 60 * 1000
 
 // Tallies the data-driven audit log KPI cards.
 function BuildAuditLogKpis(
-  auditLogs: readonly AuditLogResponseDTO[]
+  auditLogs: readonly AuditLogRow[]
 ): EntityKpi[] {
   const ENTITIES = new Set(auditLogs.map((log) => log.entity))
   const ACTIONS = new Set(auditLogs.map((log) => log.action))
@@ -76,8 +76,7 @@ function useAuditLogKpis({
   auditLogs,
 }: UseAuditLogKpisInput): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly AuditLogResponseDTO[]) =>
-      BuildAuditLogKpis(items),
+    (items: readonly AuditLogRow[]) => BuildAuditLogKpis(items),
     []
   )
 

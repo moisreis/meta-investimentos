@@ -10,7 +10,7 @@ import {
 
 import type { QuotaImportProgress } from "../types/quota-list.types"
 import { GET_QUOTA_IMPORT_PROGRESS_SCHEMA } from "../validations/quota-actions.validation"
-import { getQuotaImportJob } from "./quota-import-job.store"
+import { getQuotaImportJob } from "../jobs/import-job.store"
 
 /**
  * @summary

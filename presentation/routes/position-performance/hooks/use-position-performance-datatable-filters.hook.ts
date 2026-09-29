@@ -4,14 +4,14 @@ import { useMemo, useState } from "react"
 import { endOfDay, startOfDay } from "date-fns"
 import type { DateRange } from "react-day-picker"
 
-import type { PositionPerformanceResponseDTO } from "@/services/position-performance/dto/position-performance-response.dto"
+import type { PositionPerformanceRow } from "@/presentation/types/position-performance-row.types"
 
 interface UsePositionPerformanceDatatableFiltersOutput {
   positionId: string | undefined
   dateRange: DateRange | undefined
   onPositionChange: (value: string | undefined) => void
   onDateRangeChange: (range: DateRange | undefined) => void
-  filteredPerformances: PositionPerformanceResponseDTO[]
+  filteredPerformances: PositionPerformanceRow[]
 }
 
 /**
@@ -33,7 +33,7 @@ interface UsePositionPerformanceDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function usePositionPerformanceDatatableFilters(
-  performances: PositionPerformanceResponseDTO[]
+  performances: PositionPerformanceRow[]
 ): UsePositionPerformanceDatatableFiltersOutput {
   const [POSITION_ID, setPositionId] = useState<
     string | undefined

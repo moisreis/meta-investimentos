@@ -5,14 +5,14 @@ import { useMemo, useState } from "react"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatDate } from "@/presentation/presenters/date.presenter"
 import { ResolveBankAccountLabel } from "@/presentation/routes/checking-account/helpers/build-checking-account-name-lookups.helper"
-import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
+import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 
 import type { CheckingAccountNameLookups } from "../types/checking-account-list.types"
 
 interface UseCheckingAccountDatatableFiltersOutput {
   query: string
   onQueryChange: (query: string) => void
-  filteredEntries: CheckingAccountResponseDTO[]
+  filteredEntries: CheckingAccountRow[]
 }
 
 /**
@@ -34,7 +34,7 @@ interface UseCheckingAccountDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function useCheckingAccountDatatableFilters(
-  entries: CheckingAccountResponseDTO[],
+  entries: CheckingAccountRow[],
   names: CheckingAccountNameLookups
 ): UseCheckingAccountDatatableFiltersOutput {
   const [QUERY, setQuery] = useState("")

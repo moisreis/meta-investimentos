@@ -3,25 +3,26 @@
 import * as React from "react"
 
 import { FieldGroup } from "@/presentation/ui/field"
-import { Input } from "@/presentation/ui/input"
-import { NativeSelect } from "@/presentation/ui/native-select"
 
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { useGenerateStatementForm } from "@/presentation/routes/statement/hooks/use-statement-generate-form.hook"
+import { useStatementGenerateForm } from "@/presentation/routes/statement/hooks/use-statement-generate-form.hook"
 import {
   STATEMENT_DIALOG,
   STATEMENT_FORM,
 } from "@/presentation/routes/statement/settings/labels.settings"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+
+import { StatementPortfolioCombobox } from "./portfolio-combobox"
+import { StatementMonthPicker } from "./month-picker"
 
 /**
  * Props for the generate statement form.
  */
 export interface GenerateStatementFormProps {
-  portfolios: PortfolioResponseDTO[]
+  portfolios: PortfolioRow[]
   onStatusChange?: (
     status: EntityFormStatus,
     error: string | null
@@ -52,7 +53,7 @@ export interface GenerateStatementFormProps {
  *
  * @author Moisés Reis
  *
- * @date 2026-09-25
+ * @date 2026-09-27
  */
 function GenerateStatementForm({
   portfolios,
@@ -68,11 +69,27 @@ function GenerateStatementForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useGenerateStatementForm()
+  } = useStatementGenerateForm()
 
   React.useEffect(() => {
     onStatusChange?.(status, error)
   }, [status, error, onStatusChange])
+
+  // Wrap updatePortfolioId to handle empty string from Combobox onValueChange
+  const handlePortfolioIdChange = React.useCallback(
+    (value: string) => updatePortfolioId(value ?? ""),
+    [updatePortfolioId]
+  )
+
+  const items = React.useMemo(
+    () =>
+      portfolios.map((portfolio) => ({
+        id: portfolio.id,
+        name: portfolio.name,
+        description: portfolio.acronym,
+      })),
+    [portfolios]
+  )
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
@@ -82,28 +99,17 @@ function GenerateStatementForm({
           error={fieldErrors.portfolioId}
           htmlFor="portfolioId"
         >
-          <NativeSelect
+          <StatementPortfolioCombobox
             id="portfolioId"
             name="portfolioId"
-            required
             value={portfolioId}
-            onChange={(event) =>
-              updatePortfolioId(event.target.value)
-            }
+            onValueChange={handlePortfolioIdChange}
+            placeholder={STATEMENT_DIALOG.FIELD_PORTFOLIO_PLACEHOLDER}
+            items={items}
+            required
             disabled={pending}
-            aria-invalid={
-              fieldErrors.portfolioId ? "true" : undefined
-            }
-          >
-            <option value="">
-              {STATEMENT_DIALOG.FIELD_PORTFOLIO_PLACEHOLDER}
-            </option>
-            {portfolios.map((portfolio) => (
-              <option key={portfolio.id} value={portfolio.id}>
-                {portfolio.acronym} - {portfolio.name}
-              </option>
-            ))}
-          </NativeSelect>
+            aria-invalid={fieldErrors.portfolioId ? "true" : undefined}
+          />
         </SharedFormField>
 
         <SharedFormField
@@ -111,13 +117,13 @@ function GenerateStatementForm({
           error={fieldErrors.month}
           htmlFor="month"
         >
-          <Input
+          <StatementMonthPicker
             id="month"
             name="month"
-            type="month"
-            required
             value={month}
-            onChange={(event) => updateMonth(event.target.value)}
+            onValueChange={updateMonth}
+            placeholder={STATEMENT_DIALOG.FIELD_MONTH_PLACEHOLDER}
+            required
             disabled={pending}
             aria-invalid={fieldErrors.month ? "true" : undefined}
           />

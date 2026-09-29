@@ -2,23 +2,24 @@
 
 import { useCallback, useMemo } from "react"
 import {
+  ColumnHelper,
   createColumnHelper,
   useTable,
 } from "@tanstack/react-table"
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { QuotaResponseDTO } from "@/services/quota/dto/quota-response.dto"
+import type { QuotaRow } from "@/presentation/types/quota-row.types"
 
 import { CreateQuotaTableColumns } from "../datatable/table-columns"
 import { EMPTY_QUOTA_FUND_LOOKUPS } from "../helpers/build-quota-fund-lookups.helper"
 import type { QuotaFundLookups } from "../types/quota-list.types"
 
 // Column helper bound to the entity table features.
-const COLUMN_HELPER = createColumnHelper<
+const COLUMN_HELPER: ColumnHelper<
   EntityTableFeatures,
-  QuotaResponseDTO
->()
+  QuotaRow
+> = createColumnHelper<EntityTableFeatures, QuotaRow>()
 
 /**
  * @summary
@@ -43,7 +44,7 @@ const COLUMN_HELPER = createColumnHelper<
  * @date 2026-09-25
  */
 function useQuotaDatatable(
-  quotas: QuotaResponseDTO[],
+  quotas: QuotaRow[],
   lookups: QuotaFundLookups = EMPTY_QUOTA_FUND_LOOKUPS
 ) {
   const fundFor = useCallback(

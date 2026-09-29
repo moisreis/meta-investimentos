@@ -154,10 +154,12 @@ export class WithdrawalRepository implements IWithdrawal {
    * Retrieves withdrawals of a position in a period.
    *
    * @remarks
-   * The period is inclusive of both dates.
+   * The period is inclusive of both dates. Reversed
+   * withdrawals are excluded, keeping period queries of
+   * active rows consistent with the summed totals.
    *
    * @explanation
-   * Use this method to list the withdrawals of a
+   * Use this method to list the active withdrawals of a
    * position inside a date range for processing or
    * reporting.
    *
@@ -187,7 +189,8 @@ export class WithdrawalRepository implements IWithdrawal {
         and(
           eq(withdrawal.positionId, positionId),
           gte(withdrawal.date, startDate),
-          lte(withdrawal.date, endDate)
+          lte(withdrawal.date, endDate),
+          isNull(withdrawal.reversedAt)
         )
       )
       .orderBy(asc(withdrawal.date), asc(withdrawal.createdAt))
@@ -202,12 +205,16 @@ export class WithdrawalRepository implements IWithdrawal {
    *
    * @remarks
    * Batched lookup avoids an N+1 query pattern. The
-   * period is inclusive of both dates.
+   * period is inclusive of both dates. Reversed
+   * withdrawals are excluded, so period queries of active
+   * rows stay consistent with the summed totals.
    *
    * @explanation
-   * Use this method to aggregate withdrawals of
+   * Use this method to aggregate active withdrawals of
    * multiple positions inside a date range in a
-   * single query.
+   * single query. The reversed exclusion keeps
+   * performance calculations from valuing movements that
+   * were reversed.
    *
    * @param positionIds - The ids of the positions.
    * @param startDate - The start of the period, inclusive.
@@ -241,7 +248,8 @@ export class WithdrawalRepository implements IWithdrawal {
         and(
           inArray(withdrawal.positionId, positionIds),
           gte(withdrawal.date, startDate),
-          lte(withdrawal.date, endDate)
+          lte(withdrawal.date, endDate),
+          isNull(withdrawal.reversedAt)
         )
       )
       .orderBy(asc(withdrawal.date), asc(withdrawal.createdAt))

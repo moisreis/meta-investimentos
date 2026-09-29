@@ -5,7 +5,7 @@ import { IconHistory } from "@tabler/icons-react"
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import type { AuditLogResponseDTO } from "@/services/audit-log/dto/audit-log-response.dto"
+import type { AuditLogRow } from "@/presentation/types/audit-log-row.types"
 
 import { AuditLogDatatableFilters } from "../datatable/filters"
 import { AuditLogDatatableTable } from "../datatable/table"
@@ -16,8 +16,8 @@ import { useAuditLogKpis } from "../hooks/use-audit-log-kpis.hook"
 import { AUDIT_LOG_EMPTY } from "../settings/labels.settings"
 import type { AuditLogRowSummary } from "../types/audit-log-list.types"
 
-interface AuditLogListProps {
-  data: AuditLogResponseDTO[] | null
+export interface AuditLogListProps {
+  data: AuditLogRow[] | null
   summaries: Record<string, AuditLogRowSummary> | null
 }
 

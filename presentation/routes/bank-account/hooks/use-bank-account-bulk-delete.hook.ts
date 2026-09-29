@@ -1,10 +1,9 @@
 "use client"
 
 import { useEntityBulkDeleteAction } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
-import type { EntityBulkDeleteModel } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
 import { bulkDeleteBankAccountsAction } from "@/presentation/routes/bank-account/actions/bulk-delete-bank-accounts.action"
 import { BANK_ACCOUNT_DATATABLE } from "@/presentation/routes/bank-account/settings/labels.settings"
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
 
 /**
  * @summary
@@ -22,8 +21,8 @@ import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-ac
  *
  * @date 2026-09-26
  */
-function useBankAccountBulkDelete(): EntityBulkDeleteModel<BankAccountResponseDTO> {
-  return useEntityBulkDeleteAction<BankAccountResponseDTO>({
+function useBankAccountBulkDelete() {
+  return useEntityBulkDeleteAction<BankAccountRow>({
     run: (ids) =>
       bulkDeleteBankAccountsAction({ bankAccountIds: ids }),
     labels: BANK_ACCOUNT_DATATABLE,

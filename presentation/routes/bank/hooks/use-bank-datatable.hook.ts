@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo } from "react"
 import {
+  ColumnHelper,
   createColumnHelper,
   useTable,
 } from "@tanstack/react-table"
@@ -10,7 +11,7 @@ import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/e
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
+import type { BankRow } from "@/presentation/types/bank-row.types"
 
 import { CreateBankTableColumns } from "../datatable/table-columns"
 import type { BankRowSummary } from "../types/bank-list.types"
@@ -18,10 +19,8 @@ import { useBankBulkDelete } from "./use-bank-bulk-delete.hook"
 import { useBankRowActions } from "./use-bank-row-actions.hook"
 
 // Column helper bound to the entity table features.
-const COLUMN_HELPER = createColumnHelper<
-  EntityTableFeatures,
-  BankResponseDTO
->()
+const COLUMN_HELPER: ColumnHelper<EntityTableFeatures, BankRow> =
+  createColumnHelper<EntityTableFeatures, BankRow>()
 
 /**
  * @summary
@@ -47,11 +46,11 @@ const COLUMN_HELPER = createColumnHelper<
  * @date 2026-09-25
  */
 function useBankDatatable(
-  banks: BankResponseDTO[],
+  banks: BankRow[],
   summaries: Record<string, BankRowSummary> | null = null
 ) {
   const addDialog = useEntityAddDialog()
-  const editDialog = useEntityEditDialog<BankResponseDTO>()
+  const editDialog = useEntityEditDialog<BankRow>()
   const rowActions = useBankRowActions()
   const bulkDelete = useBankBulkDelete()
 

@@ -1,9 +1,10 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { endOfDay, startOfDay } from "date-fns"
 import { useRouter } from "next/navigation"
 import type { DateRange } from "react-day-picker"
+
+import { ToDayKey } from "@/lib/date/day-key"
 
 import { POSITION_PERFORMANCE_ALL_POSITIONS_VALUE } from "../settings/labels.settings"
 import { POSITION_PERFORMANCE_CALCULATE } from "../settings/labels.settings"
@@ -113,10 +114,8 @@ function usePositionPerformanceCalculation() {
             POSITION_PERFORMANCE_ALL_POSITIONS_VALUE
               ? null
               : positionId,
-          from: startOfDay(dateRange.from)
-            .toISOString()
-            .slice(0, 10),
-          to: endOfDay(dateRange.to).toISOString().slice(0, 10),
+          from: ToDayKey(dateRange.from),
+          to: ToDayKey(dateRange.to),
         })
 
       if (!RESULT.success) {

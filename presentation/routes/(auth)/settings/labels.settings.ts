@@ -1,4 +1,11 @@
-// Form labels for the authentication screens.
+﻿/**
+ * @summary
+ * Form labels for the authentication screens.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export const SIGN_IN = {
   // Title of the sign-in screen.
   SIGN_IN_TITLE: "Bem-vindo de volta!",
@@ -36,3 +43,4 @@ export const SIGN_UP = {
   // Label of the link that leads to the sign-in screen.
   ALREADY_HAVE_AN_ACCOUNT_LINK: "Entrar",
 } as const
+

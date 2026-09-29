@@ -10,7 +10,7 @@ import { SharedFormField } from "@/presentation/parts/components/shared-form-fie
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { useAddPortfolioForm } from "@/presentation/routes/portfolio/hooks/use-add-portfolio-form.hook"
+import { usePortfolioAddForm } from "@/presentation/routes/portfolio/hooks/use-portfolio-add-form.hook"
 
 import { PORTFOLIO_FORM } from "@/presentation/routes/portfolio/settings/labels.settings"
 
@@ -75,7 +75,7 @@ function AddPortfolioForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useAddPortfolioForm()
+  } = usePortfolioAddForm()
 
   React.useEffect(() => {
     onStatusChange?.(status, error)

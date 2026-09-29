@@ -10,13 +10,13 @@ import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-m
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { BANK_DATATABLE } from "@/presentation/routes/bank/settings/labels.settings"
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
+import type { BankRow } from "@/presentation/types/bank-row.types"
 
 import type { BankRowSummary } from "../types/bank-list.types"
 
 export interface BankTableColumnOptions {
-  onEdit: (bank: BankResponseDTO) => void
-  onDelete: (bank: BankResponseDTO) => void
+  onEdit: (bank: BankRow) => void
+  onDelete: (bank: BankRow) => void
   summaryFor: (bankId: string) => BankRowSummary | null
 }
 
@@ -40,17 +40,14 @@ export interface BankTableColumnOptions {
  *
  * @returns The bank column definitions.
  *
- * @author Moisés Reis
+ * @author MoisAcs Reis
  *
  * @date 2026-09-25
  */
 export function CreateBankTableColumns(
-  columnHelper: ColumnHelper<
-    EntityTableFeatures,
-    BankResponseDTO
-  >,
+  columnHelper: ColumnHelper<EntityTableFeatures, BankRow>,
   options: BankTableColumnOptions
-): ColumnDef<EntityTableFeatures, BankResponseDTO, any>[] {
+): ColumnDef<EntityTableFeatures, BankRow, any>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 

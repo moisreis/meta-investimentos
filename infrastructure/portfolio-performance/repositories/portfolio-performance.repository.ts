@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, inArray, lte } from "drizzle-orm"
+import { and, desc, eq, gte, inArray, lt, lte } from "drizzle-orm"
 import type {
   PgAsyncDatabase,
   PgQueryResultHKT,
@@ -256,12 +256,18 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    * @date 2026-09-15
    */
   async findLatestByPortfolioId(
-    portfolioId: EntityId
+    portfolioId: EntityId,
+    before: Date
   ): Promise<PortfolioPerformance | null> {
     const [ROW] = await this.db
       .select()
       .from(portfolioPerformance)
-      .where(eq(portfolioPerformance.portfolioId, portfolioId))
+      .where(
+        and(
+          eq(portfolioPerformance.portfolioId, portfolioId),
+          lt(portfolioPerformance.date, before)
+        )
+      )
       .orderBy(desc(portfolioPerformance.date))
       .limit(1)
 
@@ -421,13 +427,20 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
    * Persists the provided performance snapshot.
    *
    * @remarks
-   * Inserts a new row when the entity has no id. Updates
-   * the existing row otherwise. Throws `NotFoundError` when
-   * the target row is missing.
+   * Inserts a new row when the entity has no id, and
+   * overwrites the existing row for the same
+   * `(portfolio_id, date)` pair. Updates the existing row or
+   * throws `NotFoundError` when the target row is missing.
    *
    * @explanation
    * Use this method to create or update a performance
    * snapshot. Returns the persisted entity with its id.
+   *
+   * The conflict clause is what makes a recalculation
+   * possible: a `(portfolio_id, date)` unique index rejects a
+   * second insert, so without it, re-running a period that
+   * already has snapshots would fail on the first day that
+   * does.
    *
    * @param persisted - The snapshot to persist.
    *
@@ -462,6 +475,13 @@ export class PortfolioPerformanceRepository implements IPortfolioPerformance {
     const [ROW] = await this.db
       .insert(portfolioPerformance)
       .values(ToInsert(persisted))
+      .onConflictDoUpdate({
+        target: [
+          portfolioPerformance.portfolioId,
+          portfolioPerformance.date,
+        ],
+        set: ToUpdate(persisted),
+      })
       .returning()
 
     return ToDomain(ROW)

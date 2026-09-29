@@ -1,4 +1,11 @@
-// Form copy for the bank add/edit screens.
+﻿/**
+ * @summary
+ * Form copy for the bank add/edit screens.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export const BANK_FORM = {
   // Add button content.
   ADD_BUTTON: "Cadastrar Banco",
@@ -77,7 +84,8 @@ export const BANK_DATATABLE = {
   BULK_DELETE_SUCCESS_TITLE: "Bancos excluídos!",
   BULK_DELETE_SUCCESS_DESCRIPTION:
     "Os bancos selecionados foram excluídos.",
-  BULK_DELETE_ERROR_TITLE: "Não foi possível excluir os bancos",
+  BULK_DELETE_ERROR_TITLE:
+    "Não foi possível excluir os bancos",
 } as const
 
 // Column id to header label used by the edit-columns menu.
@@ -126,3 +134,4 @@ export const BANK_EMPTY = {
 } as const
 
 export { FormatDeleteBankDescription }
+

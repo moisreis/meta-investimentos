@@ -140,12 +140,13 @@ export interface IWithdrawal {
    * Retrieves the positions' withdrawals in the period.
    *
    * @remarks
-   * The period is inclusive of both dates. Returns an
-   * empty array when no withdrawals match.
+   * The period is inclusive of both dates. Reversed
+   * withdrawals are excluded. Returns an empty array
+   * when no active withdrawals match.
    *
    * @explanation
-   * Use this method to list withdrawals for many positions
-   * inside a date range in a single query.
+   * Use this method to list active withdrawals for many
+   * positions inside a date range in a single query.
    *
    * @param positionIds - The identifiers of the positions.
    * @param startDate - The start of the period, inclusive.

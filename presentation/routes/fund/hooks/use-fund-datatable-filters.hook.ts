@@ -2,12 +2,12 @@
 
 import { useMemo, useState } from "react"
 
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
+import type { FundRow } from "@/presentation/types/fund-row.types"
 
 interface UseFundDatatableFiltersOutput {
   query: string
   onQueryChange: (query: string) => void
-  filteredFunds: FundResponseDTO[]
+  filteredFunds: FundRow[]
 }
 
 /**
@@ -28,7 +28,7 @@ interface UseFundDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function useFundDatatableFilters(
-  funds: FundResponseDTO[]
+  funds: FundRow[]
 ): UseFundDatatableFiltersOutput {
   const [QUERY, setQuery] = useState("")
 

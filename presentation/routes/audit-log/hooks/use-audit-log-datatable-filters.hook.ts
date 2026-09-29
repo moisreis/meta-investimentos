@@ -2,12 +2,12 @@
 
 import { useMemo, useState } from "react"
 
-import type { AuditLogResponseDTO } from "@/services/audit-log/dto/audit-log-response.dto"
+import type { AuditLogRow } from "@/presentation/types/audit-log-row.types"
 
 import type { AuditLogRowSummary } from "../types/audit-log-list.types"
 
 interface UseAuditLogDatatableFiltersInput {
-  auditLogs: AuditLogResponseDTO[]
+  auditLogs: AuditLogRow[]
   summaries: Record<string, AuditLogRowSummary> | null
 }
 

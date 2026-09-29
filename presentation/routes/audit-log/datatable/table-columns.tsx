@@ -7,9 +7,9 @@ import type {
 
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatDateTime } from "@/presentation/presenters/date.presenter"
-import { UserAvatar } from "@/presentation/presenters/user-avatar.presenter"
-import { Badge } from "@/presentation/ui/badge"
-import type { AuditLogResponseDTO } from "@/services/audit-log/dto/audit-log-response.dto"
+import { PRESENTER_FALLBACK } from "@/presentation/presenters/lookup.presenter"
+import { FormatEntityLookup } from "@/presentation/presenters/lookup.presenter"
+import type { AuditLogRow } from "@/presentation/types/audit-log-row.types"
 
 import { FormatAuditAction } from "../helpers/format-audit-action.helper"
 import { FormatAuditEntity } from "../helpers/format-audit-entity.helper"
@@ -35,17 +35,14 @@ export interface AuditLogTableColumnOptions {
  *
  * @returns The audit log column definitions.
  *
- * @author Moisés Reis
+ * @author MoisAcs Reis
  *
  * @date 2026-09-25
  */
 export function CreateAuditLogTableColumns(
-  columnHelper: ColumnHelper<
-    EntityTableFeatures,
-    AuditLogResponseDTO
-  >,
+  columnHelper: ColumnHelper<EntityTableFeatures, AuditLogRow>,
   options: AuditLogTableColumnOptions
-): ColumnDef<EntityTableFeatures, AuditLogResponseDTO, any>[] {
+): ColumnDef<EntityTableFeatures, AuditLogRow, any>[] {
   return [
     columnHelper.accessor("createdAt", {
       id: "createdAt",
@@ -73,14 +70,7 @@ export function CreateAuditLogTableColumns(
       size: 240,
       enableSorting: false,
       meta: { fluid: true },
-      cell: (info) => (
-        <span
-          title={info.getValue()}
-          className="block max-w-full truncate font-mono text-xs text-muted-foreground"
-        >
-          {info.getValue()}
-        </span>
-      ),
+      cell: (info) => FormatEntityLookup(info.getValue()),
     }),
 
     columnHelper.accessor("action", {
@@ -92,11 +82,7 @@ export function CreateAuditLogTableColumns(
       cell: (info) => {
         const DISPLAY = FormatAuditAction(info.getValue())
 
-        return (
-          <Badge variant={DISPLAY.variant}>
-            {DISPLAY.label}
-          </Badge>
-        )
+        return DISPLAY.label
       },
     }),
 
@@ -110,19 +96,10 @@ export function CreateAuditLogTableColumns(
         const CHANGES = info.getValue()
 
         if (!CHANGES) {
-          return <span className="text-muted-foreground">-</span>
+          return PRESENTER_FALLBACK
         }
 
-        const SERIALIZED = JSON.stringify(CHANGES)
-
-        return (
-          <span
-            title={SERIALIZED}
-            className="block max-w-full truncate font-mono text-xs text-muted-foreground"
-          >
-            {SERIALIZED}
-          </span>
-        )
+        return JSON.stringify(CHANGES)
       },
     }),
 
@@ -136,15 +113,12 @@ export function CreateAuditLogTableColumns(
         const ACTOR = options.summaryFor(row.id)?.actor ?? null
 
         if (!ACTOR) {
-          return <span className="text-muted-foreground">-</span>
+          return PRESENTER_FALLBACK
         }
 
-        return (
-          <UserAvatar
-            firstName={ACTOR.firstName}
-            lastName={ACTOR.lastName}
-            image={ACTOR.image}
-          />
+        return FormatEntityLookup(
+          `${ACTOR.firstName} ${ACTOR.lastName}`,
+          ACTOR.image
         )
       },
     }),

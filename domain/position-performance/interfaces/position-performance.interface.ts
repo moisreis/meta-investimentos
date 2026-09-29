@@ -141,19 +141,22 @@ export interface IPositionPerformance {
    * a position. Callers check null for no data.
    *
    * @param positionId - The unique identifier of the position.
+   * @param before - Exclusive upper bound on the snapshot
+   * date.
    *
    * @returns The entry or `null`.
    *
    * @example
    * const PERF = await PERF_REPO
-   *   .findLatestByPositionId(POS_ID);
+   *   .findLatestByPositionId(POS_ID, TARGET_DATE);
    *
    * @author Moisés Reis
    *
    * @date 2026-09-13
    */
   findLatestByPositionId(
-    positionId: EntityId
+    positionId: EntityId,
+    before: Date
   ): Promise<PositionPerformance | null>
 
   /**
@@ -169,20 +172,28 @@ export interface IPositionPerformance {
    * Use this method to get the most recent performance of
    * every given position. Returns an empty array for none.
    *
+   * The `before` bound is what keeps a recalculation
+   * honest: without it, re-running a day that already has a
+   * snapshot would read that same snapshot as the previous
+   * period and add its balances to the day a second time.
+   *
    * @param positionIds - The identifiers of the positions.
+   * @param before - Exclusive upper bound on the snapshot
+   * date.
    *
    * @returns The latest snapshots.
    *
    * @example
    * const PERFS = await PERF_REPO
-   *   .findLatestByPositionIds(POSITION_IDS);
+   *   .findLatestByPositionIds(POSITION_IDS, TARGET_DATE);
    *
    * @author Moisés Reis
    *
    * @date 2026-09-15
    */
   findLatestByPositionIds(
-    positionIds: EntityId[]
+    positionIds: EntityId[],
+    before: Date
   ): Promise<PositionPerformance[]>
 
   /**

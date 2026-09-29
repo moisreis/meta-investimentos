@@ -4,7 +4,7 @@ import { EntityEditDialog } from "@/presentation/parts/dialogs/entity-edit"
 import { EntityEditToast } from "@/presentation/parts/toasts/entity-edit-toast"
 import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { EntityEditDialogModel } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
-import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
+import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 import { EditCheckingAccountForm } from "@/presentation/routes/checking-account/forms/edit"
 import {
   CHECKING_ACCOUNT_DIALOG,
@@ -17,7 +17,7 @@ import type { CheckingAccountNameLookups } from "../types/checking-account-list.
  * Props for the checking account edit dialog.
  */
 export interface CheckingAccountEditDialogProps {
-  dialog: EntityEditDialogModel<CheckingAccountResponseDTO>
+  dialog: EntityEditDialogModel<CheckingAccountRow>
   names: CheckingAccountNameLookups
 }
 

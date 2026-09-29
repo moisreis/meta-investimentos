@@ -9,7 +9,7 @@ import { SharedFormField } from "@/presentation/parts/components/shared-form-fie
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { useAddBankForm } from "@/presentation/routes/bank/hooks/use-add-bank-form.hook"
+import { useBankAddForm } from "@/presentation/routes/bank/hooks/use-bank-add-form.hook"
 
 import { BANK_FORM } from "@/presentation/routes/bank/settings/labels.settings"
 
@@ -60,7 +60,7 @@ function AddBankForm({ onStatusChange }: AddBankFormProps) {
     status,
     fieldErrors,
     handleSubmit,
-  } = useAddBankForm()
+  } = useBankAddForm()
 
   React.useEffect(() => {
     onStatusChange?.(status, error)

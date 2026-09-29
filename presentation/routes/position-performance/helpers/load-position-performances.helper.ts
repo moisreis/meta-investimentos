@@ -4,13 +4,21 @@ import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 import type { PositionResponseDTO } from "@/services/position/dto/position-response.dto"
 import type { PositionPerformanceResponseDTO } from "@/services/position-performance/dto/position-performance-response.dto"
+import { ToPositionPerformanceRows } from "@/presentation/mappers/position-performance-row.mapper"
+import { ToPositionRows } from "@/presentation/mappers/position-row.mapper"
+import { ToPortfolioRows } from "@/presentation/mappers/portfolio-row.mapper"
+import { ToFundRows } from "@/presentation/mappers/fund-row.mapper"
+import type { PositionPerformanceRow } from "@/presentation/types/position-performance-row.types"
+import type { PositionRow } from "@/presentation/types/position-row.types"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { FundRow } from "@/presentation/types/fund-row.types"
 
 // Data resolved by the position performance loader.
 export interface LoadedPositionPerformanceList {
-  performances: PositionPerformanceResponseDTO[]
-  positions: PositionResponseDTO[]
-  portfolios: PortfolioResponseDTO[]
-  funds: FundResponseDTO[]
+  performances: PositionPerformanceRow[]
+  positions: PositionRow[]
+  portfolios: PortfolioRow[]
+  funds: FundRow[]
 }
 
 /**
@@ -66,9 +74,9 @@ export async function LoadPositionPerformances(): Promise<LoadedPositionPerforma
   })
 
   return {
-    performances: PERFORMANCES,
-    positions: POSITIONS,
-    portfolios: PORTFOLIOS,
-    funds: FUNDS,
+    performances: ToPositionPerformanceRows(PERFORMANCES),
+    positions: ToPositionRows(POSITIONS),
+    portfolios: ToPortfolioRows(PORTFOLIOS),
+    funds: ToFundRows(FUNDS),
   }
 }

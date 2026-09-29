@@ -12,12 +12,14 @@ import { ListFundsUseCase } from "@/services/fund/use-cases/list-funds.use-case"
 import { ListPortfoliosUseCase } from "@/services/portfolio/use-cases/list-portfolios.use-case"
 import { ListAllPositionsUseCase } from "@/services/position/use-cases/list-all-positions.use-case"
 import { CalculatePositionPerformanceUseCase } from "@/services/position-performance/use-cases/calculate-position-performance.use-case"
+import { DeletePositionPerformanceUseCase } from "@/services/position-performance/use-cases/delete-position-performance.use-case"
 import { ListAllPositionPerformancesUseCase } from "@/services/position-performance/use-cases/list-all-position-performances.use-case"
 
 // The position performance use cases, already wired to the
 // repositories.
 interface PositionPerformanceUseCases {
   calculate: CalculatePositionPerformanceUseCase
+  delete: DeletePositionPerformanceUseCase
   list: ListPortfoliosUseCase
   listAll: ListAllPositionPerformancesUseCase
   listFunds: ListFundsUseCase
@@ -76,6 +78,9 @@ function PositionPerformanceContainer(): PositionPerformanceUseCases {
       POSITION_PERFORMANCE_REPOSITORY,
       NORM_REPOSITORY,
       NORMS_PORTFOLIOS_REPOSITORY
+    ),
+    delete: new DeletePositionPerformanceUseCase(
+      POSITION_PERFORMANCE_REPOSITORY
     ),
     list: new ListPortfoliosUseCase(PORTFOLIO_REPOSITORY),
     listAll: new ListAllPositionPerformancesUseCase(

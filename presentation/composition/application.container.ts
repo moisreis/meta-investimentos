@@ -6,7 +6,9 @@ import { PositionRepository } from "@/infrastructure/position/repositories/posit
 import { QuotaRepository } from "@/infrastructure/quota/repositories/quota.repository"
 import { AddApplicationUseCase } from "@/services/application/use-cases/add-application.use-case"
 import { CreateApplicationUseCase } from "@/services/application/use-cases/create-application.use-case"
+import { DeleteApplicationUseCase } from "@/services/application/use-cases/delete-application.use-case"
 import { ListAllApplicationsUseCase } from "@/services/application/use-cases/list-all-applications.use-case"
+import { ReverseApplicationUseCase } from "@/services/application/use-cases/reverse-application.use-case"
 import { ListFundsUseCase } from "@/services/fund/use-cases/list-funds.use-case"
 import { ListPortfoliosUseCase } from "@/services/portfolio/use-cases/list-portfolios.use-case"
 import { CreatePositionUseCase } from "@/services/position/use-cases/create-position.use-case"
@@ -17,6 +19,8 @@ import { RedistributePositionAllocationUseCase } from "@/services/position/use-c
 // repositories.
 interface ApplicationUseCases {
   add: AddApplicationUseCase
+  delete: DeleteApplicationUseCase
+  reverse: ReverseApplicationUseCase
   listAllApplications: ListAllApplicationsUseCase
   listAllPositions: ListAllPositionsUseCase
   listFunds: ListFundsUseCase
@@ -73,6 +77,8 @@ function ApplicationContainer(): ApplicationUseCases {
         POSITION_REPOSITORY
       )
     ),
+    delete: new DeleteApplicationUseCase(APPLICATION_REPOSITORY),
+    reverse: new ReverseApplicationUseCase(APPLICATION_REPOSITORY),
     listAllApplications: new ListAllApplicationsUseCase(
       APPLICATION_REPOSITORY
     ),

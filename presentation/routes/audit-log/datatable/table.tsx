@@ -2,10 +2,10 @@
 
 import { EntityDatatable } from "@/presentation/parts/datatable/layout/entity-datatable"
 import type { EntityTable } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { AuditLogResponseDTO } from "@/services/audit-log/dto/audit-log-response.dto"
+import type { AuditLogRow } from "@/presentation/types/audit-log-row.types"
 
 interface AuditLogDatatableTableProps {
-  table: EntityTable<AuditLogResponseDTO>
+  table: EntityTable<AuditLogRow>
 }
 
 /**

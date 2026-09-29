@@ -2,22 +2,27 @@
 
 import { useCallback, useMemo } from "react"
 import {
+  ColumnHelper,
   createColumnHelper,
   useTable,
 } from "@tanstack/react-table"
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { PositionPerformanceResponseDTO } from "@/services/position-performance/dto/position-performance-response.dto"
+import type { PositionPerformanceRow } from "@/presentation/types/position-performance-row.types"
 
 import { CreatePositionPerformanceTableColumns } from "../datatable/table-columns"
 import { EMPTY_POSITION_PERFORMANCE_LOOKUPS } from "../helpers/build-position-performance-lookups.helper"
 import type { PositionPerformanceLookups } from "../types/position-performance-list.types"
+import { usePositionPerformanceRowActions } from "./use-position-performance-row-actions.hook"
 
 // Column helper bound to the entity table features.
-const COLUMN_HELPER = createColumnHelper<
+const COLUMN_HELPER: ColumnHelper<
   EntityTableFeatures,
-  PositionPerformanceResponseDTO
+  PositionPerformanceRow
+> = createColumnHelper<
+  EntityTableFeatures,
+  PositionPerformanceRow
 >()
 
 /**
@@ -35,19 +40,20 @@ const COLUMN_HELPER = createColumnHelper<
  * @param performances - The rows rendered by the table.
  * @param lookups - The position performance lookups.
  *
- * @returns The shared table instance.
+ * @returns The shared table instance and row actions.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-25
+ * @date 2026-09-27
  */
 function usePositionPerformanceDatatable(
-  performances: PositionPerformanceResponseDTO[],
+  performances: PositionPerformanceRow[],
   lookups: PositionPerformanceLookups = EMPTY_POSITION_PERFORMANCE_LOOKUPS
 ) {
+  const rowActions = usePositionPerformanceRowActions()
+
   const rowFor = useCallback(
-    (performanceId: string) =>
-      lookups.rows[performanceId] ?? null,
+    (performanceId: string) => lookups.rows[performanceId] ?? null,
     [lookups]
   )
 
@@ -55,8 +61,9 @@ function usePositionPerformanceDatatable(
     () =>
       CreatePositionPerformanceTableColumns(COLUMN_HELPER, {
         rowFor,
+        onDelete: rowActions.handleDelete,
       }),
-    [rowFor]
+    [rowFor, rowActions.handleDelete]
   )
 
   const TABLE = useTable({
@@ -69,7 +76,7 @@ function usePositionPerformanceDatatable(
     },
   })
 
-  return { table: TABLE }
+  return { table: TABLE, rowActions }
 }
 
 export { usePositionPerformanceDatatable }

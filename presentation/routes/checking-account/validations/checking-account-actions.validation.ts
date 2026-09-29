@@ -5,11 +5,17 @@ import { ID_SCHEMA } from "@/lib/validation/common.validation"
 import {
   CHECKING_ACCOUNT_EDIT_FORM_SCHEMA,
   CHECKING_ACCOUNT_FORM_SCHEMA,
-} from "./checking-account-form.validations"
-
-// The payload accepted by the record checking account
-// action. The form and the action share this schema, so the
-// client check and the server check can never drift apart.
+} from "./checking-account-form.validation"
+/**
+ * @summary
+ * The payload accepted by the record checking account action.
+ * The form and the action share this schema, so the client check
+ * and the server check can never drift apart.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 const RECORD_CHECKING_ACCOUNT_SCHEMA =
   CHECKING_ACCOUNT_FORM_SCHEMA
 

@@ -3,14 +3,14 @@
 import { useMemo, useState } from "react"
 
 import { FormatDate } from "@/presentation/presenters/date.presenter"
-import type { QuotaResponseDTO } from "@/services/quota/dto/quota-response.dto"
+import type { QuotaRow } from "@/presentation/types/quota-row.types"
 
 import type { QuotaFundLookups } from "../types/quota-list.types"
 
 interface UseQuotaDatatableFiltersOutput {
   query: string
   onQueryChange: (query: string) => void
-  filteredQuotas: QuotaResponseDTO[]
+  filteredQuotas: QuotaRow[]
 }
 
 /**
@@ -32,7 +32,7 @@ interface UseQuotaDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function useQuotaDatatableFilters(
-  quotas: QuotaResponseDTO[],
+  quotas: QuotaRow[],
   lookups: QuotaFundLookups
 ): UseQuotaDatatableFiltersOutput {
   const [QUERY, setQuery] = useState("")

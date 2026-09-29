@@ -10,13 +10,13 @@ import { SharedFormField } from "@/presentation/parts/components/shared-form-fie
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { useEditFundForm } from "@/presentation/routes/fund/hooks/use-edit-fund-form.hook"
+import { useFundEditForm } from "../hooks/use-fund-edit-form.hook"
 
 import { FUND_FORM } from "@/presentation/routes/fund/settings/labels.settings"
 
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
+import type { FundRow } from "@/presentation/types/fund-row.types"
 
-import { FundRegistryCombobox } from "./fund-registry-combobox"
+import { FundRegistryCombobox } from "./registry-combobox"
 
 import type { FundSelectOptions } from "../types/fund-list.types"
 
@@ -24,7 +24,7 @@ import type { FundSelectOptions } from "../types/fund-list.types"
  * Props for the edit fund form.
  */
 export interface EditFundFormProps {
-  fund: FundResponseDTO
+  fund: FundRow
   options: FundSelectOptions
   onStatusChange?: (
     status: EntityFormStatus,
@@ -82,7 +82,7 @@ function EditFundForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useEditFundForm(fund)
+  } = useFundEditForm(fund)
 
   React.useEffect(() => {
     onStatusChange?.(status, error)

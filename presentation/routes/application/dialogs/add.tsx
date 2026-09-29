@@ -18,8 +18,9 @@ import { ApplicationAddAnotherDialog } from "./add-another"
  */
 export interface ApplicationAddDialogProps {
   dialog: EntityAddDialogModel
-  portfolioId: string
   options: ApplicationAddOptions
+  defaultPortfolioId?: string
+  lockedPortfolioId?: string
 }
 
 /**
@@ -35,9 +36,13 @@ export interface ApplicationAddDialogProps {
  *
  * @param props - Props of the application add dialog.
  * @param props.dialog - The add dialog flow state.
- * @param props.portfolioId - Portfolio receiving the
- * application.
- * @param props.options - The fund options.
+ * @param props.options - The portfolio and fund options.
+ * @param props.defaultPortfolioId - Portfolio preselected
+ * in the form. The application list screen passes the
+ * portfolio of its active filter, if any.
+ * @param props.lockedPortfolioId - Portfolio the flow is
+ * locked to. Passed by the portfolio detail screen, which
+ * hides the portfolio field and swaps the description.
  *
  * @returns The application add dialog flow.
  *
@@ -47,8 +52,9 @@ export interface ApplicationAddDialogProps {
  */
 function ApplicationAddDialog({
   dialog,
-  portfolioId,
   options,
+  defaultPortfolioId,
+  lockedPortfolioId,
 }: ApplicationAddDialogProps) {
   return (
     <>
@@ -56,12 +62,17 @@ function ApplicationAddDialog({
         open={dialog.open}
         onOpenChange={dialog.setOpen}
         title={APPLICATION_DIALOG.ADD_TITLE}
-        description={APPLICATION_DIALOG.ADD_DESCRIPTION}
+        description={
+          lockedPortfolioId
+            ? APPLICATION_DIALOG.ADD_DESCRIPTION_LOCKED
+            : APPLICATION_DIALOG.ADD_DESCRIPTION
+        }
       >
         <AddApplicationForm
           key={dialog.formKey}
-          portfolioId={portfolioId}
           options={options}
+          defaultPortfolioId={defaultPortfolioId}
+          lockedPortfolioId={lockedPortfolioId}
           onStatusChange={dialog.handleStatusChange}
         />
       </EntityAddDialog>

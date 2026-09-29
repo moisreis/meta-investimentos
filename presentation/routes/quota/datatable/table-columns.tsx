@@ -5,10 +5,12 @@ import type {
   ColumnHelper,
 } from "@tanstack/react-table"
 
+import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
+import { FormatCnpj } from "@/presentation/presenters/cnpj.presenter"
 import { FormatDate } from "@/presentation/presenters/date.presenter"
-import type { QuotaResponseDTO } from "@/services/quota/dto/quota-response.dto"
+import type { QuotaRow } from "@/presentation/types/quota-row.types"
 
 import { QUOTA_DATATABLE } from "../settings/labels.settings"
 import type { QuotaFundLookup } from "../types/quota-list.types"
@@ -23,11 +25,13 @@ export interface QuotaTableColumnOptions {
  *
  * @remarks
  * Renders a read-only list: the fund column resolves the
- * fund name and cnpj through `fundFor`, the date column
- * uses the date presenter and the price column renders
- * the decimal string through the currency presenter
- * aligned to the end. No selection or actions columns,
- * since quotas come from the CVM import only.
+ * fund name through `fundFor` and renders it through the
+ * shared lookup cell, with the masked CNPJ below the
+ * name, the date column uses the date presenter and the
+ * price column renders the decimal string through the
+ * currency presenter aligned to the end. No selection or
+ * actions columns, since quotas come from the CVM import
+ * only.
  *
  * @param columnHelper - The entity column helper.
  * @param options - The fund lookup resolver.
@@ -39,12 +43,9 @@ export interface QuotaTableColumnOptions {
  * @date 2026-09-25
  */
 export function CreateQuotaTableColumns(
-  columnHelper: ColumnHelper<
-    EntityTableFeatures,
-    QuotaResponseDTO
-  >,
+  columnHelper: ColumnHelper<EntityTableFeatures, QuotaRow>,
   options: QuotaTableColumnOptions
-): ColumnDef<EntityTableFeatures, QuotaResponseDTO, any>[] {
+): ColumnDef<EntityTableFeatures, QuotaRow, any>[] {
   return [
     columnHelper.accessor((row) => options.fundFor(row.id), {
       id: "fund",
@@ -54,17 +55,11 @@ export function CreateQuotaTableColumns(
       cell: (info) => {
         const LOOKUP = info.getValue()
 
-        if (!LOOKUP) {
-          return <span className="text-muted-foreground">—</span>
-        }
-
         return (
-          <div className="min-w-0">
-            <p className="truncate font-medium">{LOOKUP.name}</p>
-            <p className="truncate text-xs text-muted-foreground">
-              {LOOKUP.cnpj}
-            </p>
-          </div>
+          <EntityLookupCell
+            title={LOOKUP?.name}
+            subtitle={LOOKUP?.cnpj ? FormatCnpj(LOOKUP.cnpj) : undefined}
+          />
         )
       },
     }),

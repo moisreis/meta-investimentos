@@ -2,10 +2,10 @@
 
 import { EntityDatatable } from "@/presentation/parts/datatable/layout/entity-datatable"
 import type { EntityTable } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { QuotaResponseDTO } from "@/services/quota/dto/quota-response.dto"
+import type { QuotaRow } from "@/presentation/types/quota-row.types"
 
 interface QuotaDatatableTableProps {
-  table: EntityTable<QuotaResponseDTO>
+  table: EntityTable<QuotaRow>
 }
 
 /**

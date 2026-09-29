@@ -2,12 +2,12 @@
 
 import { useCallback, useMemo, useState } from "react"
 
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
+import type { BankRow } from "@/presentation/types/bank-row.types"
 
 interface UseBankDatatableFiltersOutput {
   query: string
   onQueryChange: (query: string) => void
-  filteredBanks: BankResponseDTO[]
+  filteredBanks: BankRow[]
 }
 
 /**
@@ -27,7 +27,7 @@ interface UseBankDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function useBankDatatableFilters(
-  banks: BankResponseDTO[]
+  banks: BankRow[]
 ): UseBankDatatableFiltersOutput {
   const [QUERY, setQuery] = useState("")
 

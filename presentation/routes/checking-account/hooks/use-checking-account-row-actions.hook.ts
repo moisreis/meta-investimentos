@@ -1,9 +1,8 @@
 "use client"
 
 import { useEntityRowActions } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
-import type { EntityRowActionsModel } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
 import { deleteCheckingAccountAction } from "@/presentation/routes/checking-account/actions/delete-checking-account.action"
-import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
+import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 
 /**
  * @summary
@@ -21,8 +20,8 @@ import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto
  *
  * @date 2026-09-26
  */
-function useCheckingAccountRowActions(): EntityRowActionsModel<CheckingAccountResponseDTO> {
-  return useEntityRowActions<CheckingAccountResponseDTO>({
+function useCheckingAccountRowActions() {
+  return useEntityRowActions<CheckingAccountRow>({
     runDelete: (id) =>
       deleteCheckingAccountAction({ checkingAccountId: id }),
   })

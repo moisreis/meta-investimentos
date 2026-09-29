@@ -2,12 +2,12 @@
 
 import { useMemo, useState } from "react"
 
-import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
+import type { StatementRow } from "@/presentation/types/statement-row.types"
 
 import type { StatementRowSummary } from "../types/statement-list.types"
 
 interface UseStatementDatatableFiltersInput {
-  statements: StatementResponseDTO[]
+  statements: StatementRow[]
   summaries: Record<string, StatementRowSummary> | null
 }
 

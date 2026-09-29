@@ -1,4 +1,11 @@
-// Display data of the user who performed an audited action.
+/**
+ * @summary
+ * Display data of the user who performed an audited action.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export interface AuditLogActor {
   // First name of the acting user.
   firstName: string

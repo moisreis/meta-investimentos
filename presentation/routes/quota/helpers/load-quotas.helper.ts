@@ -2,11 +2,15 @@ import { RequireSessionUser } from "@/lib/auth/require-session"
 import { QuotaContainer } from "@/presentation/composition/quota.container"
 import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
 import type { QuotaResponseDTO } from "@/services/quota/dto/quota-response.dto"
+import { ToQuotaRows } from "@/presentation/mappers/quota-row.mapper"
+import { ToFundRows } from "@/presentation/mappers/fund-row.mapper"
+import type { QuotaRow } from "@/presentation/types/quota-row.types"
+import type { FundRow } from "@/presentation/types/fund-row.types"
 
 // Data resolved by the quota list loader.
 export interface LoadedQuotaList {
-  funds: FundResponseDTO[]
-  quotas: QuotaResponseDTO[]
+  funds: FundRow[]
+  quotas: QuotaRow[]
 }
 
 /**
@@ -50,5 +54,8 @@ export async function LoadQuotas(): Promise<LoadedQuotaList | null> {
     fundIds: FUNDS.map((fund) => fund.id),
   })
 
-  return { funds: FUNDS, quotas: QUOTAS }
+  return {
+    funds: ToFundRows(FUNDS),
+    quotas: ToQuotaRows(QUOTAS),
+  }
 }

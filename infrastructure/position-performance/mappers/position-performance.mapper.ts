@@ -119,13 +119,16 @@ export function ToInsert(
  * Maps an entity into update values.
  *
  * @remarks
- * Omits `createdAt` and `updatedAt`. The first never changes;
- * the second refreshes via `$onUpdate`.
+ * Omits `createdAt`, which is set once at insertion and never
+ * mutated. The `positionId` and `date` columns are included
+ * so the result also serves as the `set` clause of an
+ * upsert, where they are the conflict target.
  *
  * @explanation
- * `createdAt` is set once at insertion and never mutated.
- * `updatedAt` is auto-refreshed by **Drizzle**'s `$onUpdate`,
- * so passing it explicitly is unnecessary.
+ * `createdAt` is set once at insertion and never mutated, so
+ * passing it explicitly is unnecessary. `positionId` and
+ * `date` are omitted from neither clause: they identify the
+ * row on update and are the conflict target on insert.
  *
  * @param entity - Position performance domain entity.
  *

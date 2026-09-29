@@ -2,10 +2,10 @@
 
 import { EntityDatatable } from "@/presentation/parts/datatable/layout/entity-datatable"
 import type { EntityTable } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { WithdrawalResponseDTO } from "@/services/withdrawal/dto/withdrawal-response.dto"
+import type { WithdrawalRow } from "@/presentation/types/withdrawal-row.types"
 
 interface WithdrawalDatatableTableProps {
-  table: EntityTable<WithdrawalResponseDTO>
+  table: EntityTable<WithdrawalRow>
 }
 
 /**

@@ -1,16 +1,17 @@
-import type { ApplicationResponseDTO } from "@/services/application/dto/application-response.dto"
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import type { PositionResponseDTO } from "@/services/position/dto/position-response.dto"
+import { FormatCnpjOptional } from "@/presentation/presenters/cnpj.presenter"
+import type { ApplicationRow } from "@/presentation/types/application-row.types"
+import type { FundRow } from "@/presentation/types/fund-row.types"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { PositionRow } from "@/presentation/types/position-row.types"
 
 import type { ApplicationLookups } from "../types/application-list.types"
 
 // Input resolved by the application list loader.
 export interface BuildApplicationLookupsInput {
-  applications: ApplicationResponseDTO[]
-  portfolios: PortfolioResponseDTO[]
-  funds: FundResponseDTO[]
-  positions: PositionResponseDTO[]
+  applications: ApplicationRow[]
+  portfolios: PortfolioRow[]
+  funds: FundRow[]
+  positions: PositionRow[]
 }
 
 // Empty lookups used before the loader resolves.
@@ -29,7 +30,10 @@ export const EMPTY_APPLICATION_LOOKUPS: ApplicationLookups = {
  * fund display data through the position join, and
  * derives the portfolio and fund options offered by the
  * filters from the portfolios and funds that actually
- * hold applications. Options are ordered by label.
+ * hold applications. Options are ordered by label and
+ * carry the portfolio acronym and the formatted fund
+ * CNPJ, so the filter pickers read the same way as the
+ * `Carteira` and `Fundo` columns.
  *
  * @explanation
  * Use this helper in loaders that need the lookup
@@ -93,6 +97,8 @@ export function BuildApplicationLookups(
     .map((portfolioId) => ({
       value: portfolioId,
       label: PORTFOLIO_BY_ID[portfolioId]?.name ?? "Carteira",
+      description:
+        PORTFOLIO_BY_ID[portfolioId]?.acronym ?? "",
     }))
     .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"))
 
@@ -100,6 +106,7 @@ export function BuildApplicationLookups(
     .map((fundId) => ({
       value: fundId,
       label: FUND_BY_ID[fundId]?.name ?? "Fundo",
+      description: FormatCnpjOptional(FUND_BY_ID[fundId]?.cnpj),
     }))
     .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"))
 

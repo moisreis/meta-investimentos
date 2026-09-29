@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from "drizzle-orm"
+import { and, desc, eq, inArray, lt } from "drizzle-orm"
 import type {
   PgAsyncDatabase,
   PgQueryResultHKT,
@@ -253,12 +253,18 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * @date 2026-09-15
    */
   async findLatestByPositionId(
-    positionId: EntityId
+    positionId: EntityId,
+    before: Date
   ): Promise<PositionPerformance | null> {
     const [ROW] = await this.db
       .select()
       .from(positionPerformance)
-      .where(eq(positionPerformance.positionId, positionId))
+      .where(
+        and(
+          eq(positionPerformance.positionId, positionId),
+          lt(positionPerformance.date, before)
+        )
+      )
       .orderBy(desc(positionPerformance.date))
       .limit(1)
 
@@ -291,7 +297,8 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * @date 2026-09-15
    */
   async findLatestByPositionIds(
-    positionIds: EntityId[]
+    positionIds: EntityId[],
+    before: Date
   ): Promise<PositionPerformance[]> {
     if (positionIds.length === 0) {
       return []
@@ -301,7 +308,10 @@ export class PositionPerformanceRepository implements IPositionPerformance {
       .selectDistinctOn([positionPerformance.positionId])
       .from(positionPerformance)
       .where(
-        inArray(positionPerformance.positionId, positionIds)
+        and(
+          inArray(positionPerformance.positionId, positionIds),
+          lt(positionPerformance.date, before)
+        )
       )
       .orderBy(
         positionPerformance.positionId,
@@ -316,12 +326,20 @@ export class PositionPerformanceRepository implements IPositionPerformance {
    * Persists the provided position performance snapshot.
    *
    * @remarks
-   * Inserts a new row when the entity has no id. Updates
-   * the existing row or throws `NotFoundError` when missing.
+   * Inserts a new row when the entity has no id, and
+   * overwrites the existing row for the same
+   * `(position_id, date)` pair. Updates the existing row or
+   * throws `NotFoundError` when missing.
    *
    * @explanation
    * Use this method to create or update a snapshot. Returns
    * the persisted entity with its id.
+   *
+   * The conflict clause is what makes a recalculation
+   * possible: a `(position_id, date)` unique index rejects a
+   * second insert, so without it, re-running a period that
+   * already has snapshots would fail on the first day that
+   * does.
    *
    * @param persisted - The snapshot to persist.
    *
@@ -356,6 +374,13 @@ export class PositionPerformanceRepository implements IPositionPerformance {
     const [ROW] = await this.db
       .insert(positionPerformance)
       .values(ToInsert(persisted))
+      .onConflictDoUpdate({
+        target: [
+          positionPerformance.positionId,
+          positionPerformance.date,
+        ],
+        set: ToUpdate(persisted),
+      })
       .returning()
 
     return ToDomain(ROW)

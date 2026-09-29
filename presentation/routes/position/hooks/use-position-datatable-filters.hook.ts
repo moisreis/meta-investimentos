@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { endOfDay, startOfDay } from "date-fns"
 import type { DateRange } from "react-day-picker"
 
-import type { PositionResponseDTO } from "@/services/position/dto/position-response.dto"
+import type { PositionRow } from "@/presentation/types/position-row.types"
 
 interface UsePositionDatatableFiltersOutput {
   portfolioId: string | undefined
@@ -13,7 +13,7 @@ interface UsePositionDatatableFiltersOutput {
   onPortfolioChange: (value: string | undefined) => void
   onFundChange: (value: string | undefined) => void
   onDateRangeChange: (range: DateRange | undefined) => void
-  filteredPositions: PositionResponseDTO[]
+  filteredPositions: PositionRow[]
 }
 
 /**
@@ -36,7 +36,7 @@ interface UsePositionDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function usePositionDatatableFilters(
-  positions: PositionResponseDTO[]
+  positions: PositionRow[]
 ): UsePositionDatatableFiltersOutput {
   const [PORTFOLIO_ID, setPortfolioId] = useState<
     string | undefined

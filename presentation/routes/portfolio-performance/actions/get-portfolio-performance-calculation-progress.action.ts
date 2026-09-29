@@ -9,9 +9,9 @@ import {
 } from "@/presentation/types/action-result"
 
 import type { PortfolioPerformanceCalculationProgress } from "../types/portfolio-performance-list.types"
-import { GET_PORTFOLIO_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA } from "../validations/portfolio-performance-actions.validation"
+import { GET_PORTFOLIO_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA as PROGRESS_SCHEMA } from "../validations/portfolio-performance-actions.validation"
 
-import { getPortfolioPerformanceCalculationJob } from "./portfolio-performance-calculate-job.store"
+import { getPortfolioPerformanceCalculationJob } from "../jobs/calculate-job.store"
 
 /**
  * @summary
@@ -52,10 +52,7 @@ export async function getPortfolioPerformanceCalculationProgressAction(
     return ActionSuccess(null)
   }
 
-  const PARSED =
-    GET_PORTFOLIO_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA.safeParse(
-      input
-    )
+  const PARSED = PROGRESS_SCHEMA.safeParse(input)
 
   if (!PARSED.success) {
     return RejectInput(PARSED.error)

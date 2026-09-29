@@ -5,7 +5,7 @@ import { IconCoin } from "@tabler/icons-react"
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
+import type { FundRow } from "@/presentation/types/fund-row.types"
 
 import { FundDatatableFilters } from "../datatable/filters"
 import { FundDatatableTable } from "../datatable/table"
@@ -31,8 +31,8 @@ const EMPTY_OPTIONS: FundSelectOptions = {
   categories: [],
 }
 
-interface FundListProps {
-  data: FundResponseDTO[] | null
+export interface FundListProps {
+  data: FundRow[] | null
   options?: FundSelectOptions | null
   summaries?: Record<string, FundRowSummary> | null
   names?: FundNameLookups

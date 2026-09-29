@@ -1,5 +1,5 @@
-// The role granted to the user on creation.
-export type UserRole = "USER" | "MANAGER"
+
+import type { UserRole } from "@/lib/auth/user-role"
 
 /**
  * @summary

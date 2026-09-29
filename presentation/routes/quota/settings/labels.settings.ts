@@ -1,4 +1,4 @@
-import type { CvmImportWindow } from "@/services/quota/use-cases/import-fund-valuations.use-case"
+import type { CvmImportWindow } from "@/lib/quota/cvm-import-window"
 
 export interface QuotaImportWindowOption {
   value: CvmImportWindow
@@ -7,6 +7,15 @@ export interface QuotaImportWindowOption {
 }
 
 // Import windows offered by the confirm dialog.
+/**
+ * @summary
+ * Import windows offered by the quota import
+ * confirm dialog, and the copy of the screen.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export const QUOTA_IMPORT_WINDOWS: readonly QuotaImportWindowOption[] =
   [
     {
@@ -148,4 +157,14 @@ export const QUOTA_EMPTY = {
   DESCRIPTION:
     "Importe as cotações de um período direto da CVM.",
   PRIMARY_ACTION_LABEL: "Importar cotas",
+} as const
+
+// Copy of the quota-aware date picker shared by the
+// application and withdrawal forms.
+export const QUOTA_DATE_INPUT = {
+  // Default trigger placeholder.
+  PLACEHOLDER: "Selecione a data",
+
+  // Accessible label of the day grid.
+  GRID_LABEL: "Calendário de dias com cota",
 } as const

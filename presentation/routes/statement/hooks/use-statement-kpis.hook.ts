@@ -5,13 +5,13 @@ import { useCallback } from "react"
 import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
-import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
+import type { StatementRow } from "@/presentation/types/statement-row.types"
 
 import { GetStatementMonthKey } from "../helpers/format-statement-period.helper"
 import { STATEMENT_KPI } from "../settings/labels.settings"
 
 interface UseStatementKpisInput {
-  statements: StatementResponseDTO[]
+  statements: StatementRow[]
 }
 
 // Builds the current UTC month key (`YYYY-MM`).
@@ -21,7 +21,7 @@ function CurrentMonthKey(): string {
 
 // Tallies the data-driven statement KPI cards.
 function BuildStatementKpis(
-  statements: readonly StatementResponseDTO[]
+  statements: readonly StatementRow[]
 ): EntityKpi[] {
   const COVERED_MONTHS = new Set(
     statements.map((statement) =>
@@ -88,7 +88,7 @@ function useStatementKpis({
   statements,
 }: UseStatementKpisInput): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly StatementResponseDTO[]) =>
+    (items: readonly StatementRow[]) =>
       BuildStatementKpis(items),
     []
   )

@@ -1,14 +1,15 @@
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import type { PositionResponseDTO } from "@/services/position/dto/position-response.dto"
+import { FormatCnpjOptional } from "@/presentation/presenters/cnpj.presenter"
+import type { FundRow } from "@/presentation/types/fund-row.types"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { PositionRow } from "@/presentation/types/position-row.types"
 
 import type { PositionLookups } from "../types/position-list.types"
 
 // Input resolved by the position list loader.
 export interface BuildPositionLookupsInput {
-  positions: PositionResponseDTO[]
-  portfolios: PortfolioResponseDTO[]
-  funds: FundResponseDTO[]
+  positions: PositionRow[]
+  portfolios: PortfolioRow[]
+  funds: FundRow[]
 }
 
 // Empty lookups used before the loader resolves.
@@ -82,6 +83,8 @@ export function BuildPositionLookups(
     .map((portfolioId) => ({
       value: portfolioId,
       label: PORTFOLIO_BY_ID[portfolioId]?.name ?? "Carteira",
+      description:
+        PORTFOLIO_BY_ID[portfolioId]?.acronym ?? "",
     }))
     .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"))
 
@@ -89,6 +92,7 @@ export function BuildPositionLookups(
     .map((fundId) => ({
       value: fundId,
       label: FUND_BY_ID[fundId]?.name ?? "Fundo",
+      description: FormatCnpjOptional(FUND_BY_ID[fundId]?.cnpj),
     }))
     .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"))
 

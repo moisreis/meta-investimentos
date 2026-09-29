@@ -2,6 +2,7 @@
 
 import { useMemo } from "react"
 import {
+  ColumnHelper,
   createColumnHelper,
   useTable,
 } from "@tanstack/react-table"
@@ -10,17 +11,15 @@ import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/e
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
-import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
+import type { UserRow } from "@/presentation/types/user-row.types"
 
 import { CreateUserTableColumns } from "../datatable/table-columns"
 import { useUserBulkDelete } from "./use-user-bulk-delete.hook"
 import { useUserRowActions } from "./use-user-row-actions.hook"
 
 // Column helper bound to the entity table features.
-const COLUMN_HELPER = createColumnHelper<
-  EntityTableFeatures,
-  UserResponseDTO
->()
+const COLUMN_HELPER: ColumnHelper<EntityTableFeatures, UserRow> =
+  createColumnHelper<EntityTableFeatures, UserRow>()
 
 /**
  * @summary
@@ -44,9 +43,9 @@ const COLUMN_HELPER = createColumnHelper<
  *
  * @date 2026-09-25
  */
-function useUserDatatable(users: UserResponseDTO[]) {
+function useUserDatatable(users: UserRow[]) {
   const addDialog = useEntityAddDialog()
-  const editDialog = useEntityEditDialog<UserResponseDTO>()
+  const editDialog = useEntityEditDialog<UserRow>()
   const rowActions = useUserRowActions()
   const bulkDelete = useUserBulkDelete()
 

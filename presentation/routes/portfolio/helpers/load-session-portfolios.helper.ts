@@ -2,9 +2,12 @@ import { RequireSessionUser } from "@/lib/auth/require-session"
 import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
+import { ToPortfolioRows } from "@/presentation/mappers/portfolio-row.mapper"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+
 export interface LoadSessionPortfoliosOutput {
   userId: string
-  portfolios: PortfolioResponseDTO[]
+  portfolios: PortfolioRow[]
 }
 
 /**
@@ -43,6 +46,6 @@ export async function LoadSessionPortfolios(): Promise<LoadSessionPortfoliosOutp
 
   return {
     userId: USER.id,
-    portfolios: PORTFOLIOS,
+    portfolios: ToPortfolioRows(PORTFOLIOS),
   }
 }

@@ -221,6 +221,33 @@ export interface IQuota {
 
   /**
    * @summary
+   * Retrieves all quota dates for the provided fund.
+   *
+   * @remarks
+   * Returns an array of dates (as strings in `yyyy-MM-dd` format)
+   * that have quota entries for the fund. Returns an empty
+   * array when no quotas match.
+   *
+   * @explanation
+   * Use this method to get available dates for a fund when
+   * populating a date picker for applications or withdrawals.
+   *
+   * @param fundId - The unique identifier of the fund.
+   *
+   * @returns Array of date strings in `yyyy-MM-dd` format.
+   *
+   * @example
+   * const DATES = await QUOTA_REPO
+   *   .findAllDatesByFundId(FUND_ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-27
+   */
+  findAllDatesByFundId(fundId: EntityId): Promise<string[]>
+
+  /**
+   * @summary
    * Persists the provided quota.
    *
    * @remarks

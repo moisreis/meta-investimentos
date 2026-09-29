@@ -4,7 +4,7 @@ import { useEntityBulkDeleteAction } from "@/presentation/parts/hooks/use-entity
 import type { EntityBulkDeleteModel } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
 import { bulkDeleteFundsAction } from "@/presentation/routes/fund/actions/bulk-delete-funds.action"
 import { FUND_DATATABLE } from "@/presentation/routes/fund/settings/labels.settings"
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
+import type { FundRow } from "@/presentation/types/fund-row.types"
 
 /**
  * @summary
@@ -22,8 +22,8 @@ import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
  *
  * @date 2026-09-26
  */
-function useFundBulkDelete(): EntityBulkDeleteModel<FundResponseDTO> {
-  return useEntityBulkDeleteAction<FundResponseDTO>({
+function useFundBulkDelete(): EntityBulkDeleteModel<FundRow> {
+  return useEntityBulkDeleteAction<FundRow>({
     run: (ids) => bulkDeleteFundsAction({ fundIds: ids }),
     labels: FUND_DATATABLE,
   })

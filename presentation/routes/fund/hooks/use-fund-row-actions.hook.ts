@@ -3,7 +3,7 @@
 import { useEntityRowActions } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
 import type { EntityRowActionsModel } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
 import { deleteFundAction } from "@/presentation/routes/fund/actions/delete-fund.action"
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
+import type { FundRow } from "@/presentation/types/fund-row.types"
 
 /**
  * @summary
@@ -21,8 +21,8 @@ import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
  *
  * @date 2026-09-26
  */
-function useFundRowActions(): EntityRowActionsModel<FundResponseDTO> {
-  return useEntityRowActions<FundResponseDTO>({
+function useFundRowActions(): EntityRowActionsModel<FundRow> {
+  return useEntityRowActions<FundRow>({
     runDelete: (id) => deleteFundAction({ fundId: id }),
   })
 }

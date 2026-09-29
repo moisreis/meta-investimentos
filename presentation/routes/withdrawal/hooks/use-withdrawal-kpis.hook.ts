@@ -8,7 +8,7 @@ import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatQuotaQuantity } from "@/presentation/presenters/quota-quantity.presenter"
-import type { WithdrawalResponseDTO } from "@/services/withdrawal/dto/withdrawal-response.dto"
+import type { WithdrawalRow } from "@/presentation/types/withdrawal-row.types"
 
 import { WITHDRAWAL_KPI } from "../settings/labels.settings"
 
@@ -33,7 +33,7 @@ import { WITHDRAWAL_KPI } from "../settings/labels.settings"
  * @date 2026-09-25
  */
 export function BuildWithdrawalKpis(
-  withdrawals: readonly WithdrawalResponseDTO[]
+  withdrawals: readonly WithdrawalRow[]
 ): EntityKpi[] {
   const ACTIVE = withdrawals.filter(
     (withdrawal) => !withdrawal.reversedAt
@@ -88,10 +88,10 @@ export function BuildWithdrawalKpis(
 function useWithdrawalKpis({
   withdrawals,
 }: {
-  withdrawals: readonly WithdrawalResponseDTO[]
+  withdrawals: readonly WithdrawalRow[]
 }): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly WithdrawalResponseDTO[]) =>
+    (items: readonly WithdrawalRow[]) =>
       BuildWithdrawalKpis(items),
     []
   )

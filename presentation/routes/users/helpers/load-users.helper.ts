@@ -1,6 +1,8 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { UserContainer } from "@/presentation/composition/user.container"
 import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
+import { ToUserRows } from "@/presentation/mappers/user-row.mapper"
+import type { UserRow } from "@/presentation/types/user-row.types"
 
 /**
  * @summary
@@ -24,14 +26,12 @@ import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
  *
  * @date 2026-09-25
  */
-export async function LoadUsers(): Promise<
-  UserResponseDTO[] | null
-> {
+export async function LoadUsers(): Promise<UserRow[] | null> {
   const USER = await RequireSessionUser()
 
   if (!USER) return null
 
   const { list: LIST_USERS } = UserContainer()
 
-  return await LIST_USERS.execute({})
+  return ToUserRows(await LIST_USERS.execute({}))
 }

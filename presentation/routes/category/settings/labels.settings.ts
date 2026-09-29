@@ -1,4 +1,11 @@
-// Form copy for the category add/edit screens.
+﻿/**
+ * @summary
+ * Form copy for the category add/edit screens.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export const CATEGORY_FORM = {
   // Add button content.
   ADD_BUTTON: "Cadastrar Categoria",
@@ -131,3 +138,4 @@ export const CATEGORY_EMPTY = {
 } as const
 
 export { FormatDeleteCategoryDescription }
+

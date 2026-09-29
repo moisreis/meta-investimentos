@@ -1,5 +1,8 @@
 import { db } from "@/clients/database.client"
 import { ApplicationRepository } from "@/infrastructure/application/repositories/application.repository"
+import { FundRepository } from "@/infrastructure/fund/repositories/fund.repository"
+import { NormRepository } from "@/infrastructure/norm/repositories/norm.repository"
+import { NormsPortfoliosRepository } from "@/infrastructure/norms-portfolio/repositories/norms-portfolios.repository"
 import { PortfolioRepository } from "@/infrastructure/portfolio/repositories/portfolio.repository"
 import { PortfolioPerformanceRepository } from "@/infrastructure/portfolio-performance/repositories/portfolio-performance.repository"
 import { PositionRepository } from "@/infrastructure/position/repositories/position.repository"
@@ -7,13 +10,16 @@ import { PositionPerformanceRepository } from "@/infrastructure/position-perform
 import { QuotaRepository } from "@/infrastructure/quota/repositories/quota.repository"
 import { WithdrawalRepository } from "@/infrastructure/withdrawal/repositories/withdrawal.repository"
 import { CalculatePortfolioPerformanceUseCase } from "@/services/portfolio-performance/use-cases/calculate-portfolio-performance.use-case"
+import { DeletePortfolioPerformanceUseCase } from "@/services/portfolio-performance/use-cases/delete-portfolio-performance.use-case"
 import { ListAllPortfolioPerformancesUseCase } from "@/services/portfolio-performance/use-cases/list-all-portfolio-performances.use-case"
 import { ListPortfoliosUseCase } from "@/services/portfolio/use-cases/list-portfolios.use-case"
+import { CalculatePositionPerformanceUseCase } from "@/services/position-performance/use-cases/calculate-position-performance.use-case"
 
 // The portfolio performance use cases, already wired to
 // the repositories.
 interface PortfolioPerformanceUseCases {
   calculate: CalculatePortfolioPerformanceUseCase
+  delete: DeletePortfolioPerformanceUseCase
   list: ListPortfoliosUseCase
   listAll: ListAllPortfolioPerformancesUseCase
 }
@@ -29,9 +35,11 @@ interface PortfolioPerformanceUseCases {
  * the container for the use case they need, so the delivery
  * layer never reaches into the infrastructure layer and the
  * wiring lives in a single spot. The daily calculation use
- * case spans seven repositories, because one snapshot reads
- * positions, quotas, movements and both performance
- * histories.
+ * case spans several repositories, because one snapshot
+ * reads positions, quotas, movements and both performance
+ * histories. It also takes the position performance use
+ * case, so each position is valued for the day before the
+ * portfolio aggregates it.
  *
  * @explanation
  * Use this container from any server module that needs a
@@ -57,6 +65,17 @@ function PortfolioPerformanceContainer(): PortfolioPerformanceUseCases {
     new PositionPerformanceRepository(db)
   const PORTFOLIO_PERFORMANCE_REPOSITORY =
     new PortfolioPerformanceRepository(db)
+  const POSITION_PERFORMANCE_CALCULATE_USE_CASE =
+    new CalculatePositionPerformanceUseCase(
+      POSITION_REPOSITORY,
+      new FundRepository(db),
+      QUOTA_REPOSITORY,
+      APPLICATION_REPOSITORY,
+      WITHDRAWAL_REPOSITORY,
+      POSITION_PERFORMANCE_REPOSITORY,
+      new NormRepository(db),
+      new NormsPortfoliosRepository(db)
+    )
 
   return {
     calculate: new CalculatePortfolioPerformanceUseCase(
@@ -66,6 +85,10 @@ function PortfolioPerformanceContainer(): PortfolioPerformanceUseCases {
       APPLICATION_REPOSITORY,
       WITHDRAWAL_REPOSITORY,
       POSITION_PERFORMANCE_REPOSITORY,
+      PORTFOLIO_PERFORMANCE_REPOSITORY,
+      POSITION_PERFORMANCE_CALCULATE_USE_CASE
+    ),
+    delete: new DeletePortfolioPerformanceUseCase(
       PORTFOLIO_PERFORMANCE_REPOSITORY
     ),
     list: new ListPortfoliosUseCase(PORTFOLIO_REPOSITORY),

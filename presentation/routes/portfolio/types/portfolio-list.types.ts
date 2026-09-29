@@ -1,4 +1,11 @@
-// Display name and avatar data of a portfolio owner.
+/**
+ * @summary
+ * Display name and avatar data of a portfolio owner.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export interface PortfolioOwner {
   // First name of the owning user.
   firstName: string

@@ -348,6 +348,45 @@ export class QuotaRepository implements IQuota {
 
   /**
    * @summary
+   * Retrieves all quota dates for the provided fund.
+   *
+   * @remarks
+   * Returns an array of dates (as strings in `yyyy-MM-dd` format)
+   * that have quota entries for the fund. Returns an empty
+   * array when no quotas match.
+   *
+   * @explanation
+   * Use this method to get available dates for a fund when
+   * populating a date picker for applications or withdrawals.
+   *
+   * @param fundId - The unique identifier of the fund.
+   *
+   * @returns Array of date strings in `yyyy-MM-dd` format.
+   *
+   * @example
+   * const DATES = await QUOTA_REPO
+   *   .findAllDatesByFundId(FUND_ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-27
+   */
+  async findAllDatesByFundId(
+    fundId: EntityId
+  ): Promise<string[]> {
+    const ROWS = await this.db
+      .select({ date: quota.date })
+      .from(quota)
+      .where(eq(quota.fundId, fundId))
+      .orderBy(asc(quota.date))
+
+    return ROWS.map((row) =>
+      row.date.toISOString().split("T")[0]
+    )
+  }
+
+  /**
+   * @summary
    * Upserts a batch of quota rows in bulk.
    *
    * @remarks

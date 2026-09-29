@@ -5,13 +5,13 @@ import { useCallback } from "react"
 import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
-import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 import { CATEGORY_KPI } from "../settings/labels.settings"
 import type { CategoryRowSummary } from "../types/category-list.types"
 
 interface UseCategoryKpisInput {
-  categories: CategoryResponseDTO[]
+  categories: CategoryRow[]
   summaries: Record<string, CategoryRowSummary> | null
 }
 
@@ -35,7 +35,7 @@ interface UseCategoryKpisInput {
  * @date 2026-09-25
  */
 function BuildCategoryKpis(
-  categories: readonly CategoryResponseDTO[],
+  categories: readonly CategoryRow[],
   summaries: Record<string, CategoryRowSummary> | null
 ): EntityKpi[] {
   const TOTAL_FUNDS = Object.values(summaries ?? {}).reduce(
@@ -99,7 +99,7 @@ function useCategoryKpis({
   summaries,
 }: UseCategoryKpisInput): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly CategoryResponseDTO[]) =>
+    (items: readonly CategoryRow[]) =>
       BuildCategoryKpis(items, summaries),
     [summaries]
   )

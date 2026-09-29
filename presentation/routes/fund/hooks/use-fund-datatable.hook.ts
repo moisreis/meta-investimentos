@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo } from "react"
 import {
+  ColumnHelper,
   createColumnHelper,
   useTable,
 } from "@tanstack/react-table"
@@ -10,7 +11,7 @@ import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/e
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
+import type { FundRow } from "@/presentation/types/fund-row.types"
 
 import { CreateFundTableColumns } from "../datatable/table-columns"
 import type {
@@ -21,10 +22,8 @@ import { useFundBulkDelete } from "./use-fund-bulk-delete.hook"
 import { useFundRowActions } from "./use-fund-row-actions.hook"
 
 // Column helper bound to the entity table features.
-const COLUMN_HELPER = createColumnHelper<
-  EntityTableFeatures,
-  FundResponseDTO
->()
+const COLUMN_HELPER: ColumnHelper<EntityTableFeatures, FundRow> =
+  createColumnHelper<EntityTableFeatures, FundRow>()
 
 /**
  * @summary
@@ -52,7 +51,7 @@ const COLUMN_HELPER = createColumnHelper<
  * @date 2026-09-25
  */
 function useFundDatatable(
-  funds: FundResponseDTO[],
+  funds: FundRow[],
   summaries: Record<string, FundRowSummary> | null = null,
   names: FundNameLookups = {
     banks: {},
@@ -61,7 +60,7 @@ function useFundDatatable(
   }
 ) {
   const addDialog = useEntityAddDialog()
-  const editDialog = useEntityEditDialog<FundResponseDTO>()
+  const editDialog = useEntityEditDialog<FundRow>()
   const rowActions = useFundRowActions()
   const bulkDelete = useFundBulkDelete()
 

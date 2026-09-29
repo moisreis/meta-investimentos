@@ -2,13 +2,11 @@
 
 import { EntityDatatable } from "@/presentation/parts/datatable/layout/entity-datatable"
 import type { EntityTable } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 interface PortfolioDatatableTableProps {
-  table: EntityTable<PortfolioResponseDTO>
-  onBulkDelete: (
-    items: PortfolioResponseDTO[]
-  ) => void | Promise<void>
+  table: EntityTable<PortfolioRow>
+  onBulkDelete: (items: PortfolioRow[]) => void | Promise<void>
 }
 
 /**

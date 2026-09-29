@@ -3,7 +3,7 @@
 import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 
 import { generateStatementAction } from "../actions/generate-statement.action"
-import { GENERATE_STATEMENT_SCHEMA } from "../validations/generate-statement.validations"
+import { GENERATE_STATEMENT_SCHEMA } from "../validations/generate-statement.validation"
 
 /**
  * @summary
@@ -23,13 +23,14 @@ import { GENERATE_STATEMENT_SCHEMA } from "../validations/generate-statement.val
  *
  * @example
  * const { portfolioId, updatePortfolioId, month, updateMonth,
- *   fieldErrors, status, handleSubmit } = useGenerateStatementForm()
+ *   fieldErrors, status,
+ *   handleSubmit } = useStatementGenerateForm()
  *
  * @author Moisés Reis
  *
  * @date 2026-09-25
  */
-function useGenerateStatementForm() {
+function useStatementGenerateForm() {
   const {
     values: VALUES,
     updateField,
@@ -61,4 +62,4 @@ function useGenerateStatementForm() {
   }
 }
 
-export { useGenerateStatementForm }
+export { useStatementGenerateForm }

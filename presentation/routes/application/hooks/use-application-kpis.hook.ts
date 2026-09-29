@@ -8,7 +8,7 @@ import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatQuotaQuantity } from "@/presentation/presenters/quota-quantity.presenter"
-import type { ApplicationResponseDTO } from "@/services/application/dto/application-response.dto"
+import type { ApplicationRow } from "@/presentation/types/application-row.types"
 
 import { APPLICATION_KPI } from "../settings/labels.settings"
 
@@ -33,7 +33,7 @@ import { APPLICATION_KPI } from "../settings/labels.settings"
  * @date 2026-09-25
  */
 export function BuildApplicationKpis(
-  applications: readonly ApplicationResponseDTO[]
+  applications: readonly ApplicationRow[]
 ): EntityKpi[] {
   const ACTIVE = applications.filter(
     (application) => !application.reversedAt
@@ -88,10 +88,10 @@ export function BuildApplicationKpis(
 function useApplicationKpis({
   applications,
 }: {
-  applications: readonly ApplicationResponseDTO[]
+  applications: readonly ApplicationRow[]
 }): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly ApplicationResponseDTO[]) =>
+    (items: readonly ApplicationRow[]) =>
       BuildApplicationKpis(items),
     []
   )

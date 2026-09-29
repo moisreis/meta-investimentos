@@ -9,16 +9,17 @@ import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
+import { FormatCnpj } from "@/presentation/presenters/cnpj.presenter"
 import { FormatPercentage } from "@/presentation/presenters/percentage.presenter"
 import { FormatText } from "@/presentation/presenters/text.presenter"
 import { FUND_DATATABLE } from "@/presentation/routes/fund/settings/labels.settings"
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
+import type { FundRow } from "@/presentation/types/fund-row.types"
 
 import type { FundRowSummary } from "../types/fund-list.types"
 
 export interface FundTableColumnOptions {
-  onEdit: (fund: FundResponseDTO) => void
-  onDelete: (fund: FundResponseDTO) => void
+  onEdit: (fund: FundRow) => void
+  onDelete: (fund: FundRow) => void
   summaryFor: (fundId: string) => FundRowSummary | null
   bankNameFor: (bankId: string) => string | null
   benchmarkNameFor: (benchmarkId: string) => string | null
@@ -52,12 +53,9 @@ export interface FundTableColumnOptions {
  * @date 2026-09-25
  */
 export function CreateFundTableColumns(
-  columnHelper: ColumnHelper<
-    EntityTableFeatures,
-    FundResponseDTO
-  >,
+  columnHelper: ColumnHelper<EntityTableFeatures, FundRow>,
   options: FundTableColumnOptions
-): ColumnDef<EntityTableFeatures, FundResponseDTO, any>[] {
+): ColumnDef<EntityTableFeatures, FundRow, any>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 
@@ -68,6 +66,7 @@ export function CreateFundTableColumns(
       minSize: 170,
       maxSize: 170,
       meta: { pinned: "start" },
+      cell: (info) => FormatCnpj(info.getValue()),
     }),
 
     columnHelper.accessor("name", {

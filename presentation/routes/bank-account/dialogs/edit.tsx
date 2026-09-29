@@ -4,7 +4,7 @@ import { EntityEditDialog } from "@/presentation/parts/dialogs/entity-edit"
 import { EntityEditToast } from "@/presentation/parts/toasts/entity-edit-toast"
 import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { EntityEditDialogModel } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
 import { EditBankAccountForm } from "@/presentation/routes/bank-account/forms/edit"
 import {
   BANK_ACCOUNT_DIALOG,
@@ -17,7 +17,7 @@ import type { BankAccountNameLookups } from "../types/bank-account-list.types"
  * Props for the bank account edit dialog.
  */
 export interface BankAccountEditDialogProps {
-  dialog: EntityEditDialogModel<BankAccountResponseDTO>
+  dialog: EntityEditDialogModel<BankAccountRow>
   names: BankAccountNameLookups
 }
 

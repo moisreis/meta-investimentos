@@ -57,10 +57,11 @@ function ToFirstFieldErrors(
  * also reaches the form-level alert.
  *
  * @explanation
- * Use as the base for `useAddPortfolioForm` and
- * `useEditPortfolioForm` to avoid duplicating validation and
- * submission logic across hooks. Each caller supplies its own
- * schema, initial values, and submit function.
+ * Use as the base for the per-entity form hooks, such
+ * as `useBankAddForm` and `useBankEditForm`, to avoid
+ * duplicating validation and submission logic across hooks.
+ * Each caller supplies its own schema, initial values, and
+ * submit function.
  *
  * @param options - Schema, initial values and submit fn.
  *

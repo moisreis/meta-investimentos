@@ -9,10 +9,10 @@ import {
 } from "react"
 import { type DateRange } from "react-day-picker"
 
-import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-performance-row.types"
 
-import { listPortfolioPerformanceAction } from "../actions/list-portfolio-performance.action"
+import { listPortfolioPerformancesAction } from "../actions/list-portfolio-performances.action"
 
 // Builds a local-midnight date from a UTC day key.
 function FromUtcDayKey(key: string): Date {
@@ -38,8 +38,8 @@ function BuildInitialRange(
 
 // Indexes snapshots by their portfolio id.
 function BuildPerformanceIndex(
-  snapshots: PortfolioPerformanceResponseDTO[]
-): Record<string, PortfolioPerformanceResponseDTO | undefined> {
+  snapshots: PortfolioPerformanceRow[]
+): Record<string, PortfolioPerformanceRow | undefined> {
   return Object.fromEntries(
     snapshots.map((snapshot) => [snapshot.portfolioId, snapshot])
   )
@@ -53,8 +53,8 @@ interface UsePortfolioDatatableFiltersOutput {
   isPerformanceDay: (date: Date) => boolean
   performanceFor: (
     portfolioId: string
-  ) => PortfolioPerformanceResponseDTO | null
-  filteredPortfolios: PortfolioResponseDTO[]
+  ) => PortfolioPerformanceRow | null
+  filteredPortfolios: PortfolioRow[]
 }
 
 /**
@@ -82,7 +82,7 @@ interface UsePortfolioDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function usePortfolioDatatableFilters(
-  portfolios: PortfolioResponseDTO[],
+  portfolios: PortfolioRow[],
   availableDates: string[]
 ): UsePortfolioDatatableFiltersOutput {
   const [QUERY, setQuery] = useState("")
@@ -97,7 +97,7 @@ function usePortfolioDatatableFilters(
   )
 
   const [PERFORMANCES, setPerformances] = useState<
-    Record<string, PortfolioPerformanceResponseDTO | undefined>
+    Record<string, PortfolioPerformanceRow | undefined>
   >({})
 
   const REQUEST_ID = useRef(0)
@@ -112,7 +112,7 @@ function usePortfolioDatatableFilters(
       return
     }
 
-    listPortfolioPerformanceAction({
+    listPortfolioPerformancesAction({
       from: ToUtcDayKey(FROM),
       to: ToUtcDayKey(TO),
     }).then((RESULT) => {

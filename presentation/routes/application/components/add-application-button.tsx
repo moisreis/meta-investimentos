@@ -32,9 +32,10 @@ export interface AddApplicationButtonProps {
  * component, so the screen only needs the button.
  *
  * @param props - Props of the add application button.
- * @param props.portfolioId - Portfolio receiving the
- * application.
- * @param props.options - The fund options.
+ * @param props.portfolioId - Portfolio the dialog is
+ * locked to. The picker is hidden, because a flow opened
+ * from inside a portfolio has no other valid destination.
+ * @param props.options - The portfolio and fund options.
  *
  * @returns The add application button and its dialog.
  *
@@ -63,8 +64,8 @@ function AddApplicationButton({
 
       <ApplicationAddDialog
         dialog={dialog}
-        portfolioId={portfolioId}
         options={options}
+        lockedPortfolioId={portfolioId}
       />
     </>
   )

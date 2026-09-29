@@ -11,16 +11,18 @@ import {
   ActionSuccess,
   RejectInput,
   ToActionFailure,
+  ToFailureMessage,
   type ActionResult,
 } from "@/presentation/types/action-result"
 
+import { PORTFOLIO_PERFORMANCE_CALCULATE } from "../settings/labels.settings"
 import { START_PORTFOLIO_PERFORMANCE_CALCULATION_SCHEMA } from "../validations/portfolio-performance-actions.validation"
 
 import {
   completePortfolioPerformanceCalculationJob,
   createPortfolioPerformanceCalculationJob,
   updatePortfolioPerformanceCalculationJob,
-} from "./portfolio-performance-calculate-job.store"
+} from "../jobs/calculate-job.store"
 
 // Milliseconds in a single calendar day.
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -61,7 +63,8 @@ function CountInclusiveDays(from: Date, to: Date): number {
  * @returns The job id, or a failure result.
  *
  * @example
- * const RESULT = await startPortfolioPerformanceCalculationAction({
+ * const RESULT =
+ *   await startPortfolioPerformanceCalculationAction({
  *   portfolioId: null,
  *   from: "2026-09-01",
  *   to: "2026-09-30",
@@ -160,27 +163,43 @@ async function runPortfolioPerformanceCalculationJob(
     }
 
     let calculated = 0
+    let skipped = 0
 
     for (const UNIT of plan) {
-      await CALCULATE.execute({
+      const RESULT = await CALCULATE.execute({
         portfolioId: UNIT.portfolioId,
         date: UNIT.date.toISOString(),
       })
 
-      calculated += 1
+      if (RESULT === null) {
+        skipped += 1
+      } else {
+        calculated += 1
+      }
+
       updatePortfolioPerformanceCalculationJob(jobId, {
         calculated,
+        skipped,
       })
     }
 
     completePortfolioPerformanceCalculationJob(jobId, "success")
   } catch (cause) {
+    // The job snapshot travels to the browser, so it can only
+    // carry a safe message. The real cause stays in the server
+    // log, otherwise a database failure is undiagnosable.
+    console.error(
+      "[portfolio-performance] cálculo falhou",
+      cause
+    )
+
     completePortfolioPerformanceCalculationJob(
       jobId,
       "error",
-      cause instanceof Error
-        ? cause.message
-        : "Falha durante o cálculo."
+      ToFailureMessage(
+        cause,
+        PORTFOLIO_PERFORMANCE_CALCULATE.ERROR_DESCRIPTION
+      )
     )
   }
 }

@@ -4,17 +4,15 @@ import * as React from "react"
 
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
-import { NativeSelect } from "@/presentation/ui/native-select"
 
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { useAddUserForm } from "@/presentation/routes/users/hooks/use-add-user-form.hook"
-import {
-  USER_FORM,
-  USER_ROLE_LABELS,
-} from "@/presentation/routes/users/settings/labels.settings"
+import { useUserAddForm } from "@/presentation/routes/users/hooks/use-user-add-form.hook"
+import { USER_FORM } from "@/presentation/routes/users/settings/labels.settings"
+
+import { UserRoleCombobox } from "./role-combobox"
 
 /**
  * Props for the add user form.
@@ -71,7 +69,7 @@ function AddUserForm({ onStatusChange }: AddUserFormProps) {
     status,
     fieldErrors,
     handleSubmit,
-  } = useAddUserForm()
+  } = useUserAddForm()
 
   React.useEffect(() => {
     onStatusChange?.(status, error)
@@ -184,20 +182,16 @@ function AddUserForm({ onStatusChange }: AddUserFormProps) {
           error={fieldErrors.role}
           htmlFor="role"
         >
-          <NativeSelect
+          <UserRoleCombobox
             id="role"
             name="role"
             value={role}
+            onValueChange={updateRole}
+            placeholder="Selecione o perfil"
+            required
             disabled={pending}
-            onChange={(e) => updateRole(e.target.value)}
             aria-invalid={fieldErrors.role ? "true" : undefined}
-          >
-            <option value="">Selecione o perfil</option>
-            <option value="USER">{USER_ROLE_LABELS.USER}</option>
-            <option value="MANAGER">
-              {USER_ROLE_LABELS.MANAGER}
-            </option>
-          </NativeSelect>
+          />
         </SharedFormField>
       </FieldGroup>
 

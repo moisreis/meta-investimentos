@@ -81,6 +81,42 @@ function ActionFailure<T = never>(
 
 /**
  * @summary
+ * Resolves the user-facing message of a thrown cause.
+ *
+ * @remarks
+ * Domain errors are authored as user-facing messages, so
+ * their message is forwarded. Every other cause is replaced
+ * by the given fallback, which keeps stack traces, SQL
+ * statements, bound parameters and connection details out
+ * of anything the browser can read.
+ *
+ * @explanation
+ * Use whenever a caught value has to become a message shown
+ * to the user rather than a returned `ActionResult`, such as
+ * when persisting a failure into a background job store. Log
+ * the original cause separately, otherwise a swallowed
+ * database error becomes impossible to diagnose.
+ *
+ * @param cause - The thrown value.
+ * @param fallback - The generic user-facing message.
+ * @returns The message that is safe to display.
+ *
+ * @example
+ * const MESSAGE = ToFailureMessage(cause, "Falha no cálculo.");
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-28
+ */
+function ToFailureMessage(
+  cause: unknown,
+  fallback: string
+): string {
+  return cause instanceof DomainError ? cause.message : fallback
+}
+
+/**
+ * @summary
  * Maps a thrown cause to a failed action result.
  *
  * @remarks
@@ -110,9 +146,7 @@ function ToActionFailure<T = never>(
   cause: unknown,
   fallback: string
 ): ActionResult<T> {
-  return ActionFailure<T>(
-    cause instanceof DomainError ? cause.message : fallback
-  )
+  return ActionFailure<T>(ToFailureMessage(cause, fallback))
 }
 
 /**
@@ -201,6 +235,7 @@ export {
   ActionSuccess,
   RejectInput,
   ToActionFailure,
+  ToFailureMessage,
   ToFieldErrors,
   type ActionFieldErrors,
   type ActionResult,

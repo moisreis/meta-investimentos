@@ -2,23 +2,27 @@
 
 import { useCallback, useMemo } from "react"
 import {
+  ColumnHelper,
   createColumnHelper,
   useTable,
 } from "@tanstack/react-table"
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { ApplicationResponseDTO } from "@/services/application/dto/application-response.dto"
+import type { ApplicationRow } from "@/presentation/types/application-row.types"
 
 import { CreateApplicationTableColumns } from "../datatable/table-columns"
 import { EMPTY_APPLICATION_LOOKUPS } from "../helpers/build-application-lookups.helper"
 import type { ApplicationLookups } from "../types/application-list.types"
+import { useApplicationRowActions } from "./use-application-row-actions.hook"
+import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
+import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 
 // Column helper bound to the entity table features.
-const COLUMN_HELPER = createColumnHelper<
+const COLUMN_HELPER: ColumnHelper<
   EntityTableFeatures,
-  ApplicationResponseDTO
->()
+  ApplicationRow
+> = createColumnHelper<EntityTableFeatures, ApplicationRow>()
 
 /**
  * @summary
@@ -34,19 +38,22 @@ const COLUMN_HELPER = createColumnHelper<
  * @param applications - The rows rendered by the table.
  * @param lookups - The application lookups.
  *
- * @returns The shared table instance.
+ * @returns The shared table instance and row actions.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-25
+ * @date 2026-09-27
  */
 function useApplicationDatatable(
-  applications: ApplicationResponseDTO[],
+  applications: ApplicationRow[],
   lookups: ApplicationLookups = EMPTY_APPLICATION_LOOKUPS
 ) {
+  const rowActions = useApplicationRowActions()
+  const editDialog = useEntityEditDialog<ApplicationRow>()
+  const addDialog = useEntityAddDialog()
+
   const rowFor = useCallback(
-    (applicationId: string) =>
-      lookups.rows[applicationId] ?? null,
+    (applicationId: string) => lookups.rows[applicationId] ?? null,
     [lookups]
   )
 
@@ -54,8 +61,16 @@ function useApplicationDatatable(
     () =>
       CreateApplicationTableColumns(COLUMN_HELPER, {
         rowFor,
+        onEdit: editDialog.handleOpen,
+        onReverse: rowActions.handleReverse,
+        onDelete: rowActions.handleDelete,
       }),
-    [rowFor]
+    [
+      rowFor,
+      editDialog.handleOpen,
+      rowActions.handleReverse,
+      rowActions.handleDelete,
+    ]
   )
 
   const TABLE = useTable({
@@ -68,7 +83,7 @@ function useApplicationDatatable(
     },
   })
 
-  return { table: TABLE }
+  return { table: TABLE, rowActions, editDialog, addDialog }
 }
 
 export { useApplicationDatatable }

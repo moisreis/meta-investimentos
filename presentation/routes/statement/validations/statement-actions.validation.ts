@@ -1,14 +1,20 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 
 import { ID_SCHEMA } from "@/lib/validation/common.validation"
 
-import { GENERATE_STATEMENT_SCHEMA as GENERATE_STATEMENT_FORM_SCHEMA } from "./generate-statement.validations"
-
-// The payload accepted by the generate statement action. The
-// form and the action share this schema, so the month key and
-// the portfolio id are checked the same way on both sides.
-// The generating user is never read from here: it comes from
-// the resolved session.
+import { GENERATE_STATEMENT_SCHEMA as GENERATE_STATEMENT_FORM_SCHEMA } from "./generate-statement.validation"
+/**
+ * @summary
+ * The payload accepted by the generate statement action. The
+ * form and the action share this schema, so the month key and
+ * the portfolio id are checked the same way on both sides. The
+ * generating user is never read from here: it comes from the
+ * resolved session.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 const GENERATE_STATEMENT_SCHEMA = GENERATE_STATEMENT_FORM_SCHEMA
 
 // Values of the generate statement action payload.
@@ -47,3 +53,4 @@ export {
   type DeleteStatementValues,
   type GenerateStatementValues,
 }
+

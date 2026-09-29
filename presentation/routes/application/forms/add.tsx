@@ -2,26 +2,28 @@
 
 import * as React from "react"
 
-import { EntityDateInput } from "@/presentation/parts/components/entity-date-input"
 import { PortfolioMoneyInput } from "@/presentation/parts/components/portfolio-money-input"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
+import { QuotaDateInput } from "@/presentation/routes/quota/components/quota-date-input"
 import { FieldGroup } from "@/presentation/ui/field"
 
-import { useAddApplicationForm } from "../hooks/use-add-application-form.hook"
+import { useApplicationAddForm } from "../hooks/use-application-add-form.hook"
 import { APPLICATION_FORM } from "../settings/labels.settings"
 import type { ApplicationAddOptions } from "../types/application-add.types"
 
-import { ApplicationFundCombobox } from "./application-fund-combobox"
+import { ApplicationFundCombobox } from "./fund-combobox"
+import { ApplicationPortfolioCombobox } from "./portfolio-combobox"
 
 /**
  * Props for the add application form.
  */
 export interface AddApplicationFormProps {
-  portfolioId: string
   options: ApplicationAddOptions
+  defaultPortfolioId?: string
+  lockedPortfolioId?: string
   onStatusChange?: (
     status: EntityFormStatus,
     error: string | null
@@ -34,11 +36,17 @@ export interface AddApplicationFormProps {
  *
  * @remarks
  * Validates fields with **Zod** and shows
- * human-readable error messages. Submits the fund, the
- * date and the amount to the add application server
- * action, which creates the position when the fund is not
- * held yet and derives the quotas from the quota price of
+ * human-readable error messages. Submits the portfolio, the
+ * fund, the date and the amount to the add application
+ * server action, which creates the position when the fund is
+ * not held yet and derives the quotas from the quota price of
  * the chosen date. The form never sends a quota value.
+ *
+ * The portfolio is picked inside the dialog by default: the
+ * application list screen passes nothing and the user chooses
+ * the portfolio. The portfolio detail screen locks the flow
+ * to the portfolio it is showing, so the field is hidden and
+ * the id still travels with the payload.
  *
  * Shows loading state while submitting and reports the
  * submit status through `onStatusChange` so the parent
@@ -50,9 +58,12 @@ export interface AddApplicationFormProps {
  * follow-up prompt based on the reported status.
  *
  * @param props - Props of the add application form.
- * @param props.portfolioId - Portfolio receiving the
- * application.
- * @param props.options - The fund options.
+ * @param props.options - The portfolio and fund options.
+ * @param props.defaultPortfolioId - Portfolio preselected
+ * in the form.
+ * @param props.lockedPortfolioId - Portfolio the flow is
+ * locked to. Hides the portfolio field and always submits
+ * this id, and wins over `defaultPortfolioId`.
  * @param props.onStatusChange - Reports submit outcomes.
  *
  * @returns The add application form.
@@ -62,11 +73,14 @@ export interface AddApplicationFormProps {
  * @date 2026-09-25
  */
 function AddApplicationForm({
-  portfolioId,
   options,
+  defaultPortfolioId,
+  lockedPortfolioId,
   onStatusChange,
 }: AddApplicationFormProps) {
   const {
+    portfolioId,
+    updatePortfolioId,
     fundId,
     updateFundId,
     date,
@@ -78,7 +92,9 @@ function AddApplicationForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useAddApplicationForm(portfolioId)
+  } = useApplicationAddForm(lockedPortfolioId ?? defaultPortfolioId)
+
+  const IS_PORTFOLIO_LOCKED = Boolean(lockedPortfolioId)
 
   React.useEffect(() => {
     onStatusChange?.(status, error)
@@ -87,6 +103,28 @@ function AddApplicationForm({
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
       <FieldGroup>
+        {!IS_PORTFOLIO_LOCKED && (
+          <SharedFormField
+            label={APPLICATION_FORM.FIELD_PORTFOLIO}
+            description={APPLICATION_FORM.DESCRIPTION_PORTFOLIO}
+            error={fieldErrors.portfolioId}
+            htmlFor="portfolioId"
+          >
+            <ApplicationPortfolioCombobox
+              id="portfolioId"
+              name="portfolioId"
+              required
+              value={portfolioId}
+              onValueChange={updatePortfolioId}
+              placeholder={APPLICATION_FORM.PLACEHOLDER_PORTFOLIO}
+              items={options.portfolios}
+              disabled={pending}
+              aria-invalid={
+                fieldErrors.portfolioId ? "true" : undefined
+              }
+            />
+          </SharedFormField>
+        )}
         <SharedFormField
           label={APPLICATION_FORM.FIELD_FUND}
           description={APPLICATION_FORM.DESCRIPTION_FUND}
@@ -113,7 +151,7 @@ function AddApplicationForm({
           error={fieldErrors.date}
           htmlFor="application-date"
         >
-          <EntityDateInput
+          <QuotaDateInput
             id="application-date"
             name="date"
             required
@@ -122,6 +160,7 @@ function AddApplicationForm({
             placeholder={APPLICATION_FORM.PLACEHOLDER_DATE}
             disabled={pending}
             aria-invalid={fieldErrors.date ? "true" : undefined}
+            fundId={fundId || undefined}
           />
         </SharedFormField>
         <SharedFormField

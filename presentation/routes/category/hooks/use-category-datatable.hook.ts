@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo } from "react"
 import {
+  ColumnHelper,
   createColumnHelper,
   useTable,
 } from "@tanstack/react-table"
@@ -10,7 +11,7 @@ import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/e
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
-import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 import { CreateCategoryTableColumns } from "../datatable/table-columns"
 import type { CategoryRowSummary } from "../types/category-list.types"
@@ -18,10 +19,10 @@ import { useCategoryBulkDelete } from "./use-category-bulk-delete.hook"
 import { useCategoryRowActions } from "./use-category-row-actions.hook"
 
 // Column helper bound to the entity table features.
-const COLUMN_HELPER = createColumnHelper<
+const COLUMN_HELPER: ColumnHelper<
   EntityTableFeatures,
-  CategoryResponseDTO
->()
+  CategoryRow
+> = createColumnHelper<EntityTableFeatures, CategoryRow>()
 
 /**
  * @summary
@@ -47,11 +48,11 @@ const COLUMN_HELPER = createColumnHelper<
  * @date 2026-09-25
  */
 function useCategoryDatatable(
-  categories: CategoryResponseDTO[],
+  categories: CategoryRow[],
   summaries: Record<string, CategoryRowSummary> | null = null
 ) {
   const addDialog = useEntityAddDialog()
-  const editDialog = useEntityEditDialog<CategoryResponseDTO>()
+  const editDialog = useEntityEditDialog<CategoryRow>()
   const rowActions = useCategoryRowActions()
   const bulkDelete = useCategoryBulkDelete()
 

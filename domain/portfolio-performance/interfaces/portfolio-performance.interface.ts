@@ -140,20 +140,28 @@ export interface IPortfolioPerformance {
    * Use this method to get the most recent performance of
    * a portfolio. Callers check null for no data.
    *
+   * The `before` bound is what keeps a recalculation
+   * honest: without it, re-running a day that already has a
+   * snapshot would read that same snapshot as the previous
+   * period and add its balances to the day a second time.
+   *
    * @param portfolioId - The unique identifier of the portfolio.
+   * @param before - Exclusive upper bound on the snapshot
+   * date.
    *
    * @returns The entry or `null`.
    *
    * @example
    * const PERF = await PERF_REPO
-   *   .findLatestByPortfolioId(PF_ID);
+   *   .findLatestByPortfolioId(PF_ID, TARGET_DATE);
    *
    * @author Moisés Reis
    *
    * @date 2026-09-13
    */
   findLatestByPortfolioId(
-    portfolioId: EntityId
+    portfolioId: EntityId,
+    before: Date
   ): Promise<PortfolioPerformance | null>
 
   /**

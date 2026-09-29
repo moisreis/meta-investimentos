@@ -1,4 +1,11 @@
-// Form copy for the fund add/edit screens.
+﻿/**
+ * @summary
+ * Form copy for the fund add/edit screens.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export const FUND_FORM = {
   // Add button content.
   ADD_BUTTON: "Cadastrar Fundo",
@@ -103,7 +110,8 @@ export const FUND_DATATABLE = {
   BULK_DELETE_SUCCESS_TITLE: "Fundos excluídos!",
   BULK_DELETE_SUCCESS_DESCRIPTION:
     "Os fundos selecionados foram excluídos.",
-  BULK_DELETE_ERROR_TITLE: "Não foi possível excluir os fundos",
+  BULK_DELETE_ERROR_TITLE:
+    "Não foi possível excluir os fundos",
 } as const
 
 // Column id to header label used by the edit-columns menu.
@@ -157,3 +165,4 @@ export const FUND_EMPTY = {
 } as const
 
 export { FormatDeleteFundDescription }
+

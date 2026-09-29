@@ -2,12 +2,12 @@
 
 import { useCallback, useMemo, useState } from "react"
 
-import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
+import type { UserRow } from "@/presentation/types/user-row.types"
 
 interface UseUserDatatableFiltersOutput {
   query: string
   onQueryChange: (query: string) => void
-  filteredUsers: UserResponseDTO[]
+  filteredUsers: UserRow[]
 }
 
 /**
@@ -27,7 +27,7 @@ interface UseUserDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function useUserDatatableFilters(
-  users: UserResponseDTO[]
+  users: UserRow[]
 ): UseUserDatatableFiltersOutput {
   const [QUERY, setQuery] = useState("")
 

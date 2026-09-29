@@ -10,15 +10,15 @@ import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-m
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatDate } from "@/presentation/presenters/date.presenter"
+import { FormatBankAccountLookup } from "@/presentation/presenters/lookup.presenter"
 import { CHECKING_ACCOUNT_DATATABLE } from "@/presentation/routes/checking-account/settings/labels.settings"
-import { FormatBankAccountLabel } from "@/presentation/routes/checking-account/helpers/build-checking-account-name-lookups.helper"
-import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
+import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 
 import type { CheckingAccountNameLookup } from "../types/checking-account-list.types"
 
 export interface CheckingAccountTableColumnOptions {
-  onEdit: (entry: CheckingAccountResponseDTO) => void
-  onDelete: (entry: CheckingAccountResponseDTO) => void
+  onEdit: (entry: CheckingAccountRow) => void
+  onDelete: (entry: CheckingAccountRow) => void
   accountFor: (
     bankAccountId: string
   ) => CheckingAccountNameLookup | null
@@ -46,21 +46,17 @@ export interface CheckingAccountTableColumnOptions {
  *
  * @returns The checking account column definitions.
  *
- * @author Moisés Reis
+ * @author MoisAcs Reis
  *
  * @date 2026-09-25
  */
 export function CreateCheckingAccountTableColumns(
   columnHelper: ColumnHelper<
     EntityTableFeatures,
-    CheckingAccountResponseDTO
+    CheckingAccountRow
   >,
   options: CheckingAccountTableColumnOptions
-): ColumnDef<
-  EntityTableFeatures,
-  CheckingAccountResponseDTO,
-  any
->[] {
+): ColumnDef<EntityTableFeatures, CheckingAccountRow, any>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 
@@ -71,29 +67,7 @@ export function CreateCheckingAccountTableColumns(
         header: CHECKING_ACCOUNT_DATATABLE.COLUMN_BANK_ACCOUNT,
         size: 230,
         meta: { fluid: true },
-        cell: (info) => {
-          const LOOKUP = info.getValue()
-
-          if (!LOOKUP) {
-            return (
-              <span className="text-muted-foreground">—</span>
-            )
-          }
-
-          return (
-            <div className="flex min-w-0 flex-col gap-0.5">
-              <span className="truncate font-medium">
-                {LOOKUP.bankName}
-              </span>
-              <span className="truncate text-xs text-muted-foreground">
-                {FormatBankAccountLabel(
-                  LOOKUP.agency,
-                  LOOKUP.accountNumber
-                )}
-              </span>
-            </div>
-          )
-        },
+        cell: (info) => FormatBankAccountLookup(info.getValue()),
       }
     ),
 

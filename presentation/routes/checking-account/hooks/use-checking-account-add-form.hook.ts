@@ -1,0 +1,76 @@
+"use client"
+
+import { UnmaskCurrency } from "@/presentation/masks/currency.mask"
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
+import { createCheckingAccountAction } from "@/presentation/routes/checking-account/actions/create-checking-account.action"
+import { CHECKING_ACCOUNT_FORM_SCHEMA } from "@/presentation/routes/checking-account/validations/checking-account-form.validation"
+
+/**
+ * @summary
+ * Manages the add checking account form state,
+ * validation and submission.
+ *
+ * @remarks
+ * Wraps `useEntityForm` with the checking account
+ * schema and the record server action.
+ *
+ * @explanation
+ * Use inside the add checking account form to keep the
+ * component presentational. Wire the returned inputs
+ * into controlled fields and call `handleSubmit` on
+ * submit. Render `fieldErrors` per field to show
+ * readable messages. Use `status` to trigger result
+ * toasts.
+ *
+ * @returns Form state and handlers.
+ *
+ * @example
+ * const { value, updateValue, bankAccountId,
+ *   updateBankAccountId, fieldErrors, status,
+ *   handleSubmit } = useCheckingAccountAddForm()
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-25
+ */
+function useCheckingAccountAddForm() {
+  const {
+    values: VALUES,
+    updateField,
+    error: ERROR,
+    pending: PENDING,
+    status: STATUS,
+    fieldErrors: FIELD_ERRORS,
+    handleSubmit,
+  } = useEntityForm({
+    schema: CHECKING_ACCOUNT_FORM_SCHEMA,
+    initialValues: {
+      bankAccountId: "",
+      date: "",
+      value: "",
+    },
+    submit: (values) =>
+      createCheckingAccountAction({
+        bankAccountId: values.bankAccountId,
+        date: values.date,
+        value: UnmaskCurrency(values.value),
+      }),
+  })
+
+  return {
+    bankAccountId: VALUES.bankAccountId,
+    updateBankAccountId: (value: string) =>
+      updateField("bankAccountId", value),
+    date: VALUES.date,
+    updateDate: (value: string) => updateField("date", value),
+    value: VALUES.value,
+    updateValue: (value: string) => updateField("value", value),
+    error: ERROR,
+    pending: PENDING,
+    status: STATUS,
+    fieldErrors: FIELD_ERRORS,
+    handleSubmit,
+  }
+}
+
+export { useCheckingAccountAddForm }

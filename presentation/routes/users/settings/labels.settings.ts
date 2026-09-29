@@ -1,6 +1,13 @@
-import type { UserRole } from "@/services/user/dto/create-user.dto"
+﻿import type { UserRole } from "@/lib/auth/user-role"
 
-// Form copy for the user add/edit screens.
+/**
+ * @summary
+ * Form copy for the user add/edit screens.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export const USER_FORM = {
   // Add button content.
   ADD_BUTTON: "Cadastrar Usuário",
@@ -148,3 +155,4 @@ export const USER_EMPTY = {
 } as const
 
 export { FormatDeleteUserDescription }
+

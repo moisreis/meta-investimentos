@@ -1,4 +1,11 @@
-// Form copy for the checking account add/edit screens.
+﻿/**
+ * @summary
+ * Form copy for the checking account add/edit screens.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export const CHECKING_ACCOUNT_FORM = {
   // Add button content.
   ADD_BUTTON: "Cadastrar Saldo",
@@ -52,7 +59,8 @@ export const CHECKING_ACCOUNT_DIALOG = {
   ADD_TITLE: "Novo saldo",
 
   // Add dialog description.
-  ADD_DESCRIPTION: "Registre o saldo diário da conta bancária.",
+  ADD_DESCRIPTION:
+    "Registre o saldo diário da conta bancária.",
 
   // Add-another dialog header.
   ADD_ANOTHER_TITLE: "Cadastrar outro saldo?",
@@ -124,7 +132,8 @@ export const CHECKING_ACCOUNT_DATATABLE = {
     "Os saldos selecionados foram excluídos.",
 
   // Error toast title for the bulk delete flow.
-  BULK_DELETE_ERROR_TITLE: "Não foi possível excluir os saldos",
+  BULK_DELETE_ERROR_TITLE:
+    "Não foi possível excluir os saldos",
 } as const
 
 // KPI copy for the checking account list.
@@ -179,3 +188,4 @@ export const CHECKING_ACCOUNT_EMPTY = {
     "Cadastre o primeiro saldo diário para acompanhar a conta corrente.",
   PRIMARY_ACTION_LABEL: "Cadastrar saldo",
 } as const
+

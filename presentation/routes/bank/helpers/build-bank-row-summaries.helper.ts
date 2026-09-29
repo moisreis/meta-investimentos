@@ -1,7 +1,8 @@
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
 import type { BankRowSummaryDTO } from "@/services/bank/use-cases/list-bank-row-summaries.use-case"
 
 import type { BankRowSummary } from "../types/bank-list.types"
+
+import type { BankRow } from "@/presentation/types/bank-row.types"
 
 /**
  * @summary
@@ -30,7 +31,7 @@ import type { BankRowSummary } from "../types/bank-list.types"
  * @date 2026-09-25
  */
 export function BuildBankRowSummaries(
-  banks: BankResponseDTO[],
+  banks: BankRow[],
   counts: BankRowSummaryDTO[]
 ): Record<string, BankRowSummary> {
   const COUNTS_BY_BANK = new Map(

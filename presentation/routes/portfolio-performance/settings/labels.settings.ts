@@ -1,5 +1,12 @@
-// Native select value sent when every portfolio should
-// be calculated.
+﻿/**
+ * @summary
+ * Native select value sent when every portfolio should be
+ * calculated.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export const PORTFOLIO_PERFORMANCE_ALL_PORTFOLIOS_VALUE =
   "all" as const
 
@@ -28,6 +35,20 @@ export const PORTFOLIO_PERFORMANCE_DATATABLE = {
 
   // Portfolio filter accessibility label.
   FILTER_PORTFOLIO_LABEL: "Filtrar por carteira",
+
+  // Row actions menu.
+  ROW_ACTIONS_LABEL: "Ações",
+  ROW_DELETE_LABEL: "Excluir",
+
+  // Single delete dialog.
+  DELETE_TITLE: "Excluir performance",
+  DELETE_CONFIRM_LABEL: "Excluir",
+  DELETE_CANCEL_LABEL: "Cancelar",
+
+  // Delete result toast copy.
+  DELETE_SUCCESS_TITLE: "Performance excluída!",
+  DELETE_SUCCESS_DESCRIPTION: "A performance foi excluída com sucesso.",
+  DELETE_ERROR_TITLE: "Não foi possível excluir a performance",
 } as const
 
 // Calculation flow copy.
@@ -93,6 +114,10 @@ export const PORTFOLIO_PERFORMANCE_CALCULATE = {
   // Portfolios summary label.
   PORTFOLIOS_LABEL: "carteiras processadas",
 
+  // Skipped units summary label, shown only when the job
+  // dropped days for lacking quotes.
+  SKIPPED_LABEL: "dias sem cotação ignorados",
+
   // Done button content.
   DONE_BUTTON: "Concluir",
 
@@ -134,3 +159,4 @@ export const PORTFOLIO_PERFORMANCE_EMPTY = {
     "Calcule o desempenho das carteiras para visualizar os resultados.",
   PRIMARY_ACTION_LABEL: "Calcular desempenho",
 } as const
+

@@ -10,6 +10,8 @@
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
+    "structure": "tsx scripts/check-structure.ts",
+    "verify": "npm run typecheck && npm run structure && prettier --check \"**/*.{ts,tsx}\"",
     "inngest:dev": "inngest-cli dev"
   },
   "dependencies": {

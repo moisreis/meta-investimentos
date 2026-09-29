@@ -5,7 +5,7 @@ import { IconBuildingBank } from "@tabler/icons-react"
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
+import type { BankRow } from "@/presentation/types/bank-row.types"
 
 import { BankDatatableFilters } from "../datatable/filters"
 import { BankDatatableTable } from "../datatable/table"
@@ -19,8 +19,8 @@ import { useBankKpis } from "../hooks/use-bank-kpis.hook"
 import { BANK_EMPTY } from "../settings/labels.settings"
 import type { BankRowSummary } from "../types/bank-list.types"
 
-interface BankListProps {
-  data: BankResponseDTO[] | null
+export interface BankListProps {
+  data: BankRow[] | null
   summaries?: Record<string, BankRowSummary> | null
 }
 

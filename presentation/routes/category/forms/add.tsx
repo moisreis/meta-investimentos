@@ -9,7 +9,7 @@ import { SharedFormField } from "@/presentation/parts/components/shared-form-fie
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { useAddCategoryForm } from "@/presentation/routes/category/hooks/use-add-category-form.hook"
+import { useCategoryAddForm } from "@/presentation/routes/category/hooks/use-category-add-form.hook"
 
 import { CATEGORY_FORM } from "@/presentation/routes/category/settings/labels.settings"
 
@@ -60,7 +60,7 @@ function AddCategoryForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useAddCategoryForm()
+  } = useCategoryAddForm()
 
   React.useEffect(() => {
     onStatusChange?.(status, error)

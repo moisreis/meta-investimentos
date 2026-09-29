@@ -1,10 +1,17 @@
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { BankRow } from "@/presentation/types/bank-row.types"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
-// Options consumed by the bank account forms.
+/**
+ * @summary
+ * Options consumed by the bank account forms.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export interface BankAccountSelectOptions {
-  portfolios: PortfolioResponseDTO[]
-  banks: BankResponseDTO[]
+  portfolios: PortfolioRow[]
+  banks: BankRow[]
 }
 
 // Derived data rendered on a bank account row.
@@ -15,8 +22,10 @@ export interface BankAccountRowSummary {
 
 // Name data resolved for a bank account row.
 export interface BankAccountNameLookup {
-  // Portfolio name displayed as the row subtitle.
+  // Portfolio name displayed as the row title.
   portfolioName: string
+  // Portfolio acronym displayed as the row subtitle.
+  portfolioAcronym: string
   // Bank name displayed as the row title.
   bankName: string
 }

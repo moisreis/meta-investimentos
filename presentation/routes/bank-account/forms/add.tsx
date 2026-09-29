@@ -12,7 +12,7 @@ import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-for
 
 import { BANK_ACCOUNT_FORM } from "../settings/labels.settings"
 import type { BankAccountSelectOptions } from "../types/bank-account-list.types"
-import { useAddBankAccountForm } from "../hooks/use-add-bank-account-form.hook"
+import { useBankAccountAddForm } from "../hooks/use-bank-account-add-form.hook"
 import { BankAccountRegistryCombobox } from "./registry-combobox"
 
 /**
@@ -71,7 +71,7 @@ function AddBankAccountForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useAddBankAccountForm()
+  } = useBankAccountAddForm()
 
   const PORTFOLIO_ITEMS = options.portfolios.map(
     (portfolio) => ({

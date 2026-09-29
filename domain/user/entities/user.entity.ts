@@ -1,21 +1,7 @@
 ﻿import { EntityId, type CPF } from "@/value-objects"
 import { ValidationError } from "@/errors"
+import type { UserRole } from "@/lib/auth/user-role"
 
-/**
- * @summary
- * User role type.
- *
- * @remarks
- * Either USER or MANAGER.
- *
- * @explanation
- * Use this type for role-based access control.
- *
- * @author Moisés Reis
- *
- * @date 2026-09-13
- */
-export type UserRole = "USER" | "MANAGER"
 
 // Matches a valid email format for user validation.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

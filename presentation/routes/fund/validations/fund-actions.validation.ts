@@ -5,11 +5,17 @@ import { ID_SCHEMA } from "@/lib/validation/common.validation"
 import {
   FUND_EDIT_FORM_SCHEMA,
   FUND_FORM_SCHEMA,
-} from "./fund-form.validations"
-
-// The payload accepted by the create fund action. The form
-// and the action share this schema, so the client check and
-// the server check can never drift apart.
+} from "./fund-form.validation"
+/**
+ * @summary
+ * The payload accepted by the create fund action. The form and
+ * the action share this schema, so the client check and the
+ * server check can never drift apart.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 const CREATE_FUND_SCHEMA = FUND_FORM_SCHEMA
 
 // Values of the create fund action payload.

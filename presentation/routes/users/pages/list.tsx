@@ -5,7 +5,7 @@ import { IconUsers } from "@tabler/icons-react"
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
+import type { UserRow } from "@/presentation/types/user-row.types"
 
 import { UserDatatableFilters } from "../datatable/filters"
 import { UserDatatableTable } from "../datatable/table"
@@ -18,8 +18,8 @@ import { useUserDatatable } from "../hooks/use-user-datatable.hook"
 import { useUserKpis } from "../hooks/use-user-kpis.hook"
 import { USER_EMPTY } from "../settings/labels.settings"
 
-interface UsersListProps {
-  data: UserResponseDTO[] | null
+export interface UsersListProps {
+  data: UserRow[] | null
 }
 
 function UsersList({ data }: UsersListProps) {

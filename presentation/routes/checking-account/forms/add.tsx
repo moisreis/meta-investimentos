@@ -13,9 +13,9 @@ import { FormatBankAccountLabel } from "@/presentation/routes/checking-account/h
 import { CHECKING_ACCOUNT_FORM } from "../settings/labels.settings"
 
 import type { CheckingAccountSelectOptions } from "../types/checking-account-list.types"
-import { useAddCheckingAccountForm } from "../hooks/use-add-checking-account-form.hook"
+import { useCheckingAccountAddForm } from "../hooks/use-checking-account-add-form.hook"
 import { BankAccountCombobox } from "./bank-account-combobox"
-import { CheckingAccountDateInput } from "./checking-account-date-input"
+import { CheckingAccountDateInput } from "./date-input"
 
 /**
  * Props for the add checking account form.
@@ -71,7 +71,7 @@ function AddCheckingAccountForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useAddCheckingAccountForm()
+  } = useCheckingAccountAddForm()
 
   React.useEffect(() => {
     onStatusChange?.(status, error)

@@ -10,13 +10,13 @@ import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-m
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { CATEGORY_DATATABLE } from "@/presentation/routes/category/settings/labels.settings"
-import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 import type { CategoryRowSummary } from "../types/category-list.types"
 
 export interface CategoryTableColumnOptions {
-  onEdit: (category: CategoryResponseDTO) => void
-  onDelete: (category: CategoryResponseDTO) => void
+  onEdit: (category: CategoryRow) => void
+  onDelete: (category: CategoryRow) => void
   summaryFor: (categoryId: string) => CategoryRowSummary | null
 }
 
@@ -44,12 +44,9 @@ export interface CategoryTableColumnOptions {
  * @date 2026-09-25
  */
 export function CreateCategoryTableColumns(
-  columnHelper: ColumnHelper<
-    EntityTableFeatures,
-    CategoryResponseDTO
-  >,
+  columnHelper: ColumnHelper<EntityTableFeatures, CategoryRow>,
   options: CategoryTableColumnOptions
-): ColumnDef<EntityTableFeatures, CategoryResponseDTO, any>[] {
+): ColumnDef<EntityTableFeatures, CategoryRow, any>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 

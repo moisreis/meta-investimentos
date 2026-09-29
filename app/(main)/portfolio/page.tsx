@@ -7,13 +7,14 @@ import { LoadSessionPortfolios } from "@/presentation/routes/portfolio/helpers/l
 import { PortfolioList } from "@/presentation/routes/portfolio/pages/list"
 import type { PortfolioRowSummary } from "@/presentation/routes/portfolio/types/portfolio-list.types"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 export const metadata: Metadata = {
   title: "Carteiras",
 }
 
 export default async function PortfoliosRoutePage() {
-  let PORTFOLIOS: PortfolioResponseDTO[] | null = null
+  let PORTFOLIOS: PortfolioRow[] | null = null
   let PERFORMANCE_DATES: string[] = []
   let SUMMARIES: Record<string, PortfolioRowSummary> = {}
 

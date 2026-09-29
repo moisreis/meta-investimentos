@@ -1,3 +1,5 @@
+import { StripDocumentDigits } from "@/lib/validation/document.validation"
+
 // Maximum length for CNPJ digits.
 const CNPJ_DIGITS_LENGTH = 14
 
@@ -27,9 +29,10 @@ const CNPJ_DIGITS_LENGTH = 14
  */
 function MaskCNPJ(value: string): string {
   // Keeps only the first 14 digit characters.
-  const DIGITS = value
-    .replace(/\D/g, "")
-    .slice(0, CNPJ_DIGITS_LENGTH)
+  const DIGITS = StripDocumentDigits(value).slice(
+    0,
+    CNPJ_DIGITS_LENGTH
+  )
 
   // Groups the digits as `00.000.000/0000-00`.
   return DIGITS.replace(/^(\d{2})(\d)/, "$1.$2")
@@ -64,7 +67,7 @@ function MaskCNPJ(value: string): string {
  */
 function UnmaskCNPJ(value: string): string {
   // Keeps only the digit characters.
-  return value.replace(/\D/g, "")
+  return StripDocumentDigits(value)
 }
 
 export { MaskCNPJ, UnmaskCNPJ }

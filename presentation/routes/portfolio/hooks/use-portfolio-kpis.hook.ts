@@ -10,17 +10,17 @@ import {
 } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
-import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-performance-row.types"
 
 import { PORTFOLIO_KPI } from "../settings/labels.settings"
 import type { PortfolioRowSummary } from "../types/portfolio-list.types"
 
 interface UsePortfolioKpisInput {
-  portfolios: PortfolioResponseDTO[]
+  portfolios: PortfolioRow[]
   performanceFor: (
     portfolioId: string
-  ) => PortfolioPerformanceResponseDTO | null
+  ) => PortfolioPerformanceRow | null
   summaries: Record<string, PortfolioRowSummary> | null
 }
 
@@ -53,16 +53,16 @@ function ToAmount(value: string | null | undefined): number {
  * @date 2026-09-25
  */
 function BuildPortfolioKpis(
-  portfolios: readonly PortfolioResponseDTO[],
+  portfolios: readonly PortfolioRow[],
   performanceFor: (
     portfolioId: string
-  ) => PortfolioPerformanceResponseDTO | null,
+  ) => PortfolioPerformanceRow | null,
   summaries: Record<string, PortfolioRowSummary> | null
 ): EntityKpi[] {
   const SNAPSHOTS = portfolios
     .map((portfolio) => performanceFor(portfolio.id))
     .filter(
-      (snapshot): snapshot is PortfolioPerformanceResponseDTO =>
+      (snapshot): snapshot is PortfolioPerformanceRow =>
         snapshot !== null
     )
 
@@ -160,7 +160,7 @@ function usePortfolioKpis({
   summaries,
 }: UsePortfolioKpisInput): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly PortfolioResponseDTO[]) =>
+    (items: readonly PortfolioRow[]) =>
       BuildPortfolioKpis(items, performanceFor, summaries),
     [performanceFor, summaries]
   )

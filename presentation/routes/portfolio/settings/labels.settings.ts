@@ -1,4 +1,11 @@
-// Form copy for the portfolio add/edit screens.
+﻿/**
+ * @summary
+ * Form copy for the portfolio add/edit screens.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export const PORTFOLIO_FORM = {
   // Add button content.
   ADD_BUTTON: "Criar Carteira",
@@ -156,6 +163,82 @@ export const PORTFOLIO_OVERVIEW = {
     "cálculo do desempenho.",
 } as const
 
+// Chart copy for the portfolio detail screen.
+export const PORTFOLIO_CHARTS = {
+  // Patrimony chart.
+  PATRIMONY_TITLE: "Evolução do Patrimônio",
+  PATRIMONY_DESCRIPTION:
+    "Valor da carteira ao fim de cada dia do período.",
+  PATRIMONY_SERIES: "Patrimônio",
+  PATRIMONY_REFERENCE: "Valor no início do período",
+
+  // Return chart.
+  RETURN_TITLE: "Rentabilidade",
+  RETURN_DESCRIPTION:
+    "Retorno de cada dia e rentabilidade acumulada no mês e no ano.",
+  RETURN_SERIES_DAILY: "Retorno diário",
+  RETURN_SERIES_MONTHLY: "Retorno no mês",
+  RETURN_SERIES_YEARLY: "Retorno no ano",
+
+  // Daily result chart.
+  RESULT_TITLE: "Resultado Diário",
+  RESULT_DESCRIPTION:
+    "Ganho de mercado de cada dia, frente ao valor da carteira.",
+  RESULT_SERIES_EARNINGS: "Ganho de mercado",
+
+  // Cash movement chart.
+  MOVEMENT_TITLE: "Entradas e Saídas",
+  MOVEMENT_DESCRIPTION:
+    "Aplicações e resgates líquidos de cada dia do período.",
+  MOVEMENT_SERIES_CASH_FLOW: "Fluxo líquido",
+} as const
+
+// Chart copy for the by-position and by-bank distributions
+// of the portfolio detail screen.
+export const PORTFOLIO_DISTRIBUTION = {
+  // Series shared by both rings.
+  SERIES_INVESTED: "Investido",
+
+  // By-position distribution.
+  POSITION_TITLE: "Distribuição por Fundo",
+  POSITION_DESCRIPTION:
+    "Proporção do valor investido em cada fundo da carteira.",
+  POSITION_CENTER: "Investido",
+
+  // By-bank distribution.
+  BANK_TITLE: "Distribuição por Banco",
+  BANK_DESCRIPTION:
+    "Proporção do valor investido em cada banco custodiente.",
+  BANK_CENTER: "Investido",
+} as const
+
+// Datatable copy for the recent activity section of the
+// portfolio detail screen.
+export const PORTFOLIO_ACTIVITY = {
+  // Section title.
+  TITLE: "Movimentações do Período",
+  // Section description.
+  DESCRIPTION:
+    "Aplicações e resgates da carteira no período selecionado.",
+
+  // Column headers.
+  COLUMN_TYPE: "Tipo",
+  COLUMN_DATE: "Data",
+  COLUMN_FUND: "Fundo",
+  COLUMN_AMOUNT: "Valor",
+  COLUMN_QUOTAS: "Cotas",
+
+  // Type badges.
+  TYPE_APPLICATION: "Aplicação",
+  TYPE_WITHDRAWAL: "Resgate",
+
+  // Empty state of the section.
+  EMPTY_TITLE: "Nenhuma movimentação no período",
+  EMPTY_DESCRIPTION:
+    "As aplicações e os resgates da carteira aparecem aqui " +
+    "assim que houver um lançamento no período selecionado.",
+} as const
+
 // Formats the delete dialog description with the name.
 function FormatDeletePortfolioDescription(name: string): string {
   return (
@@ -173,4 +256,95 @@ export const PORTFOLIO_EMPTY = {
   PRIMARY_ACTION_LABEL: PORTFOLIO_FORM.ADD_BUTTON,
 } as const
 
+// Section copy of the portfolio detail charts.
+export const PORTFOLIO_CHART_SECTIONS = {
+  // Windowed performance section.
+  PERFORMANCE_TITLE: "Desempenho no período",
+  PERFORMANCE_DESCRIPTION:
+    "Evolução do patrimônio, do resultado e dos movimentos " +
+    "dentro do período selecionado.",
+
+  // Holdings distribution section.
+  DISTRIBUTIONS_TITLE: "Distribuições",
+  DISTRIBUTIONS_DESCRIPTION:
+    "Como o valor investido está dividido entre os fundos e " +
+    "os bancos custodiantes da carteira.",
+
+  // Checking account section.
+  CHECKING_TITLE: "Conta corrente",
+  CHECKING_DESCRIPTION:
+    "Saldos em conta corrente do período e a divisão atual " +
+    "entre as contas da carteira.",
+
+  // Annual monthly history section.
+  ANNUAL_TITLE: "Análise do ano",
+  ANNUAL_DESCRIPTION:
+    "Rendimentos, patrimônio e retorno mês a mês do ano " +
+    "corrente, independentes do período selecionado.",
+} as const
+
+// Chart copy for the checking accounts of the portfolio
+// detail screen.
+export const PORTFOLIO_CHECKING = {
+  // Series shared by the evolution and the distribution.
+  SERIES_BALANCE: "Saldo",
+
+  // Balance evolution chart.
+  EVOLUTION_TITLE: "Evolução do Saldo",
+  EVOLUTION_DESCRIPTION:
+    "Soma dos saldos em conta corrente de cada dia do período.",
+
+  // Balance distribution chart.
+  DISTRIBUTION_TITLE: "Distribuição do Saldo",
+  DISTRIBUTION_DESCRIPTION:
+    "Saldo atual de cada conta corrente da carteira.",
+  DISTRIBUTION_CENTER: "Saldo",
+} as const
+
+// Chart copy for the annual monthly history of the portfolio
+// detail screen.
+export const PORTFOLIO_ANNUAL = {
+  // Monthly earnings chart.
+  EARNINGS_TITLE: "Rendimento Mensal",
+  EARNINGS_DESCRIPTION:
+    "Soma dos rendimentos de mercado de cada mês do ano.",
+  EARNINGS_SERIES: "Rendimento",
+
+  // Monthly patrimony chart.
+  PATRIMONY_TITLE: "Patrimônio Mensal",
+  PATRIMONY_DESCRIPTION:
+    "Patrimônio da carteira ao fim de cada mês do ano.",
+  PATRIMONY_SERIES: "Patrimônio",
+
+  // Monthly return chart.
+  RETURN_TITLE: "Retorno Mensal",
+  RETURN_DESCRIPTION:
+    "Retorno acumulado de cada mês do ano.",
+  RETURN_SERIES: "Retorno no mês",
+} as const
+
+// Datatable copy for the positions section of the portfolio
+// detail screen.
+export const PORTFOLIO_POSITIONS = {
+  // Section title.
+  TITLE: "Posições da Carteira",
+  // Section description.
+  DESCRIPTION:
+    "Fundos que compõem a carteira, com o banco custodiente, " +
+    "o peso e o valor investido.",
+
+  // Column headers.
+  COLUMN_FUND: "Fundo",
+  COLUMN_BANK: "Banco",
+  COLUMN_WEIGHT: "Peso",
+  COLUMN_INVESTED: "Valor Investido",
+
+  // Empty state of the section.
+  EMPTY_TITLE: "Nenhuma posição",
+  EMPTY_DESCRIPTION:
+    "As posições da carteira aparecem aqui assim que houver " +
+    "um fundo aplicado.",
+} as const
+
 export { FormatDeletePortfolioDescription }
+

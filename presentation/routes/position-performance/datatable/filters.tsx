@@ -5,6 +5,7 @@ import type { DateRange } from "react-day-picker"
 import { EntityDateRangeFilter } from "@/presentation/parts/filters/date-range"
 import type { EntitySelectFilterOption } from "@/presentation/parts/filters/entity-select-filter"
 import { EntitySelectFilter } from "@/presentation/parts/filters/entity-select-filter"
+import { EntityDatatableToolbarSeparator } from "@/presentation/parts/components/entity-datatable-toolbar-separator"
 
 import { POSITION_PERFORMANCE_DATATABLE } from "../settings/labels.settings"
 
@@ -58,6 +59,7 @@ function PositionPerformanceDatatableFilters({
           POSITION_PERFORMANCE_DATATABLE.FILTER_POSITION_LABEL
         }
       />
+      <EntityDatatableToolbarSeparator />
       <EntityDateRangeFilter
         value={dateRange}
         onChange={onDateRangeChange}

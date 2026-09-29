@@ -2,10 +2,10 @@
 
 import { EntityDatatable } from "@/presentation/parts/datatable/layout/entity-datatable"
 import type { EntityTable } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { ApplicationResponseDTO } from "@/services/application/dto/application-response.dto"
+import type { ApplicationRow } from "@/presentation/types/application-row.types"
 
 interface ApplicationDatatableTableProps {
-  table: EntityTable<ApplicationResponseDTO>
+  table: EntityTable<ApplicationRow>
 }
 
 /**

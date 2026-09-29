@@ -1,4 +1,11 @@
-// Datatable copy for the audit log list screen.
+﻿/**
+ * @summary
+ * Datatable copy for the audit log list screen.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export const AUDIT_LOG_DATATABLE = {
   // Column headers.
   COLUMN_CREATED_AT: "Data",
@@ -41,7 +48,7 @@ export const AUDIT_LOG_KPI = {
   ACTIONS_COMPARISON: "tipos de ação",
 
   // Recent activity card.
-  RECENT_TITLE: "Últimas 24h",
+  RECENT_TITLE: "Êltimas 24h",
   RECENT_COMPARISON: "atividades recentes",
 } as const
 
@@ -52,3 +59,4 @@ export const AUDIT_LOG_EMPTY = {
     "As alterações do sistema aparecerão aqui " +
     "conforme forem registradas.",
 } as const
+

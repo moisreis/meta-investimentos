@@ -1,9 +1,8 @@
 "use client"
 
 import { useEntityRowActions } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
-import type { EntityRowActionsModel } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
 import { deletePortfolioAction } from "@/presentation/routes/portfolio/actions/delete-portfolio.action"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 /**
  * @summary
@@ -22,8 +21,8 @@ import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-re
  *
  * @date 2026-09-26
  */
-function usePortfolioRowActions(): EntityRowActionsModel<PortfolioResponseDTO> {
-  return useEntityRowActions<PortfolioResponseDTO>({
+function usePortfolioRowActions() {
+  return useEntityRowActions<PortfolioRow>({
     runDelete: (id) =>
       deletePortfolioAction({ portfolioId: id }),
     onView: (row, router) => router.push(`/portfolio/${row.id}`),

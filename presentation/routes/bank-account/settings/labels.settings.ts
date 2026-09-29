@@ -1,4 +1,11 @@
-// Form copy for the bank account add/edit screens.
+﻿/**
+ * @summary
+ * Form copy for the bank account add/edit screens.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export const BANK_ACCOUNT_FORM = {
   // Add button content.
   ADD_BUTTON: "Cadastrar Conta",
@@ -128,7 +135,8 @@ export const BANK_ACCOUNT_DATATABLE = {
     "As contas selecionadas foram excluídas.",
 
   // Error toast title for the bulk delete flow.
-  BULK_DELETE_ERROR_TITLE: "Não foi possível excluir as contas",
+  BULK_DELETE_ERROR_TITLE:
+    "Não foi possível excluir as contas",
 } as const
 
 // KPI copy for the bank account list.
@@ -184,3 +192,4 @@ export const BANK_ACCOUNT_EMPTY = {
     "Cadastre a primeira conta para acompanhar a conta corrente.",
   PRIMARY_ACTION_LABEL: "Cadastrar conta",
 } as const
+

@@ -1,10 +1,16 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 
 import { ID_SCHEMA } from "@/lib/validation/common.validation"
 import { DATE_SCHEMA } from "@/lib/validation/date.validation"
-
-// Longest period accepted by the start calculation action,
-// in calendar days.
+/**
+ * @summary
+ * Longest period accepted by the start calculation action, in
+ * calendar days.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 const MAX_CALCULATION_DAYS = 366
 
 // Milliseconds in a single calendar day.
@@ -61,9 +67,22 @@ type GetPortfolioPerformanceCalculationProgressValues = z.infer<
   typeof GET_PORTFOLIO_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA
 >
 
+// The payload accepted by the delete portfolio performance action.
+const DELETE_PORTFOLIO_PERFORMANCE_SCHEMA = z.object({
+  performanceId: ID_SCHEMA,
+})
+
+// Values of the delete portfolio performance action payload.
+type DeletePortfolioPerformanceValues = z.infer<
+  typeof DELETE_PORTFOLIO_PERFORMANCE_SCHEMA
+>
+
 export {
+  DELETE_PORTFOLIO_PERFORMANCE_SCHEMA,
   GET_PORTFOLIO_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA,
   START_PORTFOLIO_PERFORMANCE_CALCULATION_SCHEMA,
+  type DeletePortfolioPerformanceValues,
   type GetPortfolioPerformanceCalculationProgressValues,
   type StartPortfolioPerformanceCalculationValues,
 }
+

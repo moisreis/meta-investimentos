@@ -5,7 +5,7 @@ import { IconCreditCard } from "@tabler/icons-react"
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
+import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 
 import { CheckingAccountDatatableFilters } from "../datatable/filters"
 import { CheckingAccountDatatableTable } from "../datatable/table"
@@ -29,8 +29,8 @@ const EMPTY_OPTIONS: CheckingAccountSelectOptions = {
   banks: [],
 }
 
-interface CheckingAccountListProps {
-  data: CheckingAccountResponseDTO[] | null
+export interface CheckingAccountListProps {
+  data: CheckingAccountRow[] | null
   options?: CheckingAccountSelectOptions | null
   names?: CheckingAccountNameLookups
 }

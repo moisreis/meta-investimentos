@@ -7,8 +7,8 @@ import {
   ImportFundValuationsUseCase,
   resolveCvmWindow,
 } from "@/services/quota/use-cases/import-fund-valuations.use-case"
+import type { CvmImportWindow } from "@/lib/quota/cvm-import-window"
 import type {
-  CvmImportWindow,
   ImportMonthInput,
   ImportMonthResult,
   ImportWindowRange,

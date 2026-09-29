@@ -1,7 +1,7 @@
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
-import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
-
 import type { BankAccountRowSummary } from "../types/bank-account-list.types"
+
+import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
+import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 
 /**
  * @summary
@@ -32,8 +32,8 @@ import type { BankAccountRowSummary } from "../types/bank-account-list.types"
  * @date 2026-09-25
  */
 export function BuildBankAccountRowSummaries(
-  bankAccounts: BankAccountResponseDTO[],
-  entries: CheckingAccountResponseDTO[]
+  bankAccounts: BankAccountRow[],
+  entries: CheckingAccountRow[]
 ): Record<string, BankAccountRowSummary> {
   const COUNTS = new Map<string, number>()
 

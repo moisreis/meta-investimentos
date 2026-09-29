@@ -2,7 +2,14 @@ import type { DateRange } from "react-day-picker"
 
 import type { EntitySelectFilterOption } from "@/presentation/parts/filters/entity-select-filter"
 
-// Display data resolved for a position row.
+/**
+ * @summary
+ * Display data resolved for a position row.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export interface PositionRowLookup {
   // Portfolio name shown as the row title.
   portfolioName: string
@@ -26,4 +33,16 @@ export interface PositionFilters {
   portfolioId: string | undefined
   fundId: string | undefined
   dateRange: DateRange | undefined
+}
+
+/**
+ * @summary
+ * Derived data rendered on a position row.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-27
+ */
+export interface PositionRowSummary {
+  // Placeholder for future derived data.
 }

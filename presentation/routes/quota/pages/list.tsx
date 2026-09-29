@@ -5,13 +5,13 @@ import { IconChartPie } from "@tabler/icons-react"
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import type { QuotaResponseDTO } from "@/services/quota/dto/quota-response.dto"
+import type { QuotaRow } from "@/presentation/types/quota-row.types"
 
 import { QuotaDatatableFilters } from "../datatable/filters"
 import { QuotaDatatableTable } from "../datatable/table"
 import { QuotaDatatableToolbar } from "../datatable/toolbar"
-import { QuotaConfirmImportDialog } from "../dialogs/quota-confirm-import"
-import { QuotaImportProgressDialog } from "../dialogs/quota-import-progress"
+import { QuotaConfirmImportDialog } from "../dialogs/confirm-import"
+import { QuotaImportProgressDialog } from "../dialogs/import-progress"
 import { EMPTY_QUOTA_FUND_LOOKUPS } from "../helpers/build-quota-fund-lookups.helper"
 import { useQuotaDatatable } from "../hooks/use-quota-datatable.hook"
 import { useQuotaDatatableFilters } from "../hooks/use-quota-datatable-filters.hook"
@@ -20,8 +20,8 @@ import { useQuotaImport } from "../hooks/use-quota-import.hook"
 import { QUOTA_EMPTY } from "../settings/labels.settings"
 import type { QuotaFundLookups } from "../types/quota-list.types"
 
-interface QuotaListProps {
-  data: QuotaResponseDTO[] | null
+export interface QuotaListProps {
+  data: QuotaRow[] | null
   lookups?: QuotaFundLookups
 }
 

@@ -2,7 +2,14 @@ import type { DateRange } from "react-day-picker"
 
 import type { EntitySelectFilterOption } from "@/presentation/parts/filters/entity-select-filter"
 
-// Display data resolved for an application row.
+/**
+ * @summary
+ * Display data resolved for an application row.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export interface ApplicationRowLookup {
   // Position portfolio id used by the filters.
   portfolioId: string
@@ -30,4 +37,9 @@ export interface ApplicationFilters {
   portfolioId: string | undefined
   fundId: string | undefined
   dateRange: DateRange | undefined
+}
+
+// Options consumed by the application forms.
+export interface FundSelectOptions {
+  funds: { id: string; name: string; cnpj: string }[]
 }

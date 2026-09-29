@@ -2,11 +2,15 @@ import { RequireSessionUser } from "@/lib/auth/require-session"
 import { PortfolioPerformanceContainer } from "@/presentation/composition/portfolio-performance.container"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
+import { ToPortfolioPerformanceRows } from "@/presentation/mappers/portfolio-performance-row.mapper"
+import { ToPortfolioRows } from "@/presentation/mappers/portfolio-row.mapper"
+import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-performance-row.types"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 // Data resolved by the performance list loader.
 export interface LoadedPortfolioPerformanceList {
-  performances: PortfolioPerformanceResponseDTO[]
-  portfolios: PortfolioResponseDTO[]
+  performances: PortfolioPerformanceRow[]
+  portfolios: PortfolioRow[]
 }
 
 /**
@@ -51,7 +55,7 @@ export async function LoadPortfolioPerformances(): Promise<LoadedPortfolioPerfor
   })
 
   return {
-    performances: PERFORMANCES,
-    portfolios: PORTFOLIOS,
+    performances: ToPortfolioPerformanceRows(PERFORMANCES),
+    portfolios: ToPortfolioRows(PORTFOLIOS),
   }
 }

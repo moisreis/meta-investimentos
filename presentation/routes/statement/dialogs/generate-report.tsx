@@ -8,14 +8,14 @@ import {
   STATEMENT_DIALOG,
   STATEMENT_FORM,
 } from "@/presentation/routes/statement/settings/labels.settings"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 /**
  * Props for the statement generate-report dialog.
  */
 export interface StatementGenerateReportDialogProps {
   dialog: ReturnType<typeof useStatementGenerateDialog>
-  portfolios: PortfolioResponseDTO[]
+  portfolios: PortfolioRow[]
 }
 
 /**

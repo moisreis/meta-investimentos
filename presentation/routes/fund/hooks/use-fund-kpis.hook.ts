@@ -5,13 +5,13 @@ import { useCallback } from "react"
 import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
+import type { FundRow } from "@/presentation/types/fund-row.types"
 
 import { FUND_KPI } from "../settings/labels.settings"
 import type { FundRowSummary } from "../types/fund-list.types"
 
 interface UseFundKpisInput {
-  funds: FundResponseDTO[]
+  funds: FundRow[]
   summaries: Record<string, FundRowSummary> | null
 }
 
@@ -35,7 +35,7 @@ interface UseFundKpisInput {
  * @date 2026-09-25
  */
 function BuildFundKpis(
-  funds: readonly FundResponseDTO[],
+  funds: readonly FundRow[],
   summaries: Record<string, FundRowSummary> | null
 ): EntityKpi[] {
   const TOTAL_POSITIONS = Object.values(summaries ?? {}).reduce(
@@ -96,7 +96,7 @@ function useFundKpis({
   summaries,
 }: UseFundKpisInput): EntityKpi[] {
   const compute = useCallback(
-    (items: readonly FundResponseDTO[]) =>
+    (items: readonly FundRow[]) =>
       BuildFundKpis(items, summaries),
     [summaries]
   )

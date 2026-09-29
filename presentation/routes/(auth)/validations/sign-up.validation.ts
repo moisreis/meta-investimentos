@@ -1,7 +1,15 @@
-import { z } from "zod"
-import { IsValidCpf } from "../validators/cpf.validator"
+﻿import { z } from "zod"
 
-// Validates the sign-up form fields with **Zod**.
+import { IsValidCpf } from "@/lib/validation/document.validation"
+
+/**
+ * @summary
+ * Validates the sign-up form fields with **Zod**.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 const SIGN_UP_FORM_SCHEMA = z.object({
   name: z.string().trim().min(1, "Informe seu nome completo."),
   firstName: z.string().trim().min(1, "Informe seu nome."),
@@ -23,3 +31,4 @@ const SIGN_UP_FORM_SCHEMA = z.object({
 type SignUpFormValues = z.infer<typeof SIGN_UP_FORM_SCHEMA>
 
 export { SIGN_UP_FORM_SCHEMA, type SignUpFormValues }
+

@@ -9,17 +9,17 @@ import { SharedFormField } from "@/presentation/parts/components/shared-form-fie
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { useEditCategoryForm } from "@/presentation/routes/category/hooks/use-edit-category-form.hook"
+import { useCategoryEditForm } from "../hooks/use-category-edit-form.hook"
 
 import { CATEGORY_FORM } from "@/presentation/routes/category/settings/labels.settings"
 
-import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 /**
  * Props for the edit category form.
  */
 export interface EditCategoryFormProps {
-  category: CategoryResponseDTO
+  category: CategoryRow
   onStatusChange?: (
     status: EntityFormStatus,
     error: string | null
@@ -66,7 +66,7 @@ function EditCategoryForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useEditCategoryForm(category)
+  } = useCategoryEditForm(category)
 
   React.useEffect(() => {
     onStatusChange?.(status, error)

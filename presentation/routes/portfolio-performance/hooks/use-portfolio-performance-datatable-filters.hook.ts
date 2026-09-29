@@ -4,14 +4,14 @@ import { useMemo, useState } from "react"
 import { endOfDay, startOfDay } from "date-fns"
 import type { DateRange } from "react-day-picker"
 
-import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
+import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-performance-row.types"
 
 interface UsePortfolioPerformanceDatatableFiltersOutput {
   portfolioId: string | undefined
   dateRange: DateRange | undefined
   onPortfolioChange: (value: string | undefined) => void
   onDateRangeChange: (range: DateRange | undefined) => void
-  filteredPerformances: PortfolioPerformanceResponseDTO[]
+  filteredPerformances: PortfolioPerformanceRow[]
 }
 
 /**
@@ -33,7 +33,7 @@ interface UsePortfolioPerformanceDatatableFiltersOutput {
  * @date 2026-09-25
  */
 function usePortfolioPerformanceDatatableFilters(
-  performances: PortfolioPerformanceResponseDTO[]
+  performances: PortfolioPerformanceRow[]
 ): UsePortfolioPerformanceDatatableFiltersOutput {
   const [PORTFOLIO_ID, setPortfolioId] = useState<
     string | undefined

@@ -5,8 +5,11 @@ import type { AuditLogResponseDTO } from "@/services/audit-log/dto/audit-log-res
 import { BuildAuditLogRowSummaries } from "./build-audit-log-row-summaries.helper"
 import type { AuditLogRowSummary } from "../types/audit-log-list.types"
 
+import { ToAuditLogRows } from "@/presentation/mappers/audit-log-row.mapper"
+import type { AuditLogRow } from "@/presentation/types/audit-log-row.types"
+
 export interface LoadSessionAuditLogsOutput {
-  auditLogs: AuditLogResponseDTO[]
+  auditLogs: AuditLogRow[]
   summaries: Record<string, AuditLogRowSummary>
 }
 
@@ -57,7 +60,7 @@ export async function LoadSessionAuditLogs(): Promise<LoadSessionAuditLogsOutput
   })
 
   return {
-    auditLogs: LOGS,
+    auditLogs: ToAuditLogRows(LOGS),
     summaries: BuildAuditLogRowSummaries(LOGS, USERS),
   }
 }

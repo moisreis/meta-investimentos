@@ -1,4 +1,4 @@
-import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 import type { CategoryRowSummaryDTO } from "@/services/category/use-cases/list-category-row-summaries.use-case"
 
 import type { CategoryRowSummary } from "../types/category-list.types"
@@ -31,7 +31,7 @@ import type { CategoryRowSummary } from "../types/category-list.types"
  * @date 2026-09-25
  */
 export function BuildCategoryRowSummaries(
-  categories: CategoryResponseDTO[],
+  categories: CategoryRow[],
   counts: CategoryRowSummaryDTO[]
 ): Record<string, CategoryRowSummary> {
   const COUNTS_BY_CATEGORY = new Map(

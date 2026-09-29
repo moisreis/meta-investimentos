@@ -5,7 +5,7 @@ import { IconCategory } from "@tabler/icons-react"
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 import { CategoryDatatableFilters } from "../datatable/filters"
 import { CategoryDatatableTable } from "../datatable/table"
@@ -19,8 +19,8 @@ import { useCategoryKpis } from "../hooks/use-category-kpis.hook"
 import { CATEGORY_EMPTY } from "../settings/labels.settings"
 import type { CategoryRowSummary } from "../types/category-list.types"
 
-interface CategoryListProps {
-  data: CategoryResponseDTO[] | null
+export interface CategoryListProps {
+  data: CategoryRow[] | null
   summaries?: Record<string, CategoryRowSummary> | null
 }
 

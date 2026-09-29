@@ -1,4 +1,4 @@
-import type { UserRole } from "./create-user.dto"
+import type { UserRole } from "@/lib/auth/user-role"
 
 /**
  * @summary

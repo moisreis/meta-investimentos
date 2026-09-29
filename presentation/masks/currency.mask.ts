@@ -21,7 +21,11 @@ const GROUPED_PATTERN = /^\d{1,3}(\.\d{3})+$/
  * decimal is only honored for seed values. Appending a
  * digit after the automatic `,00` continues the integer
  * part, and backspacing at the automatic `,00` removes
- * the last integer digit directly.
+ * the last integer digit directly. The decimals are
+ * editable in place: selecting them (`,00` or `,84` in
+ * `1.409.325,84`) and typing digits replaces the cents
+ * (`700.000,16` results from selecting `,00` and typing
+ * `16`).
  *
  * @explanation
  * Use on text input changes to keep a currency field
@@ -78,6 +82,30 @@ function MaskCurrency(value: string, previous = ""): string {
     }
   } else {
     INTEGER = BODY
+  }
+
+  // A region replace that covered the decimals of the
+  // previous display leaves only plain digits behind: the
+  // typed digits are the new cents. Without this rule the
+  // missing comma would collapse them into the integer
+  // part (`700.000,00` with `,00` selected and `16` typed
+  // would inflate to `70.000.016,00`). Pure insertions and
+  // deletions are handled by the rules below and must not
+  // be reinterpreted as a cents replace.
+  const COMA_AT = previous.lastIndexOf(",")
+  const REPLACED_CENTS =
+    COMA_AT >= 0 &&
+    value.startsWith(previous.slice(0, COMA_AT)) &&
+    !(value.length === previous.length - 1 &&
+      previous.startsWith(value))
+      ? value.slice(COMA_AT)
+      : ""
+
+  if (/^\d{1,2}$/.test(REPLACED_CENTS)) {
+    INTEGER = previous
+      .slice(0, COMA_AT)
+      .replace(/[.,-]/g, "")
+    DECIMALS = REPLACED_CENTS
   }
 
   // A single digit appended at the end of an automatic

@@ -1,6 +1,6 @@
 import { EntityId } from "@/value-objects"
 import { ValidationError } from "@/errors"
-import type { UserRole } from "@domain/user/entities/user.entity"
+import type { UserRole } from "@/lib/auth/user-role"
 
 export interface UserRegisteredProps {
   userId: EntityId

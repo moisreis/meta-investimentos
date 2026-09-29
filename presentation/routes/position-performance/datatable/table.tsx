@@ -2,10 +2,12 @@
 
 import { EntityDatatable } from "@/presentation/parts/datatable/layout/entity-datatable"
 import type { EntityTable } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { PositionPerformanceResponseDTO } from "@/services/position-performance/dto/position-performance-response.dto"
+import type { PositionPerformanceRow } from "@/presentation/types/position-performance-row.types"
 
 interface PositionPerformanceDatatableTableProps {
-  table: EntityTable<PositionPerformanceResponseDTO>
+  table: EntityTable<PositionPerformanceRow>
+  /** Enables the bulk delete confirm flow for the selected rows. */
+  onBulkDelete?: (items: PositionPerformanceRow[]) => void | Promise<void>
 }
 
 /**
@@ -13,23 +15,24 @@ interface PositionPerformanceDatatableTableProps {
  * Renders the position performance datatable.
  *
  * @remarks
- * Composes the shared entity datatable without selection
- * or bulk delete flows, since performances are produced
- * by the calculation flow only.
+ * Composes the shared entity datatable with selection and
+ * bulk delete flows enabled.
  *
  * @param props - The shared table instance.
  * @param props.table - The shared table instance.
+ * @param props.onBulkDelete - Optional bulk delete handler.
  *
  * @returns The position performance datatable.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-25
+ * @date 2026-09-27
  */
 function PositionPerformanceDatatableTable({
   table,
+  onBulkDelete,
 }: PositionPerformanceDatatableTableProps) {
-  return <EntityDatatable table={table} />
+  return <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
 }
 
 export { PositionPerformanceDatatableTable }

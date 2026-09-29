@@ -1,9 +1,8 @@
 "use client"
 
 import { useEntityRowActions } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
-import type { EntityRowActionsModel } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
 import { deleteCategoryAction } from "@/presentation/routes/category/actions/delete-category.action"
-import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
+import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 /**
  * @summary
@@ -21,8 +20,8 @@ import type { CategoryResponseDTO } from "@/services/category/dto/category-respo
  *
  * @date 2026-09-26
  */
-function useCategoryRowActions(): EntityRowActionsModel<CategoryResponseDTO> {
-  return useEntityRowActions<CategoryResponseDTO>({
+function useCategoryRowActions() {
+  return useEntityRowActions<CategoryRow>({
     runDelete: (id) => deleteCategoryAction({ categoryId: id }),
   })
 }

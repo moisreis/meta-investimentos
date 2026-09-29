@@ -1,10 +1,9 @@
 "use client"
 
 import { useEntityBulkDeleteAction } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
-import type { EntityBulkDeleteModel } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
 import { bulkDeletePortfoliosAction } from "@/presentation/routes/portfolio/actions/bulk-delete-portfolios.action"
 import { PORTFOLIO_DATATABLE } from "@/presentation/routes/portfolio/settings/labels.settings"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 /**
  * @summary
@@ -22,8 +21,8 @@ import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-re
  *
  * @date 2026-09-26
  */
-function usePortfolioBulkDelete(): EntityBulkDeleteModel<PortfolioResponseDTO> {
-  return useEntityBulkDeleteAction<PortfolioResponseDTO>({
+function usePortfolioBulkDelete() {
+  return useEntityBulkDeleteAction<PortfolioRow>({
     run: (ids) =>
       bulkDeletePortfoliosAction({ portfolioIds: ids }),
     labels: PORTFOLIO_DATATABLE,

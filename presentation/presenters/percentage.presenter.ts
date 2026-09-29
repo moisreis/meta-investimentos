@@ -51,3 +51,57 @@ export function FormatPercentage(
     maximumFractionDigits: 2,
   }).format(PARSED / 100)
 }
+
+/**
+ * @summary
+ * Formats a percentage value with its sign, keeping zero.
+ *
+ * @remarks
+ * `FormatPercentage` swaps a zero for the fallback, which
+ * reads as "no data" on a table but lies on a chart: a day
+ * with no variation and a day with no return at all are
+ * different facts. This variant renders zero as "0,00%" and
+ * prefixes a positive value with `+`, so a series reads its
+ * direction without a second glance. Nil and non-finite
+ * values still return the fallback.
+ *
+ * @explanation
+ * Use this function for chart tooltips and for any place
+ * where zero is a meaningful value. Keep `FormatPercentage`
+ * for the KPI cards, where a zero return is better shown as
+ * a dash than as a flat line.
+ *
+ * @param value - The raw percentage in percent units.
+ *
+ * @returns The signed percentage string or the fallback.
+ *
+ * @example
+ * const PERCENT = FormatSignedPercentage(-1.88);
+ * // returns "-1,88%"
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-28
+ */
+export function FormatSignedPercentage(
+  value: string | number | null | undefined
+): string {
+  const PARSED =
+    typeof value === "string" ? Number.parseFloat(value) : value
+
+  if (
+    PARSED === null ||
+    PARSED === undefined ||
+    !Number.isFinite(PARSED)
+  ) {
+    return PRESENTER_FALLBACK
+  }
+
+  const FORMATTED = new Intl.NumberFormat("pt-BR", {
+    style: "percent",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(PARSED / 100)
+
+  return PARSED > 0 ? `+ ${FORMATTED}` : FORMATTED
+}

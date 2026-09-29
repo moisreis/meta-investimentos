@@ -5,13 +5,14 @@ import { IconCoin } from "@tabler/icons-react"
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import type { PositionPerformanceResponseDTO } from "@/services/position-performance/dto/position-performance-response.dto"
+import type { PositionPerformanceRow } from "@/presentation/types/position-performance-row.types"
 
 import { PositionPerformanceDatatableFilters } from "../datatable/filters"
 import { PositionPerformanceDatatableTable } from "../datatable/table"
 import { PositionPerformanceDatatableToolbar } from "../datatable/toolbar"
-import { PositionPerformanceCalculateConfirmDialog } from "../dialogs/position-performance-calculate-confirm"
-import { PositionPerformanceCalculateProgressDialog } from "../dialogs/position-performance-calculate-progress"
+import { PositionPerformanceCalculateConfirmDialog } from "../dialogs/calculate-confirm"
+import { PositionPerformanceCalculateProgressDialog } from "../dialogs/calculate-progress"
+import { PositionPerformanceConfirmDeleteDialog } from "../dialogs/confirm-delete"
 import { EMPTY_POSITION_PERFORMANCE_LOOKUPS } from "../helpers/build-position-performance-lookups.helper"
 import { usePositionPerformanceCalculation } from "../hooks/use-position-performance-calculation.hook"
 import { usePositionPerformanceDatatable } from "../hooks/use-position-performance-datatable.hook"
@@ -20,8 +21,8 @@ import { usePositionPerformanceKpis } from "../hooks/use-position-performance-kp
 import { POSITION_PERFORMANCE_EMPTY } from "../settings/labels.settings"
 import type { PositionPerformanceLookups } from "../types/position-performance-list.types"
 
-interface PositionPerformanceListProps {
-  data: PositionPerformanceResponseDTO[] | null
+export interface PositionPerformanceListProps {
+  data: PositionPerformanceRow[] | null
   lookups?: PositionPerformanceLookups
 }
 
@@ -32,9 +33,9 @@ interface PositionPerformanceListProps {
  * @remarks
  * Composes the KPI group, the toolbar with the calculate
  * button, the position and period filters, the empty
- * state and the read-only datatable. The calculate-confirm
- * and calculate-progress dialogs render at the page level
- * above the table.
+ * state and the selectable datatable with row delete action.
+ * The calculate-confirm, calculate-progress and confirm delete
+ * dialogs render at the page level above the table.
  *
  * @param props - Props of the performance list page.
  * @param props.data - The performance rows, or `null`
@@ -45,7 +46,7 @@ interface PositionPerformanceListProps {
  *
  * @author Moisés Reis
  *
- * @date 2026-09-25
+ * @date 2026-09-27
  */
 function PositionPerformanceList({
   data,
@@ -56,7 +57,7 @@ function PositionPerformanceList({
 
   const filters =
     usePositionPerformanceDatatableFilters(PERFORMANCES)
-  const { table } = usePositionPerformanceDatatable(
+  const { table, rowActions } = usePositionPerformanceDatatable(
     filters.filteredPerformances,
     lookups
   )
@@ -95,7 +96,10 @@ function PositionPerformanceList({
       />
 
       {HAS_PERFORMANCES ? (
-        <PositionPerformanceDatatableTable table={table} />
+        <PositionPerformanceDatatableTable
+          table={table}
+          onBulkDelete={rowActions.handleConfirmDelete}
+        />
       ) : (
         <EntityEmptyTable
           icon={IconCoin}
@@ -126,6 +130,11 @@ function PositionPerformanceList({
         onOpenChange={calculation.handleProgressOpenChange}
         job={calculation.job}
         onDone={calculation.handleClose}
+      />
+
+      <PositionPerformanceConfirmDeleteDialog
+        dialog={rowActions}
+        lookups={lookups}
       />
     </>
   )

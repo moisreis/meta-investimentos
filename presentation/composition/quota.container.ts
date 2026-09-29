@@ -3,9 +3,11 @@ import { FundRepository } from "@/infrastructure/fund/repositories/fund.reposito
 import { QuotaRepository } from "@/infrastructure/quota/repositories/quota.repository"
 import { ListFundsUseCase } from "@/services/fund/use-cases/list-funds.use-case"
 import { ListAllQuotasUseCase } from "@/services/quota/use-cases/list-all-quotas.use-case"
+import { ListQuotaDatesUseCase } from "@/services/quota/use-cases/list-quota-dates.use-case"
 
 // The quota use cases, already wired to the repositories.
 interface QuotaUseCases {
+  list: ListQuotaDatesUseCase
   listAllQuotas: ListAllQuotasUseCase
   listFunds: ListFundsUseCase
 }
@@ -44,6 +46,7 @@ function QuotaContainer(): QuotaUseCases {
   const QUOTA_REPOSITORY = new QuotaRepository(db)
 
   return {
+    list: new ListQuotaDatesUseCase(QUOTA_REPOSITORY),
     listAllQuotas: new ListAllQuotasUseCase(QUOTA_REPOSITORY),
     listFunds: new ListFundsUseCase(FUND_REPOSITORY),
   }
