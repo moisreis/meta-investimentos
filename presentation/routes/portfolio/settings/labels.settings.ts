@@ -137,20 +137,22 @@ export const PORTFOLIO_KPI = {
   FUND_COUNT_COMPARISON: "fundos nas carteiras",
 } as const
 
-// KPI and filter copy for the portfolio detail screen.
-export const PORTFOLIO_OVERVIEW = {
-  // KPI card titles.
-  KPI_PATRIMONY_TITLE: "Patrimônio da Carteira",
-  KPI_YEAR_GAIN_TITLE: "Ganho Acumulado no Ano",
-  KPI_MONTH_GAIN_TITLE: "Ganhos do Mês",
-  KPI_YEAR_RETURN_TITLE: "Rendimento Acumulado do Ano",
-  KPI_MONTH_RETURN_TITLE: "Rendimento do Mês",
+// Copy of the extrato summary and of the toolbar filter of
+// the portfolio detail screen.
+export const PORTFOLIO_SUMMARY = {
+  // Label of the headline figure. The window beside it states
+  // the days, so the label names the figure and nothing else.
+  PATRIMONY_LABEL: "Patrimônio",
+  // Qualifier of the return under the headline figure.
+  RETURN_NOTE: "no período",
+  // Separator of the stated period.
+  PERIOD_SEPARATOR: "a",
 
-  // Comparison prefixes.
-  COMPARISON_VS: "vs.",
-  COMPARISON_SINCE: "desde",
-  COMPARISON_YEAR: "no ano de",
-  COMPARISON_MONTH: "em",
+  // Reconciliation figure labels, in reading order.
+  OPENING_ENTRY_LABEL: "Saldo inicial",
+  DEPOSITS_ENTRY_LABEL: "Entradas",
+  WITHDRAWALS_ENTRY_LABEL: "Saídas",
+  RESULT_ENTRY_LABEL: "Resultado do período",
 
   // Toolbar filter copy.
   FILTER_DATE_PLACEHOLDER:
@@ -159,8 +161,8 @@ export const PORTFOLIO_OVERVIEW = {
   // Empty state copy for the detail screen.
   EMPTY_TITLE: "Sem desempenho calculado",
   EMPTY_DESCRIPTION:
-    "Os indicadores da carteira aparecem após o " +
-    "cálculo do desempenho.",
+    "Os números da carteira aparecem assim que houver um " +
+    "dia de desempenho calculado.",
 } as const
 
 // Chart copy for the portfolio detail screen.
@@ -256,31 +258,21 @@ export const PORTFOLIO_EMPTY = {
   PRIMARY_ACTION_LABEL: PORTFOLIO_FORM.ADD_BUTTON,
 } as const
 
-// Section copy of the portfolio detail charts.
+// Section copy of the portfolio detail charts. Each chart
+// carries its own description inside its card, so a section
+// states only the question its charts answer.
 export const PORTFOLIO_CHART_SECTIONS = {
   // Windowed performance section.
   PERFORMANCE_TITLE: "Desempenho no período",
-  PERFORMANCE_DESCRIPTION:
-    "Evolução do patrimônio, do resultado e dos movimentos " +
-    "dentro do período selecionado.",
 
   // Holdings distribution section.
   DISTRIBUTIONS_TITLE: "Distribuições",
-  DISTRIBUTIONS_DESCRIPTION:
-    "Como o valor investido está dividido entre os fundos e " +
-    "os bancos custodiantes da carteira.",
 
   // Checking account section.
   CHECKING_TITLE: "Conta corrente",
-  CHECKING_DESCRIPTION:
-    "Saldos em conta corrente do período e a divisão atual " +
-    "entre as contas da carteira.",
 
   // Annual monthly history section.
   ANNUAL_TITLE: "Análise do ano",
-  ANNUAL_DESCRIPTION:
-    "Rendimentos, patrimônio e retorno mês a mês do ano " +
-    "corrente, independentes do período selecionado.",
 } as const
 
 // Chart copy for the checking accounts of the portfolio
@@ -318,8 +310,7 @@ export const PORTFOLIO_ANNUAL = {
 
   // Monthly return chart.
   RETURN_TITLE: "Retorno Mensal",
-  RETURN_DESCRIPTION:
-    "Retorno acumulado de cada mês do ano.",
+  RETURN_DESCRIPTION: "Retorno acumulado de cada mês do ano.",
   RETURN_SERIES: "Retorno no mês",
 } as const
 
@@ -347,4 +338,3 @@ export const PORTFOLIO_POSITIONS = {
 } as const
 
 export { FormatDeletePortfolioDescription }
-

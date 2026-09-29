@@ -38,13 +38,13 @@ const START_OF_DAY = "T00:00:00.000Z"
  *
  * @explanation
  * Use as the fetch target of the date range filter of the
- * portfolio detail screen, whose year and month return
- * cards depend on it.
+ * portfolio detail screen, whose year, month and window
+ * returns depend on it.
  *
  * @param input - The untrusted portfolio id and the
  *   inclusive day boundaries.
  *
- * @returns The chained year and month returns, or a
+ * @returns The chained year, month and window returns, or a
  *          failure result.
  *
  * @example

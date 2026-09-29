@@ -14,11 +14,11 @@ const SERIES_COLORS = [
   "var(--color-chart-5)",
 ] as const
 
-// Column colors of a `sign` tone series, matching the
-// success and negative dots of the KPI cards so a gain and
-// a loss read the same across the screen.
-const SIGN_POSITIVE_COLOR = "#16a34a"
-const SIGN_NEGATIVE_COLOR = "#dc2626"
+// Column colors of a `sign` tone series, resolved from the
+// theme so a gain, a loss, a headline figure and a ledger row
+// all read as the same two colors on light and on dark.
+const SIGN_POSITIVE_COLOR = "var(--color-positive)"
+const SIGN_NEGATIVE_COLOR = "var(--color-negative)"
 
 /**
  * @summary

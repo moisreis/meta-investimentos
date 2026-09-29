@@ -81,7 +81,6 @@ export function BuildPortfolioChartSections(
     {
       id: "performance",
       title: PORTFOLIO_CHART_SECTIONS.PERFORMANCE_TITLE,
-      description: PORTFOLIO_CHART_SECTIONS.PERFORMANCE_DESCRIPTION,
       featured: true,
       models: BuildPortfolioCharts(
         input.performances,
@@ -91,13 +90,11 @@ export function BuildPortfolioChartSections(
     {
       id: "distributions",
       title: PORTFOLIO_CHART_SECTIONS.DISTRIBUTIONS_TITLE,
-      description: PORTFOLIO_CHART_SECTIONS.DISTRIBUTIONS_DESCRIPTION,
       models: BuildPortfolioDistributionCharts(input.holdings),
     },
     {
       id: "checking",
       title: PORTFOLIO_CHART_SECTIONS.CHECKING_TITLE,
-      description: PORTFOLIO_CHART_SECTIONS.CHECKING_DESCRIPTION,
       models: BuildPortfolioCheckingCharts(
         input.balances,
         input.bankAccounts,
@@ -107,7 +104,6 @@ export function BuildPortfolioChartSections(
     {
       id: "annual",
       title: PORTFOLIO_CHART_SECTIONS.ANNUAL_TITLE,
-      description: PORTFOLIO_CHART_SECTIONS.ANNUAL_DESCRIPTION,
       models: BuildPortfolioAnnualCharts(
         input.performances,
         input.year

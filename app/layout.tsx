@@ -1,5 +1,10 @@
 import { Metadata } from "next"
-import { Geist, Geist_Mono, Roboto_Slab, Inter, Manrope } from "next/font/google"
+import {
+  Geist,
+  Geist_Mono,
+  Roboto_Slab,
+  Manrope,
+} from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/presentation/theme/theme-provider"
 import { TooltipProvider } from "@/presentation/ui/tooltip"
@@ -7,11 +12,27 @@ import { Toaster } from "@/presentation/ui/toast"
 import { cn } from "@/lib/utils"
 import BRAND from "@/presentation/constants/brand.constants"
 
-// Stores the **Roboto Slab** heading font configuration.
-const manropeHeading = Manrope({subsets:['latin'],variable:'--font-heading'})
+// Stores the **Manrope** heading font configuration, used by
+// the titles of the shared surfaces.
+const manropeHeading = Manrope({
+  subsets: ["latin"],
+  variable: "--font-heading",
+})
+
+// Stores the **Roboto Slab** figure font configuration. The
+// slab is reserved for figures of account — the headline
+// numbers of a detail screen — and never for interface chrome,
+// so a figure of money never reads as a component title.
+const slabFigure = Roboto_Slab({
+  subsets: ["latin"],
+  variable: "--font-figure",
+})
 
 // Stores the **Geist** sans-serif font configuration.
-const geist = Geist({subsets:['latin'],variable:'--font-sans'})
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
 // Stores the **Geist Mono** font configuration.
 const FONT_MONO = Geist_Mono({
@@ -62,14 +83,15 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="pt-BR"
       suppressHydrationWarning
       className={cn(
         "antialiased",
         FONT_MONO.variable,
         "font-sans",
         geist.variable,
-        manropeHeading.variable
+        manropeHeading.variable,
+        slabFigure.variable
       )}
     >
       <body>

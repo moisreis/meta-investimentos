@@ -10,12 +10,12 @@ import {
 import type { DateRange } from "react-day-picker"
 
 import type { PortfolioPeriodReturnsDTO } from "@/services/portfolio-performance/use-cases/resolve-portfolio-period-returns.use-case"
-import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
+import type { EntitySummary } from "@/presentation/parts/components/entity-detail-summary"
 
 import { getPortfolioPeriodReturnsAction } from "../actions/get-portfolio-period-returns.action"
 import { FilterPortfolioActivity } from "../activity/helpers/filter-portfolio-activity.helper"
 import { BuildPortfolioChartSections } from "../charts/build-portfolio-chart-sections.helper"
-import { BuildPortfolioOverviewKpis } from "../helpers/build-portfolio-overview-kpis.helper"
+import { BuildPortfolioSummary } from "../helpers/build-portfolio-summary.helper"
 import type { PortfolioOverviewData } from "../types/portfolio-overview.types"
 import type { PortfolioChartSection } from "../types/portfolio-chart-section.types"
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
@@ -24,6 +24,7 @@ import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activi
 const EMPTY_PERIOD_RETURNS: PortfolioPeriodReturnsDTO = {
   yearReturn: null,
   monthReturn: null,
+  periodReturn: null,
 }
 
 // Builds a local-midnight date from a UTC day key.
@@ -55,11 +56,14 @@ interface UsePortfolioOverviewOutput {
   onDateRangeChange: (range: DateRange | undefined) => void
   // Matches the calendar days holding a snapshot.
   isPerformanceDay: (date: Date) => boolean
-  // The KPI cards of the detail screen.
-  kpis: EntityKpi[]
+  // The opening block of the screen: the closing balance of
+  // the window, its return and the figures reconciling the
+  // opening balance with the closing one. Null when the
+  // series holds no snapshot.
+  summary: EntitySummary | null
   // The charts of the detail screen, grouped into titled
   // sections: the performance series clamped to the same
-  // window as the cards, and the distributions, the checking
+  // window as the summary, and the distributions, the checking
   // accounts and the annual monthly history, which describe
   // the portfolio as it is today and are not window-clamped.
   chartSections: PortfolioChartSection[]
@@ -73,13 +77,12 @@ interface UsePortfolioOverviewOutput {
  * Coordinates the portfolio detail screen filters.
  *
  * @remarks
- * Owns the date range and narrows the KPI computation to
- * the selected window. The range starts covering the full
- * span of available snapshot days and every change refetches
- * the chained year and month returns through the server
- * action, then rebuilds the KPI cards and the chart models
- * through their pure builders, both clamped to the same
- * window. The returns stay in a request-keyed cache
+ * Owns the date range and narrows the summary to the selected
+ * window. The range starts covering the full span of available
+ * snapshot days and every change refetches the chained returns
+ * through the server action, then rebuilds the summary and the
+ * chart models through their pure builders, both clamped to
+ * the same window. The returns stay in a request-keyed cache
  * so moving back to a window already seen does not refetch,
  * and a slow response can never overwrite a newer one.
  * `isPerformanceDay` reports whether the portfolio holds a
@@ -88,7 +91,7 @@ interface UsePortfolioOverviewOutput {
  *
  * @param data - The performance series and its day index.
  *
- * @returns The filter state, the day matcher, the KPIs and
+ * @returns The filter state, the day matcher, the summary and
  *   the chart models.
  *
  * @example
@@ -153,9 +156,9 @@ function usePortfolioOverview(
     [AVAILABLE_KEYS]
   )
 
-  const KPIS = useMemo(
+  const SUMMARY = useMemo(
     () =>
-      BuildPortfolioOverviewKpis(
+      BuildPortfolioSummary(
         data.performances,
         DATE_RANGE,
         PERIOD_RETURNS
@@ -164,7 +167,7 @@ function usePortfolioOverview(
   )
 
   // The charts are clamped by the same period window the
-  // cards are, so a plotted point can never fall outside the
+  // summary is, so a plotted point can never fall outside the
   // window the numbers above it describe. The distributions,
   // the checking balances and the annual monthly history
   // follow in their own sections, but they are not clamped: a
@@ -196,7 +199,7 @@ function usePortfolioOverview(
     ]
   )
 
-  // The activity is clamped to the same window as the KPIs
+  // The activity is clamped to the same window as the summary
   // and the performance charts, so the table always describes
   // the movements behind the numbers above it.
   const ACTIVITY_ROWS = useMemo(
@@ -208,7 +211,7 @@ function usePortfolioOverview(
     dateRange: DATE_RANGE,
     onDateRangeChange: setDateRange,
     isPerformanceDay,
-    kpis: KPIS,
+    summary: SUMMARY,
     chartSections: CHART_SECTIONS,
     activityRows: ACTIVITY_ROWS,
   }

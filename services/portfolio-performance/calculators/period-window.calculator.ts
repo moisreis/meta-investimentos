@@ -185,3 +185,67 @@ export function SumSeriesEarnings(
     0
   )
 }
+
+/**
+ * @summary
+ * The money that entered and left a horizon.
+ *
+ * @remarks
+ * `deposits` sums the positive net cash flows and
+ * `withdrawals` sums the negative ones as positive amounts,
+ * so both figures read as magnitudes and the caller decides
+ * the sign it shows.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-29
+ */
+export interface PortfolioPeriodCashFlows {
+  // Money applied inside the horizon, as an amount.
+  deposits: number
+  // Money redeemed inside the horizon, as a positive amount.
+  withdrawals: number
+}
+
+/**
+ * @summary
+ * Splits a horizon by the direction of its daily cash flows.
+ *
+ * @remarks
+ * Adds the `cashFlowNet` field of each snapshot by its own
+ * sign, so a series with no movement resolves to zero on both
+ * sides. A day that applies and redeems on the same day nets
+ * out, matching the net flow the registry stores and the
+ * net flow chart draws.
+ *
+ * @explanation
+ * Use this calculator to explain how a closing balance came
+ * from an opening one, next to the earnings sum of the same
+ * horizon.
+ *
+ * @param series - The snapshots of the horizon.
+ *
+ * @returns The deposits and the withdrawals of the horizon.
+ *
+ * @example
+ * const FLOWS = SumSeriesCashFlows(WINDOW.inWindow);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-29
+ */
+export function SumSeriesCashFlows(
+  series: readonly PortfolioPerformanceResponseDTO[]
+): PortfolioPeriodCashFlows {
+  return series.reduce<PortfolioPeriodCashFlows>(
+    (flows, snapshot) => {
+      const FLOW = ToAmount(snapshot.cashFlowNet)
+
+      if (FLOW > 0) flows.deposits += FLOW
+      else flows.withdrawals += Math.abs(FLOW)
+
+      return flows
+    },
+    { deposits: 0, withdrawals: 0 }
+  )
+}

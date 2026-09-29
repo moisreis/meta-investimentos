@@ -24,6 +24,12 @@ export interface PortfolioPeriodReturnsDTO {
   // Chained month return, as an unmasked decimal string.
   // Null when the horizon cannot be resolved.
   monthReturn: string | null
+  // Chained return of the selected window itself, as an
+  // unmasked decimal string. Null when the window holds
+  // fewer than two usable daily returns: an arbitrary window
+  // has no trailing return stored on the closing snapshot, so
+  // there is nothing honest to fall back to.
+  periodReturn: string | null
 }
 
 // Parses a numeric snapshot field to a finite amount.
@@ -42,8 +48,8 @@ function ToAmount(value: string | null | undefined): number {
  * series and hands them to the domain return calculator. A
  * horizon holding fewer than two usable daily returns falls
  * back to the trailing return stored on the closing
- * snapshot, and a horizon with no closing snapshot resolves
- * to `null`.
+ * snapshot, and a horizon with no trailing return to fall
+ * back to resolves to `null`.
  *
  * @explanation
  * Use this function inside the period return use case. The
@@ -52,7 +58,8 @@ function ToAmount(value: string | null | undefined): number {
  *
  * @param series - The snapshots of the horizon.
  * @param stored - The trailing return of the closing
- *   snapshot, used as the fallback.
+ *   snapshot, used as the fallback, or `null` when the
+ *   horizon has no stored return to fall back to.
  *
  * @returns The period return, or `null`.
  *
@@ -94,10 +101,10 @@ function ChainPeriodReturn(
  * @remarks
  * Fetches the portfolio, rejects it when it belongs to
  * another user, lists its daily snapshots and chains the
- * daily growth factors of the year and month horizons
- * through the domain return calculator. The business logic
- * runs here, on the server, so the browser never receives
- * the domain formula.
+ * daily growth factors of the year, month and selected
+ * window horizons through the domain return calculator. The
+ * business logic runs here, on the server, so the browser
+ * never receives the domain formula.
  *
  * @explanation
  * Use this use case whenever a client needs the chained
@@ -106,7 +113,7 @@ function ChainPeriodReturn(
  * @param input - The portfolio, its owning user and the
  *   inclusive window boundaries.
  *
- * @returns The chained year and month returns.
+ * @returns The chained year, month and window returns.
  *
  * @example
  * const RESULT = await USE_CASE.execute({
@@ -145,7 +152,7 @@ export class ResolvePortfolioPeriodReturnsUseCase {
    * @param input - The portfolio, its owning user and the
    *   inclusive window boundaries.
    *
-   * @returns The chained year and month returns.
+   * @returns The chained year, month and window returns.
    *
    * @example
    * const RESULT = await USE_CASE.execute({
@@ -198,6 +205,7 @@ export class ResolvePortfolioPeriodReturnsUseCase {
         WINDOW.monthSeries,
         WINDOW.end?.returnMonthly ?? null
       ),
+      periodReturn: ChainPeriodReturn(WINDOW.inWindow, null),
     }
   }
 }

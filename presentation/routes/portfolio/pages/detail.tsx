@@ -1,18 +1,9 @@
 "use client"
 
-import type { ComponentType } from "react"
-import {
-  IconCalendarDollar,
-  IconCalendarMonth,
-  IconCash,
-  IconChartLine,
-  IconPercentage,
-  IconWallet,
-} from "@tabler/icons-react"
+import { IconChartLine } from "@tabler/icons-react"
 
-import { EntityDetailKpiCard } from "@/presentation/parts/components/entity-detail-kpi-card"
-import { EntityDetailKpiGroup } from "@/presentation/parts/components/entity-detail-kpi-group"
 import { EntityDatatableToolbar } from "@/presentation/parts/components/entity-datatable-toolbar"
+import { EntityDetailSummary } from "@/presentation/parts/components/entity-detail-summary"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
 import { EntityDateRangeFilter } from "@/presentation/parts/filters/date-range"
 
@@ -20,7 +11,7 @@ import { PortfolioActivityDatatable } from "../activity/portfolio-activity-datat
 import { PortfolioDetailCharts } from "../charts/portfolio-detail-charts"
 import { PortfolioPositionsDatatable } from "../positions/portfolio-positions-datatable"
 import { usePortfolioOverview } from "../hooks/use-portfolio-overview.hook"
-import { PORTFOLIO_OVERVIEW } from "../settings/labels.settings"
+import { PORTFOLIO_SUMMARY } from "../settings/labels.settings"
 import {
   EMPTY_PORTFOLIO_OVERVIEW,
   type PortfolioOverviewData,
@@ -32,52 +23,41 @@ interface PortfolioDetailProps {
   data: PortfolioOverviewData | null
 }
 
-// Entity icon decorating the header of each overview card.
-const OVERVIEW_HEADER_ICONS: Record<
-  string,
-  ComponentType<{ size?: number; stroke?: number }>
-> = {
-  patrimony: IconWallet,
-  "year-gain": IconCalendarDollar,
-  "month-gain": IconCash,
-  "year-return": IconPercentage,
-  "month-return": IconCalendarMonth,
-}
-
 /**
  * @summary
  * Renders the portfolio detail screen.
  *
  * @remarks
- * Composes the toolbar with the date range filter, the
- * data-driven KPI group, the sectioned charts, the positions
- * datatable, the recent activity datatable and the empty
- * state. The filter selects the window the KPIs, the
- * performance charts and the activity rows are computed
- * from; KPI values, trends, comparisons, chart sections and
- * movements come from the overview hook and never from
- * component-local logic. The distributions, the checking
- * balances, the positions and the annual monthly history are
- * the exception by design: a holding and a balance are facts
- * about the portfolio today, and the year is a fixed
- * horizon, so they ignore the window.
+ * Opens with the extrato summary — the closing balance of the
+ * selected window, the return it earned and the figures that
+ * reconcile the opening balance with the closing one — then
+ * continues as a document: the windowed performance, the
+ * distributions and the checking accounts, the annual monthly
+ * history, the positions the portfolio holds and the
+ * movements of the window.
  *
- * The KPI group renders only over a performance snapshot
- * window; without one the friendly empty state takes its
- * place. The chart sections, the positions and the activity
- * table render either way when they have data, because they
- * describe what the portfolio holds and has moved, not only
- * what was snapshotted.
+ * The filter in the toolbar selects the window the summary,
+ * the performance charts and the movements are computed
+ * from; the values, the chart sections and the rows come from
+ * the overview hook and never from component-local logic. The
+ * distributions, the checking balances, the positions and the
+ * annual monthly history are the exception by design: a
+ * holding and a balance are facts about the portfolio today,
+ * and the year is a fixed horizon, so they ignore the window.
  *
- * The toolbar actions host the entry points of the
- * add application and add withdrawal flows. Each button
- * owns its own dialog, toast and add-another prompt, so
- * the screen only supplies the options loaded for this
- * portfolio.
+ * Without a single snapshot the summary gives way to the
+ * shared empty state. The rest of the screen still renders,
+ * because holdings and movements describe what the portfolio
+ * has, not only what was snapshotted.
+ *
+ * The toolbar actions host the entry points of the add
+ * application and add withdrawal flows. Each button owns its
+ * own dialog, toast and add-another prompt, so the screen only
+ * supplies the options loaded for this portfolio.
  *
  * @param props - Props of the portfolio detail screen.
- * @param props.data - The overview data, or `null` when
- *                     the portfolio cannot be resolved.
+ * @param props.data - The overview data, or `null` when the
+ *                     portfolio cannot be resolved.
  *
  * @returns The portfolio detail screen.
  *
@@ -90,9 +70,9 @@ const OVERVIEW_HEADER_ICONS: Record<
  */
 function PortfolioDetail({ data }: PortfolioDetailProps) {
   const DATA = data ?? EMPTY_PORTFOLIO_OVERVIEW
-  const HAS_PERFORMANCES = DATA.performances.length > 0
 
   const overview = usePortfolioOverview(DATA)
+  const SUMMARY = overview.summary
 
   return (
     <div className="min-h-full overflow-auto">
@@ -106,7 +86,7 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
                 !overview.isPerformanceDay(date)
               }
               placeholder={
-                PORTFOLIO_OVERVIEW.FILTER_DATE_PLACEHOLDER
+                PORTFOLIO_SUMMARY.FILTER_DATE_PLACEHOLDER
               }
               numberOfMonths={1}
             />
@@ -126,30 +106,21 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
         />
       </div>
 
-      {HAS_PERFORMANCES ? (
-        <EntityDetailKpiGroup>
-          {overview.kpis.map((kpi) => (
-            <EntityDetailKpiCard
-              key={kpi.key}
-              title={kpi.title}
-              value={kpi.value}
-              trend={kpi.trend}
-              comparison={kpi.comparison}
-              dotIndicator={kpi.dotIndicator}
-              icon={kpi.icon}
-              headerIcon={OVERVIEW_HEADER_ICONS[kpi.key]}
-            />
-          ))}
-        </EntityDetailKpiGroup>
+      {SUMMARY ? (
+        <EntityDetailSummary {...SUMMARY} />
       ) : (
         <EntityEmptyTable
           icon={IconChartLine}
-          title={PORTFOLIO_OVERVIEW.EMPTY_TITLE}
-          description={PORTFOLIO_OVERVIEW.EMPTY_DESCRIPTION}
+          title={PORTFOLIO_SUMMARY.EMPTY_TITLE}
+          description={PORTFOLIO_SUMMARY.EMPTY_DESCRIPTION}
         />
       )}
 
       <PortfolioDetailCharts sections={overview.chartSections} />
+
+      <PortfolioPositionsDatatable holdings={DATA.holdings} />
+
+      <PortfolioActivityDatatable rows={overview.activityRows} />
     </div>
   )
 }

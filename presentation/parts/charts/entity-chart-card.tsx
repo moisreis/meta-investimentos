@@ -1,11 +1,6 @@
 import type { ReactNode } from "react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/presentation/ui/card"
+
+import { cn } from "cn"
 
 /**
  * Props of an entity chart card.
@@ -13,6 +8,9 @@ import {
 export interface EntityChartCardProps {
   // Chart drawn in the body of the card.
   children: ReactNode
+  // Extra classes, used by a section to span the featured
+  // chart across its grid.
+  className?: string
   // Optional explanatory line under the title.
   description?: string
   // Card title.
@@ -24,12 +22,20 @@ export interface EntityChartCardProps {
  * Renders the card shell every entity chart sits in.
  *
  * @remarks
- * Composes the shared card with a bordered header holding
- * the title and the optional description, and a padded body
- * for the chart. Holds no chart logic: the route decides
- * what is plotted and the chart parts decide how, so the
- * spacing, the type scale and the border stay identical on
- * every detail screen.
+ * Holds one frame, not two: a bordered surface with the
+ * title, the optional description and the plot inside it, and
+ * nothing else. The title is set in sentence case at reading
+ * size, because it names a chart rather than announcing a
+ * section, and the description under it states what the plot
+ * measures — the axis of a financial series is never obvious
+ * from the shape of the line alone.
+ *
+ * The card never sets a height of its own: the plot brings
+ * its own, so a pie and an area chart rise to the same
+ * height and the grid rows stay aligned. The header keeps a
+ * minimum height of two description lines, so a card whose
+ * description wraps does not push its plot below the plots
+ * beside it.
  *
  * @explanation
  * Use as the frame of every chart of an entity detail
@@ -39,6 +45,8 @@ export interface EntityChartCardProps {
  *
  * @param props - Props of the chart card.
  * @param props.children - The chart drawn in the card.
+ * @param props.className - Extra classes merged into the
+ *   frame, used by a section to span the featured chart.
  * @param props.description - Explanatory line under the
  *   title. Dropped when absent, instead of leaving a gap.
  * @param props.title - The card title.
@@ -56,20 +64,32 @@ export interface EntityChartCardProps {
  */
 function EntityChartCard({
   children,
+  className,
   description,
   title,
 }: EntityChartCardProps) {
   return (
-    <Card size="sm" className="gap-0 p-0">
-      <CardHeader className="p-3">
-        <CardTitle>{title}</CardTitle>
+    <div
+      className={cn(
+        "flex h-full flex-col gap-4 rounded-md border border-border bg-background p-4",
+        className
+      )}
+    >
+      <div className="flex min-h-14 flex-col gap-1">
+        <h3 className="text-sm font-medium text-foreground">
+          {title}
+        </h3>
         {description ? (
-          <CardDescription>{description}</CardDescription>
+          <p className="text-xs text-muted-foreground">
+            {description}
+          </p>
         ) : null}
-      </CardHeader>
+      </div>
 
-      <CardContent className="p-3 border-t bg-sidebar h-full">{children}</CardContent>
-    </Card>
+      <div className="flex min-h-0 flex-1 flex-col">
+        {children}
+      </div>
+    </div>
   )
 }
 

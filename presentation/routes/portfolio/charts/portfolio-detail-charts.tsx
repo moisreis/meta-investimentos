@@ -19,15 +19,18 @@ export interface PortfolioDetailChartsProps {
  * into titled sections.
  *
  * @remarks
- * Every section renders its title and description above its
- * charts, so the screen reads in blocks instead of in a flat
- * list. The performance section features its first model —
- * the patrimony, which is the headline of the screen — at the
- * full width of the content area and lays the remaining ones
- * out in a responsive grid; the other sections lay every
- * chart out in that same grid. Every card is the shared chart
- * card and every plot is the shared chart, so the spacing and
- * the type scale match the KPI rows above.
+ * The screen reads as a document: every block — the summary,
+ * a group of charts, a table — is introduced by one quiet
+ * sentence case heading and separated from the next by a
+ * hairline, and no block is boxed inside another.
+ *
+ * The performance section spans its first model — the
+ * patrimony, the headline chart of the window — across the
+ * full width of the content and lays the remaining ones out
+ * beside each other; the other sections lay every chart out
+ * in that same grid. Every card is the shared chart card and
+ * every plot is the shared chart, so the spacing, the type
+ * scale and the plot height match the block above them.
  *
  * Renders nothing when no section has a model — before the
  * first snapshot and without holdings or balances — so the
@@ -53,7 +56,7 @@ function PortfolioDetailCharts({
   if (sections.length === 0) return null
 
   return (
-    <div className="flex w-full flex-col gap-0 ">
+    <div className="flex w-full flex-col">
       {sections.map((section) => {
         const [FEATURED, ...REST] = section.models
 
@@ -62,52 +65,37 @@ function PortfolioDetailCharts({
         return (
           <section
             key={section.id}
-            className="flex w-full flex-col gap-4 p-4"
+            className="flex w-full flex-col gap-4 border-b border-border px-4 py-6 last:border-b-0 sm:px-6"
             aria-labelledby={`${section.id}-title`}
           >
-            <div className="flex flex-col gap-1">
-              <h2
-                id={`${section.id}-title`}
-                className="font-heading text-muted-foreground text-xs uppercase font-medium"
+            <h2
+              id={`${section.id}-title`}
+              className="text-base font-medium text-foreground"
+            >
+              {section.title}
+            </h2>
+
+            <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+              <EntityChartCard
+                className={
+                  section.featured ? "md:col-span-2" : undefined
+                }
+                title={FEATURED.title}
+                description={FEATURED.description}
               >
-                {section.title}
-              </h2>
-            </div>
+                <EntityChart model={FEATURED} />
+              </EntityChartCard>
 
-            {section.featured ? (
-              <div className="flex w-full flex-col gap-4">
+              {REST.map((model) => (
                 <EntityChartCard
-                  title={FEATURED.title}
-                  description={FEATURED.description}
+                  key={model.id}
+                  title={model.title}
+                  description={model.description}
                 >
-                  <EntityChart model={FEATURED} />
+                  <EntityChart model={model} />
                 </EntityChartCard>
-
-                <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2">
-                  {REST.map((model) => (
-                    <EntityChartCard
-                      key={model.id}
-                      title={model.title}
-                      description={model.description}
-                    >
-                      <EntityChart model={model} />
-                    </EntityChartCard>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2">
-                {section.models.map((model) => (
-                  <EntityChartCard
-                    key={model.id}
-                    title={model.title}
-                    description={model.description}
-                  >
-                    <EntityChart model={model} />
-                  </EntityChartCard>
-                ))}
-              </div>
-            )}
+              ))}
+            </div>
           </section>
         )
       })}
