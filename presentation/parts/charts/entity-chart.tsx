@@ -19,6 +19,8 @@ import {
 } from "recharts"
 import type { TooltipValueType } from "recharts"
 
+import { cn } from "cn"
+
 import {
   ChartContainer,
   ChartLegend,
@@ -56,6 +58,11 @@ const TICK_CHARACTER_WIDTH = 7
 
 // Color of a reference line and of its label.
 const REFERENCE_COLOR = "var(--muted-foreground)"
+
+// Height shared by every chart kind, so a pie and an area
+// card always rise to the same height inside their card.
+// The pie reserves part of this budget for its slice legend.
+const CHART_PLOT_HEIGHT = "h-64"
 
 // Shown when a tooltip entry has no value, instead of
 // letting a raw `null` reach the screen.
@@ -585,6 +592,8 @@ export interface EntityChartProps {
  * by its own position in the ramp, and states the total of
  * the ring in the center. Every other kind keeps the shared
  * axes, the shared config legend and the reference lines.
+ * All four kinds share the same plot height so they fit
+ * exactly inside `EntityChartCard`.
  *
  * Nothing here knows what is plotted: the route hands over a
  * model built from its own records, so the same chart draws
@@ -715,11 +724,16 @@ function EntityChart({ model }: EntityChartProps) {
     const TOTAL = SumPieSlices(SLICES)
 
     return (
-      <div className="flex w-full flex-col gap-2">
+      <div
+        className={cn(
+          "flex w-full flex-col gap-2",
+          CHART_PLOT_HEIGHT
+        )}
+      >
         <ChartContainer
           id={model.id}
           config={CONFIG}
-          className="aspect-auto h-56 w-full"
+          className="aspect-auto min-h-0 w-full flex-1"
         >
           <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
             <Pie
@@ -783,7 +797,7 @@ function EntityChart({ model }: EntityChartProps) {
       <ChartContainer
         id={model.id}
         config={CONFIG}
-        className="aspect-auto h-64 w-full"
+        className={cn("aspect-auto w-full", CHART_PLOT_HEIGHT)}
       >
         <BarChart data={DATA} margin={{ left: 0, right: 8, top: 8 }}>
           {AXES}
@@ -821,7 +835,7 @@ function EntityChart({ model }: EntityChartProps) {
       <ChartContainer
         id={model.id}
         config={CONFIG}
-        className="aspect-auto h-64 w-full"
+        className={cn("aspect-auto w-full", CHART_PLOT_HEIGHT)}
       >
         <LineChart data={DATA} margin={{ left: 0, right: 8, top: 8 }}>
           {AXES}
@@ -850,7 +864,7 @@ function EntityChart({ model }: EntityChartProps) {
     <ChartContainer
       id={model.id}
       config={CONFIG}
-      className="aspect-auto h-64 w-full"
+      className={cn("aspect-auto w-full", CHART_PLOT_HEIGHT)}
     >
       <AreaChart data={DATA} margin={{ left: 0, right: 8, top: 8 }}>
         <defs>
