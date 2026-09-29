@@ -47,14 +47,15 @@ export const PORTFOLIO_PERFORMANCE_DATATABLE = {
 
   // Delete result toast copy.
   DELETE_SUCCESS_TITLE: "Performance excluída!",
-  DELETE_SUCCESS_DESCRIPTION: "A performance foi excluída com sucesso.",
+  DELETE_SUCCESS_DESCRIPTION:
+    "A performance foi excluída com sucesso.",
   DELETE_ERROR_TITLE: "Não foi possível excluir a performance",
 } as const
 
 // Calculation flow copy.
 export const PORTFOLIO_PERFORMANCE_CALCULATE = {
   // Calculate action button label.
-  BUTTON_LABEL: "Calcular Desempenho",
+  BUTTON_LABEL: "Calcular desempenho",
 
   // Confirm dialog header.
   CONFIRM_TITLE: "Calcular desempenho",
@@ -159,4 +160,3 @@ export const PORTFOLIO_PERFORMANCE_EMPTY = {
     "Calcule o desempenho das carteiras para visualizar os resultados.",
   PRIMARY_ACTION_LABEL: "Calcular desempenho",
 } as const
-

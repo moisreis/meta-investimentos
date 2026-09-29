@@ -23,6 +23,10 @@ import { StatementMonthPicker } from "./month-picker"
  */
 export interface GenerateStatementFormProps {
   portfolios: PortfolioRow[]
+  // Portfolio preselected on mount, so a screen that already
+  // shows one portfolio generates its report without a
+  // second selection. Omit to leave the field unset.
+  defaultPortfolioId?: string
   onStatusChange?: (
     status: EntityFormStatus,
     error: string | null
@@ -47,6 +51,8 @@ export interface GenerateStatementFormProps {
  *
  * @param props - Props of the generate statement form.
  * @param props.portfolios - Options of the portfolio field.
+ * @param props.defaultPortfolioId - Portfolio preselected
+ *   on mount.
  * @param props.onStatusChange - Reports submit outcomes.
  *
  * @returns The generate statement form.
@@ -57,6 +63,7 @@ export interface GenerateStatementFormProps {
  */
 function GenerateStatementForm({
   portfolios,
+  defaultPortfolioId,
   onStatusChange,
 }: GenerateStatementFormProps) {
   const {
@@ -69,7 +76,7 @@ function GenerateStatementForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useStatementGenerateForm()
+  } = useStatementGenerateForm(defaultPortfolioId)
 
   React.useEffect(() => {
     onStatusChange?.(status, error)
@@ -104,11 +111,15 @@ function GenerateStatementForm({
             name="portfolioId"
             value={portfolioId}
             onValueChange={handlePortfolioIdChange}
-            placeholder={STATEMENT_DIALOG.FIELD_PORTFOLIO_PLACEHOLDER}
+            placeholder={
+              STATEMENT_DIALOG.FIELD_PORTFOLIO_PLACEHOLDER
+            }
             items={items}
             required
             disabled={pending}
-            aria-invalid={fieldErrors.portfolioId ? "true" : undefined}
+            aria-invalid={
+              fieldErrors.portfolioId ? "true" : undefined
+            }
           />
         </SharedFormField>
 
@@ -122,7 +133,9 @@ function GenerateStatementForm({
             name="month"
             value={month}
             onValueChange={updateMonth}
-            placeholder={STATEMENT_DIALOG.FIELD_MONTH_PLACEHOLDER}
+            placeholder={
+              STATEMENT_DIALOG.FIELD_MONTH_PLACEHOLDER
+            }
             required
             disabled={pending}
             aria-invalid={fieldErrors.month ? "true" : undefined}

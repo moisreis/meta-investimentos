@@ -56,11 +56,12 @@ function ResolveTone(amount: number): EntitySummaryTone {
  * Clamps the snapshot series to the selected `[from, to]`
  * window through the shared period window calculator and
  * derives the opening block from real registry data: the
- * closing patrimony is the headline figure, the return of
- * the window is its qualifier, and the reconciliation figures
- * explain how the opening balance became the closing one by
- * the money that entered, the money that left and the result
- * the market earned in between.
+ * closing patrimony is the headline figure, named after the
+ * day it was measured on; the return of the window sits
+ * under it; and the reconciliation figures explain how the
+ * opening balance became the closing one by the money that
+ * entered, the money that left and the result the market
+ * earned in between.
  *
  * The reconciliation is the point of the block. A period with
  * contributions and redemptions moves the balance for reasons
@@ -160,25 +161,24 @@ export function BuildPortfolioSummary(
     },
   ]
 
-  // The window opens on the balance measured before it, or on
-  // the first snapshot inside it when the series starts there.
-  const PERIOD_FROM = OPENING ?? IN_WINDOW[0]
-
   return {
-    period: `${PERIOD_FROM ? FormatUtcDay(PERIOD_FROM) : ""} ${
-      PORTFOLIO_SUMMARY.PERIOD_SEPARATOR
-    } ${FormatUtcDay(END)}`,
-    label: PORTFOLIO_SUMMARY.PATRIMONY_LABEL,
+    // The label carries the closing day, so the figure is
+    // dated without restating the window the charts are
+    // already drawn over.
+    label: `${PORTFOLIO_SUMMARY.PATRIMONY_LABEL} ${FormatUtcDay(END)}`,
     value: FormatCurrency(END.patrimony),
-    // The qualifier states the return, so it stays empty until
-    // the server resolves one: a lone "no período" under the
-    // figure would say nothing.
+    // The note states the return, so it stays absent until the
+    // server resolves one: a badge with no figure would say
+    // nothing. The sign travels in the figure and the
+    // direction in the icon, so the reader never depends on
+    // the colour of the line to know how the money moved.
     note: PERIOD_RETURN
-      ? `${FormatSignedPercentage(PERIOD_RETURN)} ${
-          PORTFOLIO_SUMMARY.RETURN_NOTE
-        }`
-      : "",
-    noteTone: RETURN_TONE,
+      ? {
+          value: FormatSignedPercentage(PERIOD_RETURN),
+          label: PORTFOLIO_SUMMARY.RETURN_NOTE,
+          tone: RETURN_TONE,
+        }
+      : null,
     entries: ENTRIES,
   }
 }

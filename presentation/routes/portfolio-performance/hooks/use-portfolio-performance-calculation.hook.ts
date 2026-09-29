@@ -28,9 +28,18 @@ const CALCULATION_POLL_INTERVAL_MS = 750
  * after a successful calculation so the datatable
  * reflects the new rows.
  *
+ * `defaultPortfolioId` preselects a portfolio instead of the
+ * aggregated option, so a screen that already shows one
+ * portfolio opens the dialog on it. The picker stays
+ * complete, because the user can still calculate another
+ * portfolio from there.
+ *
  * @explanation
  * Use as the single source of truth for the calculation
  * dialogs rendered at the list page level.
+ *
+ * @param defaultPortfolioId - Portfolio the dialog opens
+ *   on, or `null` for the aggregated option.
  *
  * @returns The calculation flow state and handlers.
  *
@@ -38,12 +47,15 @@ const CALCULATION_POLL_INTERVAL_MS = 750
  *
  * @date 2026-09-25
  */
-function usePortfolioPerformanceCalculation() {
+function usePortfolioPerformanceCalculation(
+  defaultPortfolioId: string | null = null
+) {
   const ROUTER = useRouter()
 
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [portfolioId, setPortfolioId] = useState<string>(
-    PORTFOLIO_PERFORMANCE_ALL_PORTFOLIOS_VALUE
+    defaultPortfolioId ??
+      PORTFOLIO_PERFORMANCE_ALL_PORTFOLIOS_VALUE
   )
   const [dateRange, setDateRange] = useState<
     DateRange | undefined
@@ -61,11 +73,14 @@ function usePortfolioPerformanceCalculation() {
   const [progressOpen, setProgressOpen] = useState(false)
 
   const handleOpenConfirm = useCallback(() => {
-    setPortfolioId(PORTFOLIO_PERFORMANCE_ALL_PORTFOLIOS_VALUE)
+    setPortfolioId(
+      defaultPortfolioId ??
+        PORTFOLIO_PERFORMANCE_ALL_PORTFOLIOS_VALUE
+    )
     setDateRange(undefined)
     setStartError(null)
     setConfirmOpen(true)
-  }, [])
+  }, [defaultPortfolioId])
 
   const handleConfirmOpenChange = useCallback(
     (open: boolean) => {

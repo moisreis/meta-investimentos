@@ -14,23 +14,31 @@ import { GENERATE_STATEMENT_SCHEMA } from "../validations/generate-statement.val
  * Wraps the shared form hook with the generate schema and
  * the generate statement server action.
  *
+ * `defaultPortfolioId` preselects a portfolio, so a screen
+ * that already shows one portfolio generates its report
+ * without a second selection. The picker stays complete,
+ * because the user can still pick another portfolio.
+ *
  * @explanation
  * Use inside the generate report form to keep the component
  * presentational. Wire the returned inputs into controlled
  * fields and call `handleSubmit` on submit.
+ *
+ * @param defaultPortfolioId - Portfolio the form opens on,
+ *   or an empty string to leave it unset.
  *
  * @returns Form state and handlers.
  *
  * @example
  * const { portfolioId, updatePortfolioId, month, updateMonth,
  *   fieldErrors, status,
- *   handleSubmit } = useStatementGenerateForm()
+ *   handleSubmit } = useStatementGenerateForm(PORTFOLIO_ID)
  *
  * @author Moisés Reis
  *
  * @date 2026-09-25
  */
-function useStatementGenerateForm() {
+function useStatementGenerateForm(defaultPortfolioId = "") {
   const {
     values: VALUES,
     updateField,
@@ -42,7 +50,7 @@ function useStatementGenerateForm() {
   } = useEntityForm({
     schema: GENERATE_STATEMENT_SCHEMA,
     initialValues: {
-      portfolioId: "",
+      portfolioId: defaultPortfolioId,
       month: "",
     },
     submit: (values) => generateStatementAction(values),

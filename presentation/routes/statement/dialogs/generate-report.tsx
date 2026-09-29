@@ -16,6 +16,11 @@ import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 export interface StatementGenerateReportDialogProps {
   dialog: ReturnType<typeof useStatementGenerateDialog>
   portfolios: PortfolioRow[]
+  // Portfolio preselected when the dialog opens, so a screen
+  // that already shows one portfolio generates its report
+  // without a second selection. Omit to leave the field
+  // unset.
+  defaultPortfolioId?: string
 }
 
 /**
@@ -30,6 +35,8 @@ export interface StatementGenerateReportDialogProps {
  * @param props - Props of the generate-report dialog.
  * @param props.dialog - The generate dialog flow state.
  * @param props.portfolios - Options of the portfolio field.
+ * @param props.defaultPortfolioId - Portfolio preselected
+ *   when the dialog opens.
  *
  * @returns The statement generate-report dialog flow.
  *
@@ -40,6 +47,7 @@ export interface StatementGenerateReportDialogProps {
 function StatementGenerateReportDialog({
   dialog,
   portfolios,
+  defaultPortfolioId,
 }: StatementGenerateReportDialogProps) {
   return (
     <>
@@ -52,6 +60,7 @@ function StatementGenerateReportDialog({
         <GenerateStatementForm
           key={dialog.formKey}
           portfolios={portfolios}
+          defaultPortfolioId={defaultPortfolioId}
           onStatusChange={dialog.handleStatusChange}
         />
       </EntityAddDialog>

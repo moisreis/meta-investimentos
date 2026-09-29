@@ -140,13 +140,12 @@ export const PORTFOLIO_KPI = {
 // Copy of the extrato summary and of the toolbar filter of
 // the portfolio detail screen.
 export const PORTFOLIO_SUMMARY = {
-  // Label of the headline figure. The window beside it states
-  // the days, so the label names the figure and nothing else.
-  PATRIMONY_LABEL: "Patrimônio",
-  // Qualifier of the return under the headline figure.
+  // Label of the headline figure, followed by the closing day
+  // of the window it was measured on.
+  PATRIMONY_LABEL: "Patrimônio em",
+  // Qualifier naming the horizon of the return under the
+  // headline figure.
   RETURN_NOTE: "no período",
-  // Separator of the stated period.
-  PERIOD_SEPARATOR: "a",
 
   // Reconciliation figure labels, in reading order.
   OPENING_ENTRY_LABEL: "Saldo inicial",

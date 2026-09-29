@@ -21,8 +21,8 @@ export interface PortfolioDetailChartsProps {
  * @remarks
  * The screen reads as a document: every block — the summary,
  * a group of charts, a table — is introduced by one quiet
- * sentence case heading and separated from the next by a
- * hairline, and no block is boxed inside another.
+ * small heading and separated from the next by a hairline,
+ * and no block is boxed inside another.
  *
  * The performance section spans its first model — the
  * patrimony, the headline chart of the window — across the
@@ -70,7 +70,7 @@ function PortfolioDetailCharts({
           >
             <h2
               id={`${section.id}-title`}
-              className="text-base font-medium text-foreground"
+              className="font-heading text-xs font-medium text-foreground uppercase"
             >
               {section.title}
             </h2>

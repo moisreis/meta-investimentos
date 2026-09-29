@@ -2,16 +2,12 @@
 
 import type { RowData } from "@tanstack/react-table"
 
-import { IconFileText } from "@tabler/icons-react"
-import { Button } from "@/presentation/ui/button"
 import { EntityDatatableEditColumnsButton } from "@/presentation/parts/components/entity-datatable-edit-columns-button"
 import { EntityDatatableToolbar } from "@/presentation/parts/components/entity-datatable-toolbar"
 import { EntityDatatableToolbarSeparator } from "@/presentation/parts/components/entity-datatable-toolbar-separator"
 import type { EntityTable } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import {
-  STATEMENT_DATATABLE,
-  STATEMENT_DATATABLE_COLUMN_LABELS,
-} from "@/presentation/routes/statement/settings/labels.settings"
+import { StatementGenerateReportButton } from "@/presentation/routes/statement/components/statement-generate-report-button"
+import { STATEMENT_DATATABLE_COLUMN_LABELS } from "@/presentation/routes/statement/settings/labels.settings"
 
 interface StatementDatatableToolbarProps<TData extends RowData> {
   table: EntityTable<TData>
@@ -61,17 +57,9 @@ function StatementDatatableToolbar<TData extends RowData>({
             }
           />
           <EntityDatatableToolbarSeparator />
-          <Button
-            type="button"
-            variant="ghost"
-            className="font-normal text-muted-foreground"
+          <StatementGenerateReportButton
             onClick={onGenerateReport}
-          >
-            <IconFileText />
-            <span>
-              {STATEMENT_DATATABLE.GENERATE_REPORT_LABEL}
-            </span>
-          </Button>
+          />
         </>
       }
     />

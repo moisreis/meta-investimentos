@@ -55,7 +55,7 @@ function PortfolioActivityDatatable({
       <div className="flex flex-col gap-1">
         <h2
           id="portfolio-activity-title"
-          className="text-base font-medium text-foreground"
+          className="font-heading text-xs font-medium text-foreground uppercase"
         >
           {PORTFOLIO_ACTIVITY.TITLE}
         </h2>

@@ -11,6 +11,7 @@ import { WithdrawalContainer } from "@/presentation/composition/withdrawal.conta
 import { BuildPortfolioActivityRows } from "./build-portfolio-activity-rows.helper"
 import { LoadPortfolioApplicationOptions } from "./load-portfolio-application-options.helper"
 import { LoadPortfolioWithdrawalOptions } from "./load-portfolio-withdrawal-options.helper"
+import { LoadSessionPortfolios } from "./load-session-portfolios.helper"
 
 import { EMPTY_APPLICATION_ADD_OPTIONS } from "@/presentation/routes/application/types/application-add.types"
 import { EMPTY_WITHDRAWAL_ADD_OPTIONS } from "@/presentation/routes/withdrawal/types/withdrawal-add.types"
@@ -23,6 +24,7 @@ import type { WithdrawalAddOptions } from "@/presentation/routes/withdrawal/type
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
 import type { PortfolioBankAccountView } from "@/presentation/types/portfolio-checking.types"
 import type { PortfolioHolding } from "@/presentation/types/portfolio-holding.types"
+import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 import type { PortfolioOverviewData } from "../types/portfolio-overview.types"
 
 // Data resolved by the portfolio detail loader beyond the
@@ -62,13 +64,14 @@ const EMPTY_PORTFOLIO_OVERVIEW_EXTRAS: LoadedPortfolioOverviewExtras =
  * the portfolio are listed through the container too and
  * the distinct UTC day keys are derived from their dates.
  * The add application and add withdrawal option registries,
- * the holdings and the activity are all loaded in parallel.
- * A failure of the registers degrades to the empty extras,
- * so the KPIs and the performance charts stay visible while
- * the distributions and the activity table explain the
- * missing records through their own empty copy. Returns null
- * when there is no session, the portfolio is missing, or the
- * portfolio is not owned by the session user.
+ * the session portfolios offered by the calculate and report
+ * dialogs, the holdings and the activity are all loaded in
+ * parallel. A failure of the registers degrades to the empty
+ * extras, so the summary and the performance charts stay
+ * visible while the distributions and the activity table
+ * explain the missing records through their own empty copy.
+ * Returns null when there is no session, the portfolio is
+ * missing, or the portfolio is not owned by the session user.
  *
  * @explanation
  * Use this helper from the page loader so the session
@@ -122,11 +125,15 @@ export async function LoadPortfolioOverview(
       ),
     ].sort()
 
-    const [[APPLICATION_OPTIONS, WITHDRAWAL_OPTIONS], EXTRAS] =
-      await Promise.all([
-        LoadPortfolioAddOptions(portfolioId),
-        LoadPortfolioOverviewExtras(portfolioId),
-      ])
+    const [
+      [APPLICATION_OPTIONS, WITHDRAWAL_OPTIONS],
+      PICKER_OPTIONS,
+      EXTRAS,
+    ] = await Promise.all([
+      LoadPortfolioAddOptions(portfolioId),
+      LoadPortfolioPickerOptions(),
+      LoadPortfolioOverviewExtras(portfolioId),
+    ])
 
     return {
       portfolioId,
@@ -138,6 +145,7 @@ export async function LoadPortfolioOverview(
       balances: EXTRAS.balances,
       applicationOptions: APPLICATION_OPTIONS,
       withdrawalOptions: WITHDRAWAL_OPTIONS,
+      portfolios: PICKER_OPTIONS,
     }
   } catch (cause) {
     console.error(
@@ -157,7 +165,7 @@ export async function LoadPortfolioOverview(
  * Loads the funds of the add application flow and the
  * positions of the add withdrawal flow in parallel. A
  * failure here degrades to the empty option registries
- * instead of failing the whole screen, so the KPIs stay
+ * instead of failing the whole screen, so the summary stays
  * visible and the add dialogs explain the missing options
  * through their own empty copy.
  *
@@ -194,6 +202,47 @@ async function LoadPortfolioAddOptions(
       EMPTY_APPLICATION_ADD_OPTIONS,
       EMPTY_WITHDRAWAL_ADD_OPTIONS,
     ]
+  }
+}
+
+/**
+ * @summary
+ * Resolves the portfolios offered by the dialogs the detail
+ * screen borrows from other routes.
+ *
+ * @remarks
+ * The calculate performance and the generate report dialogs
+ * preselect the portfolio of the screen, so the list they
+ * start from is the registry of the session user rather than
+ * the single portfolio of the route. A failure here degrades
+ * to an empty list instead of failing the whole screen, so
+ * the two pickers lose their options and the extrato stays.
+ *
+ * @explanation
+ * Use this helper from the portfolio detail loader to keep
+ * the borrowed dialogs on the shared session composition
+ * point and a registry outage isolated from the overview.
+ *
+ * @returns The portfolios of the session user.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-29
+ */
+async function LoadPortfolioPickerOptions(): Promise<
+  PortfolioRow[]
+> {
+  try {
+    const BUNDLE = await LoadSessionPortfolios()
+    const PORTFOLIOS = BUNDLE === null ? [] : BUNDLE.portfolios
+
+    return PORTFOLIOS
+  } catch (cause) {
+    console.error(
+      "[LoadPortfolioPickerOptions] failed to resolve the session portfolios.",
+      cause
+    )
+    return []
   }
 }
 
@@ -254,14 +303,20 @@ async function LoadPortfolioOverviewExtras(
         LIST_BANK_ACCOUNTS.execute({}),
       ])
 
-    const HOLDINGS = BuildPortfolioHoldings(WEIGHTS, FUNDS, BANKS)
+    const HOLDINGS = BuildPortfolioHoldings(
+      WEIGHTS,
+      FUNDS,
+      BANKS
+    )
     const BANK_ACCOUNT_VIEWS = BuildPortfolioBankAccountViews(
       BANK_ACCOUNTS,
       BANKS,
       portfolioId
     )
 
-    const POSITION_IDS = HOLDINGS.map((holding) => holding.positionId)
+    const POSITION_IDS = HOLDINGS.map(
+      (holding) => holding.positionId
+    )
     const BANK_ACCOUNT_IDS = BANK_ACCOUNT_VIEWS.map(
       (account) => account.id
     )

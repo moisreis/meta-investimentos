@@ -12,9 +12,11 @@ import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-for
  *
  * @remarks
  * Tracks the dialog open state, the form submit status and
- * the form key. On a successful submit the dialog closes and
- * the server data refreshes so the new statement appears in
- * the table.
+ * the form key. Every open bumps the key, so the form
+ * remounts and returns to its initial values instead of
+ * keeping whatever the user typed last time. On a
+ * successful submit the dialog closes and the server data
+ * refreshes so the new statement appears in the table.
  *
  * @explanation
  * Use inside the route generate dialog component to keep the
@@ -37,6 +39,9 @@ function useStatementGenerateDialog() {
   const HandleOpen = useCallback(() => {
     setStatus("idle")
     setError(null)
+    // Bumping the key remounts the form, so it returns to its
+    // initial values — including the preselected portfolio.
+    setFormKey((key) => key + 1)
     setOpen(true)
   }, [])
 

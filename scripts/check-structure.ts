@@ -60,9 +60,18 @@ const COLLECTION_VERBS = ["bulk-delete", "load", "list"]
 // Route to route imports that are allowed, and why. The
 // Portfolio aggregate is composed of its ledger entries, so
 // the portfolio route is the one place that reaches into the
-// application and withdrawal routes.
+// application and withdrawal routes. It is also the screen
+// that carries every action taken on a portfolio, so it
+// composes the calculation and the report dialogs of the
+// portfolio-performance and statement routes instead of
+// duplicating their flows.
 const CROSS_ROUTE_ALLOWLIST: Record<string, string[]> = {
-  portfolio: ["application", "withdrawal"],
+  portfolio: [
+    "application",
+    "withdrawal",
+    "portfolio-performance",
+    "statement",
+  ],
 }
 
 // Leading words that turn a hook file into a verb first name.

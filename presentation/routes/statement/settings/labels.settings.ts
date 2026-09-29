@@ -59,7 +59,7 @@ export const STATEMENT_DATATABLE = {
   FILTER_SEARCH_PLACEHOLDER: "Buscar por carteira",
 
   // Toolbar generate report button.
-  GENERATE_REPORT_LABEL: "Gerar Relatório",
+  GENERATE_REPORT_LABEL: "Gerar relatório",
 
   // Row actions menu.
   ROW_ACTIONS_LABEL: "Ações",
@@ -141,4 +141,3 @@ export const STATEMENT_EMPTY = {
 } as const
 
 export { FormatDeleteStatementDescription }
-

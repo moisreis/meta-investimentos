@@ -22,6 +22,11 @@ export interface PortfolioPerformanceCalculateButtonProps {
  * created manually. Ghost styled with the calculator
  * icon and the calculation copy.
  *
+ * @explanation
+ * Use wherever a calculation can be started: the
+ * performance list toolbar, or the portfolio detail
+ * toolbar of the portfolio the run defaults to.
+ *
  * @param props - The click handler.
  * @param props.onClick - Opens the confirm dialog.
  *
