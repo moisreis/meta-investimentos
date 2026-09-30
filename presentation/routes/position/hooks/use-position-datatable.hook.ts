@@ -57,8 +57,9 @@ function usePositionDatatable(
       CreatePositionTableColumns(COLUMN_HELPER, {
         rowFor,
         onDelete: rowActions.handleDelete,
+        onView: rowActions.handleView,
       }),
-    [rowFor, rowActions.handleDelete]
+    [rowFor, rowActions.handleDelete, rowActions.handleView]
   )
 
   const TABLE = useTable({

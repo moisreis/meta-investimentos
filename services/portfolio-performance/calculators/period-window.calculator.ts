@@ -1,20 +1,54 @@
-import type { PortfolioPerformanceResponseDTO } from "../dto/portfolio-performance-response.dto"
+import { GrowthFactor, type SignedPercentage } from "@/value-objects"
+
+/**
+ * @summary
+ * The read model of a daily performance snapshot shared by
+ * the portfolio and the position performance registries.
+ *
+ * @remarks
+ * Both response DTOs carry these fields with the same types,
+ * so the window calculator, the chained return and the chart
+ * builders read either registry without knowing which one
+ * they were handed.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-29
+ */
+export interface PerformanceSnapshot {
+  // Snapshot day, as an ISO 8601 string.
+  date: string
+  // Closing value of the entity, as a decimal string.
+  patrimony: string
+  // Market gain of the day, as a decimal string.
+  earnings: string
+  // Net cash flow of the day, as a decimal string.
+  cashFlowNet: string
+  // Return of the day, as a decimal string.
+  returnDaily: string
+  // Return accumulated from the month anchor, or `null`
+  // while the horizon is too short to chain.
+  returnMonthly: string | null
+  // Return accumulated from the year anchor, or `null`
+  // while the horizon is too short to chain.
+  returnYearly: string | null
+}
 
 // The daily snapshots clamped to a selected window, plus
 // the anchors of the year and month horizons that close it.
-export interface PortfolioPeriodWindow {
+export interface PeriodWindow<T extends PerformanceSnapshot> {
   // The closing snapshot of the window, or `null` when the
   // window holds no snapshot.
-  end: PortfolioPerformanceResponseDTO | null
+  end: T | null
   // The last snapshot before the window opens, used as the
   // comparison baseline of the patrimony card.
-  opening: PortfolioPerformanceResponseDTO | null
+  opening: T | null
   // Snapshots inside the window, ascending by date.
-  inWindow: PortfolioPerformanceResponseDTO[]
+  inWindow: T[]
   // Snapshots inside the window from the year anchor on.
-  yearSeries: PortfolioPerformanceResponseDTO[]
+  yearSeries: T[]
   // Snapshots inside the window from the month anchor on.
-  monthSeries: PortfolioPerformanceResponseDTO[]
+  monthSeries: T[]
   // Start of the calendar year, in UTC millis.
   yearStart: number
   // Start of the calendar month, in UTC millis.
@@ -47,9 +81,7 @@ function EndOfUtcDay(date: Date): number {
 }
 
 // Millis at which a snapshot was recorded.
-function TimeOf(
-  snapshot: PortfolioPerformanceResponseDTO
-): number {
+function TimeOf(snapshot: PerformanceSnapshot): number {
   return new Date(snapshot.date).getTime()
 }
 
@@ -68,11 +100,13 @@ function TimeOf(
  * never report a gain earned outside it. Boundaries follow
  * the UTC day key convention of the registry filters.
  *
+ * @typeParam T - Snapshot type of the resolved registry.
+ *
  * @explanation
  * Use this calculator to agree on which snapshots feed a
  * horizon. The use case chains the returns through it, and
- * the KPI cards read the same window, so the labels and the
- * values can never drift apart.
+ * the summary and the charts read the same window, so the
+ * labels and the values can never drift apart.
  *
  * @param performances - The daily snapshots, in any order.
  * @param from - The inclusive start of the window. Falls
@@ -89,11 +123,11 @@ function TimeOf(
  *
  * @date 2026-09-26
  */
-export function ResolvePeriodWindow(
-  performances: readonly PortfolioPerformanceResponseDTO[],
+export function ResolvePeriodWindow<T extends PerformanceSnapshot>(
+  performances: readonly T[],
   from: Date | null,
   to: Date | null
-): PortfolioPeriodWindow {
+): PeriodWindow<T> {
   const SNAPSHOTS = [...performances].sort((left, right) =>
     left.date.localeCompare(right.date)
   )
@@ -115,7 +149,7 @@ export function ResolvePeriodWindow(
 
   const END = IN_WINDOW[IN_WINDOW.length - 1] ?? null
 
-  let OPENING: PortfolioPerformanceResponseDTO | null = null
+  let OPENING: T | null = null
   for (
     let INDEX = SNAPSHOTS.length - 1;
     INDEX >= 0;
@@ -177,8 +211,8 @@ export function ResolvePeriodWindow(
  *
  * @date 2026-09-26
  */
-export function SumSeriesEarnings(
-  series: readonly PortfolioPerformanceResponseDTO[]
+export function SumSeriesEarnings<T extends PerformanceSnapshot>(
+  series: readonly T[]
 ): number {
   return series.reduce(
     (sum, snapshot) => sum + ToAmount(snapshot.earnings),
@@ -200,7 +234,7 @@ export function SumSeriesEarnings(
  *
  * @date 2026-09-29
  */
-export interface PortfolioPeriodCashFlows {
+export interface PeriodCashFlows {
   // Money applied inside the horizon, as an amount.
   deposits: number
   // Money redeemed inside the horizon, as a positive amount.
@@ -234,10 +268,10 @@ export interface PortfolioPeriodCashFlows {
  *
  * @date 2026-09-29
  */
-export function SumSeriesCashFlows(
-  series: readonly PortfolioPerformanceResponseDTO[]
-): PortfolioPeriodCashFlows {
-  return series.reduce<PortfolioPeriodCashFlows>(
+export function SumSeriesCashFlows<T extends PerformanceSnapshot>(
+  series: readonly T[]
+): PeriodCashFlows {
+  return series.reduce<PeriodCashFlows>(
     (flows, snapshot) => {
       const FLOW = ToAmount(snapshot.cashFlowNet)
 
@@ -248,4 +282,69 @@ export function SumSeriesCashFlows(
     },
     { deposits: 0, withdrawals: 0 }
   )
+}
+
+/**
+ * @summary
+ * Chains a horizon of daily returns into a period return.
+ *
+ * @remarks
+ * Builds the growth factor of every daily return of the
+ * series and hands them to the domain return calculator
+ * passed in. A horizon holding fewer than two usable daily
+ * returns falls back to the trailing return stored on the
+ * closing snapshot, and a horizon with no trailing return to
+ * fall back to resolves to `null`.
+ *
+ * @typeParam T - Snapshot type of the resolved horizon.
+ *
+ * @explanation
+ * Use this calculator from the period return use cases of
+ * the portfolio and of the position. The formula itself
+ * stays in the domain calculator each route chains through,
+ * so no delivery layer ever reimplements the chaining.
+ *
+ * @param series - The snapshots of the horizon.
+ * @param stored - The trailing return of the closing
+ *   snapshot, used as the fallback, or `null` when the
+ *   horizon has no stored return to fall back to.
+ * @param chain - The domain return calculator of the
+ *   registry, which turns the daily growth factors into the
+ *   chained signed percentage.
+ *
+ * @returns The chained period return, or `null`.
+ *
+ * @example
+ * const RESULT = ChainPeriodReturn(
+ *   WINDOW.yearSeries,
+ *   END.returnYearly,
+ *   calculateReturn
+ * );
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-29
+ */
+export function ChainPeriodReturn<T extends PerformanceSnapshot>(
+  series: readonly T[],
+  stored: string | null,
+  chain: (input: {
+    dailyGrowthFactors: { value: GrowthFactor }[]
+  }) => SignedPercentage
+): string | null {
+  const FACTORS: { value: GrowthFactor }[] = []
+
+  for (const snapshot of series) {
+    const FACTOR_VALUE = 1 + ToAmount(snapshot.returnDaily) / 100
+    if (!Number.isFinite(FACTOR_VALUE) || FACTOR_VALUE < 0) {
+      continue
+    }
+    FACTORS.push({ value: GrowthFactor.create(FACTOR_VALUE) })
+  }
+
+  if (FACTORS.length >= 2) {
+    return chain({ dailyGrowthFactors: FACTORS }).value.toString()
+  }
+
+  return stored === null ? null : String(ToAmount(stored))
 }

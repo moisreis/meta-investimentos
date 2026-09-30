@@ -1,4 +1,5 @@
 import { getPortfolioNameAction } from "@/presentation/routes/portfolio/actions/get-portfolio-name.action"
+import { getPositionNameAction } from "@/presentation/routes/position/actions/get-position-name.action"
 
 // Resolves a dynamic breadcrumb segment by id.
 export type MainBreadcrumbResolver = (
@@ -17,10 +18,23 @@ async function ResolvePortfolioName(
   return { name: RESULT.data }
 }
 
+async function ResolvePositionName(
+  id: string
+): Promise<{ name: string | null }> {
+  const RESULT = await getPositionNameAction(id)
+
+  if (!RESULT.success) {
+    return { name: null }
+  }
+
+  return { name: RESULT.data }
+}
+
 // Dynamic detail resolvers keyed by their parent href.
 export const MAIN_BREADCRUMB_RESOLVERS: Record<
   string,
   MainBreadcrumbResolver
 > = {
   "/portfolio": ResolvePortfolioName,
+  "/position": ResolvePositionName,
 }

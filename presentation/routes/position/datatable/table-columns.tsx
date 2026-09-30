@@ -19,6 +19,7 @@ import type { PositionRowLookup } from "../types/position-list.types"
 
 export interface PositionTableColumnOptions {
   rowFor: (positionId: string) => PositionRowLookup | null
+  onView: (position: PositionRow) => void
   onDelete: (position: PositionRow) => void
 }
 
@@ -38,10 +39,11 @@ export interface PositionTableColumnOptions {
  * balance column renders the nullable decimal string
  * through the currency presenter aligned to the end.
  * The actions column is pinned to the end and offers a
- * delete action for each row.
+ * view and a delete action for each row.
  *
  * @param columnHelper - The entity column helper.
- * @param options - The row lookup resolver and delete callback.
+ * @param options - The row lookup resolver, and the view and
+ *                  delete callbacks.
  *
  * @returns The position column definitions.
  *
@@ -85,7 +87,9 @@ export function CreatePositionTableColumns(
           <EntityLookupCell
             title={LOOKUP?.fundName}
             subtitle={
-              LOOKUP?.fundCnpj ? FormatCnpj(LOOKUP.fundCnpj) : undefined
+              LOOKUP?.fundCnpj
+                ? FormatCnpj(LOOKUP.fundCnpj)
+                : undefined
             }
           />
         )
@@ -118,6 +122,11 @@ export function CreatePositionTableColumns(
         <EntityTableRowMenuDropdown
           label={POSITION_DATATABLE.ROW_ACTIONS_LABEL}
           actions={[
+            {
+              key: "view",
+              label: POSITION_DATATABLE.ROW_VIEW_LABEL,
+              onSelect: () => options.onView(row.original),
+            },
             {
               key: "delete",
               label: POSITION_DATATABLE.ROW_DELETE_LABEL,

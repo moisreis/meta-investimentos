@@ -4,6 +4,7 @@ import type {
   ColumnDef,
   ColumnHelper,
 } from "@tanstack/react-table"
+import Link from "next/link"
 
 import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
@@ -52,12 +53,21 @@ export function CreatePortfolioPositionsColumns(
       size: 280,
       meta: { fluid: true },
       enableSorting: false,
-      cell: (info) => (
-        <EntityLookupCell
-          title={info.getValue()}
-          subtitle={info.row.original.bankName}
-        />
-      ),
+      cell: (info) => {
+        const POSITION_ID = info.row.original.positionId
+
+        return (
+          <Link
+            href={`/position/${POSITION_ID}`}
+            className="block w-full max-w-full"
+          >
+            <EntityLookupCell
+              title={info.getValue()}
+              subtitle={info.row.original.bankName}
+            />
+          </Link>
+        )
+      },
     }),
 
     columnHelper.accessor("bankName", {

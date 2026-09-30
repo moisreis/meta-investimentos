@@ -2,20 +2,27 @@ import { db } from "@/clients/database.client"
 import { ApplicationRepository } from "@/infrastructure/application/repositories/application.repository"
 import { FundRepository } from "@/infrastructure/fund/repositories/fund.repository"
 import { PortfolioRepository } from "@/infrastructure/portfolio/repositories/portfolio.repository"
+import { PositionPerformanceRepository } from "@/infrastructure/position-performance/repositories/position-performance.repository"
 import { PositionRepository } from "@/infrastructure/position/repositories/position.repository"
 import { WithdrawalRepository } from "@/infrastructure/withdrawal/repositories/withdrawal.repository"
 import { ListFundsUseCase } from "@/services/fund/use-cases/list-funds.use-case"
 import { ListPortfoliosUseCase } from "@/services/portfolio/use-cases/list-portfolios.use-case"
+import { DeletePositionUseCase } from "@/services/position/use-cases/delete-position.use-case"
+import { GetPositionUseCase } from "@/services/position/use-cases/get-position.use-case"
 import { ListAllPositionsUseCase } from "@/services/position/use-cases/list-all-positions.use-case"
 import { ListPositionWeightsUseCase } from "@/services/position/use-cases/list-position-weights.use-case"
-import { DeletePositionUseCase } from "@/services/position/use-cases/delete-position.use-case"
+import { ListPositionPerformanceUseCase } from "@/services/position-performance/use-cases/list-position-performance.use-case"
+import { ResolvePositionPeriodReturnsUseCase } from "@/services/position-performance/use-cases/resolve-position-period-returns.use-case"
 
 // The position use cases, already wired to the repository.
 interface PositionUseCases {
+  get: GetPositionUseCase
   list: ListPortfoliosUseCase
   listAll: ListAllPositionsUseCase
   listFunds: ListFundsUseCase
   listWeights: ListPositionWeightsUseCase
+  listPerformances: ListPositionPerformanceUseCase
+  resolvePeriodReturns: ResolvePositionPeriodReturnsUseCase
   delete: DeletePositionUseCase
 }
 
@@ -53,8 +60,11 @@ function PositionContainer(): PositionUseCases {
   const FUND_REPOSITORY = new FundRepository(db)
   const APPLICATION_REPOSITORY = new ApplicationRepository(db)
   const WITHDRAWAL_REPOSITORY = new WithdrawalRepository(db)
+  const POSITION_PERFORMANCE_REPOSITORY =
+    new PositionPerformanceRepository(db)
 
   return {
+    get: new GetPositionUseCase(POSITION_REPOSITORY),
     list: new ListPortfoliosUseCase(PORTFOLIO_REPOSITORY),
     listAll: new ListAllPositionsUseCase(POSITION_REPOSITORY),
     listFunds: new ListFundsUseCase(FUND_REPOSITORY),
@@ -62,6 +72,14 @@ function PositionContainer(): PositionUseCases {
       POSITION_REPOSITORY,
       APPLICATION_REPOSITORY,
       WITHDRAWAL_REPOSITORY
+    ),
+    listPerformances: new ListPositionPerformanceUseCase(
+      POSITION_PERFORMANCE_REPOSITORY
+    ),
+    resolvePeriodReturns: new ResolvePositionPeriodReturnsUseCase(
+      POSITION_REPOSITORY,
+      PORTFOLIO_REPOSITORY,
+      POSITION_PERFORMANCE_REPOSITORY
     ),
     delete: new DeletePositionUseCase(POSITION_REPOSITORY),
   }

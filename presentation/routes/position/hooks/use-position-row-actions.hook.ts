@@ -11,7 +11,8 @@ import type { PositionRow } from "@/presentation/types/position-row.types"
  *
  * @remarks
  * Maps the row id to the route delete server action
- * only. The shared hook owns the confirm dialog
+ * and the view action to the detail screen of the
+ * position. The shared hook owns the confirm dialog
  * state and the delete result toast status.
  *
  * @returns The row actions and delete dialog state.
@@ -23,6 +24,7 @@ import type { PositionRow } from "@/presentation/types/position-row.types"
 function usePositionRowActions() {
   return useEntityRowActions<PositionRow>({
     runDelete: (id) => deletePositionAction({ positionId: id }),
+    onView: (row, router) => router.push(`/position/${row.id}`),
   })
 }
 

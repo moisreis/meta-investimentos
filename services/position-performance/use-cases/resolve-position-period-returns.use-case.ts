@@ -1,25 +1,26 @@
-import { calculatePortfolioReturn } from "@domain/portfolio/calculators/return.calculator"
+import { calculateReturn } from "@domain/position/calculators/return.calculator"
 import type { IPortfolio } from "@domain/portfolio/interfaces/portfolio.interface"
-import type { IPortfolioPerformance } from "@domain/portfolio-performance/interfaces/portfolio-performance.interface"
+import type { IPosition } from "@domain/position/interfaces/position.interface"
+import type { IPositionPerformance } from "@domain/position-performance/interfaces/position-performance.interface"
 import { NotFoundError } from "@errors/not-found.error"
 import { EntityId } from "@/value-objects"
 
 import {
   ChainPeriodReturn,
   ResolvePeriodWindow,
-} from "../calculators/period-window.calculator"
-import { toResponseDTO } from "../mappers/portfolio-performance.mapper"
+} from "@/services/portfolio-performance/calculators/period-window.calculator"
+import { toResponseDTO } from "../mappers/position-performance.mapper"
 
-export interface ResolvePortfolioPeriodReturnsInput {
-  portfolioId: string
+export interface ResolvePositionPeriodReturnsInput {
+  positionId: string
   /** Owning user id; ownership is always enforced. */
   userId: string
   from: Date
   to: Date
 }
 
-// The period metrics of a portfolio performance window.
-export interface PortfolioPeriodReturnsDTO {
+// The period metrics of a position performance window.
+export interface PositionPeriodReturnsDTO {
   // Chained year return, as an unmasked decimal string.
   // Null when the horizon cannot be resolved.
   yearReturn: string | null
@@ -34,38 +35,32 @@ export interface PortfolioPeriodReturnsDTO {
   periodReturn: string | null
 }
 
-// Parses a numeric snapshot field to a finite amount.
-function ToAmount(value: string | null | undefined): number {
-  if (value === null || value === undefined) return 0
-  const PARSED = Number.parseFloat(value)
-  return Number.isFinite(PARSED) ? PARSED : 0
-}
-
 /**
  * @summary
- * Resolves the period returns of a portfolio performance
+ * Resolves the period returns of a position performance
  * window.
  *
  * @remarks
- * Fetches the portfolio, rejects it when it belongs to
- * another user, lists its daily snapshots and chains the
- * daily growth factors of the year, month and selected
- * window horizons through the domain return calculator. The
+ * Fetches the position, walks to its portfolio and rejects
+ * it when that portfolio belongs to another user, lists the
+ * daily snapshots of the position and chains the daily
+ * growth factors of the year, month and selected window
+ * horizons through the domain return calculator. The
  * business logic runs here, on the server, so the browser
  * never receives the domain formula.
  *
  * @explanation
  * Use this use case whenever a client needs the chained
- * returns of a portfolio performance window.
+ * returns of a position performance window.
  *
- * @param input - The portfolio, its owning user and the
+ * @param input - The position, its owning user and the
  *   inclusive window boundaries.
  *
  * @returns The chained year, month and window returns.
  *
  * @example
  * const RESULT = await USE_CASE.execute({
- *   portfolioId: "portfolio-1",
+ *   positionId: "position-1",
  *   userId: "user-1",
  *   from: FROM_DATE,
  *   to: TO_DATE,
@@ -73,12 +68,13 @@ function ToAmount(value: string | null | undefined): number {
  *
  * @author Moisés Reis
  *
- * @date 2026-09-26
+ * @date 2026-09-29
  */
-export class ResolvePortfolioPeriodReturnsUseCase {
+export class ResolvePositionPeriodReturnsUseCase {
   constructor(
+    private positionRepository: IPosition,
     private portfolioRepository: IPortfolio,
-    private portfolioPerformanceRepository: IPortfolioPerformance
+    private positionPerformanceRepository: IPositionPerformance
   ) {}
 
   /**
@@ -86,25 +82,26 @@ export class ResolvePortfolioPeriodReturnsUseCase {
    * Resolves the chained period returns of the window.
    *
    * @remarks
-   * Fetches the portfolio, rejects it when it belongs to
-   * another user, lists its daily snapshots and chains the
-   * daily growth factors of the year and month horizons
+   * Fetches the position, walks to its portfolio, rejects it
+   * when that portfolio belongs to another user, lists the
+   * daily snapshots of the position and chains the daily
+   * growth factors of the year, month and window horizons
    * through the domain return calculator. The business logic
    * runs here, on the server, so the browser never receives
    * the domain formula.
    *
    * @explanation
    * Use this method whenever a client needs the chained
-   * returns of a portfolio performance window.
+   * returns of a position performance window.
    *
-   * @param input - The portfolio, its owning user and the
+   * @param input - The position, its owning user and the
    *   inclusive window boundaries.
    *
    * @returns The chained year, month and window returns.
    *
    * @example
    * const RESULT = await USE_CASE.execute({
-   *   portfolioId: "portfolio-1",
+   *   positionId: "position-1",
    *   userId: "user-1",
    *   from: FROM_DATE,
    *   to: TO_DATE,
@@ -112,26 +109,30 @@ export class ResolvePortfolioPeriodReturnsUseCase {
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-26
+   * @date 2026-09-29
    */
   async execute(
-    input: ResolvePortfolioPeriodReturnsInput
-  ): Promise<PortfolioPeriodReturnsDTO> {
+    input: ResolvePositionPeriodReturnsInput
+  ): Promise<PositionPeriodReturnsDTO> {
+    const POSITION = await this.positionRepository.findById(
+      EntityId.create(input.positionId)
+    )
+
+    if (!POSITION || !POSITION.id) {
+      throw new NotFoundError("`Position` not found.")
+    }
+
     const PORTFOLIO = await this.portfolioRepository.findById(
-      EntityId.create(input.portfolioId)
+      POSITION.portfolioId
     )
 
     if (!PORTFOLIO || PORTFOLIO.userId !== input.userId) {
       throw new NotFoundError("`Portfolio` not found.")
     }
 
-    if (!PORTFOLIO.id) {
-      throw new NotFoundError("`Portfolio` not found.")
-    }
-
     const PERFORMANCES =
-      await this.portfolioPerformanceRepository.findAllByPortfolioId(
-        PORTFOLIO.id
+      await this.positionPerformanceRepository.findAllByPositionId(
+        POSITION.id
       )
 
     const DTOs = PERFORMANCES.map((entity) =>
@@ -148,17 +149,17 @@ export class ResolvePortfolioPeriodReturnsUseCase {
       yearReturn: ChainPeriodReturn(
         WINDOW.yearSeries,
         WINDOW.end?.returnYearly ?? null,
-        calculatePortfolioReturn
+        calculateReturn
       ),
       monthReturn: ChainPeriodReturn(
         WINDOW.monthSeries,
         WINDOW.end?.returnMonthly ?? null,
-        calculatePortfolioReturn
+        calculateReturn
       ),
       periodReturn: ChainPeriodReturn(
         WINDOW.inWindow,
         null,
-        calculatePortfolioReturn
+        calculateReturn
       ),
     }
   }

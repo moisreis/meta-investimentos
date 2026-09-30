@@ -10,6 +10,7 @@ import { ListCategoriesUseCase } from "@/services/category/use-cases/list-catego
 import { BulkDeleteFundsUseCase } from "@/services/fund/use-cases/bulk-delete-funds.use-case"
 import { CreateFundUseCase } from "@/services/fund/use-cases/create-fund.use-case"
 import { DeleteFundUseCase } from "@/services/fund/use-cases/delete-fund.use-case"
+import { GetFundUseCase } from "@/services/fund/use-cases/get-fund.use-case"
 import { ListFundRowSummariesUseCase } from "@/services/fund/use-cases/list-fund-row-summaries.use-case"
 import { ListFundsUseCase } from "@/services/fund/use-cases/list-funds.use-case"
 import { UpdateFundUseCase } from "@/services/fund/use-cases/update-fund.use-case"
@@ -18,6 +19,7 @@ import { UpdateFundUseCase } from "@/services/fund/use-cases/update-fund.use-cas
 interface FundUseCases {
   bulkDelete: BulkDeleteFundsUseCase
   create: CreateFundUseCase
+  get: GetFundUseCase
   list: ListFundsUseCase
   listBanks: ListBanksUseCase
   listBenchmarks: ListBenchmarksUseCase
@@ -66,6 +68,7 @@ function FundContainer(): FundUseCases {
   return {
     bulkDelete: new BulkDeleteFundsUseCase(REPOSITORY),
     create: new CreateFundUseCase(REPOSITORY),
+    get: new GetFundUseCase(REPOSITORY),
     list: new ListFundsUseCase(REPOSITORY),
     listBanks: new ListBanksUseCase(BANK_REPOSITORY),
     listBenchmarks: new ListBenchmarksUseCase(
