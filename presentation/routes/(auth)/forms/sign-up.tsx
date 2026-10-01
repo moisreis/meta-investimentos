@@ -3,8 +3,8 @@
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
 
-import { AuthCpfInput } from "@/presentation/parts/components/auth-cpf-input"
-import { AuthSignUpToast } from "@/presentation/parts/components/auth-sign-up-toast"
+import { AuthCpfInput } from "../components/auth-cpf-input"
+import { AuthSignUpToast } from "../components/auth-sign-up-toast"
 
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
@@ -65,7 +65,7 @@ function SignUpForm() {
     <SharedFormWrapper onSubmit={handleSubmit}>
       <FieldGroup>
         <SharedFormField
-          label="Nome completo"
+          label={SIGN_UP.LABEL_FULL_NAME}
           error={fieldErrors.name}
           htmlFor="name"
         >
@@ -74,7 +74,7 @@ function SignUpForm() {
             type="text"
             name="name"
             autoComplete="name"
-            placeholder="Maria Oliveira"
+            placeholder={SIGN_UP.PLACEHOLDER_FULL_NAME}
             required
             value={name}
             onChange={(e) => updateName(e.target.value)}
@@ -84,7 +84,7 @@ function SignUpForm() {
         </SharedFormField>
 
         <SharedFormField
-          label="Nome"
+          label={SIGN_UP.LABEL_FIRST_NAME}
           error={fieldErrors.firstName}
           htmlFor="firstName"
         >
@@ -92,7 +92,7 @@ function SignUpForm() {
             id="firstName"
             type="text"
             name="firstName"
-            placeholder="Maria"
+            placeholder={SIGN_UP.PLACEHOLDER_FIRST_NAME}
             required
             value={firstName}
             onChange={(e) => updateFirstName(e.target.value)}
@@ -104,7 +104,7 @@ function SignUpForm() {
         </SharedFormField>
 
         <SharedFormField
-          label="Sobrenome"
+          label={SIGN_UP.LABEL_LAST_NAME}
           error={fieldErrors.lastName}
           htmlFor="lastName"
         >
@@ -112,7 +112,7 @@ function SignUpForm() {
             id="lastName"
             type="text"
             name="lastName"
-            placeholder="Oliveira"
+            placeholder={SIGN_UP.PLACEHOLDER_LAST_NAME}
             required
             value={lastName}
             onChange={(e) => updateLastName(e.target.value)}
@@ -124,7 +124,7 @@ function SignUpForm() {
         </SharedFormField>
 
         <SharedFormField
-          label="E-mail"
+          label={SIGN_UP.LABEL_EMAIL}
           error={fieldErrors.email}
           htmlFor="email"
         >
@@ -133,7 +133,7 @@ function SignUpForm() {
             type="email"
             name="email"
             autoComplete="email"
-            placeholder="seu@email.com"
+            placeholder={SIGN_UP.PLACEHOLDER_EMAIL}
             required
             value={email}
             onChange={(e) => updateEmail(e.target.value)}
@@ -143,7 +143,7 @@ function SignUpForm() {
         </SharedFormField>
 
         <SharedFormField
-          label="CPF"
+          label={SIGN_UP.LABEL_CPF}
           error={fieldErrors.cpf}
           htmlFor="cpf"
         >
@@ -157,7 +157,7 @@ function SignUpForm() {
         </SharedFormField>
 
         <SharedFormField
-          label="Senha"
+          label={SIGN_UP.LABEL_PASSWORD}
           error={fieldErrors.password}
           htmlFor="password"
         >
@@ -180,7 +180,7 @@ function SignUpForm() {
       <SharedSubmitButton
         pending={pending}
         label={SIGN_UP.SIGN_UP_BUTTON}
-        pendingLabel="Criando conta"
+        pendingLabel={SIGN_UP.PENDING_BUTTON}
       />
       <AuthSignUpToast status={status} errorMessage={error} />
     </SharedFormWrapper>

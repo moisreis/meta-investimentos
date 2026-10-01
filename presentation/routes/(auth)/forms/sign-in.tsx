@@ -7,7 +7,7 @@ import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-w
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 
-import { AuthSignInToast } from "@/presentation/parts/components/auth-sign-in-toast"
+import { AuthSignInToast } from "../components/auth-sign-in-toast"
 
 import { useSignIn } from "@/presentation/routes/(auth)/hooks/use-sign-in.hook"
 
@@ -55,7 +55,7 @@ function SignInForm() {
     <SharedFormWrapper onSubmit={handleSubmit}>
       <FieldGroup>
         <SharedFormField
-          label="E-mail"
+          label={SIGN_IN.LABEL_EMAIL}
           error={fieldErrors.email}
           htmlFor="email"
         >
@@ -64,7 +64,7 @@ function SignInForm() {
             type="email"
             name="email"
             autoComplete="email"
-            placeholder="seu@email.com"
+            placeholder={SIGN_IN.PLACEHOLDER_EMAIL}
             required
             value={email}
             onChange={(e) => updateEmail(e.target.value)}
@@ -73,7 +73,7 @@ function SignInForm() {
           />
         </SharedFormField>
         <SharedFormField
-          label="Senha"
+          label={SIGN_IN.LABEL_PASSWORD}
           error={fieldErrors.password}
           htmlFor="password"
         >
@@ -95,7 +95,7 @@ function SignInForm() {
       <SharedSubmitButton
         pending={pending}
         label={SIGN_IN.SIGN_IN_BUTTON}
-        pendingLabel="Entrando"
+        pendingLabel={SIGN_IN.PENDING_BUTTON}
       />
       <AuthSignInToast status={status} errorMessage={error} />
     </SharedFormWrapper>

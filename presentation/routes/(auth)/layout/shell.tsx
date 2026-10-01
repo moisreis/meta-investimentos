@@ -1,8 +1,14 @@
-import { AuthCopyright } from "@/presentation/parts/components/auth-copyright"
-import { AuthShellWrapper } from "@/presentation/parts/components/auth-shell-wrapper"
-import { AuthBackgroundWrapper } from "@/presentation/parts/components/auth-background-wrapper"
-import { AuthFluidBackground } from "@/presentation/parts/components/auth-fluid-background"
-import { AuthCard } from "@/presentation/parts/components/auth-card"
+"use client"
+
+import { SharedAuthBackdrop } from "@/presentation/parts/auth/shared-auth-backdrop"
+import { SharedAuthCard } from "@/presentation/parts/auth/shared-auth-card"
+import { SharedAuthCopyright } from "@/presentation/parts/auth/shared-auth-copyright"
+import { SharedAuthFluidBackdrop } from "@/presentation/parts/auth/shared-auth-fluid-backdrop"
+import { SharedAuthSecondaryLink } from "@/presentation/parts/auth/shared-auth-secondary-link"
+import { SharedAuthShell } from "@/presentation/parts/auth/shared-auth-shell"
+
+import { useAuthSecondaryLink } from "../hooks/use-auth-secondary-link.hook"
+import { AUTH_COPYRIGHT } from "../settings/labels.settings"
 
 interface AuthShellProps {
   // Content rendered inside the card body.
@@ -23,6 +29,11 @@ interface AuthShellProps {
  * Composes the **AsciiFluid** background, a centered **Card**
  * with title, description and children, plus the secondary
  * link footer and the brand copyright notice.
+ *
+ * The frame is a client component because the secondary link
+ * reads the pathname to decide which way it points, and the
+ * sign-in and sign-up pages are the only two destinations it
+ * has to tell apart.
  *
  * @explanation
  * Use this layout for the sign-in and sign-up routes to keep
@@ -51,16 +62,30 @@ function AuthShell({
   description,
   title,
 }: AuthShellProps) {
+  const LINK = useAuthSecondaryLink()
+
   return (
-    <AuthShellWrapper>
-      <AuthBackgroundWrapper>
-        <AuthFluidBackground />
-        <AuthCard title={title} description={description}>
+    <SharedAuthShell>
+      <SharedAuthBackdrop>
+        <SharedAuthFluidBackdrop />
+
+        <SharedAuthCard
+          title={title}
+          description={description}
+          footer={
+            <SharedAuthSecondaryLink
+              text={LINK.text}
+              href={LINK.href}
+              linkLabel={LINK.linkLabel}
+            />
+          }
+        >
           {children}
-        </AuthCard>
-      </AuthBackgroundWrapper>
-      <AuthCopyright />
-    </AuthShellWrapper>
+        </SharedAuthCard>
+      </SharedAuthBackdrop>
+
+      <SharedAuthCopyright text={AUTH_COPYRIGHT} />
+    </SharedAuthShell>
   )
 }
 

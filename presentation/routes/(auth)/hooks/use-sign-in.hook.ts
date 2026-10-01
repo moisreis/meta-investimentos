@@ -1,8 +1,8 @@
 "use client"
 
-import { authClient } from "@/clients/auth.client"
+import { AuthContainer } from "@/presentation/composition/auth.container"
 import { SIGN_IN_FORM_SCHEMA } from "@/presentation/routes/(auth)/validations/sign-in.validation"
-import { useAuthForm } from "@/presentation/parts/hooks/use-auth-form.hook"
+import { useAuthForm } from "./use-auth-form.hook"
 
 // Human-readable authentication error messages.
 const SIGN_IN_ERROR_MESSAGES: Record<string, string> = {
@@ -40,6 +40,7 @@ const SIGN_IN_ERROR_MESSAGES: Record<string, string> = {
  * @date 2026-09-23
  */
 function useSignIn() {
+  const AUTH = AuthContainer()
   const {
     values: VALUES,
     updateField,
@@ -52,7 +53,7 @@ function useSignIn() {
     schema: SIGN_IN_FORM_SCHEMA,
     initialValues: { email: "", password: "" },
     errorMessages: SIGN_IN_ERROR_MESSAGES,
-    submit: (values) => authClient.signIn.email(values),
+    submit: (values) => AUTH.signIn(values),
   })
 
   return {

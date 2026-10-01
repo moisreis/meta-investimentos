@@ -1,9 +1,9 @@
 "use client"
 
-import { authClient } from "@/clients/auth.client"
+import { AuthContainer } from "@/presentation/composition/auth.container"
 import { UnmaskCPF } from "@/presentation/masks/cpf.mask"
 import { SIGN_UP_FORM_SCHEMA } from "@/presentation/routes/(auth)/validations/sign-up.validation"
-import { useAuthForm } from "@/presentation/parts/hooks/use-auth-form.hook"
+import { useAuthForm } from "./use-auth-form.hook"
 
 // Human-readable authentication error messages.
 const SIGN_UP_ERROR_MESSAGES: Record<string, string> = {
@@ -41,6 +41,7 @@ const SIGN_UP_ERROR_MESSAGES: Record<string, string> = {
  * @date 2026-09-23
  */
 function useSignUp() {
+  const AUTH = AuthContainer()
   const {
     values: VALUES,
     updateField,
@@ -61,10 +62,7 @@ function useSignUp() {
     },
     errorMessages: SIGN_UP_ERROR_MESSAGES,
     submit: (values) =>
-      authClient.signUp.email({
-        ...values,
-        cpf: UnmaskCPF(values.cpf),
-      } as Parameters<typeof authClient.signUp.email>[0]),
+      AUTH.signUp({ ...values, cpf: UnmaskCPF(values.cpf) }),
   })
 
   return {

@@ -31,4 +31,3 @@ const SIGN_UP_FORM_SCHEMA = z.object({
 type SignUpFormValues = z.infer<typeof SIGN_UP_FORM_SCHEMA>
 
 export { SIGN_UP_FORM_SCHEMA, type SignUpFormValues }
-

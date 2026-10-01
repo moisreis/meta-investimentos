@@ -10,7 +10,7 @@ import { ThemeProvider } from "@/presentation/theme/theme-provider"
 import { TooltipProvider } from "@/presentation/ui/tooltip"
 import { Toaster } from "@/presentation/ui/toast"
 import { cn } from "@/lib/utils"
-import BRAND from "@/presentation/constants/brand.constants"
+import { BRAND } from "@/presentation/constants/brand.constants"
 
 // Stores the **Manrope** heading font configuration, used by
 // the titles of the shared surfaces.
@@ -44,10 +44,10 @@ const FONT_MONO = Geist_Mono({
 // Configures document titles and short brand names.
 export const metadata: Metadata = {
   title: {
-    template: `%s | ${BRAND.BRAND_SHORT_NAME}`,
-    default: BRAND.BRAND_SHORT_NAME,
+    template: `%s | ${BRAND.SHORT_NAME}`,
+    default: BRAND.SHORT_NAME,
   },
-  description: BRAND.BRAND_LEGAL_NAME,
+  description: BRAND.LEGAL_NAME,
 }
 
 /**
