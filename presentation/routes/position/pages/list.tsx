@@ -49,7 +49,6 @@ function PositionList({
   data,
   lookups = EMPTY_POSITION_LOOKUPS,
 }: PositionListProps) {
-
   // Normalize missing position data to an empty array.
   const POSITIONS = data ?? []
 
@@ -59,7 +58,8 @@ function PositionList({
   // Build the position filters using the available positions.
   const FILTERS = usePositionDatatableFilters(POSITIONS)
 
-  // Build the datatable using the filtered positions and lookup data.
+  // Build the datatable from the filtered positions and the
+  // lookup data.
   const { table, rowActions } = usePositionDatatable(
     FILTERS.filteredPositions,
     lookups

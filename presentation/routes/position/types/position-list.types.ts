@@ -39,10 +39,15 @@ export interface PositionFilters {
  * @summary
  * Derived data rendered on a position row.
  *
+ * @remarks
+ * A position row carries no derived data yet, so the summary
+ * is an empty object. The prop stays on the confirm-delete
+ * dialog because every other list module passes summaries the
+ * same way, and a future derived field only has to be added
+ * here.
+ *
  * @author Moisés Reis
  *
  * @date 2026-09-27
  */
-export interface PositionRowSummary {
-  // Placeholder for future derived data.
-}
+export type PositionRowSummary = Record<string, never>

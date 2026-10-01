@@ -8,7 +8,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 
 import { DELETE_POSITION_SCHEMA } from "../validations/position-actions.validation"
 
@@ -62,6 +62,9 @@ export async function deletePositionAction(
 
     return ActionSuccess(undefined)
   } catch (cause) {
-    return ToActionFailure(cause, "Não foi possível excluir a posição.")
+    return ToActionFailure(
+      cause,
+      "Não foi possível excluir a posição."
+    )
   }
 }

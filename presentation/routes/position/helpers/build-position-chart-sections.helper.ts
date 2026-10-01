@@ -1,8 +1,8 @@
 import type { DateRange } from "react-day-picker"
 
-import { BuildAnnualChartModels } from "@/presentation/parts/charts/annual-chart-models.helper"
+import { BuildAnnualChartModels } from "@/presentation/parts/charts/entity-annual-chart-models.helper"
 import type { EntityChartSection } from "@/presentation/parts/charts/entity-chart-section.types"
-import { BuildPerformanceChartModels } from "@/presentation/parts/charts/performance-chart-models.helper"
+import { BuildPerformanceChartModels } from "@/presentation/parts/charts/entity-performance-chart-models.helper"
 import type { PositionPerformanceResponseDTO } from "@/services/position-performance/dto/position-performance-response.dto"
 
 import {

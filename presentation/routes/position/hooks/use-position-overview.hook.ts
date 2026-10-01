@@ -12,7 +12,7 @@ import type { DateRange } from "react-day-picker"
 import type { EntityChartSection } from "@/presentation/parts/charts/entity-chart-section.types"
 import type { EntitySummary } from "@/presentation/parts/components/entity-detail-summary"
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
-import type { PositionPeriodReturnsDTO } from "@/services/position-performance/use-cases/resolve-position-period-returns.use-case"
+import type { PositionPeriodReturns } from "@/presentation/types/position-period-returns.types"
 
 import { getPositionPeriodReturnsAction } from "../actions/get-position-period-returns.action"
 import { BuildPositionChartSections } from "../helpers/build-position-chart-sections.helper"
@@ -21,7 +21,7 @@ import { FilterPositionActivity } from "../helpers/filter-position-activity.help
 import type { PositionOverviewData } from "../types/position-overview.types"
 
 // Returns rendered before the server resolves the window.
-const EMPTY_PERIOD_RETURNS: PositionPeriodReturnsDTO = {
+const EMPTY_PERIOD_RETURNS: PositionPeriodReturns = {
   yearReturn: null,
   monthReturn: null,
   periodReturn: null,
@@ -113,7 +113,7 @@ function usePositionOverview(
   )
 
   const [RETURNS_CACHE, setReturnsCache] = useState<
-    Record<string, PositionPeriodReturnsDTO>
+    Record<string, PositionPeriodReturns>
   >({})
 
   const PERIOD_RETURNS = ResolveCachedReturns(
@@ -216,10 +216,10 @@ function BuildRangeKey(
 // Reads the returns of the window from the cache, falling
 // back to the neutral payload while the server resolves it.
 function ResolveCachedReturns(
-  cache: Record<string, PositionPeriodReturnsDTO>,
+  cache: Record<string, PositionPeriodReturns>,
   positionId: string,
   dateRange: DateRange | undefined
-): PositionPeriodReturnsDTO {
+): PositionPeriodReturns {
   const FROM = dateRange?.from
   const TO = dateRange?.to
 

@@ -1,8 +1,5 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { PositionContainer } from "@/presentation/composition/position.container"
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import type { PositionResponseDTO } from "@/services/position/dto/position-response.dto"
 import { ToPositionRows } from "@/presentation/mappers/position-row.mapper"
 import { ToPortfolioRows } from "@/presentation/mappers/portfolio-row.mapper"
 import { ToFundRows } from "@/presentation/mappers/fund-row.mapper"

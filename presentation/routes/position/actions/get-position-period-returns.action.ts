@@ -8,8 +8,8 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
-import type { PositionPeriodReturnsDTO } from "@/services/position-performance/use-cases/resolve-position-period-returns.use-case"
+} from "@/presentation/presenters/action-result.presenter"
+import type { PositionPeriodReturns } from "@/presentation/types/position-period-returns.types"
 
 import { GET_POSITION_PERIOD_RETURNS_SCHEMA } from "../validations/position-actions.validation"
 
@@ -60,7 +60,7 @@ const START_OF_DAY = "T00:00:00.000Z"
  */
 export async function getPositionPeriodReturnsAction(
   input: unknown
-): Promise<ActionResult<PositionPeriodReturnsDTO>> {
+): Promise<ActionResult<PositionPeriodReturns>> {
   const USER = await RequireSessionUser()
 
   if (!USER) {

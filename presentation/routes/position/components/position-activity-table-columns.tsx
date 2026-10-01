@@ -1,16 +1,14 @@
 "use client"
 
-import type {
-  ColumnDef,
-  ColumnHelper,
-} from "@tanstack/react-table"
+import type { ColumnHelper } from "@tanstack/react-table"
 
+import { EntityStateBadge } from "@/presentation/parts/datatable/columns/entity-state-badge"
+import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatDate } from "@/presentation/presenters/date.presenter"
 import { FormatQuotaQuantity } from "@/presentation/presenters/quota-quantity.presenter"
-import { Badge } from "@/presentation/ui/badge"
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
 
 import { POSITION_ACTIVITY } from "../settings/labels.settings"
@@ -47,7 +45,7 @@ export function CreatePositionActivityColumns(
     EntityTableFeatures,
     PortfolioActivityRow
   >
-): ColumnDef<EntityTableFeatures, PortfolioActivityRow, any>[] {
+): EntityColumnDef<PortfolioActivityRow>[] {
   return [
     columnHelper.accessor("kind", {
       id: "kind",
@@ -55,19 +53,13 @@ export function CreatePositionActivityColumns(
       size: 120,
       meta: { fluid: true },
       enableSorting: false,
-      cell: (info) => {
-        const IS_APPLICATION = info.getValue() === "application"
-
-        return (
-          <Badge
-            variant={IS_APPLICATION ? "default" : "destructive"}
-          >
-            {IS_APPLICATION
-              ? POSITION_ACTIVITY.TYPE_APPLICATION
-              : POSITION_ACTIVITY.TYPE_WITHDRAWAL}
-          </Badge>
-        )
-      },
+      cell: ({ getValue }) => (
+        <EntityStateBadge
+          matched={getValue() === "application"}
+          matchedLabel={POSITION_ACTIVITY.TYPE_APPLICATION}
+          unmatchedLabel={POSITION_ACTIVITY.TYPE_WITHDRAWAL}
+        />
+      ),
     }),
 
     columnHelper.accessor("fundName", {

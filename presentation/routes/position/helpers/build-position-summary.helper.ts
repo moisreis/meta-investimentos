@@ -1,7 +1,7 @@
 import type { DateRange } from "react-day-picker"
 
 import type { PositionPerformanceResponseDTO } from "@/services/position-performance/dto/position-performance-response.dto"
-import type { PositionPeriodReturnsDTO } from "@/services/position-performance/use-cases/resolve-position-period-returns.use-case"
+import type { PositionPeriodReturns } from "@/presentation/types/position-period-returns.types"
 import {
   ResolvePeriodWindow,
   SumSeriesCashFlows,
@@ -101,7 +101,7 @@ function ResolveTone(amount: number): EntitySummaryTone {
 export function BuildPositionSummary(
   performances: readonly PositionPerformanceResponseDTO[],
   dateRange: DateRange | undefined,
-  periodReturns: PositionPeriodReturnsDTO
+  periodReturns: PositionPeriodReturns
 ): EntitySummary | null {
   const WINDOW = ResolvePeriodWindow(
     performances,

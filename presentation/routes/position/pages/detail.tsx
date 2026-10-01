@@ -4,9 +4,10 @@ import { IconChartLine } from "@tabler/icons-react"
 
 import { EntityChartSections } from "@/presentation/parts/charts/entity-chart-sections"
 import { EntityDatatableToolbar } from "@/presentation/parts/components/entity-datatable-toolbar"
+import { EntityDetailShell } from "@/presentation/parts/components/entity-detail-shell"
 import { EntityDetailSummary } from "@/presentation/parts/components/entity-detail-summary"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import { EntityDateRangeFilter } from "@/presentation/parts/filters/date-range"
+import { EntityDateRangeFilter } from "@/presentation/parts/filters/entity-date-range"
 
 import { PositionActivityDatatable } from "../components/position-activity-datatable"
 import { usePositionOverview } from "../hooks/use-position-overview.hook"
@@ -39,6 +40,11 @@ interface PositionDetailProps {
  * design: the year is a fixed horizon, so it ignores the
  * window.
  *
+ * The page composes the blocks and owns no markup: the shell
+ * pins the toolbar, the summary is the shared detail block
+ * and the charts and the movements are the parts that render
+ * them.
+ *
  * Without a single snapshot the summary gives way to the
  * shared empty state. The rest of the screen still renders,
  * because movements describe what the position did, not only
@@ -64,8 +70,8 @@ function PositionDetail({ data }: PositionDetailProps) {
   const SUMMARY = overview.summary
 
   return (
-    <div className="min-h-full overflow-auto">
-      <div className="sticky top-0 z-50 h-11 w-full bg-background">
+    <EntityDetailShell
+      toolbar={
         <EntityDatatableToolbar
           filters={
             <EntityDateRangeFilter
@@ -81,8 +87,8 @@ function PositionDetail({ data }: PositionDetailProps) {
             />
           }
         />
-      </div>
-
+      }
+    >
       {SUMMARY ? (
         <EntityDetailSummary {...SUMMARY} />
       ) : (
@@ -96,7 +102,7 @@ function PositionDetail({ data }: PositionDetailProps) {
       <EntityChartSections sections={overview.chartSections} />
 
       <PositionActivityDatatable rows={overview.activityRows} />
-    </div>
+    </EntityDetailShell>
   )
 }
 

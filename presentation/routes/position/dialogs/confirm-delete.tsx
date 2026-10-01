@@ -5,7 +5,6 @@ import { EntityDeleteToast } from "@/presentation/parts/toasts/entity-delete-toa
 import { FormatPositionLookup } from "@/presentation/presenters/lookup.presenter"
 import { usePositionRowActions } from "@/presentation/routes/position/hooks/use-position-row-actions.hook"
 import { POSITION_DATATABLE } from "@/presentation/routes/position/settings/labels.settings"
-import type { PositionRowSummary } from "@/presentation/routes/position/types/position-list.types"
 import type { PositionRowLookup } from "@/presentation/routes/position/types/position-list.types"
 
 /**
@@ -14,7 +13,6 @@ import type { PositionRowLookup } from "@/presentation/routes/position/types/pos
 export interface PositionConfirmDeleteDialogProps {
   dialog: ReturnType<typeof usePositionRowActions>
   lookups: { rows: Record<string, PositionRowLookup> }
-  summaries?: Record<string, PositionRowSummary> | null
 }
 
 /**
@@ -30,7 +28,6 @@ export interface PositionConfirmDeleteDialogProps {
  * @param props - Props of the confirm-delete dialog.
  * @param props.dialog - The row actions flow state.
  * @param props.lookups - The position row lookups.
- * @param props.summaries - Per-row derived data keyed by id.
  *
  * @returns The position confirm-delete dialog flow.
  *
@@ -41,7 +38,6 @@ export interface PositionConfirmDeleteDialogProps {
 function PositionConfirmDeleteDialog({
   dialog,
   lookups,
-  summaries,
 }: PositionConfirmDeleteDialogProps) {
   const TARGET = dialog.deleteTarget
 

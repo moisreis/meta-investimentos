@@ -1,10 +1,8 @@
 "use client"
 
-import type {
-  ColumnDef,
-  ColumnHelper,
-} from "@tanstack/react-table"
+import type { ColumnHelper } from "@tanstack/react-table"
 
+import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
@@ -54,7 +52,7 @@ export interface PositionTableColumnOptions {
 export function CreatePositionTableColumns(
   columnHelper: ColumnHelper<EntityTableFeatures, PositionRow>,
   options: PositionTableColumnOptions
-): ColumnDef<EntityTableFeatures, PositionRow, any>[] {
+): EntityColumnDef<PositionRow>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 
@@ -63,16 +61,12 @@ export function CreatePositionTableColumns(
       header: POSITION_DATATABLE.COLUMN_PORTFOLIO,
       size: 180,
       meta: { fluid: true },
-      cell: (info) => {
-        const LOOKUP = info.getValue()
-
-        return (
-          <EntityLookupCell
-            title={LOOKUP?.portfolioName}
-            subtitle={LOOKUP?.portfolioAcronym}
-          />
-        )
-      },
+      cell: ({ getValue }) => (
+        <EntityLookupCell
+          title={getValue()?.portfolioName}
+          subtitle={getValue()?.portfolioAcronym}
+        />
+      ),
     }),
 
     columnHelper.accessor((row) => options.rowFor(row.id), {
@@ -80,20 +74,16 @@ export function CreatePositionTableColumns(
       header: POSITION_DATATABLE.COLUMN_FUND,
       size: 220,
       meta: { fluid: true },
-      cell: (info) => {
-        const LOOKUP = info.getValue()
-
-        return (
-          <EntityLookupCell
-            title={LOOKUP?.fundName}
-            subtitle={
-              LOOKUP?.fundCnpj
-                ? FormatCnpj(LOOKUP.fundCnpj)
-                : undefined
-            }
-          />
-        )
-      },
+      cell: ({ getValue }) => (
+        <EntityLookupCell
+          title={getValue()?.fundName}
+          subtitle={
+            getValue()?.fundCnpj
+              ? FormatCnpj(getValue().fundCnpj)
+              : undefined
+          }
+        />
+      ),
     }),
 
     columnHelper.accessor("createdAt", {

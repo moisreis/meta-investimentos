@@ -6,7 +6,10 @@ import type { PositionRow } from "@/presentation/types/position-row.types"
 
 interface PositionDatatableTableProps {
   table: EntityTable<PositionRow>
-  /** Enables the bulk delete confirm flow for the selected rows. */
+  /**
+   * Enables the bulk delete confirm flow for the selected
+   * rows.
+   */
   onBulkDelete?: (items: PositionRow[]) => void | Promise<void>
 }
 
@@ -32,7 +35,9 @@ function PositionDatatableTable({
   table,
   onBulkDelete,
 }: PositionDatatableTableProps) {
-  return <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+  return (
+    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+  )
 }
 
 export { PositionDatatableTable }
