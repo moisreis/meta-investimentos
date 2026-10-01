@@ -10,6 +10,7 @@ import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-w
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { FieldGroup } from "@/presentation/ui/field"
+import { getQuotaDatesAction } from "@/presentation/routes/quota/actions/get-quota-dates.action"
 
 import { useWithdrawalAddForm } from "../hooks/use-withdrawal-add-form.hook"
 import { useWithdrawalPositionScope } from "../hooks/use-withdrawal-position-scope.hook"
@@ -176,6 +177,7 @@ function AddWithdrawalForm({
             disabled={pending}
             aria-invalid={fieldErrors.date ? "true" : undefined}
             fundId={fundId}
+            loadDates={getQuotaDatesAction}
           />
         </SharedFormField>
         <SharedFormField

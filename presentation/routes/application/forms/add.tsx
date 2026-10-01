@@ -8,6 +8,7 @@ import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-w
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { FieldGroup } from "@/presentation/ui/field"
+import { getQuotaDatesAction } from "@/presentation/routes/quota/actions/get-quota-dates.action"
 
 import { useApplicationAddForm } from "../hooks/use-application-add-form.hook"
 import { APPLICATION_FORM } from "../settings/labels.settings"
@@ -162,6 +163,7 @@ function AddApplicationForm({
             disabled={pending}
             aria-invalid={fieldErrors.date ? "true" : undefined}
             fundId={fundId || undefined}
+            loadDates={getQuotaDatesAction}
           />
         </SharedFormField>
         <SharedFormField

@@ -64,14 +64,18 @@ const COLLECTION_VERBS = ["bulk-delete", "load", "list"]
 // that carries every action taken on a portfolio, so it
 // composes the calculation and the report dialogs of the
 // portfolio-performance and statement routes instead of
-// duplicating their flows.
+// duplicating their flows. The application and withdrawal
+// forms gate their date field on the quota dates of a fund,
+// so both reach into the quota route for that one query.
 const CROSS_ROUTE_ALLOWLIST: Record<string, string[]> = {
+  application: ["quota"],
   portfolio: [
     "application",
     "withdrawal",
     "portfolio-performance",
     "statement",
   ],
+  withdrawal: ["quota"],
 }
 
 // An import statement, whichever of the two shapes it takes:

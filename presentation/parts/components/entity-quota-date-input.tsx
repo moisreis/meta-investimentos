@@ -3,9 +3,15 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 
 import { FromDayKey, ToDayKey } from "@/lib/date/day-key"
-import { getQuotaDatesAction } from "@/presentation/routes/quota/actions/get-quota-dates.action"
 
 import { EntityDateInput } from "./entity-date-input"
+
+// Loads the quota dates of a fund. The route that renders
+// the form supplies the server action, so the part never
+// reaches into a route.
+export type EntityQuotaDatesLoader = (input: {
+  fundId: string
+}) => Promise<{ success: boolean; data?: string[] }>
 
 /**
  * Props for the quota-aware date picker.
@@ -23,6 +29,10 @@ export interface EntityQuotaDateInputProps {
   // while no fund is selected: the calendar then leaves every
   // day selectable instead of guessing.
   fundId: string | undefined
+
+  // Loads the quota dates of a fund. Injected by the route
+  // so the part carries no route import.
+  loadDates: EntityQuotaDatesLoader
 }
 
 // Copy of the quota-aware picker, which reads differently
@@ -48,8 +58,9 @@ const COPY = {
  * the fund has no price for. Changing the fund clears a date
  * that is no longer available for it.
  *
- * The quota dates are resolved through the quota server
- * action, the data query the picker depends on.
+ * The quota dates are resolved through the loader the
+ * route passes in, so the picker carries no dependency
+ * on the route that owns the query.
  *
  * @explanation
  * Use for the date field of the application and withdrawal
@@ -59,6 +70,7 @@ const COPY = {
  * @param props - Props of the date input.
  * @param props.fundId - The fund whose quota dates gate the
  * calendar. Pass `undefined` while no fund is selected.
+ * @param props.loadDates - Loads the quota dates of a fund.
  *
  * @returns The date picker with quota-gated disabled dates.
  *
@@ -76,6 +88,7 @@ function EntityQuotaDateInput({
   disabled = false,
   "aria-invalid": ariaInvalid,
   fundId,
+  loadDates,
 }: EntityQuotaDateInputProps) {
   // `null` means "not known yet", which is different from
   // "known to be empty". Gating on an empty set would hide
@@ -105,7 +118,7 @@ function EntityQuotaDateInput({
 
     let CANCELLED = false
 
-    getQuotaDatesAction({ fundId })
+    loadDates({ fundId })
       .then((result) => {
         if (CANCELLED) return
         setQuotaDates({
@@ -124,7 +137,7 @@ function EntityQuotaDateInput({
     return () => {
       CANCELLED = true
     }
-  }, [fundId])
+  }, [fundId, loadDates])
 
   // Fund the current selection was made against, so the date
   // is only cleared when the user switches to another fund.

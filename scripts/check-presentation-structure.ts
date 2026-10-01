@@ -275,6 +275,41 @@ function CheckLayering(files: string[]): void {
 }
 
 /**
+ * Reports a shared part that imports a route.
+ *
+ * @remarks
+ * A part is rendered by many screens, so it cannot own a
+ * route: whichever screen renders it supplies the server
+ * action as a prop, and the dependency points one way, from
+ * the route that knows its query to the part that shows it.
+ */
+function CheckPartRouteImports(files: string[]): void {
+  for (const file of files) {
+    const relativePath = ToRelative(file)
+    const isShared =
+      relativePath.startsWith("presentation/parts/") ||
+      relativePath.startsWith("presentation/ui/")
+    if (!isShared) continue
+
+    for (const specifier of ImportSpecifiers(file)) {
+      const target = ResolveSpecifier(specifier, file)
+      if (!target) continue
+      if (
+        !ToRelative(target).startsWith("presentation/routes/")
+      ) {
+        continue
+      }
+      Report(
+        "no-route-import",
+        relativePath,
+        "take the route's action from props instead"
+      )
+      break
+    }
+  }
+}
+
+/**
  * Reports an action named after a verb outside the vocabulary.
  */
 function CheckActionVerbs(files: string[]): void {
@@ -863,6 +898,7 @@ function Main(): void {
   CheckFileSuffix(files)
   CheckNoBarrel(files)
   CheckLayering(files)
+  CheckPartRouteImports(files)
   CheckActionVerbs(files)
   CheckEntityPrefixes(modules)
   CheckNoReExport(files)
