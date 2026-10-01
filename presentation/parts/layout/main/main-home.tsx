@@ -8,18 +8,14 @@ import {
 
 import { MAIN_NAVIGATION } from "@/presentation/parts/navigation/main-navigation.settings"
 
-// Copy of the shell home, which orients the person
-// instead of reporting anything.
-const COPY = {
-  // Screen heading.
-  TITLE: "Painel",
-
-  // One line of direction below the heading.
-  INTRO: "Escolha uma área para abrir.",
-
-  // The home does not link to itself.
-  HOME_HREF: "/main",
-} as const
+/**
+ * Copy shape for the main home screen, received as props.
+ */
+interface MainHomeCopy {
+  TITLE: string
+  INTRO: string
+  HOME_HREF: string
+}
 
 /**
  * @summary
@@ -33,17 +29,19 @@ const COPY = {
  * sidebar. The dashboard entry is dropped because a link
  * back to the current screen tells the person nothing.
  *
+ * @param copy - The copy strings for the home screen.
+ *
  * @returns The home screen of the main shell.
  *
  * @author Moisés Reis
  *
  * @date 2026-10-01
  */
-function MainHome() {
+function MainHome({ copy }: { copy: MainHomeCopy }) {
   const GROUPS = MAIN_NAVIGATION.map((group) => ({
     label: group.label,
     items: group.items.filter(
-      (item) => item.href !== COPY.HOME_HREF
+      (item) => item.href !== copy.HOME_HREF
     ),
   })).filter((group) => group.items.length > 0)
 
@@ -52,10 +50,10 @@ function MainHome() {
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-8 sm:px-6">
         <header className="flex flex-col gap-1">
           <h1 className="font-heading text-base font-medium">
-            {COPY.TITLE}
+            {copy.TITLE}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {COPY.INTRO}
+            {copy.INTRO}
           </p>
         </header>
 

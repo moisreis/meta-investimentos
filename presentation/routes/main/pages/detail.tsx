@@ -1,4 +1,5 @@
 import { MainHome } from "@/presentation/parts/layout/main/main-home"
+import { MAIN_HOME } from "../settings/labels.settings"
 
 /**
  * @summary
@@ -17,7 +18,7 @@ import { MainHome } from "@/presentation/parts/layout/main/main-home"
  * @date 2026-10-01
  */
 function MainDetail() {
-  return <MainHome />
+  return <MainHome copy={MAIN_HOME} />
 }
 
 export { MainDetail }
