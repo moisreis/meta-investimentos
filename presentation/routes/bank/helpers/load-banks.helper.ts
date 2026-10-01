@@ -1,6 +1,5 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { BankContainer } from "@/presentation/composition/bank.container"
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
 import { ToBankRows } from "@/presentation/mappers/bank-row.mapper"
 import type { BankRow } from "@/presentation/types/bank-row.types"
 

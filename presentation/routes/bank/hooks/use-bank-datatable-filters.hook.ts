@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 
 import type { BankRow } from "@/presentation/types/bank-row.types"
 

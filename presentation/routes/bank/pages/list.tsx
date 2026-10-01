@@ -24,6 +24,29 @@ export interface BankListProps {
   summaries?: Record<string, BankRowSummary> | null
 }
 
+/**
+ * @summary
+ * Renders the bank list page.
+ *
+ * @remarks
+ * Composes the KPI group, the toolbar with the search
+ * filter, the empty state and the datatable. The page
+ * renders no markup of its own, so the blocks above the
+ * table stay in the parts and the blocks below it stay
+ * in the route components.
+ *
+ * @param props - Props of the bank list page.
+ * @param props.data - The bank rows, or `null` while
+ *                     loading.
+ * @param props.summaries - The bank summaries the KPIs
+ *                          and the row actions read.
+ *
+ * @returns The bank list page.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-30
+ */
 function BankList({ data, summaries = null }: BankListProps) {
   const BANKS = data ?? []
   const HAS_BANKS = BANKS.length > 0

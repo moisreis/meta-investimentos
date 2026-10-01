@@ -8,7 +8,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
 
 import { UPDATE_BANK_SCHEMA } from "../validations/bank-actions.validation"

@@ -17,4 +17,3 @@ const BANK_FORM_SCHEMA = z.object({
 type BankFormValues = z.infer<typeof BANK_FORM_SCHEMA>
 
 export { BANK_FORM_SCHEMA, type BankFormValues }
-

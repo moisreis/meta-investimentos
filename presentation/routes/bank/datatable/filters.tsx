@@ -1,6 +1,6 @@
 "use client"
 
-import { EntitySearchFilter } from "@/presentation/parts/filters/search"
+import { EntitySearchFilter } from "@/presentation/parts/filters/entity-search"
 import { BANK_DATATABLE } from "@/presentation/routes/bank/settings/labels.settings"
 
 interface BankDatatableFiltersProps {

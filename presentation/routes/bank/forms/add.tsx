@@ -1,11 +1,10 @@
 "use client"
 
-import * as React from "react"
-
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
 
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
+import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
@@ -62,15 +61,13 @@ function AddBankForm({ onStatusChange }: AddBankFormProps) {
     handleSubmit,
   } = useBankAddForm()
 
-  React.useEffect(() => {
-    onStatusChange?.(status, error)
-  }, [status, error, onStatusChange])
+  useEntityFormStatus({ status, error, onStatusChange })
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
       <FieldGroup>
         <SharedFormField
-          label="Código"
+          label={BANK_FORM.LABEL_CODE}
           error={fieldErrors.code}
           htmlFor="code"
         >
@@ -79,7 +76,7 @@ function AddBankForm({ onStatusChange }: AddBankFormProps) {
             type="text"
             name="code"
             autoComplete="off"
-            placeholder="Ex.: 237"
+            placeholder={BANK_FORM.PLACEHOLDER_CODE}
             required
             value={code}
             onChange={(e) => updateCode(e.target.value)}
@@ -88,7 +85,7 @@ function AddBankForm({ onStatusChange }: AddBankFormProps) {
           />
         </SharedFormField>
         <SharedFormField
-          label="Nome"
+          label={BANK_FORM.LABEL_NAME}
           error={fieldErrors.name}
           htmlFor="name"
         >
@@ -97,7 +94,7 @@ function AddBankForm({ onStatusChange }: AddBankFormProps) {
             type="text"
             name="name"
             autoComplete="off"
-            placeholder="Ex.: Banco Bradesco"
+            placeholder={BANK_FORM.PLACEHOLDER_NAME}
             required
             value={name}
             onChange={(e) => updateName(e.target.value)}

@@ -34,6 +34,18 @@ export const BANK_FORM = {
 
   // Error toast title for the bank forms.
   ERROR_TITLE: "Não foi possível salvar o banco",
+
+  // Code field label.
+  LABEL_CODE: "Código",
+
+  // Name field label.
+  LABEL_NAME: "Nome",
+
+  // Code field placeholder.
+  PLACEHOLDER_CODE: "Ex.: 237",
+
+  // Name field placeholder.
+  PLACEHOLDER_NAME: "Ex.: Banco Bradesco",
 } as const
 
 // Dialog copy for the bank add/edit flows.
@@ -84,8 +96,7 @@ export const BANK_DATATABLE = {
   BULK_DELETE_SUCCESS_TITLE: "Bancos excluídos!",
   BULK_DELETE_SUCCESS_DESCRIPTION:
     "Os bancos selecionados foram excluídos.",
-  BULK_DELETE_ERROR_TITLE:
-    "Não foi possível excluir os bancos",
+  BULK_DELETE_ERROR_TITLE: "Não foi possível excluir os bancos",
 } as const
 
 // Column id to header label used by the edit-columns menu.
@@ -134,4 +145,3 @@ export const BANK_EMPTY = {
 } as const
 
 export { FormatDeleteBankDescription }
-
