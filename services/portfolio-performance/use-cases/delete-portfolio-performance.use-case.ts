@@ -29,7 +29,9 @@ export interface DeletePortfolioPerformanceInput {
  * @date 2026-09-27
  */
 export class DeletePortfolioPerformanceUseCase {
-  constructor(private portfolioPerformanceRepository: IPortfolioPerformance) {}
+  constructor(
+    private portfolioPerformanceRepository: IPortfolioPerformance
+  ) {}
 
   /**
    * @summary
@@ -57,11 +59,16 @@ export class DeletePortfolioPerformanceUseCase {
    *
    * @date 2026-09-27
    */
-  async execute(input: DeletePortfolioPerformanceInput): Promise<void> {
+  async execute(
+    input: DeletePortfolioPerformanceInput
+  ): Promise<void> {
     const ID = EntityId.create(input.performanceId)
-    const PERFORMANCE = await this.portfolioPerformanceRepository.findById(ID)
+    const PERFORMANCE =
+      await this.portfolioPerformanceRepository.findById(ID)
     if (!PERFORMANCE) {
-      throw new NotFoundError("`PortfolioPerformance` not found.")
+      throw new NotFoundError(
+        "`PortfolioPerformance` not found."
+      )
     }
     await this.portfolioPerformanceRepository.delete(ID)
   }

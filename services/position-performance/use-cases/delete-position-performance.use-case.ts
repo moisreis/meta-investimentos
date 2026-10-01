@@ -29,7 +29,9 @@ export interface DeletePositionPerformanceInput {
  * @date 2026-09-27
  */
 export class DeletePositionPerformanceUseCase {
-  constructor(private positionPerformanceRepository: IPositionPerformance) {}
+  constructor(
+    private positionPerformanceRepository: IPositionPerformance
+  ) {}
 
   /**
    * @summary
@@ -57,9 +59,12 @@ export class DeletePositionPerformanceUseCase {
    *
    * @date 2026-09-27
    */
-  async execute(input: DeletePositionPerformanceInput): Promise<void> {
+  async execute(
+    input: DeletePositionPerformanceInput
+  ): Promise<void> {
     const ID = EntityId.create(input.performanceId)
-    const PERFORMANCE = await this.positionPerformanceRepository.findById(ID)
+    const PERFORMANCE =
+      await this.positionPerformanceRepository.findById(ID)
     if (!PERFORMANCE) {
       throw new NotFoundError("`PositionPerformance` not found.")
     }

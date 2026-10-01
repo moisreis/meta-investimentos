@@ -511,9 +511,7 @@ export class CalculatePortfolioPerformanceUseCase {
         continue
       }
 
-      const PRICE = PRICE_BY_FUND.get(
-        position.fundId as string
-      )
+      const PRICE = PRICE_BY_FUND.get(position.fundId as string)
       if (!PRICE) {
         throw new ValidationError(
           "`Quota` is required for the target date."

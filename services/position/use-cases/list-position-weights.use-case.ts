@@ -71,7 +71,10 @@ function GroupActiveAmounts(
 
     const CURRENT = AMOUNTS.get(movement.positionId) ?? []
 
-    AMOUNTS.set(movement.positionId, [...CURRENT, movement.amount])
+    AMOUNTS.set(movement.positionId, [
+      ...CURRENT,
+      movement.amount,
+    ])
   }
 
   return AMOUNTS
@@ -105,10 +108,14 @@ function CalculateInvestedValue(
 ): SignedMoney {
   const CASH_FLOW = calculateCashFlowNet({
     applications: calculateApplicationSum({
-      application: applications.map((amount) => ({ value: amount })),
+      application: applications.map((amount) => ({
+        value: amount,
+      })),
     }),
     withdrawals: calculateWithdrawalSum({
-      withdrawal: withdrawals.map((amount) => ({ value: amount })),
+      withdrawal: withdrawals.map((amount) => ({
+        value: amount,
+      })),
     }),
   })
 
@@ -143,7 +150,8 @@ function SumByPortfolio(
   const TOTALS = new Map<string, SignedMoney>()
 
   for (const entry of invested) {
-    const CURRENT = TOTALS.get(entry.portfolioId)?.value ?? NO_BALANCE
+    const CURRENT =
+      TOTALS.get(entry.portfolioId)?.value ?? NO_BALANCE
 
     TOTALS.set(
       entry.portfolioId,
@@ -271,7 +279,9 @@ export class ListPositionWeightsUseCase {
     )
 
     const POSITIONS =
-      await this.positionRepository.findAllByPortfolioIds(PORTFOLIO_IDS)
+      await this.positionRepository.findAllByPortfolioIds(
+        PORTFOLIO_IDS
+      )
 
     if (POSITIONS.length === 0) return []
 
@@ -320,11 +330,17 @@ export class ListPositionWeightsUseCase {
       position.id ? [{ position, positionId: position.id }] : []
     )
 
-    const POSITION_IDS = PERSISTED.map((entry) => entry.positionId)
+    const POSITION_IDS = PERSISTED.map(
+      (entry) => entry.positionId
+    )
 
     const [APPLICATIONS, WITHDRAWALS] = await Promise.all([
-      this.applicationRepository.findAllByPositionIds(POSITION_IDS),
-      this.withdrawalRepository.findAllByPositionIds(POSITION_IDS),
+      this.applicationRepository.findAllByPositionIds(
+        POSITION_IDS
+      ),
+      this.withdrawalRepository.findAllByPositionIds(
+        POSITION_IDS
+      ),
     ])
 
     const APPLICATION_AMOUNTS = GroupActiveAmounts(APPLICATIONS)

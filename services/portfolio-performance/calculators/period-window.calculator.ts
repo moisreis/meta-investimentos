@@ -1,4 +1,7 @@
-import { GrowthFactor, type SignedPercentage } from "@/value-objects"
+import {
+  GrowthFactor,
+  type SignedPercentage,
+} from "@/value-objects"
 
 /**
  * @summary
@@ -123,7 +126,9 @@ function TimeOf(snapshot: PerformanceSnapshot): number {
  *
  * @date 2026-09-26
  */
-export function ResolvePeriodWindow<T extends PerformanceSnapshot>(
+export function ResolvePeriodWindow<
+  T extends PerformanceSnapshot,
+>(
   performances: readonly T[],
   from: Date | null,
   to: Date | null
@@ -268,9 +273,9 @@ export interface PeriodCashFlows {
  *
  * @date 2026-09-29
  */
-export function SumSeriesCashFlows<T extends PerformanceSnapshot>(
-  series: readonly T[]
-): PeriodCashFlows {
+export function SumSeriesCashFlows<
+  T extends PerformanceSnapshot,
+>(series: readonly T[]): PeriodCashFlows {
   return series.reduce<PeriodCashFlows>(
     (flows, snapshot) => {
       const FLOW = ToAmount(snapshot.cashFlowNet)
@@ -343,7 +348,9 @@ export function ChainPeriodReturn<T extends PerformanceSnapshot>(
   }
 
   if (FACTORS.length >= 2) {
-    return chain({ dailyGrowthFactors: FACTORS }).value.toString()
+    return chain({
+      dailyGrowthFactors: FACTORS,
+    }).value.toString()
   }
 
   return stored === null ? null : String(ToAmount(stored))

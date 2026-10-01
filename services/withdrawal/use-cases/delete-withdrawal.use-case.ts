@@ -50,16 +50,17 @@ export class DeleteWithdrawalUseCase {
    *
    * @example
    * await DELETE_WITHDRAWAL_USE_CASE.execute({
- *   withdrawalId: "withdrawal-1",
- * });
- *
- * @author Moisés Reis
- *
- * @date 2026-09-27
+   *   withdrawalId: "withdrawal-1",
+   * });
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-09-27
    */
   async execute(input: DeleteWithdrawalInput): Promise<void> {
     const ID = EntityId.create(input.withdrawalId)
-    const WITHDRAWAL = await this.withdrawalRepository.findById(ID)
+    const WITHDRAWAL =
+      await this.withdrawalRepository.findById(ID)
     if (!WITHDRAWAL) {
       throw new NotFoundError("`Withdrawal` not found.")
     }

@@ -380,8 +380,8 @@ export class QuotaRepository implements IQuota {
       .where(eq(quota.fundId, fundId))
       .orderBy(asc(quota.date))
 
-    return ROWS.map((row) =>
-      row.date.toISOString().split("T")[0]
+    return ROWS.map(
+      (row) => row.date.toISOString().split("T")[0]
     )
   }
 

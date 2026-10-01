@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 
-import { MainShell } from "@/presentation/parts/layout/main/shell"
+import { MainShell } from "@/presentation/parts/layout/main/main-shell"
 
 /**
  * @summary

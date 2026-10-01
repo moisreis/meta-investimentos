@@ -59,7 +59,8 @@ export class DeleteApplicationUseCase {
    */
   async execute(input: DeleteApplicationInput): Promise<void> {
     const ID = EntityId.create(input.applicationId)
-    const APPLICATION = await this.applicationRepository.findById(ID)
+    const APPLICATION =
+      await this.applicationRepository.findById(ID)
     if (!APPLICATION) {
       throw new NotFoundError("`Application` not found.")
     }

@@ -34,4 +34,50 @@ function ToDayKey(date: Date): string {
   return format(date, "yyyy-MM-dd")
 }
 
-export { ToDayKey }
+/**
+ * @summary
+ * Reads a `yyyy-MM-dd` day key, or an ISO string, back into
+ * the local date the user picked.
+ *
+ * @remarks
+ * The inverse of `ToDayKey`, so the two never disagree about
+ * which day a key names.
+ *
+ * A date-only key builds a **local midnight** date, which is
+ * why it is not handed to `new Date()`: the string parser
+ * reads it as UTC and the calendar would then show the
+ * previous day to anyone west of Greenwich. A value carrying
+ * a time is parsed as an instant, because only a real instant
+ * can be shifted into the reader's own day.
+ *
+ * @param value - The raw day key or ISO string.
+ *
+ * @returns The local date, or `undefined` when the value is
+ * empty or unparseable.
+ *
+ * @example
+ * const DATE = FromDayKey("2026-08-31");
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-30
+ */
+function FromDayKey(value: string): Date | undefined {
+  if (!value) return undefined
+
+  const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/
+  const MATCH = value.match(DATE_ONLY)
+
+  if (MATCH) {
+    return new Date(
+      Number(MATCH[1]),
+      Number(MATCH[2]) - 1,
+      Number(MATCH[3])
+    )
+  }
+
+  const DATE = new Date(value)
+  return Number.isNaN(DATE.getTime()) ? undefined : DATE
+}
+
+export { FromDayKey, ToDayKey }

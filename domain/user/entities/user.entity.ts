@@ -2,7 +2,6 @@
 import { ValidationError } from "@/errors"
 import type { UserRole } from "@/lib/auth/user-role"
 
-
 // Matches a valid email format for user validation.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 

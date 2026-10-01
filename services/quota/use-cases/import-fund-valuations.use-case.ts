@@ -21,7 +21,6 @@ export const UPSERT_CHUNK_SIZE = 100
 // TYPES
 // ---------------------------------
 
-
 /**
  * @summary
  * A half-open date range resolved for a given import window.
