@@ -8,7 +8,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 
 import { BULK_DELETE_CHECKING_ACCOUNTS_SCHEMA } from "../validations/checking-account-actions.validation"
 

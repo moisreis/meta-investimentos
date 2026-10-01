@@ -1,8 +1,7 @@
 "use client"
 
-import * as React from "react"
-
-import { PortfolioMoneyInput } from "@/presentation/parts/components/portfolio-money-input"
+import { EntityMoneyInput } from "@/presentation/parts/components/entity-money-input"
+import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
@@ -15,7 +14,7 @@ import { CHECKING_ACCOUNT_FORM } from "../settings/labels.settings"
 import type { CheckingAccountSelectOptions } from "../types/checking-account-list.types"
 import { useCheckingAccountAddForm } from "../hooks/use-checking-account-add-form.hook"
 import { BankAccountCombobox } from "./bank-account-combobox"
-import { CheckingAccountDateInput } from "./date-input"
+import { EntityDateInput } from "@/presentation/parts/components/entity-date-input"
 
 /**
  * Props for the add checking account form.
@@ -73,10 +72,6 @@ function AddCheckingAccountForm({
     handleSubmit,
   } = useCheckingAccountAddForm()
 
-  React.useEffect(() => {
-    onStatusChange?.(status, error)
-  }, [status, error, onStatusChange])
-
   const BANK_NAMES = new Map(
     options.banks.map((bank) => [bank.id, bank.name])
   )
@@ -91,6 +86,8 @@ function AddCheckingAccountForm({
       ),
     })
   )
+
+  useEntityFormStatus({ status, error, onStatusChange })
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
@@ -124,7 +121,7 @@ function AddCheckingAccountForm({
           error={fieldErrors.date}
           htmlFor="checking-account-date"
         >
-          <CheckingAccountDateInput
+          <EntityDateInput
             id="checking-account-date"
             name="date"
             required
@@ -141,7 +138,7 @@ function AddCheckingAccountForm({
           error={fieldErrors.value}
           htmlFor="checking-account-value"
         >
-          <PortfolioMoneyInput
+          <EntityMoneyInput
             id="checking-account-value"
             name="value"
             required

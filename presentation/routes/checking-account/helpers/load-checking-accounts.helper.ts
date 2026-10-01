@@ -1,8 +1,5 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { CheckingAccountContainer } from "@/presentation/composition/checking-account.container"
-import type { BankResponseDTO } from "@/services/bank/dto/bank-response.dto"
-import type { BankAccountResponseDTO } from "@/services/bank-account/dto/bank-account-response.dto"
-import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
 import { ToCheckingAccountRows } from "@/presentation/mappers/checking-account-row.mapper"
 import { ToBankAccountRows } from "@/presentation/mappers/bank-account-row.mapper"
 import { ToBankRows } from "@/presentation/mappers/bank-row.mapper"

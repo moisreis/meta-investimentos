@@ -1,8 +1,7 @@
 "use client"
 
-import * as React from "react"
-
-import { PortfolioMoneyInput } from "@/presentation/parts/components/portfolio-money-input"
+import { EntityMoneyInput } from "@/presentation/parts/components/entity-money-input"
+import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
@@ -16,7 +15,7 @@ import { CHECKING_ACCOUNT_FORM } from "../settings/labels.settings"
 import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 import type { CheckingAccountNameLookups } from "../types/checking-account-list.types"
 import { useCheckingAccountEditForm } from "../hooks/use-checking-account-edit-form.hook"
-import { CheckingAccountDateInput } from "./date-input"
+import { EntityDateInput } from "@/presentation/parts/components/entity-date-input"
 
 /**
  * Props for the edit checking account form.
@@ -76,9 +75,7 @@ function EditCheckingAccountForm({
     handleSubmit,
   } = useCheckingAccountEditForm(entry)
 
-  React.useEffect(() => {
-    onStatusChange?.(status, error)
-  }, [status, error, onStatusChange])
+  useEntityFormStatus({ status, error, onStatusChange })
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
@@ -102,7 +99,7 @@ function EditCheckingAccountForm({
           label={CHECKING_ACCOUNT_FORM.FIELD_DATE}
           htmlFor="edit-checking-account-date"
         >
-          <CheckingAccountDateInput
+          <EntityDateInput
             id="edit-checking-account-date"
             name="date"
             value={entry.date}
@@ -115,7 +112,7 @@ function EditCheckingAccountForm({
           error={fieldErrors.value}
           htmlFor="edit-checking-account-value"
         >
-          <PortfolioMoneyInput
+          <EntityMoneyInput
             id="edit-checking-account-value"
             name="value"
             required

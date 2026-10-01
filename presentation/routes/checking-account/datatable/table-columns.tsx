@@ -1,10 +1,8 @@
 "use client"
 
-import type {
-  ColumnDef,
-  ColumnHelper,
-} from "@tanstack/react-table"
+import type { ColumnHelper } from "@tanstack/react-table"
 
+import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
@@ -46,7 +44,7 @@ export interface CheckingAccountTableColumnOptions {
  *
  * @returns The checking account column definitions.
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-25
  */
@@ -56,7 +54,7 @@ export function CreateCheckingAccountTableColumns(
     CheckingAccountRow
   >,
   options: CheckingAccountTableColumnOptions
-): ColumnDef<EntityTableFeatures, CheckingAccountRow, any>[] {
+): EntityColumnDef<CheckingAccountRow>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 

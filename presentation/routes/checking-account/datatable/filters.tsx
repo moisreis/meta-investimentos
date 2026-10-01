@@ -1,6 +1,6 @@
 "use client"
 
-import { EntitySearchFilter } from "@/presentation/parts/filters/search"
+import { EntitySearchFilter } from "@/presentation/parts/filters/entity-search"
 import { CHECKING_ACCOUNT_DATATABLE } from "@/presentation/routes/checking-account/settings/labels.settings"
 
 interface CheckingAccountDatatableFiltersProps {
