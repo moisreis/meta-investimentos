@@ -23,6 +23,8 @@ export interface EntityTableRowModel<TData extends RowData> {
  */
 export interface EntityTableRowsModel<TData extends RowData> {
   empty: boolean
+  /** Empty because the filter hid rows that do exist. */
+  noMatch: boolean
   rows: EntityTableRowModel<TData>[]
   /** Number of visible leaf columns for the empty row. */
   columnCount: number
@@ -51,19 +53,34 @@ function useEntityRows<TData extends RowData>(
 ): EntityTableRowsModel<TData> {
   const ROWS = table.getRowModel().rows
 
-  // Rebuilds when the visible column set changes, keeping the
-  // cells of each row aligned with the current table state.
-  const VISIBLE_COLUMN_IDS = table
+  // Hiding and showing a column has to re-align the cells of
+  // every row with the header. That rebuild keys off a string
+  // rather than the id array itself: `getVisibleLeafColumns`
+  // returns a fresh array on every render, so an array dep
+  // would change identity each render and the memo below would
+  // never hit, re-mapping every row on every keystroke. A
+  // joined key has value equality, so the rebuild happens when
+  // the visible set genuinely changes and not otherwise.
+  const VISIBLE_COLUMN_KEY = table
     .getVisibleLeafColumns()
     .map((column) => column.id)
+    .join("|")
 
   const ROW_MODELS = useMemo(
     () => ROWS.map(ToRowModel),
-    [ROWS, VISIBLE_COLUMN_IDS]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ROWS, VISIBLE_COLUMN_KEY]
   )
 
   return {
     empty: ROWS.length === 0,
+    // The row model is the filtered one, so an empty model
+    // over a non-empty core model means the search hid the
+    // rows rather than the table having none. Those two read
+    // very differently to the person who just typed a query.
+    noMatch:
+      ROWS.length === 0 &&
+      table.getCoreRowModel().rows.length > 0,
     rows: ROW_MODELS,
     columnCount: table.getAllLeafColumns().length,
   }

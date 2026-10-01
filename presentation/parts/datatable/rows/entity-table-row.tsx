@@ -11,7 +11,10 @@ import {
 
 import { EntityTableColumn } from "../columns/entity-table-column"
 import type { EntityTable } from "../settings/entity-table-features.settings"
-import { ENTITY_TABLE_EMPTY_STATE_LABEL } from "../settings/entity-table-labels.settings"
+import {
+  ENTITY_TABLE_EMPTY_STATE_LABEL,
+  ENTITY_TABLE_NO_MATCH_STATE_LABEL,
+} from "../settings/entity-table-labels.settings"
 
 /**
  * Props for the entity table row group.
@@ -50,7 +53,9 @@ function EntityTableRows<TData extends RowData>({
             colSpan={body.columnCount}
             className="h-24 border-r border-b border-border bg-neutral-50 px-3 text-center text-sm text-muted-foreground"
           >
-            {ENTITY_TABLE_EMPTY_STATE_LABEL}
+            {body.noMatch
+              ? ENTITY_TABLE_NO_MATCH_STATE_LABEL
+              : ENTITY_TABLE_EMPTY_STATE_LABEL}
           </TableCell>
         </TableRow>
       ) : (
