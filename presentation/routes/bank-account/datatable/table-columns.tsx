@@ -1,10 +1,8 @@
 "use client"
 
-import type {
-  ColumnDef,
-  ColumnHelper,
-} from "@tanstack/react-table"
+import type { ColumnHelper } from "@tanstack/react-table"
 
+import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
@@ -63,7 +61,7 @@ export function CreateBankAccountTableColumns(
     BankAccountRow
   >,
   options: BankAccountTableColumnOptions
-): ColumnDef<EntityTableFeatures, BankAccountRow, any>[] {
+): EntityColumnDef<BankAccountRow>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 

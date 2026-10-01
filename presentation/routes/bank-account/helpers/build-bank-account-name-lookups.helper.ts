@@ -123,7 +123,8 @@ export function BuildBankAccountNameLookups(
         account.id,
         {
           portfolioName:
-            PORTFOLIO_BY_ID[account.portfolioId]?.name ?? "Carteira",
+            PORTFOLIO_BY_ID[account.portfolioId]?.name ??
+            "Carteira",
           portfolioAcronym:
             PORTFOLIO_BY_ID[account.portfolioId]?.acronym ?? "",
           bankName: BANK_NAMES[account.bankId] ?? "Banco",

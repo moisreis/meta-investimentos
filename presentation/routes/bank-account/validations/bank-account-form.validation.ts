@@ -25,4 +25,3 @@ export const BANK_ACCOUNT_EDIT_FORM_SCHEMA = z.object({
 export type BankAccountFormValues = z.infer<
   typeof BANK_ACCOUNT_FORM_SCHEMA
 >
-
