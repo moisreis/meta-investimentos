@@ -45,15 +45,6 @@ export const MAIN_NAVIGATION: MainNavigationGroup[] = [
     ],
   },
   {
-    label: "Índices econômicos",
-    items: [
-      {
-        label: "Histórico de registros",
-        href: "/benchmark-history",
-      },
-    ],
-  },
-  {
     label: "Fundos de investimento",
     items: [
       { label: "Fundos credenciados", href: "/fund" },
