@@ -2,8 +2,9 @@
 
 import { useState } from "react"
 import { ptBR } from "date-fns/locale"
-import { IconCalendar } from "@tabler/icons-react"
+import { IconCalendar, IconLoader2 } from "@tabler/icons-react"
 
+import { FromDayKey, ToDayKey } from "@/lib/date/day-key"
 import { Button } from "@/presentation/ui/button"
 import { Calendar } from "@/presentation/ui/calendar"
 import {
@@ -13,6 +14,9 @@ import {
 } from "@/presentation/ui/popover"
 import { FormatDate } from "@/presentation/presenters/date.presenter"
 
+/**
+ * Props for the shared calendar-backed date picker.
+ */
 export interface EntityDateInputProps {
   id: string
   name: string
@@ -22,35 +26,12 @@ export interface EntityDateInputProps {
   required?: boolean
   disabled?: boolean
   "aria-invalid"?: boolean | "true" | "false"
-}
-
-// Parses a yyyy-MM-dd or ISO string into a local date.
-// Date-only strings build a local-midnight date so the
-// calendar and the presenter never shift the day.
-function ParseDateValue(value: string): Date | undefined {
-  if (!value) return undefined
-
-  const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/
-  const MATCH = value.match(DATE_ONLY)
-
-  if (MATCH) {
-    return new Date(
-      Number(MATCH[1]),
-      Number(MATCH[2]) - 1,
-      Number(MATCH[3])
-    )
-  }
-
-  const DATE = new Date(value)
-  return Number.isNaN(DATE.getTime()) ? undefined : DATE
-}
-
-// Serializes a local date as a yyyy-MM-dd string.
-function ToLocalDateString(date: Date): string {
-  const YEAR = date.getFullYear()
-  const MONTH = String(date.getMonth() + 1).padStart(2, "0")
-  const DAY = String(date.getDate()).padStart(2, "0")
-  return `${YEAR}-${MONTH}-${DAY}`
+  /** Blocks a day in the grid. */
+  isDateDisabled?: (date: Date) => boolean
+  /** Shows the loading mark on the trigger. */
+  pending?: boolean
+  /** Accessible label of the day grid. */
+  gridLabel?: string
 }
 
 /**
@@ -64,6 +45,11 @@ function ToLocalDateString(date: Date): string {
  * selected. Picking a day reports the value as a
  * `yyyy-MM-dd` string and closes the popover. When
  * `disabled`, renders only the read-only trigger.
+ *
+ * A calendar day is not always pickable, so `isDateDisabled`
+ * lets the owner of the field decide which ones are. While
+ * `pending` is set the trigger shows a loading mark, which is
+ * the honest answer while the days are still being resolved.
  *
  * @explanation
  * Use for the date field of any form. The string
@@ -80,6 +66,9 @@ function ToLocalDateString(date: Date): string {
  * @param props.required - Marks the field as required.
  * @param props.disabled - Blocks the interaction.
  * @param props.aria-invalid - Marks the field as invalid.
+ * @param props.isDateDisabled - Blocks a day in the grid.
+ * @param props.pending - Shows the loading mark.
+ * @param props.gridLabel - Accessible label of the grid.
  *
  * @returns The date picker.
  *
@@ -100,10 +89,13 @@ function EntityDateInput({
   required = false,
   disabled = false,
   "aria-invalid": ariaInvalid,
+  isDateDisabled,
+  pending = false,
+  gridLabel,
 }: EntityDateInputProps) {
   const [OPEN, setOpen] = useState(false)
 
-  const SELECTED = ParseDateValue(value)
+  const SELECTED = FromDayKey(value)
   const TRIGGER_LABEL = SELECTED
     ? FormatDate(SELECTED)
     : placeholder
@@ -121,11 +113,19 @@ function EntityDateInput({
             className="w-full justify-start gap-2 font-normal data-[placeholder=true]:text-muted-foreground"
             disabled={disabled}
             aria-invalid={ariaInvalid}
+            aria-required={required}
           >
-            <IconCalendar
-              className="text-muted-foreground"
-              aria-hidden="true"
-            />
+            {pending ? (
+              <IconLoader2
+                className="animate-spin text-muted-foreground"
+                aria-hidden="true"
+              />
+            ) : (
+              <IconCalendar
+                className="text-muted-foreground"
+                aria-hidden="true"
+              />
+            )}
             <span className="truncate">{TRIGGER_LABEL}</span>
           </Button>
         }
@@ -136,12 +136,14 @@ function EntityDateInput({
           locale={ptBR}
           defaultMonth={SELECTED}
           selected={SELECTED}
+          disabled={isDateDisabled}
           onSelect={(next) => {
             if (!next) return
-            onValueChange?.(ToLocalDateString(next))
+            onValueChange?.(ToDayKey(next))
             setOpen(false)
           }}
           autoFocus
+          aria-label={gridLabel}
         />
       </PopoverContent>
     </Popover>

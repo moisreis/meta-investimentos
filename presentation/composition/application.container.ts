@@ -78,7 +78,9 @@ function ApplicationContainer(): ApplicationUseCases {
       )
     ),
     delete: new DeleteApplicationUseCase(APPLICATION_REPOSITORY),
-    reverse: new ReverseApplicationUseCase(APPLICATION_REPOSITORY),
+    reverse: new ReverseApplicationUseCase(
+      APPLICATION_REPOSITORY
+    ),
     listAllApplications: new ListAllApplicationsUseCase(
       APPLICATION_REPOSITORY
     ),

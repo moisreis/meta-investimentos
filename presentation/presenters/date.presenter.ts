@@ -86,6 +86,54 @@ export function FormatDateTime(
 /**
  * Parses a date-like value into a valid `Date`, or null.
  */
+/**
+ * @summary
+ * Formats a date as the month and year it belongs to, in
+ * Brazilian Portuguese locale.
+ *
+ * @remarks
+ * Converts a date-like value (ISO string, timestamp or
+ * `Date`) into a long month name with its year, such as
+ * `Setembro de 2026`. The month name is capitalised because it
+ * starts a label rather than a sentence, and `Intl` lower-cases
+ * it in this locale. Returns the fallback for nil or invalid
+ * values.
+ *
+ * @explanation
+ * Use for a field whose value is a whole month, such as the
+ * reporting period of a statement. A day picker is the usual
+ * way to choose one, so the day that gets clicked is discarded
+ * and only the month it falls in is shown.
+ *
+ * @param value - The raw date-like value to format.
+ * @returns The formatted month, or the fallback.
+ *
+ * @example
+ * const MONTH = FormatMonth("2026-09-24T10:00:00Z");
+ * // returns "Setembro de 2026"
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-01
+ */
+export function FormatMonth(
+  value: string | number | Date | null | undefined
+): string {
+  const DATE = toDate(value)
+
+  if (!DATE) return PRESENTER_FALLBACK
+
+  return new Intl.DateTimeFormat("pt-BR", {
+    month: "long",
+    year: "numeric",
+  })
+    .format(DATE)
+    .replace(/^./, (char) => char.toUpperCase())
+}
+
+/**
+ * Parses a date-like value into a valid `Date`, or null.
+ */
 function toDate(
   value: string | number | Date | null | undefined
 ): Date | null {

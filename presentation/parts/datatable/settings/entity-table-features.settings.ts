@@ -17,6 +17,7 @@ import {
 import type {
   Cell,
   Column,
+  ColumnDef,
   Header,
   ReactTable,
   Row,
@@ -69,6 +70,20 @@ export type EntityColumn<TData extends RowData> = Column<
   EntityTableFeatures,
   TData,
   unknown
+>
+
+// One column definition of an entity table.
+//
+// The value type stays `unknown` because a column set is
+// heterogeneous: one column narrows to `string`, the next to
+// `number | null`. Declaring the array element here keeps every
+// route column factory on a single named contract instead of
+// each repeating the same escape hatch.
+export type EntityColumnDef<TData extends RowData> = ColumnDef<
+  EntityTableFeatures,
+  TData,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  any
 >
 
 // Cell instance bound to the entity table features.

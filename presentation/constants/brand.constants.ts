@@ -1,26 +1,28 @@
 // Brand metadata constants for **Meta Investimentos**.
-const BRAND = {
+//
+// The keys are the brand's own names, so a reader sees which
+// value is the legal entity and which is the commercial one
+// without cross-referencing the constant that holds them.
+export const BRAND = {
   // Short commercial brand name.
-  BRAND_SHORT_NAME: "Meta Investimentos",
+  SHORT_NAME: "Meta Investimentos",
 
   // Official corporate entity name.
-  BRAND_LEGAL_NAME:
+  LEGAL_NAME:
     "Meta Consultoria de Investimentos Institucionais Ltda",
 
   // Corporate tax identifier registration number.
-  BRAND_CODE: "34.369.665/0001-99",
+  CODE: "34.369.665/0001-99",
 
   // Primary customer service contact telephone.
-  BRAND_PHONE: "(74) 981-399-579",
+  PHONE: "(74) 981-399-579",
 
   // Physical corporate headquarters address.
-  BRAND_ADDRESS: "",
+  ADDRESS: "",
 
   // Official corporate contact email address.
-  BRAND_EMAIL: "mr.investing@outlook.com",
+  EMAIL: "mr.investing@outlook.com",
 
   // Official public corporate portal address.
-  BRAND_SITE: "https://www.investingmeta.com.br/",
+  SITE: "https://www.investingmeta.com.br/",
 } as const
-
-export default BRAND

@@ -76,11 +76,12 @@ function PositionContainer(): PositionUseCases {
     listPerformances: new ListPositionPerformanceUseCase(
       POSITION_PERFORMANCE_REPOSITORY
     ),
-    resolvePeriodReturns: new ResolvePositionPeriodReturnsUseCase(
-      POSITION_REPOSITORY,
-      PORTFOLIO_REPOSITORY,
-      POSITION_PERFORMANCE_REPOSITORY
-    ),
+    resolvePeriodReturns:
+      new ResolvePositionPeriodReturnsUseCase(
+        POSITION_REPOSITORY,
+        PORTFOLIO_REPOSITORY,
+        POSITION_PERFORMANCE_REPOSITORY
+      ),
     delete: new DeletePositionUseCase(POSITION_REPOSITORY),
   }
 }

@@ -71,7 +71,9 @@ function EntityTablePagination<TData extends RowData>({
   // pagination controls on their own.
   const HAS_SELECTION = table
     .getAllLeafColumns()
-    .some((column) => column.id === ENTITY_TABLE_SELECT_COLUMN_ID)
+    .some(
+      (column) => column.id === ENTITY_TABLE_SELECT_COLUMN_ID
+    )
 
   return (
     <div className="flex h-11 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border px-3">

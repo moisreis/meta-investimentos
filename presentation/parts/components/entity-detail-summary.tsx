@@ -61,6 +61,10 @@ export interface EntitySummary {
   label: string
   // The headline figure, the closing balance of the window.
   value: string
+  // Optional qualifier rendered under the headline, such as
+  // the registry document of the subject. Absent when the
+  // subject has no second line to state.
+  caption?: string | null
   // The return the window earned, split into the figure and
   // its qualifier so the figure can sit in a badge. Null
   // until the server resolves a return.
@@ -146,6 +150,7 @@ const TONE_TEXT: Record<EntitySummaryTone, string> = {
 export function EntityDetailSummary({
   label,
   value,
+  caption,
   note,
   entries,
 }: EntitySummary): JSX.Element {
@@ -157,6 +162,12 @@ export function EntityDetailSummary({
         <p className="font-figure text-4xl leading-none tracking-tight text-foreground tabular-nums sm:text-6xl">
           {value}
         </p>
+
+        {caption ? (
+          <p className="text-sm text-muted-foreground tabular-nums">
+            {caption}
+          </p>
+        ) : null}
 
         {note ? (
           <p className="flex items-center gap-2 text-sm text-muted-foreground">

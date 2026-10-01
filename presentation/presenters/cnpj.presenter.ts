@@ -76,7 +76,7 @@ export function FormatCnpjOptional(
  * const CNPJ = FormatCnpj("12345678000199");
  * // returns "12.345.678/0001-99"
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-27
  */

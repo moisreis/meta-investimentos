@@ -81,9 +81,7 @@ function CheckingAccountContainer(): CheckingAccountUseCases {
     remove: new DeleteCheckingAccountUseCase(REPOSITORY),
     update: new UpdateCheckingAccountUseCase(REPOSITORY),
     listByBankAccounts:
-      new ListCheckingAccountsByBankAccountsUseCase(
-        REPOSITORY
-      ),
+      new ListCheckingAccountsByBankAccountsUseCase(REPOSITORY),
   }
 }
 

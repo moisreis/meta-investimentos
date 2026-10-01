@@ -1,6 +1,7 @@
+import Link from "next/link"
 import { cn } from "cn"
 
-import { PRESENTER_FALLBACK } from "@/presentation/presenters/lookup.presenter"
+import { EntityFallbackCell } from "./entity-fallback-cell"
 
 /**
  * Props for the two-line entity lookup cell.
@@ -12,6 +13,10 @@ export interface EntityLookupCellProps {
   // Secondary text, rendered below the primary line. The
   // line is skipped when the value is nil or blank.
   subtitle?: string | null
+
+  // Route the cell opens. Absent leaves the cell inert, for a
+  // relation the user reads but cannot enter.
+  href?: string
 
   // Extra classes applied to the root element.
   className?: string
@@ -28,7 +33,9 @@ export interface EntityLookupCellProps {
  * muted weight. Both lines are truncated so wide values
  * never spill into the neighboring columns of a fluid
  * column. A nil or blank title renders the presenter
- * fallback instead of an empty cell.
+ * fallback instead of an empty cell. Passing `href` makes the
+ * whole cell the link to the relation, so both lines stay one
+ * target instead of only the first line being clickable.
  *
  * @explanation
  * Use this cell for the relation columns of a datatable,
@@ -38,6 +45,7 @@ export interface EntityLookupCellProps {
  * @param props - The lookup lines of the cell.
  * @param props.title - The entity name rendered on top.
  * @param props.subtitle - The qualifier rendered below.
+ * @param props.href - Route the cell opens, when it is one.
  * @param props.className - Extra classes for the root.
  *
  * @returns The two-line lookup cell.
@@ -49,25 +57,44 @@ export interface EntityLookupCellProps {
 function EntityLookupCell({
   title,
   subtitle,
+  href,
   className,
 }: EntityLookupCellProps) {
   const TITLE = title?.trim() ?? ""
   const SUBTITLE = subtitle?.trim() ?? ""
 
   if (!TITLE) {
-    return <span className="text-muted-foreground">{PRESENTER_FALLBACK}</span>
+    return <EntityFallbackCell />
   }
 
-  return (
-    <div className={cn("min-w-0", className)}>
+  const LINES = (
+    <>
       <p className="truncate font-medium">{TITLE}</p>
       {SUBTITLE ? (
         <p className="truncate text-xs font-normal text-muted-foreground">
           {SUBTITLE}
         </p>
       ) : null}
-    </div>
+    </>
   )
+
+  // A lookup cell is usually a destination as well as a
+  // reading: the fund column leads to the fund. When the route
+  // is given, the whole cell becomes the link, so the two
+  // lines stay one target instead of two lines with a link
+  // only on the first.
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={cn("block w-full min-w-0", className)}
+      >
+        {LINES}
+      </Link>
+    )
+  }
+
+  return <div className={cn("min-w-0", className)}>{LINES}</div>
 }
 
 export { EntityLookupCell }

@@ -96,15 +96,15 @@ function MaskCurrency(value: string, previous = ""): string {
   const REPLACED_CENTS =
     COMA_AT >= 0 &&
     value.startsWith(previous.slice(0, COMA_AT)) &&
-    !(value.length === previous.length - 1 &&
-      previous.startsWith(value))
+    !(
+      value.length === previous.length - 1 &&
+      previous.startsWith(value)
+    )
       ? value.slice(COMA_AT)
       : ""
 
   if (/^\d{1,2}$/.test(REPLACED_CENTS)) {
-    INTEGER = previous
-      .slice(0, COMA_AT)
-      .replace(/[.,-]/g, "")
+    INTEGER = previous.slice(0, COMA_AT).replace(/[.,-]/g, "")
     DECIMALS = REPLACED_CENTS
   }
 

@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation"
 
-import { useAuthFormToast } from "@/presentation/parts/hooks/use-auth-form-toast.hook"
-import type { ActionResult } from "@/presentation/types/action-result"
+import { useEntityFormToast } from "@/presentation/parts/hooks/use-entity-form-toast.hook"
+import type { ActionResult } from "@/presentation/presenters/action-result.presenter"
 
 /**
  * Bulk delete copy of an entity route.
@@ -17,12 +17,8 @@ export interface EntityBulkDeleteLabels {
 /**
  * Configuration of the bulk delete flow of an entity
  * route.
- *
- * @typeParam TData - Row type of the datatable.
  */
-export interface EntityBulkDeleteConfig<
-  TData extends { id: string },
-> {
+export interface EntityBulkDeleteConfig {
   run: (ids: string[]) => Promise<ActionResult<undefined>>
   labels: EntityBulkDeleteLabels
 }
@@ -77,9 +73,9 @@ function useEntityBulkDeleteAction<
 >({
   run,
   labels,
-}: EntityBulkDeleteConfig<TData>): EntityBulkDeleteModel<TData> {
+}: EntityBulkDeleteConfig): EntityBulkDeleteModel<TData> {
   const ROUTER = useRouter()
-  const { showSuccess, showError } = useAuthFormToast({
+  const { showSuccess, showError } = useEntityFormToast({
     successTitle: labels.BULK_DELETE_SUCCESS_TITLE,
     successDescription: labels.BULK_DELETE_SUCCESS_DESCRIPTION,
     errorTitle: labels.BULK_DELETE_ERROR_TITLE,

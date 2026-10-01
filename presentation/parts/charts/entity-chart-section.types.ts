@@ -1,4 +1,4 @@
-import type { EntityChartModel } from "@/presentation/parts/charts/types"
+import type { EntityChartModel } from "@/presentation/parts/charts/entity-chart.types"
 
 /**
  * @summary

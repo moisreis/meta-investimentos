@@ -1,6 +1,7 @@
 import { IconPlus } from "@tabler/icons-react"
-import { Button } from "@/presentation/ui/button"
 import type { JSX } from "react"
+
+import { EntityDatatableGhostButton } from "./entity-datatable-ghost-button"
 
 // Copy shown when the caller does not provide a label.
 const DEFAULT_LABEL = "Adicionar Item"
@@ -16,13 +17,10 @@ export function EntityDatatableAddItemButton(
   const { onClick, label = DEFAULT_LABEL } = props
 
   return (
-    <Button
-      variant="ghost"
-      className="font-normal text-muted-foreground"
+    <EntityDatatableGhostButton
+      icon={IconPlus}
+      label={label}
       onClick={onClick}
-    >
-      <IconPlus />
-      <span>{label}</span>
-    </Button>
+    />
   )
 }

@@ -23,7 +23,7 @@ import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
  * @example
  * const ROW = ToUserRow(DTO);
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-26
  */
@@ -65,7 +65,7 @@ export function ToUserRow(dto: UserResponseDTO): UserRow {
  * @example
  * const ROWS = ToUserRows(DTO);
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-26
  */

@@ -6,7 +6,7 @@ import type { z } from "zod"
 import {
   ToFieldErrors,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 
 type EntityFormStatus =
   "idle" | "attempting" | "success" | "error"

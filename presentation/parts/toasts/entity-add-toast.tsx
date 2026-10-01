@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { useAuthFormToast } from "@/presentation/parts/hooks/use-auth-form-toast.hook"
+import { useEntityFormToast } from "@/presentation/parts/hooks/use-entity-form-toast.hook"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 
 /**
@@ -27,7 +27,7 @@ const VALIDATION_ERROR =
  * @remarks
  * Fires a toast when the status becomes `success` or
  * `error` after the add form submits. Uses the shared
- * auth form toast callbacks with the given copy.
+ * entity form toast callbacks with the given copy.
  *
  * @explanation
  * Render next to the entity add dialog wiring the form
@@ -60,7 +60,7 @@ function EntityAddToast({
   successDescription,
   errorTitle,
 }: EntityAddToastProps) {
-  const { showSuccess, showError } = useAuthFormToast({
+  const { showSuccess, showError } = useEntityFormToast({
     successTitle,
     successDescription,
     errorTitle,

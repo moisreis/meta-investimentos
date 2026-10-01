@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 
 import type { EntityDeleteToastStatus } from "@/presentation/parts/toasts/entity-delete-toast"
 import type { EntityReverseToastStatus } from "@/presentation/parts/toasts/entity-reverse-toast"
-import type { ActionResult } from "@/presentation/types/action-result"
+import type { ActionResult } from "@/presentation/presenters/action-result.presenter"
 
 // Router instance returned by the navigation use router hook.
 type EntityRouter = ReturnType<typeof useRouter>
@@ -112,9 +112,9 @@ function useEntityRowActions<TData extends { id: string }>({
   const [REVERSE_PENDING, setReversePending] = useState(false)
   const [REVERSE_STATUS, setReverseStatus] =
     useState<EntityReverseToastStatus>("idle")
-  const [REVERSE_ERROR, setReverseError] = useState<string | null>(
-    null
-  )
+  const [REVERSE_ERROR, setReverseError] = useState<
+    string | null
+  >(null)
 
   const HandleView = useCallback(
     (row: TData) => {

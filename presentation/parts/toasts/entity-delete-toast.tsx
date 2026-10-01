@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { useAuthFormToast } from "@/presentation/parts/hooks/use-auth-form-toast.hook"
+import { useEntityFormToast } from "@/presentation/parts/hooks/use-entity-form-toast.hook"
 
 /**
  * Status of the entity delete flow.
@@ -65,7 +65,7 @@ function EntityDeleteToast({
   successDescription,
   errorTitle,
 }: EntityDeleteToastProps) {
-  const { showSuccess, showError } = useAuthFormToast({
+  const { showSuccess, showError } = useEntityFormToast({
     successTitle,
     successDescription,
     errorTitle,

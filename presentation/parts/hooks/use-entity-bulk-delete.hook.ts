@@ -8,7 +8,7 @@ import type { EntityTable } from "@/presentation/parts/datatable/settings/entity
 /**
  * View model for the bulk delete confirm flow.
  */
-export interface EntityBulkDeleteModel<TData extends RowData> {
+export interface EntityBulkDeleteModel {
   open: boolean
   setOpen: (open: boolean) => void
   count: number
@@ -36,7 +36,7 @@ export interface EntityBulkDeleteModel<TData extends RowData> {
 function useEntityBulkDelete<TData extends RowData>(
   table: EntityTable<TData>,
   onBulkDelete?: (items: TData[]) => void | Promise<void>
-): EntityBulkDeleteModel<TData> {
+): EntityBulkDeleteModel {
   const [open, setOpen] = useState(false)
 
   const items = table

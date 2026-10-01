@@ -33,12 +33,12 @@ import {
   BuildChartConfig,
   ResolveColumnFill,
   ResolveSeriesColor,
-} from "./chart-colors"
+} from "./entity-chart-colors.helper"
 import type {
   EntityChartModel,
   EntityChartPoint,
   EntityChartSeries,
-} from "./types"
+} from "./entity-chart.types"
 
 // A datum handed to recharts, flattened so every series key
 // sits on the same level as the category label.
@@ -62,7 +62,7 @@ const REFERENCE_COLOR = "var(--muted-foreground)"
 // Height shared by every chart kind, so a pie and an area
 // card always rise to the same height inside their card.
 // The pie reserves part of this budget for its slice legend.
-const CHART_PLOT_HEIGHT = "h-64"
+const CHART_PLOT_HEIGHT = "h-96"
 
 // Shown when a tooltip entry has no value, instead of
 // letting a raw `null` reach the screen.
@@ -299,7 +299,9 @@ interface EntityChartSliceLegendProps {
  *
  * @date 2026-09-28
  */
-function EntityChartSliceLegend({ items }: EntityChartSliceLegendProps) {
+function EntityChartSliceLegend({
+  items,
+}: EntityChartSliceLegendProps) {
   if (items.length === 0) return null
 
   return (
@@ -307,7 +309,7 @@ function EntityChartSliceLegend({ items }: EntityChartSliceLegendProps) {
       {items.map((item) => (
         <li
           key={item.label}
-          className="flex min-w-0 max-w-full items-center gap-1.5"
+          className="flex max-w-full min-w-0 items-center gap-1.5"
         >
           <span
             className="size-2.5 shrink-0 rounded-[2px]"
@@ -392,7 +394,10 @@ export function ResolveYAxisWidth(
   if (LONGEST === 0) return DEFAULT_Y_AXIS_WIDTH
 
   return Math.min(
-    Math.max(LONGEST * TICK_CHARACTER_WIDTH + 12, MIN_Y_AXIS_WIDTH),
+    Math.max(
+      LONGEST * TICK_CHARACTER_WIDTH + 12,
+      MIN_Y_AXIS_WIDTH
+    ),
     MAX_Y_AXIS_WIDTH
   )
 }
@@ -424,7 +429,8 @@ export function ReadTooltipNumber(
   value: TooltipValueType | null | undefined
 ): number | null {
   if (value === null || value === undefined) return null
-  if (typeof value !== "number" && typeof value !== "string") return null
+  if (typeof value !== "number" && typeof value !== "string")
+    return null
 
   const PARSED =
     typeof value === "number" ? value : Number.parseFloat(value)
@@ -544,8 +550,11 @@ function EntityChartPieTooltip({
   return (
     <div className="grid min-w-32 items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
       {payload.map((item) => {
-        const NAME = typeof item.name === "string" ? item.name : ""
-        const INDEX = slices.findIndex((slice) => slice.name === NAME)
+        const NAME =
+          typeof item.name === "string" ? item.name : ""
+        const INDEX = slices.findIndex(
+          (slice) => slice.name === NAME
+        )
         const NUMBER = ReadTooltipNumber(item.value)
 
         return (
@@ -633,15 +642,24 @@ function EntityChart({ model }: EntityChartProps) {
 
   const SERIES_BY_KEY = React.useMemo(
     () =>
-      new Map(model.series.map((series, index) => [series.key, { series, index }])),
+      new Map(
+        model.series.map((series, index) => [
+          series.key,
+          { series, index },
+        ])
+      ),
     [model.series]
   )
 
   if (model.points.length === 0) return null
 
   const AXIS_SERIES = model.series[0]
-  const FORMAT_TICK = AXIS_SERIES?.formatTick ?? AXIS_SERIES?.formatValue
-  const Y_AXIS_WIDTH = ResolveYAxisWidth(AXIS_SERIES, model.points)
+  const FORMAT_TICK =
+    AXIS_SERIES?.formatTick ?? AXIS_SERIES?.formatValue
+  const Y_AXIS_WIDTH = ResolveYAxisWidth(
+    AXIS_SERIES,
+    model.points
+  )
   const GRADIENT_ID = `entity-chart-fill-${model.id}`
 
   const AXES = (
@@ -663,7 +681,9 @@ function EntityChart({ model }: EntityChartProps) {
         axisLine={false}
         tickMargin={4}
         tickFormatter={
-          FORMAT_TICK ? (value: number) => FORMAT_TICK(value) : undefined
+          FORMAT_TICK
+            ? (value: number) => FORMAT_TICK(value)
+            : undefined
         }
       />
     </React.Fragment>
@@ -704,7 +724,8 @@ function EntityChart({ model }: EntityChartProps) {
                 value={
                   NUMBER === null
                     ? NO_VALUE_LABEL
-                    : (ENTRY?.series.formatValue(NUMBER) ?? NO_VALUE_LABEL)
+                    : (ENTRY?.series.formatValue(NUMBER) ??
+                      NO_VALUE_LABEL)
                 }
               />
             )
@@ -735,7 +756,9 @@ function EntityChart({ model }: EntityChartProps) {
           config={CONFIG}
           className="aspect-auto min-h-0 w-full flex-1"
         >
-          <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
+          <PieChart
+            margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
+          >
             <Pie
               data={SLICES}
               dataKey="value"
@@ -799,7 +822,10 @@ function EntityChart({ model }: EntityChartProps) {
         config={CONFIG}
         className={cn("aspect-auto w-full", CHART_PLOT_HEIGHT)}
       >
-        <BarChart data={DATA} margin={{ left: 0, right: 8, top: 8 }}>
+        <BarChart
+          data={DATA}
+          margin={{ left: 0, right: 8, top: 8 }}
+        >
           {AXES}
           {REFERENCES}
           {model.series.map((series, index) => (
@@ -837,7 +863,10 @@ function EntityChart({ model }: EntityChartProps) {
         config={CONFIG}
         className={cn("aspect-auto w-full", CHART_PLOT_HEIGHT)}
       >
-        <LineChart data={DATA} margin={{ left: 0, right: 8, top: 8 }}>
+        <LineChart
+          data={DATA}
+          margin={{ left: 0, right: 8, top: 8 }}
+        >
           {AXES}
           {REFERENCES}
           {model.series.map((series, index) => (
@@ -866,7 +895,10 @@ function EntityChart({ model }: EntityChartProps) {
       config={CONFIG}
       className={cn("aspect-auto w-full", CHART_PLOT_HEIGHT)}
     >
-      <AreaChart data={DATA} margin={{ left: 0, right: 8, top: 8 }}>
+      <AreaChart
+        data={DATA}
+        margin={{ left: 0, right: 8, top: 8 }}
+      >
         <defs>
           <linearGradient
             id={GRADIENT_ID}

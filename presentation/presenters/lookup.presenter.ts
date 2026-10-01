@@ -25,7 +25,7 @@ export { PRESENTER_FALLBACK }
  * });
  * // returns "Fundo Exemplo (12.345.678/0001-99)"
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-27
  */
@@ -80,7 +80,7 @@ export function FormatFundLookup(
  * });
  * // returns "Minha Carteira (MC)"
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-27
  */
@@ -124,7 +124,7 @@ export function FormatPortfolioLookup(
  * });
  * // returns "Banco do Brasil (001)"
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-27
  */
@@ -166,7 +166,7 @@ export function FormatBankLookup(
  * });
  * // returns "Ag. 1234 Cta. 56789-0"
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-27
  */
@@ -217,7 +217,7 @@ export function FormatBankAccountLookup(
  * const DISPLAY = FormatEntityLookup("Fundo Exemplo", "12.345.678/0001-99");
  * // returns "Fundo Exemplo (12.345.678/0001-99)"
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-27
  */
@@ -260,7 +260,7 @@ export function FormatEntityLookup(
  * });
  * // returns "Fundo Exemplo (Minha Carteira - MC)"
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-27
  */
