@@ -6,6 +6,8 @@ import type { BankRow } from "@/presentation/types/bank-row.types"
 
 interface BankDatatableTableProps {
   table: EntityTable<BankRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
   onBulkDelete: (items: BankRow[]) => void | Promise<void>
 }
 
@@ -22,6 +24,7 @@ interface BankDatatableTableProps {
  * @param props.table - The shared table instance.
  * @param props.onBulkDelete - Runs the bulk delete flow.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The bank datatable.
  *
  * @author Moisés Reis
@@ -30,10 +33,15 @@ interface BankDatatableTableProps {
  */
 function BankDatatableTable({
   table,
+  pending,
   onBulkDelete,
 }: BankDatatableTableProps) {
   return (
-    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+    <EntityDatatable
+      table={table}
+      onBulkDelete={onBulkDelete}
+      pending={pending}
+    />
   )
 }
 

@@ -6,6 +6,8 @@ import type { CheckingAccountRow } from "@/presentation/types/checking-account-r
 
 interface CheckingAccountDatatableTableProps {
   table: EntityTable<CheckingAccountRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
   onBulkDelete: (
     items: CheckingAccountRow[]
   ) => void | Promise<void>
@@ -24,6 +26,7 @@ interface CheckingAccountDatatableTableProps {
  * @param props.table - The shared table instance.
  * @param props.onBulkDelete - Runs the bulk delete flow.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The checking account datatable.
  *
  * @author Moisés Reis
@@ -32,10 +35,15 @@ interface CheckingAccountDatatableTableProps {
  */
 function CheckingAccountDatatableTable({
   table,
+  pending,
   onBulkDelete,
 }: CheckingAccountDatatableTableProps) {
   return (
-    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+    <EntityDatatable
+      table={table}
+      onBulkDelete={onBulkDelete}
+      pending={pending}
+    />
   )
 }
 

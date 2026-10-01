@@ -6,6 +6,8 @@ import type { PositionPerformanceRow } from "@/presentation/types/position-perfo
 
 interface PositionPerformanceDatatableTableProps {
   table: EntityTable<PositionPerformanceRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
   /**
    * Enables the bulk delete confirm flow for the selected
    * rows.
@@ -27,6 +29,7 @@ interface PositionPerformanceDatatableTableProps {
  * @param props.table - The shared table instance.
  * @param props.onBulkDelete - Optional bulk delete handler.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The position performance datatable.
  *
  * @author Moisés Reis
@@ -35,10 +38,15 @@ interface PositionPerformanceDatatableTableProps {
  */
 function PositionPerformanceDatatableTable({
   table,
+  pending,
   onBulkDelete,
 }: PositionPerformanceDatatableTableProps) {
   return (
-    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+    <EntityDatatable
+      table={table}
+      onBulkDelete={onBulkDelete}
+      pending={pending}
+    />
   )
 }
 

@@ -6,6 +6,8 @@ import type { QuotaRow } from "@/presentation/types/quota-row.types"
 
 interface QuotaDatatableTableProps {
   table: EntityTable<QuotaRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
 }
 
 /**
@@ -20,6 +22,7 @@ interface QuotaDatatableTableProps {
  * @param props - The shared table instance.
  * @param props.table - The shared table instance.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The quota datatable.
  *
  * @author Moisés Reis
@@ -28,8 +31,9 @@ interface QuotaDatatableTableProps {
  */
 function QuotaDatatableTable({
   table,
+  pending,
 }: QuotaDatatableTableProps) {
-  return <EntityDatatable table={table} />
+  return <EntityDatatable table={table} pending={pending} />
 }
 
 export { QuotaDatatableTable }

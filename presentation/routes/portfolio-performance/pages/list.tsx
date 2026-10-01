@@ -57,6 +57,7 @@ function PortfolioPerformanceList({
   portfolios = [],
   lookups = EMPTY_PORTFOLIO_PERFORMANCE_LOOKUPS,
 }: PortfolioPerformanceListProps) {
+  const PENDING = data === null
   const PERFORMANCES = data ?? []
   const HAS_PERFORMANCES = PERFORMANCES.length > 0
 
@@ -100,8 +101,9 @@ function PortfolioPerformanceList({
         }
       />
 
-      {HAS_PERFORMANCES ? (
+      {PENDING || HAS_PERFORMANCES ? (
         <PortfolioPerformanceDatatableTable
+          pending={PENDING}
           table={table}
           onBulkDelete={rowActions.handleConfirmDelete}
         />

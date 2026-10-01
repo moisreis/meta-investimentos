@@ -54,6 +54,7 @@ function ApplicationList({
   lookups = EMPTY_APPLICATION_LOOKUPS,
   options = null,
 }: ApplicationListProps) {
+  const PENDING = data === null
   const APPLICATIONS = data ?? []
   const HAS_APPLICATIONS = APPLICATIONS.length > 0
   const OPTIONS = options ?? EMPTY_APPLICATION_ADD_OPTIONS
@@ -101,8 +102,11 @@ function ApplicationList({
         }
       />
 
-      {HAS_APPLICATIONS ? (
-        <ApplicationDatatableTable table={table} />
+      {PENDING || HAS_APPLICATIONS ? (
+        <ApplicationDatatableTable
+          table={table}
+          pending={PENDING}
+        />
       ) : (
         <EntityEmptyTable
           icon={IconCoin}

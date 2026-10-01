@@ -51,6 +51,7 @@ function CategoryList({
   data,
   summaries = null,
 }: CategoryListProps) {
+  const PENDING = data === null
   const CATEGORIES = data ?? []
   const HAS_CATEGORIES = CATEGORIES.length > 0
 
@@ -94,8 +95,9 @@ function CategoryList({
         }
       />
 
-      {HAS_CATEGORIES ? (
+      {PENDING || HAS_CATEGORIES ? (
         <CategoryDatatableTable
+          pending={PENDING}
           table={table}
           onBulkDelete={bulkDelete.handleBulkDelete}
         />

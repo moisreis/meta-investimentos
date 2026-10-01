@@ -8,6 +8,7 @@ import { useEntityDatatableFluidWidths } from "@/presentation/parts/hooks/use-en
 import { useEntityDatatablePinning } from "@/presentation/parts/hooks/use-entity-datatable-pinning.hook"
 
 import { EntityTablePagination } from "../pagination/entity-table-pagination"
+import { EntityTablePendingRows } from "../pending/entity-table-pending-rows"
 import { EntityTableRows } from "../rows/entity-table-row"
 import type { EntityTable } from "../settings/entity-table-features.settings"
 import { EntityTableHeader } from "../table-header/entity-table-header"
@@ -20,6 +21,13 @@ export interface EntityDatatableProps<TData extends RowData> {
   className?: string
   /** Enables the bulk delete confirm flow for the selected rows. */
   onBulkDelete?: (items: TData[]) => void | Promise<void>
+  /**
+   * Renders placeholder rows in place of the body while the
+   * rows have not resolved. The header stays real, the
+   * pagination footer steps aside because there is nothing
+   * to paginate yet, and the table announces `aria-busy`.
+   */
+  pending?: boolean
 }
 
 /**
@@ -54,6 +62,7 @@ function EntityDatatable<TData extends RowData>({
   table,
   className,
   onBulkDelete,
+  pending = false,
 }: EntityDatatableProps<TData>) {
   useEntityDatatablePinning(table)
 
@@ -78,14 +87,20 @@ function EntityDatatable<TData extends RowData>({
         >
           <EntityTableHeader table={table} />
 
-          <EntityTableRows table={table} />
+          {pending ? (
+            <EntityTablePendingRows table={table} />
+          ) : (
+            <EntityTableRows table={table} />
+          )}
         </table>
       </div>
 
-      <EntityTablePagination
-        table={table}
-        onBulkDelete={onBulkDelete}
-      />
+      {pending ? null : (
+        <EntityTablePagination
+          table={table}
+          onBulkDelete={onBulkDelete}
+        />
+      )}
     </div>
   )
 }

@@ -50,6 +50,7 @@ function PositionList({
   lookups = EMPTY_POSITION_LOOKUPS,
 }: PositionListProps) {
   // Normalize missing position data to an empty array.
+  const PENDING = data === null
   const POSITIONS = data ?? []
 
   // Determine whether there are any positions to display.
@@ -99,8 +100,9 @@ function PositionList({
         }
       />
 
-      {HAS_POSITIONS ? (
+      {PENDING || HAS_POSITIONS ? (
         <PositionDatatableTable
+          pending={PENDING}
           table={table}
           onBulkDelete={rowActions.handleConfirmDelete}
         />

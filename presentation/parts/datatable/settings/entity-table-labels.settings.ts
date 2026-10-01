@@ -6,6 +6,29 @@
 export const ENTITY_TABLE_EMPTY_STATE_LABEL =
   "Nenhum registro encontrado."
 
+// Message shown when the table has no rows because the
+// filter matched none, which is not the same as having no
+// records at all.
+export const ENTITY_TABLE_NO_MATCH_STATE_LABEL =
+  "Nenhum registro corresponde à busca."
+
+// Accessible label of the body while its rows are pending.
+export const ENTITY_TABLE_PENDING_LABEL = "Carregando registros"
+
+// Placeholder rows drawn while the body is pending. Enough
+// to fill the first page without drawing a row per page
+// size the user may have picked.
+export const ENTITY_TABLE_PENDING_ROW_COUNT = 8
+
+// Placeholder cell widths, cycled across the columns so the
+// pending body reads as a table instead of a wall of bars.
+export const ENTITY_TABLE_PENDING_WIDTHS = [
+  "w-24",
+  "w-16",
+  "w-20",
+  "w-12",
+] as const
+
 // Background used by the sticky header row.
 export const ENTITY_TABLE_HEADER_BG = "bg-background"
 

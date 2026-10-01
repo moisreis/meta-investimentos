@@ -6,6 +6,8 @@ import type { AuditLogRow } from "@/presentation/types/audit-log-row.types"
 
 interface AuditLogDatatableTableProps {
   table: EntityTable<AuditLogRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
 }
 
 /**
@@ -19,6 +21,7 @@ interface AuditLogDatatableTableProps {
  * @param props - The table instance.
  * @param props.table - The shared table instance.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The audit log datatable.
  *
  * @author Moisés Reis
@@ -27,8 +30,9 @@ interface AuditLogDatatableTableProps {
  */
 function AuditLogDatatableTable({
   table,
+  pending,
 }: AuditLogDatatableTableProps) {
-  return <EntityDatatable table={table} />
+  return <EntityDatatable table={table} pending={pending} />
 }
 
 export { AuditLogDatatableTable }

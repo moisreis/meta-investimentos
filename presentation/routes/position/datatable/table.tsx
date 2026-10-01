@@ -6,6 +6,8 @@ import type { PositionRow } from "@/presentation/types/position-row.types"
 
 interface PositionDatatableTableProps {
   table: EntityTable<PositionRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
   /**
    * Enables the bulk delete confirm flow for the selected
    * rows.
@@ -25,6 +27,7 @@ interface PositionDatatableTableProps {
  * @param props.table - The shared table instance.
  * @param props.onBulkDelete - Optional bulk delete handler.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The position datatable.
  *
  * @author Moisés Reis
@@ -33,10 +36,15 @@ interface PositionDatatableTableProps {
  */
 function PositionDatatableTable({
   table,
+  pending,
   onBulkDelete,
 }: PositionDatatableTableProps) {
   return (
-    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+    <EntityDatatable
+      table={table}
+      onBulkDelete={onBulkDelete}
+      pending={pending}
+    />
   )
 }
 

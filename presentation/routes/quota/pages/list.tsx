@@ -50,6 +50,7 @@ function QuotaList({
   data,
   lookups = EMPTY_QUOTA_FUND_LOOKUPS,
 }: QuotaListProps) {
+  const PENDING = data === null
   const QUOTAS = data ?? []
   const HAS_QUOTAS = QUOTAS.length > 0
 
@@ -87,8 +88,8 @@ function QuotaList({
         }
       />
 
-      {HAS_QUOTAS ? (
-        <QuotaDatatableTable table={table} />
+      {PENDING || HAS_QUOTAS ? (
+        <QuotaDatatableTable table={table} pending={PENDING} />
       ) : (
         <EntityEmptyTable
           icon={IconChartPie}

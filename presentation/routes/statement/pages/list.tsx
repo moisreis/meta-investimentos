@@ -51,6 +51,7 @@ function StatementList({
   portfolios,
   summaries,
 }: StatementListProps) {
+  const PENDING = data === null
   const STATEMENTS = data ?? []
   const HAS_STATEMENTS = STATEMENTS.length > 0
 
@@ -91,8 +92,9 @@ function StatementList({
         }
       />
 
-      {HAS_STATEMENTS ? (
+      {PENDING || HAS_STATEMENTS ? (
         <StatementDatatableTable
+          pending={PENDING}
           table={table}
           onBulkDelete={bulkDelete.handleBulkDelete}
         />

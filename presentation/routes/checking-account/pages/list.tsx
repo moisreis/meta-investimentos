@@ -63,6 +63,7 @@ function CheckingAccountList({
   options = null,
   names = EMPTY_CHECKING_ACCOUNT_NAME_LOOKUPS,
 }: CheckingAccountListProps) {
+  const PENDING = data === null
   const ENTRIES = data ?? []
   const HAS_ENTRIES = ENTRIES.length > 0
   const OPTIONS = options ?? EMPTY_OPTIONS
@@ -107,8 +108,9 @@ function CheckingAccountList({
         }
       />
 
-      {HAS_ENTRIES ? (
+      {PENDING || HAS_ENTRIES ? (
         <CheckingAccountDatatableTable
+          pending={PENDING}
           table={table}
           onBulkDelete={bulkDelete.handleBulkDelete}
         />

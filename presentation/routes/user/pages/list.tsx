@@ -43,6 +43,7 @@ export interface UserListProps {
  * @date 2026-09-30
  */
 function UserList({ data }: UserListProps) {
+  const PENDING = data === null
   const USERS = data ?? []
   const HAS_USERS = USERS.length > 0
 
@@ -83,8 +84,9 @@ function UserList({ data }: UserListProps) {
         }
       />
 
-      {HAS_USERS ? (
+      {PENDING || HAS_USERS ? (
         <UserDatatableTable
+          pending={PENDING}
           table={table}
           onBulkDelete={bulkDelete.handleBulkDelete}
         />

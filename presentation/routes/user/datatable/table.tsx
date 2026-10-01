@@ -6,6 +6,8 @@ import type { UserRow } from "@/presentation/types/user-row.types"
 
 interface UserDatatableTableProps {
   table: EntityTable<UserRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
   onBulkDelete: (items: UserRow[]) => void | Promise<void>
 }
 
@@ -22,6 +24,7 @@ interface UserDatatableTableProps {
  * @param props.table - The shared table instance.
  * @param props.onBulkDelete - Runs the bulk delete flow.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The user datatable.
  *
  * @author Moisés Reis
@@ -30,10 +33,15 @@ interface UserDatatableTableProps {
  */
 function UserDatatableTable({
   table,
+  pending,
   onBulkDelete,
 }: UserDatatableTableProps) {
   return (
-    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+    <EntityDatatable
+      table={table}
+      onBulkDelete={onBulkDelete}
+      pending={pending}
+    />
   )
 }
 

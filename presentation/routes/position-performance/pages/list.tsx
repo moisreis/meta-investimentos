@@ -52,6 +52,7 @@ function PositionPerformanceList({
   data,
   lookups = EMPTY_POSITION_PERFORMANCE_LOOKUPS,
 }: PositionPerformanceListProps) {
+  const PENDING = data === null
   const PERFORMANCES = data ?? []
   const HAS_PERFORMANCES = PERFORMANCES.length > 0
 
@@ -95,8 +96,9 @@ function PositionPerformanceList({
         }
       />
 
-      {HAS_PERFORMANCES ? (
+      {PENDING || HAS_PERFORMANCES ? (
         <PositionPerformanceDatatableTable
+          pending={PENDING}
           table={table}
           onBulkDelete={rowActions.handleConfirmDelete}
         />

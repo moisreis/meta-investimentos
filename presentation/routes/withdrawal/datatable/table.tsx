@@ -6,6 +6,8 @@ import type { WithdrawalRow } from "@/presentation/types/withdrawal-row.types"
 
 interface WithdrawalDatatableTableProps {
   table: EntityTable<WithdrawalRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
 }
 
 /**
@@ -20,6 +22,7 @@ interface WithdrawalDatatableTableProps {
  * @param props - The shared table instance.
  * @param props.table - The shared table instance.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The withdrawal datatable.
  *
  * @author Moisés Reis
@@ -28,8 +31,9 @@ interface WithdrawalDatatableTableProps {
  */
 function WithdrawalDatatableTable({
   table,
+  pending,
 }: WithdrawalDatatableTableProps) {
-  return <EntityDatatable table={table} />
+  return <EntityDatatable table={table} pending={pending} />
 }
 
 export { WithdrawalDatatableTable }

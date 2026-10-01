@@ -6,6 +6,8 @@ import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-per
 
 interface PortfolioPerformanceDatatableTableProps {
   table: EntityTable<PortfolioPerformanceRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
   /**
    * Enables the bulk delete confirm flow for the selected
    * rows.
@@ -27,6 +29,7 @@ interface PortfolioPerformanceDatatableTableProps {
  * @param props.table - The shared table instance.
  * @param props.onBulkDelete - Optional bulk delete handler.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The portfolio performance datatable.
  *
  * @author Moisés Reis
@@ -35,10 +38,15 @@ interface PortfolioPerformanceDatatableTableProps {
  */
 function PortfolioPerformanceDatatableTable({
   table,
+  pending,
   onBulkDelete,
 }: PortfolioPerformanceDatatableTableProps) {
   return (
-    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+    <EntityDatatable
+      table={table}
+      onBulkDelete={onBulkDelete}
+      pending={pending}
+    />
   )
 }
 

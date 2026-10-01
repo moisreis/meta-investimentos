@@ -48,6 +48,7 @@ export interface BankListProps {
  * @date 2026-09-30
  */
 function BankList({ data, summaries = null }: BankListProps) {
+  const PENDING = data === null
   const BANKS = data ?? []
   const HAS_BANKS = BANKS.length > 0
 
@@ -88,8 +89,9 @@ function BankList({ data, summaries = null }: BankListProps) {
         }
       />
 
-      {HAS_BANKS ? (
+      {PENDING || HAS_BANKS ? (
         <BankDatatableTable
+          pending={PENDING}
           table={table}
           onBulkDelete={bulkDelete.handleBulkDelete}
         />

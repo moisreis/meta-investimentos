@@ -6,6 +6,8 @@ import type { CategoryRow } from "@/presentation/types/category-row.types"
 
 interface CategoryDatatableTableProps {
   table: EntityTable<CategoryRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
   onBulkDelete: (items: CategoryRow[]) => void | Promise<void>
 }
 
@@ -22,6 +24,7 @@ interface CategoryDatatableTableProps {
  * @param props.table - The shared table instance.
  * @param props.onBulkDelete - Runs the bulk delete flow.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The category datatable.
  *
  * @author Moisés Reis
@@ -30,10 +33,15 @@ interface CategoryDatatableTableProps {
  */
 function CategoryDatatableTable({
   table,
+  pending,
   onBulkDelete,
 }: CategoryDatatableTableProps) {
   return (
-    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+    <EntityDatatable
+      table={table}
+      onBulkDelete={onBulkDelete}
+      pending={pending}
+    />
   )
 }
 

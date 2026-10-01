@@ -74,6 +74,7 @@ function FundList({
   summaries = null,
   names = EMPTY_FUND_NAME_LOOKUPS,
 }: FundListProps) {
+  const PENDING = data === null
   const FUNDS = data ?? []
   const HAS_FUNDS = FUNDS.length > 0
   const OPTIONS = options ?? EMPTY_OPTIONS
@@ -115,8 +116,9 @@ function FundList({
         }
       />
 
-      {HAS_FUNDS ? (
+      {PENDING || HAS_FUNDS ? (
         <FundDatatableTable
+          pending={PENDING}
           table={table}
           onBulkDelete={bulkDelete.handleBulkDelete}
         />

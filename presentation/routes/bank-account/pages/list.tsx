@@ -67,6 +67,7 @@ function BankAccountList({
   names = EMPTY_BANK_ACCOUNT_NAME_LOOKUPS,
   summaries = null,
 }: BankAccountListProps) {
+  const PENDING = data === null
   const ACCOUNTS = data ?? []
   const HAS_ACCOUNTS = ACCOUNTS.length > 0
   const OPTIONS = options ?? EMPTY_OPTIONS
@@ -115,8 +116,9 @@ function BankAccountList({
         }
       />
 
-      {HAS_ACCOUNTS ? (
+      {PENDING || HAS_ACCOUNTS ? (
         <BankAccountDatatableTable
+          pending={PENDING}
           table={table}
           onBulkDelete={bulkDelete.handleBulkDelete}
         />

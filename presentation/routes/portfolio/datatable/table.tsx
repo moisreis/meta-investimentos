@@ -6,6 +6,8 @@ import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 interface PortfolioDatatableTableProps {
   table: EntityTable<PortfolioRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
   onBulkDelete: (items: PortfolioRow[]) => void | Promise<void>
 }
 
@@ -22,6 +24,7 @@ interface PortfolioDatatableTableProps {
  * @param props.table - The shared table instance.
  * @param props.onBulkDelete - Runs the bulk delete flow.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The portfolio datatable.
  *
  * @author Moisés Reis
@@ -30,10 +33,15 @@ interface PortfolioDatatableTableProps {
  */
 function PortfolioDatatableTable({
   table,
+  pending,
   onBulkDelete,
 }: PortfolioDatatableTableProps) {
   return (
-    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+    <EntityDatatable
+      table={table}
+      onBulkDelete={onBulkDelete}
+      pending={pending}
+    />
   )
 }
 

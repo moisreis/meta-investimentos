@@ -6,6 +6,8 @@ import type { StatementRow } from "@/presentation/types/statement-row.types"
 
 interface StatementDatatableTableProps {
   table: EntityTable<StatementRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
   onBulkDelete: (items: StatementRow[]) => void | Promise<void>
 }
 
@@ -22,6 +24,7 @@ interface StatementDatatableTableProps {
  * @param props.table - The shared table instance.
  * @param props.onBulkDelete - Runs the bulk delete flow.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The statement datatable.
  *
  * @author Moisés Reis
@@ -30,10 +33,15 @@ interface StatementDatatableTableProps {
  */
 function StatementDatatableTable({
   table,
+  pending,
   onBulkDelete,
 }: StatementDatatableTableProps) {
   return (
-    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+    <EntityDatatable
+      table={table}
+      onBulkDelete={onBulkDelete}
+      pending={pending}
+    />
   )
 }
 

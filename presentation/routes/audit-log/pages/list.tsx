@@ -42,6 +42,7 @@ export interface AuditLogListProps {
  * @date 2026-09-25
  */
 function AuditLogList({ data, summaries }: AuditLogListProps) {
+  const PENDING = data === null
   const LOGS = data ?? []
   const HAS_LOGS = LOGS.length > 0
 
@@ -81,8 +82,11 @@ function AuditLogList({ data, summaries }: AuditLogListProps) {
         }
       />
 
-      {HAS_LOGS ? (
-        <AuditLogDatatableTable table={table} />
+      {PENDING || HAS_LOGS ? (
+        <AuditLogDatatableTable
+          table={table}
+          pending={PENDING}
+        />
       ) : (
         <EntityEmptyTable
           icon={IconHistory}

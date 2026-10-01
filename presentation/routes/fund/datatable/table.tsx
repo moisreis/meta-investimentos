@@ -6,6 +6,8 @@ import type { FundRow } from "@/presentation/types/fund-row.types"
 
 interface FundDatatableTableProps {
   table: EntityTable<FundRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
   onBulkDelete: (items: FundRow[]) => void | Promise<void>
 }
 
@@ -22,6 +24,7 @@ interface FundDatatableTableProps {
  * @param props.table - The shared table instance.
  * @param props.onBulkDelete - Runs the bulk delete flow.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The fund datatable.
  *
  * @author Moisés Reis
@@ -30,10 +33,15 @@ interface FundDatatableTableProps {
  */
 function FundDatatableTable({
   table,
+  pending,
   onBulkDelete,
 }: FundDatatableTableProps) {
   return (
-    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+    <EntityDatatable
+      table={table}
+      onBulkDelete={onBulkDelete}
+      pending={pending}
+    />
   )
 }
 

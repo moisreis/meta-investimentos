@@ -6,6 +6,8 @@ import type { ApplicationRow } from "@/presentation/types/application-row.types"
 
 interface ApplicationDatatableTableProps {
   table: EntityTable<ApplicationRow>
+  /** Renders placeholder rows until the rows resolve. */
+  pending?: boolean
 }
 
 /**
@@ -20,6 +22,7 @@ interface ApplicationDatatableTableProps {
  * @param props - The shared table instance.
  * @param props.table - The shared table instance.
  *
+ * @param props.pending - Renders placeholder rows.
  * @returns The application datatable.
  *
  * @author Moisés Reis
@@ -28,8 +31,9 @@ interface ApplicationDatatableTableProps {
  */
 function ApplicationDatatableTable({
   table,
+  pending,
 }: ApplicationDatatableTableProps) {
-  return <EntityDatatable table={table} />
+  return <EntityDatatable table={table} pending={pending} />
 }
 
 export { ApplicationDatatableTable }

@@ -56,6 +56,7 @@ function PortfolioList({
   availableDates = [],
   summaries = null,
 }: PortfolioListProps) {
+  const PENDING = data === null
   const PORTFOLIOS = data ?? []
   const HAS_PORTFOLIOS = PORTFOLIOS.length > 0
 
@@ -110,8 +111,9 @@ function PortfolioList({
         }
       />
 
-      {HAS_PORTFOLIOS ? (
+      {PENDING || HAS_PORTFOLIOS ? (
         <PortfolioDatatableTable
+          pending={PENDING}
           table={table}
           onBulkDelete={bulkDelete.handleBulkDelete}
         />

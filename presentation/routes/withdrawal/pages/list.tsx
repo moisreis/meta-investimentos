@@ -54,6 +54,7 @@ function WithdrawalList({
   lookups = EMPTY_WITHDRAWAL_LOOKUPS,
   options = null,
 }: WithdrawalListProps) {
+  const PENDING = data === null
   const WITHDRAWALS = data ?? []
   const HAS_WITHDRAWALS = WITHDRAWALS.length > 0
   const OPTIONS = options ?? EMPTY_WITHDRAWAL_ADD_OPTIONS
@@ -98,8 +99,11 @@ function WithdrawalList({
         }
       />
 
-      {HAS_WITHDRAWALS ? (
-        <WithdrawalDatatableTable table={table} />
+      {PENDING || HAS_WITHDRAWALS ? (
+        <WithdrawalDatatableTable
+          table={table}
+          pending={PENDING}
+        />
       ) : (
         <EntityEmptyTable
           icon={IconArrowDownCircle}
