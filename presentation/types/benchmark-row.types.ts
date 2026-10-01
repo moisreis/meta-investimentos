@@ -4,11 +4,8 @@
  *
  * @remarks
  * Projects the benchmark read model onto the fields
- * the screens actually render. Every money and quota
- * value stays a decimal string so the presenters are
- * the only place that formats it.
- *
- *The `acronym`, `createdAt` fields stay in the service layer.
+ * the screens actually render. The `createdAt` field
+ * stays in the service layer.
  *
  * @explanation
  * Use this type in tables, dialogs, forms and hooks.
@@ -17,9 +14,10 @@
  *
  * @author Moisés Reis
  *
- * @date 2026-09-26
+ * @date 2026-10-01
  */
 export interface BenchmarkRow {
   id: string
+  acronym: string
   name: string
 }

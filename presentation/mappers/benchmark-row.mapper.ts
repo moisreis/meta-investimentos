@@ -6,10 +6,8 @@ import type { BenchmarkResponseDTO } from "@/services/benchmark/dto/benchmark-re
  * Projects a benchmark read model onto the benchmark row.
  *
  * @remarks
- * Keeps the 2 fields the screens render
- * and drops 2 that stay in the
- * service layer:
- * `acronym`, `createdAt`.
+ * Keeps the 3 fields the screens render and drops
+ * `createdAt`, which stays in the service layer.
  *
  * @explanation
  * Use this mapper in the route loaders, the only place
@@ -25,26 +23,25 @@ import type { BenchmarkResponseDTO } from "@/services/benchmark/dto/benchmark-re
  *
  * @author Moisés Reis
  *
- * @date 2026-09-26
+ * @date 2026-10-01
  */
 export function ToBenchmarkRow(
   dto: BenchmarkResponseDTO
 ): BenchmarkRow {
   return {
     id: dto.id,
+    acronym: dto.acronym,
     name: dto.name,
   }
 }
 
 /**
  * @summary
- * Projects the benchmark read models onto the benchmark rows.
+ * Projects the benchmark read models onto the rows.
  *
  * @remarks
- * Keeps the 2 fields the screens render
- * and drops 2 that stay in the
- * service layer:
- * `acronym`, `createdAt`.
+ * Keeps the 3 fields the screens render and drops
+ * `createdAt`, which stays in the service layer.
  *
  * @explanation
  * Use this mapper in the route loaders, the only place
@@ -56,11 +53,11 @@ export function ToBenchmarkRow(
  * @returns The benchmark rows.
  *
  * @example
- * const ROWS = ToBenchmarkRows(DTO);
+ * const ROWS = ToBenchmarkRows(DTOS);
  *
  * @author Moisés Reis
  *
- * @date 2026-09-26
+ * @date 2026-10-01
  */
 export function ToBenchmarkRows(
   dtos: BenchmarkResponseDTO[]
