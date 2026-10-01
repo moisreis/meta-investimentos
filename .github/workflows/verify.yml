@@ -1,0 +1,53 @@
+name: Verify
+
+on:
+  push:
+  pull_request:
+
+# One job runs the gate the repository already defines, so
+# the checks a reviewer runs by hand are the checks that run
+# on every push. The build runs after it because the build is
+# the only signal that catches a server component calling a
+# client hook, which the gate cannot see.
+jobs:
+  verify:
+    name: Gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run verify
+
+      # The application reads these at request time and the
+      # build never connects, so placeholders are enough to
+      # let the bundle compile in a clean runner. Real values
+      # belong to the deploy, not to the build.
+      - run: npm run build
+        env:
+          DATABASE_URL: postgres://user:pass@localhost:5432/build
+          BETTER_AUTH_URL: http://localhost:3000
+          NEXT_PUBLIC_BETTER_AUTH_URL: http://localhost:3000
+          INNGEST_EVENT_KEY: build-placeholder
+
+  # Reserved for the test suite. The repository has no runner
+  # yet, so wiring a job here would only report a false green.
+  # Add the job the moment a runner lands, and keep it in this
+  # same workflow so the gate and the tests never diverge.
+  # tests:
+  #   name: Tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 22
+  #         cache: npm
+  #     - run: npm ci
+  #     - run: npm test
