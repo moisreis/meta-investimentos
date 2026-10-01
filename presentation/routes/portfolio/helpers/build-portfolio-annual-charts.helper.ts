@@ -1,5 +1,5 @@
-import { BuildAnnualChartModels } from "@/presentation/parts/charts/annual-chart-models.helper"
-import type { EntityChartModel } from "@/presentation/parts/charts/types"
+import { BuildAnnualChartModels } from "@/presentation/parts/charts/entity-annual-chart-models.helper"
+import type { EntityChartModel } from "@/presentation/parts/charts/entity-chart.types"
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 
 import { PORTFOLIO_ANNUAL } from "../settings/labels.settings"

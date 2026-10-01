@@ -2,7 +2,7 @@ import type {
   EntityChartModel,
   EntityChartPoint,
   EntityChartSeries,
-} from "@/presentation/parts/charts/types"
+} from "@/presentation/parts/charts/entity-chart.types"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import type { PortfolioHolding } from "@/presentation/types/portfolio-holding.types"
 
@@ -182,7 +182,8 @@ export function BuildBankDistributionChart(
 
     BY_BANK.set(holding.bankId, {
       label: ResolveBankLabel(holding, CURRENT?.label),
-      value: (CURRENT?.value ?? 0) + ToAmount(holding.investedValue),
+      value:
+        (CURRENT?.value ?? 0) + ToAmount(holding.investedValue),
     })
   }
 

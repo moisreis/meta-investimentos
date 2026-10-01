@@ -2,7 +2,6 @@
 
 import { EntityEditDialog } from "@/presentation/parts/dialogs/entity-edit"
 import { EntityEditToast } from "@/presentation/parts/toasts/entity-edit-toast"
-import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { EntityEditDialogModel } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 import { EditPortfolioForm } from "@/presentation/routes/portfolio/forms/edit"

@@ -34,6 +34,24 @@ export const PORTFOLIO_FORM = {
 
   // Error toast title for the portfolio forms.
   ERROR_TITLE: "Não foi possível salvar a carteira",
+  // Field label: the acronym.
+  LABEL_ACRONYM: "Sigla",
+  // Field placeholder: the acronym.
+  PLACEHOLDER_ACRONYM: "Ex.: RF",
+  // Field label: the name.
+  LABEL_NAME: "Nome",
+  // Field placeholder: the name.
+  PLACEHOLDER_NAME: "Ex.: Renda Fixa",
+  // Field label: the annual interest rate.
+  LABEL_ANNUAL_INTEREST_RATE: "Taxa de juros anual",
+  // Field description: the annual interest rate.
+  DESCRIPTION_ANNUAL_INTEREST_RATE: "Em percentual ao ano.",
+  // Field label: the minimum allocation.
+  LABEL_MINIMUM_ALLOCATION: "Alocação mínima",
+  // Field label: the target allocation.
+  LABEL_TARGET_ALLOCATION: "Alocação alvo",
+  // Field label: the maximum allocation.
+  LABEL_MAXIMUM_ALLOCATION: "Alocação máxima",
 } as const
 
 // Dialog copy for the portfolio add/edit flows.

@@ -4,9 +4,9 @@ import { PositionContainer } from "@/presentation/composition/position.container
 import { WithdrawalContainer } from "@/presentation/composition/withdrawal.container"
 import { ToPositionWeightRows } from "@/presentation/mappers/position-weight-row.mapper"
 
+import { BuildPositionAddOptions } from "@/presentation/routes/withdrawal/helpers/build-withdrawal-position-add-options.helper"
+import { BuildWithdrawalPortfolioOptions } from "@/presentation/routes/withdrawal/helpers/build-withdrawal-portfolio-options.helper"
 import {
-  BuildPositionAddOptions,
-  BuildWithdrawalPortfolioOptions,
   type WithdrawalAddOptions,
   EMPTY_WITHDRAWAL_ADD_OPTIONS,
 } from "@/presentation/routes/withdrawal/types/withdrawal-add.types"
@@ -64,12 +64,13 @@ export async function LoadPortfolioWithdrawalOptions(
   const { list: LIST_PORTFOLIOS } = PortfolioContainer()
   const { listWeights: LIST_WEIGHTS } = PositionContainer()
 
-  const [POSITIONS, FUNDS, PORTFOLIOS, WEIGHTS] = await Promise.all([
-    LIST_POSITIONS.execute({ portfolioIds: [portfolioId] }),
-    LIST_FUNDS.execute({}),
-    LIST_PORTFOLIOS.execute({ userId: USER.id }),
-    LIST_WEIGHTS.execute({ portfolioIds: [portfolioId] }),
-  ])
+  const [POSITIONS, FUNDS, PORTFOLIOS, WEIGHTS] =
+    await Promise.all([
+      LIST_POSITIONS.execute({ portfolioIds: [portfolioId] }),
+      LIST_FUNDS.execute({}),
+      LIST_PORTFOLIOS.execute({ userId: USER.id }),
+      LIST_WEIGHTS.execute({ portfolioIds: [portfolioId] }),
+    ])
 
   return {
     positions: BuildPositionAddOptions({

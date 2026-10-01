@@ -1,67 +1,31 @@
 import type { Metadata } from "next"
 
-import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
-import { UserContainer } from "@/presentation/composition/user.container"
-import { BuildPortfolioRowSummaries } from "@/presentation/routes/portfolio/helpers/build-portfolio-row-summaries.helper"
-import { LoadSessionPortfolios } from "@/presentation/routes/portfolio/helpers/load-session-portfolios.helper"
+import { LoadPortfolioPageProps } from "@/presentation/routes/portfolio/helpers/load-portfolio-page-props.helper"
 import { PortfolioList } from "@/presentation/routes/portfolio/pages/list"
-import type { PortfolioRowSummary } from "@/presentation/routes/portfolio/types/portfolio-list.types"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 export const metadata: Metadata = {
   title: "Carteiras",
 }
 
+/**
+ * @summary
+ * Route page of the portfolio list screen.
+ *
+ * @remarks
+ * Loads the props of the screen on the server, so the
+ * first paint already carries the data, and hands them
+ * to the route page that composes the screen. The page
+ * itself only decides the title and the entry point, so
+ * the same route page can be rendered from anywhere.
+ *
+ * @returns The route page of the screen.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-30
+ */
 export default async function PortfoliosRoutePage() {
-  let PORTFOLIOS: PortfolioRow[] | null = null
-  let PERFORMANCE_DATES: string[] = []
-  let SUMMARIES: Record<string, PortfolioRowSummary> = {}
+  const PROPS = await LoadPortfolioPageProps()
 
-  const SESSION_BUNDLE = await LoadSessionPortfolios()
-
-  if (SESSION_BUNDLE) {
-    const { userId: USER_ID, portfolios: PORTFOLIOS_LOADED } =
-      SESSION_BUNDLE
-    PORTFOLIOS = PORTFOLIOS_LOADED
-
-    const PORTFOLIO_IDS = PORTFOLIOS.map(
-      (portfolio) => portfolio.id
-    )
-
-    const {
-      listPerformanceDates: LIST_PERFORMANCE_DATES,
-      listRowSummaries: LIST_ROW_SUMMARIES,
-    } = PortfolioContainer()
-    const { get: GET_USER } = UserContainer()
-
-    const [DATES, USER, ROW_SUMMARIES] = await Promise.all([
-      LIST_PERFORMANCE_DATES.execute({
-        portfolioIds: PORTFOLIO_IDS,
-      }),
-      GET_USER.execute({ userId: USER_ID }),
-      LIST_ROW_SUMMARIES.execute({
-        portfolioIds: PORTFOLIO_IDS,
-      }),
-    ])
-
-    PERFORMANCE_DATES = DATES
-
-    SUMMARIES = BuildPortfolioRowSummaries(
-      PORTFOLIOS,
-      ROW_SUMMARIES,
-      USER_ID,
-      USER
-    )
-  }
-
-  return (
-    <>
-      <PortfolioList
-        data={PORTFOLIOS}
-        availableDates={PERFORMANCE_DATES}
-        summaries={SUMMARIES}
-      />
-    </>
-  )
+  return <PortfolioList {...PROPS} />
 }

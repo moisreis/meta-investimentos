@@ -1,9 +1,9 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { FundContainer } from "@/presentation/composition/fund.container"
 import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
+import { BuildApplicationFundOptions } from "@/presentation/routes/application/helpers/build-application-fund-options.helper"
+import { BuildApplicationPortfolioOptions } from "@/presentation/routes/application/helpers/build-application-portfolio-options.helper"
 import {
-  BuildApplicationFundOptions,
-  BuildApplicationPortfolioOptions,
   type ApplicationAddOptions,
   EMPTY_APPLICATION_ADD_OPTIONS,
 } from "@/presentation/routes/application/types/application-add.types"

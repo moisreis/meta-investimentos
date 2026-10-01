@@ -3,7 +3,7 @@ import type { DateRange } from "react-day-picker"
 import type {
   EntityChartModel,
   EntityChartSeries,
-} from "@/presentation/parts/charts/types"
+} from "@/presentation/parts/charts/entity-chart.types"
 import {
   FormatCompactCurrency,
   FormatCurrency,
@@ -11,9 +11,7 @@ import {
 import type { CheckingAccountResponseDTO } from "@/services/checking-account/dto/checking-account-response.dto"
 import type { PortfolioBankAccountView } from "@/presentation/types/portfolio-checking.types"
 
-import {
-  PORTFOLIO_CHECKING,
-} from "../settings/labels.settings"
+import { PORTFOLIO_CHECKING } from "../settings/labels.settings"
 
 // Keys of the chart container ids, kept stable so the
 // generated gradients and the injected colors survive a
@@ -75,7 +73,10 @@ function BuildBalanceSeries(): EntityChartSeries[] {
  *   window holds no balance entry.
  *
  * @example
- * const MODEL = BuildCheckingEvolutionChart(BALANCES, DATE_RANGE);
+ * const MODEL = BuildCheckingEvolutionChart(
+ *   BALANCES,
+ *   DATE_RANGE
+ * );
  *
  * @author Moisés Reis
  *
@@ -98,7 +99,10 @@ export function BuildCheckingEvolutionChart(
     const KEY = entry.date.slice(0, 10)
     if (FROM && KEY < FROM) continue
     if (TO && KEY > TO) continue
-    BY_DAY.set(KEY, (BY_DAY.get(KEY) ?? 0) + ToAmount(entry.value))
+    BY_DAY.set(
+      KEY,
+      (BY_DAY.get(KEY) ?? 0) + ToAmount(entry.value)
+    )
   }
 
   const DAYS = [...BY_DAY.keys()].sort()
@@ -146,7 +150,10 @@ export function BuildCheckingEvolutionChart(
  *   account holds a positive balance.
  *
  * @example
- * const MODEL = BuildCheckingDistributionChart(ACCOUNTS, BALANCES);
+ * const MODEL = BuildCheckingDistributionChart(
+ *   ACCOUNTS,
+ *   BALANCES
+ * );
  *
  * @author Moisés Reis
  *
@@ -156,7 +163,10 @@ export function BuildCheckingDistributionChart(
   bankAccounts: readonly PortfolioBankAccountView[],
   balances: readonly CheckingAccountResponseDTO[]
 ): EntityChartModel | null {
-  const LATEST = new Map<string, { date: string; value: number }>()
+  const LATEST = new Map<
+    string,
+    { date: string; value: number }
+  >()
 
   for (const entry of balances) {
     const CURRENT = LATEST.get(entry.bankAccountId)

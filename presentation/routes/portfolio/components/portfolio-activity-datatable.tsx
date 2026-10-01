@@ -2,11 +2,10 @@
 
 import { IconArrowDownRight } from "@tabler/icons-react"
 
-import { EntityDatatable } from "@/presentation/parts/datatable/layout/entity-datatable"
-import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
+import { SharedDatatableSection } from "@/presentation/parts/datatable/layout/shared-datatable-section"
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
 
-import { usePortfolioActivityTable } from "./hooks/use-portfolio-activity-table.hook"
+import { usePortfolioActivityTable } from "../hooks/use-portfolio-activity-table.hook"
 import { PORTFOLIO_ACTIVITY } from "../settings/labels.settings"
 
 /**
@@ -48,32 +47,16 @@ function PortfolioActivityDatatable({
   const { hasRows, table } = usePortfolioActivityTable(rows)
 
   return (
-    <section
-      className="flex w-full flex-col gap-4 border-b border-border px-4 py-6 last:border-b-0 sm:px-6"
-      aria-labelledby="portfolio-activity-title"
-    >
-      <div className="flex flex-col gap-1">
-        <h2
-          id="portfolio-activity-title"
-          className="font-heading text-xs font-medium text-foreground uppercase"
-        >
-          {PORTFOLIO_ACTIVITY.TITLE}
-        </h2>
-        <p className="text-xs text-muted-foreground">
-          {PORTFOLIO_ACTIVITY.DESCRIPTION}
-        </p>
-      </div>
-
-      {hasRows ? (
-        <EntityDatatable table={table} />
-      ) : (
-        <EntityEmptyTable
-          icon={IconArrowDownRight}
-          title={PORTFOLIO_ACTIVITY.EMPTY_TITLE}
-          description={PORTFOLIO_ACTIVITY.EMPTY_DESCRIPTION}
-        />
-      )}
-    </section>
+    <SharedDatatableSection
+      titleId="portfolio-activity-title"
+      title={PORTFOLIO_ACTIVITY.TITLE}
+      description={PORTFOLIO_ACTIVITY.DESCRIPTION}
+      table={table}
+      hasRows={hasRows}
+      emptyIcon={IconArrowDownRight}
+      emptyTitle={PORTFOLIO_ACTIVITY.EMPTY_TITLE}
+      emptyDescription={PORTFOLIO_ACTIVITY.EMPTY_DESCRIPTION}
+    />
   )
 }
 

@@ -1,7 +1,7 @@
 import type { DateRange } from "react-day-picker"
 
-import { BuildPerformanceChartModels } from "@/presentation/parts/charts/performance-chart-models.helper"
-import type { EntityChartModel } from "@/presentation/parts/charts/types"
+import { BuildPerformanceChartModels } from "@/presentation/parts/charts/entity-performance-chart-models.helper"
+import type { EntityChartModel } from "@/presentation/parts/charts/entity-chart.types"
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 
 import { PORTFOLIO_CHARTS } from "../settings/labels.settings"

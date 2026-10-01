@@ -1,17 +1,15 @@
 "use client"
 
-import type {
-  ColumnDef,
-  ColumnHelper,
-} from "@tanstack/react-table"
+import type { ColumnHelper } from "@tanstack/react-table"
 
+import { EntityUserCell } from "@/presentation/parts/datatable/columns/entity-user-cell"
+import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatPercentage } from "@/presentation/presenters/percentage.presenter"
-import { UserAvatar } from "@/presentation/presenters/user-avatar.presenter"
 import { PORTFOLIO_DATATABLE } from "@/presentation/routes/portfolio/settings/labels.settings"
 import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-performance-row.types"
 import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
@@ -52,14 +50,14 @@ export interface PortfolioTableColumnOptions {
  *
  * @returns The portfolio column definitions.
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-25
  */
 export function CreatePortfolioTableColumns(
   columnHelper: ColumnHelper<EntityTableFeatures, PortfolioRow>,
   options: PortfolioTableColumnOptions
-): ColumnDef<EntityTableFeatures, PortfolioRow, any>[] {
+): EntityColumnDef<PortfolioRow>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 
@@ -115,21 +113,11 @@ export function CreatePortfolioTableColumns(
         size: 200,
         enableSorting: false,
         meta: { fluid: true },
-        cell: ({ row }) => {
-          const OWNER = options.summaryFor(row.id)?.owner ?? null
-
-          if (!OWNER) {
-            return <span className="text-muted-foreground">-</span>
-          }
-
-          return (
-            <UserAvatar
-              firstName={OWNER.firstName}
-              lastName={OWNER.lastName}
-              image={OWNER.image}
-            />
-          )
-        },
+        cell: ({ row }) => (
+          <EntityUserCell
+            user={options.summaryFor(row.id)?.owner ?? null}
+          />
+        ),
       }
     ),
 

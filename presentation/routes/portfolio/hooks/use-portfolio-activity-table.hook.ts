@@ -12,39 +12,42 @@ import type {
   EntityTable,
   EntityTableFeatures,
 } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { PortfolioHolding } from "@/presentation/types/portfolio-holding.types"
+import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
 
-import { CreatePortfolioPositionsColumns } from "../datatable/table-columns"
+import { CreatePortfolioActivityColumns } from "../components/portfolio-activity-table-columns"
 
 // Column helper bound to the entity table features.
 const COLUMN_HELPER: ColumnHelper<
   EntityTableFeatures,
-  PortfolioHolding
-> = createColumnHelper<EntityTableFeatures, PortfolioHolding>()
+  PortfolioActivityRow
+> = createColumnHelper<
+  EntityTableFeatures,
+  PortfolioActivityRow
+>()
 
-interface UsePortfolioPositionsTableOutput {
-  // Whether the portfolio holds at least one position. The
-  // section gates the datatable on it, so the friendly empty
-  // state replaces the "no rows" row of the table.
+interface UsePortfolioActivityTableOutput {
+  // Whether the window holds at least one movement. The
+  // section gates the datatable on it, so the friendly
+  // empty state replaces the "no rows" row of the table.
   hasRows: boolean
   // The shared table instance of the section.
-  table: EntityTable<PortfolioHolding>
+  table: EntityTable<PortfolioActivityRow>
 }
 
 /**
  * @summary
- * Coordinates the positions datatable of the portfolio
+ * Coordinates the recent activity datatable of the portfolio
  * detail screen.
  *
  * @remarks
  * Creates the shared table instance used by the datatable
- * and the pagination over the holdings of the portfolio. The
+ * and the pagination over the window-filtered rows. The
  * columns are read-only and built once, and the pagination
  * starts at ten rows per page. The rows are never mutated,
- * so the same table instance serves the whole life of the
- * screen.
+ * so the same table instance serves every window the user
+ * picks by swapping the data the hook is called with.
  *
- * @param holdings - The holdings of the portfolio.
+ * @param rows - The activity rows inside the selected window.
  *
  * @returns The table instance and the row gate.
  *
@@ -52,19 +55,19 @@ interface UsePortfolioPositionsTableOutput {
  *
  * @date 2026-09-28
  */
-function usePortfolioPositionsTable(
-  holdings: readonly PortfolioHolding[]
-): UsePortfolioPositionsTableOutput {
+function usePortfolioActivityTable(
+  rows: readonly PortfolioActivityRow[]
+): UsePortfolioActivityTableOutput {
   const COLUMNS = useMemo(
-    () => CreatePortfolioPositionsColumns(COLUMN_HELPER),
+    () => CreatePortfolioActivityColumns(COLUMN_HELPER),
     []
   )
 
   const TABLE = useTable({
     features: ENTITY_TABLE_FEATURES,
     columns: COLUMNS,
-    data: holdings,
-    getRowId: (row) => row.positionId,
+    data: rows,
+    getRowId: (row) => row.id,
     initialState: {
       pagination: { pageIndex: 0, pageSize: 10 },
     },
@@ -76,4 +79,4 @@ function usePortfolioPositionsTable(
   return { hasRows: HAS_ROWS, table: TABLE }
 }
 
-export { usePortfolioPositionsTable }
+export { usePortfolioActivityTable }

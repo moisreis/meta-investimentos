@@ -2,21 +2,13 @@
 
 import { IconChartLine } from "@tabler/icons-react"
 
+import { EntityChartSections } from "@/presentation/parts/charts/entity-chart-sections"
 import { EntityDatatableToolbar } from "@/presentation/parts/components/entity-datatable-toolbar"
 import { EntityDatatableToolbarSeparator } from "@/presentation/parts/components/entity-datatable-toolbar-separator"
+import { EntityDetailShell } from "@/presentation/parts/components/entity-detail-shell"
 import { EntityDetailSummary } from "@/presentation/parts/components/entity-detail-summary"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
-import { EntityDateRangeFilter } from "@/presentation/parts/filters/date-range"
-
-import { PortfolioActivityDatatable } from "../activity/portfolio-activity-datatable"
-import { PortfolioDetailCharts } from "../charts/portfolio-detail-charts"
-import { PortfolioPositionsDatatable } from "../positions/portfolio-positions-datatable"
-import { usePortfolioOverview } from "../hooks/use-portfolio-overview.hook"
-import { PORTFOLIO_SUMMARY } from "../settings/labels.settings"
-import {
-  EMPTY_PORTFOLIO_OVERVIEW,
-  type PortfolioOverviewData,
-} from "../types/portfolio-overview.types"
+import { EntityDateRangeFilter } from "@/presentation/parts/filters/entity-date-range"
 import { AddApplicationButton } from "@/presentation/routes/application/components/add-application-button"
 import { PortfolioPerformanceCalculateButton } from "@/presentation/routes/portfolio-performance/components/portfolio-performance-calculate-button"
 import { PortfolioPerformanceCalculateConfirmDialog } from "@/presentation/routes/portfolio-performance/dialogs/calculate-confirm"
@@ -26,6 +18,15 @@ import { StatementGenerateReportButton } from "@/presentation/routes/statement/c
 import { StatementGenerateReportDialog } from "@/presentation/routes/statement/dialogs/generate-report"
 import { useStatementGenerateDialog } from "@/presentation/routes/statement/hooks/use-statement-generate-dialog.hook"
 import { AddWithdrawalButton } from "@/presentation/routes/withdrawal/components/add-withdrawal-button"
+
+import { PortfolioActivityDatatable } from "../components/portfolio-activity-datatable"
+import { PortfolioPositionsDatatable } from "../components/portfolio-positions-datatable"
+import { usePortfolioOverview } from "../hooks/use-portfolio-overview.hook"
+import { PORTFOLIO_SUMMARY } from "../settings/labels.settings"
+import {
+  EMPTY_PORTFOLIO_OVERVIEW,
+  type PortfolioOverviewData,
+} from "../types/portfolio-overview.types"
 
 interface PortfolioDetailProps {
   data: PortfolioOverviewData | null
@@ -48,8 +49,8 @@ interface PortfolioDetailProps {
  * the performance charts and the movements are computed
  * from; the values, the chart sections and the rows come from
  * the overview hook and never from component-local logic. The
- * distributions, the checking balances, the positions and the
- * annual monthly history are the exception by design: a
+ * distributions, the checking balances, the positions and
+ * the annual monthly history are the exception by design: a
  * holding and a balance are facts about the portfolio today,
  * and the year is a fixed horizon, so they ignore the window.
  *
@@ -94,8 +95,8 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
   const generateDialog = useStatementGenerateDialog()
 
   return (
-    <div className="min-h-full overflow-auto">
-      <div className="sticky top-0 z-50 h-11 w-full bg-background">
+    <EntityDetailShell
+      toolbar={
         <EntityDatatableToolbar
           filters={
             <EntityDateRangeFilter
@@ -133,8 +134,8 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
             </>
           }
         />
-      </div>
-
+      }
+    >
       {SUMMARY ? (
         <EntityDetailSummary {...SUMMARY} />
       ) : (
@@ -145,7 +146,7 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
         />
       )}
 
-      <PortfolioDetailCharts sections={overview.chartSections} />
+      <EntityChartSections sections={overview.chartSections} />
 
       <PortfolioPositionsDatatable holdings={DATA.holdings} />
 
@@ -176,7 +177,7 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
         portfolios={DATA.portfolios}
         defaultPortfolioId={DATA.portfolioId}
       />
-    </div>
+    </EntityDetailShell>
   )
 }
 

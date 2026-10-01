@@ -8,8 +8,8 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
-import type { PortfolioPeriodReturnsDTO } from "@/services/portfolio-performance/use-cases/resolve-portfolio-period-returns.use-case"
+} from "@/presentation/presenters/action-result.presenter"
+import type { PortfolioPeriodReturns } from "@/presentation/types/portfolio-period-returns.types"
 
 import { GET_PORTFOLIO_PERIOD_RETURNS_SCHEMA } from "../validations/portfolio-actions.validation"
 
@@ -60,7 +60,7 @@ const START_OF_DAY = "T00:00:00.000Z"
  */
 export async function getPortfolioPeriodReturnsAction(
   input: unknown
-): Promise<ActionResult<PortfolioPeriodReturnsDTO>> {
+): Promise<ActionResult<PortfolioPeriodReturns>> {
   const USER = await RequireSessionUser()
 
   if (!USER) {

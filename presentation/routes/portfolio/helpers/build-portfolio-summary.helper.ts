@@ -1,7 +1,7 @@
 import type { DateRange } from "react-day-picker"
 
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
-import type { PortfolioPeriodReturnsDTO } from "@/services/portfolio-performance/use-cases/resolve-portfolio-period-returns.use-case"
+import type { PortfolioPeriodReturns } from "@/presentation/types/portfolio-period-returns.types"
 import {
   ResolvePeriodWindow,
   SumSeriesCashFlows,
@@ -101,7 +101,7 @@ function ResolveTone(amount: number): EntitySummaryTone {
 export function BuildPortfolioSummary(
   performances: readonly PortfolioPerformanceResponseDTO[],
   dateRange: DateRange | undefined,
-  periodReturns: PortfolioPeriodReturnsDTO
+  periodReturns: PortfolioPeriodReturns
 ): EntitySummary | null {
   const WINDOW = ResolvePeriodWindow(
     performances,

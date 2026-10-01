@@ -9,19 +9,19 @@ import {
 } from "react"
 import type { DateRange } from "react-day-picker"
 
-import type { PortfolioPeriodReturnsDTO } from "@/services/portfolio-performance/use-cases/resolve-portfolio-period-returns.use-case"
+import type { PortfolioPeriodReturns } from "@/presentation/types/portfolio-period-returns.types"
 import type { EntitySummary } from "@/presentation/parts/components/entity-detail-summary"
 
 import { getPortfolioPeriodReturnsAction } from "../actions/get-portfolio-period-returns.action"
-import { FilterPortfolioActivity } from "../activity/helpers/filter-portfolio-activity.helper"
-import { BuildPortfolioChartSections } from "../charts/build-portfolio-chart-sections.helper"
+import { FilterPortfolioActivity } from "../helpers/filter-portfolio-activity.helper"
+import { BuildPortfolioChartSections } from "../helpers/build-portfolio-chart-sections.helper"
 import { BuildPortfolioSummary } from "../helpers/build-portfolio-summary.helper"
 import type { PortfolioOverviewData } from "../types/portfolio-overview.types"
 import type { PortfolioChartSection } from "../types/portfolio-chart-section.types"
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
 
 // Returns rendered before the server resolves the window.
-const EMPTY_PERIOD_RETURNS: PortfolioPeriodReturnsDTO = {
+const EMPTY_PERIOD_RETURNS: PortfolioPeriodReturns = {
   yearReturn: null,
   monthReturn: null,
   periodReturn: null,
@@ -114,7 +114,7 @@ function usePortfolioOverview(
   )
 
   const [RETURNS_CACHE, setReturnsCache] = useState<
-    Record<string, PortfolioPeriodReturnsDTO>
+    Record<string, PortfolioPeriodReturns>
   >({})
 
   const PERIOD_RETURNS = ResolveCachedReturns(
@@ -229,10 +229,10 @@ function BuildRangeKey(
 // Reads the returns of the window from the cache, falling
 // back to the neutral payload while the server resolves it.
 function ResolveCachedReturns(
-  cache: Record<string, PortfolioPeriodReturnsDTO>,
+  cache: Record<string, PortfolioPeriodReturns>,
   portfolioId: string,
   dateRange: DateRange | undefined
-): PortfolioPeriodReturnsDTO {
+): PortfolioPeriodReturns {
   const FROM = dateRange?.from
   const TO = dateRange?.to
 

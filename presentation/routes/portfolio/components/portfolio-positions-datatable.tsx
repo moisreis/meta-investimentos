@@ -2,11 +2,10 @@
 
 import { IconChartDonut } from "@tabler/icons-react"
 
-import { EntityDatatable } from "@/presentation/parts/datatable/layout/entity-datatable"
-import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
+import { SharedDatatableSection } from "@/presentation/parts/datatable/layout/shared-datatable-section"
 import type { PortfolioHolding } from "@/presentation/types/portfolio-holding.types"
 
-import { usePortfolioPositionsTable } from "./hooks/use-portfolio-positions-table.hook"
+import { usePortfolioPositionsTable } from "../hooks/use-portfolio-positions-table.hook"
 import { PORTFOLIO_POSITIONS } from "../settings/labels.settings"
 
 /**
@@ -51,32 +50,16 @@ function PortfolioPositionsDatatable({
   const { hasRows, table } = usePortfolioPositionsTable(holdings)
 
   return (
-    <section
-      className="flex w-full flex-col gap-4 border-b border-border px-4 py-6 last:border-b-0 sm:px-6"
-      aria-labelledby="portfolio-positions-title"
-    >
-      <div className="flex flex-col gap-1">
-        <h2
-          id="portfolio-positions-title"
-          className="font-heading text-xs font-medium text-foreground uppercase"
-        >
-          {PORTFOLIO_POSITIONS.TITLE}
-        </h2>
-        <p className="text-xs text-muted-foreground">
-          {PORTFOLIO_POSITIONS.DESCRIPTION}
-        </p>
-      </div>
-
-      {hasRows ? (
-        <EntityDatatable table={table} />
-      ) : (
-        <EntityEmptyTable
-          icon={IconChartDonut}
-          title={PORTFOLIO_POSITIONS.EMPTY_TITLE}
-          description={PORTFOLIO_POSITIONS.EMPTY_DESCRIPTION}
-        />
-      )}
-    </section>
+    <SharedDatatableSection
+      titleId="portfolio-positions-title"
+      title={PORTFOLIO_POSITIONS.TITLE}
+      description={PORTFOLIO_POSITIONS.DESCRIPTION}
+      table={table}
+      hasRows={hasRows}
+      emptyIcon={IconChartDonut}
+      emptyTitle={PORTFOLIO_POSITIONS.EMPTY_TITLE}
+      emptyDescription={PORTFOLIO_POSITIONS.EMPTY_DESCRIPTION}
+    />
   )
 }
 

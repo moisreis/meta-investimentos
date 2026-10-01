@@ -1,18 +1,15 @@
 "use client"
 
-import type {
-  ColumnDef,
-  ColumnHelper,
-} from "@tanstack/react-table"
-import Link from "next/link"
+import type { ColumnHelper } from "@tanstack/react-table"
 
+import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatPercentage } from "@/presentation/presenters/percentage.presenter"
 import type { PortfolioHolding } from "@/presentation/types/portfolio-holding.types"
 
-import { PORTFOLIO_POSITIONS } from "../../settings/labels.settings"
+import { PORTFOLIO_POSITIONS } from "../settings/labels.settings"
 
 /**
  * @summary
@@ -45,7 +42,7 @@ export function CreatePortfolioPositionsColumns(
     EntityTableFeatures,
     PortfolioHolding
   >
-): ColumnDef<EntityTableFeatures, PortfolioHolding, any>[] {
+): EntityColumnDef<PortfolioHolding>[] {
   return [
     columnHelper.accessor("fundName", {
       id: "fund",
@@ -53,21 +50,13 @@ export function CreatePortfolioPositionsColumns(
       size: 280,
       meta: { fluid: true },
       enableSorting: false,
-      cell: (info) => {
-        const POSITION_ID = info.row.original.positionId
-
-        return (
-          <Link
-            href={`/position/${POSITION_ID}`}
-            className="block w-full max-w-full"
-          >
-            <EntityLookupCell
-              title={info.getValue()}
-              subtitle={info.row.original.bankName}
-            />
-          </Link>
-        )
-      },
+      cell: (info) => (
+        <EntityLookupCell
+          title={info.getValue()}
+          subtitle={info.row.original.bankName}
+          href={`/position/${info.row.original.positionId}`}
+        />
+      ),
     }),
 
     columnHelper.accessor("bankName", {

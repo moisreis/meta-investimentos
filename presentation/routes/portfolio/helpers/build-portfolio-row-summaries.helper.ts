@@ -1,9 +1,7 @@
-import type { PortfolioRowSummaryDTO } from "@/services/portfolio/use-cases/list-portfolio-row-summaries.use-case"
-import type { UserResponseDTO } from "@/services/user/dto/user-response.dto"
-
 import type {
   PortfolioOwner,
   PortfolioRowSummary,
+  PortfolioRowSummaryInput,
 } from "../types/portfolio-list.types"
 
 import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
@@ -43,7 +41,7 @@ import type { UserRow } from "@/presentation/types/user-row.types"
  */
 export function BuildPortfolioRowSummaries(
   portfolios: PortfolioRow[],
-  counts: PortfolioRowSummaryDTO[],
+  counts: PortfolioRowSummaryInput[],
   userId: string,
   user: UserRow
 ): Record<string, PortfolioRowSummary> {

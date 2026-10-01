@@ -19,12 +19,38 @@ import { usePortfolioKpis } from "../hooks/use-portfolio-kpis.hook"
 import { PORTFOLIO_EMPTY } from "../settings/labels.settings"
 import type { PortfolioRowSummary } from "../types/portfolio-list.types"
 
-interface PortfolioListProps {
+export interface PortfolioListProps {
   data: PortfolioRow[] | null
   availableDates?: string[]
   summaries?: Record<string, PortfolioRowSummary> | null
 }
 
+/**
+ * @summary
+ * Renders the portfolio list page.
+ *
+ * @remarks
+ * Composes the KPI group, the toolbar with the search
+ * filter and the window filter, the empty state and the
+ * datatable. The window filter is handed the performance
+ * days of the session, so it can hide a day the
+ * performance has no entry for instead of querying a
+ * range nothing was calculated for.
+ *
+ * @param props - Props of the portfolio list page.
+ * @param props.data - The portfolio rows, or `null`
+ *                     while loading.
+ * @param props.availableDates - The days the performance
+ *                               has an entry for.
+ * @param props.summaries - The portfolio summaries the
+ *                          KPIs and the row actions read.
+ *
+ * @returns The portfolio list page.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-30
+ */
 function PortfolioList({
   data,
   availableDates = [],

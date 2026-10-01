@@ -1,11 +1,10 @@
 "use client"
 
-import * as React from "react"
-
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
 
-import { PortfolioPercentageInput } from "@/presentation/parts/components/portfolio-percentage-input"
+import { EntityPercentageInput } from "@/presentation/parts/components/entity-percentage-input"
+import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
@@ -77,15 +76,13 @@ function AddPortfolioForm({
     handleSubmit,
   } = usePortfolioAddForm()
 
-  React.useEffect(() => {
-    onStatusChange?.(status, error)
-  }, [status, error, onStatusChange])
+  useEntityFormStatus({ status, error, onStatusChange })
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
       <FieldGroup>
         <SharedFormField
-          label="Sigla"
+          label={PORTFOLIO_FORM.LABEL_ACRONYM}
           error={fieldErrors.acronym}
           htmlFor="acronym"
         >
@@ -94,7 +91,7 @@ function AddPortfolioForm({
             type="text"
             name="acronym"
             autoComplete="off"
-            placeholder="Ex.: RF"
+            placeholder={PORTFOLIO_FORM.PLACEHOLDER_ACRONYM}
             required
             value={acronym}
             onChange={(e) => updateAcronym(e.target.value)}
@@ -105,7 +102,7 @@ function AddPortfolioForm({
           />
         </SharedFormField>
         <SharedFormField
-          label="Nome"
+          label={PORTFOLIO_FORM.LABEL_NAME}
           error={fieldErrors.name}
           htmlFor="name"
         >
@@ -114,7 +111,7 @@ function AddPortfolioForm({
             type="text"
             name="name"
             autoComplete="off"
-            placeholder="Ex.: Renda Fixa"
+            placeholder={PORTFOLIO_FORM.PLACEHOLDER_NAME}
             required
             value={name}
             onChange={(e) => updateName(e.target.value)}
@@ -123,12 +120,14 @@ function AddPortfolioForm({
           />
         </SharedFormField>
         <SharedFormField
-          label="Taxa de juros anual"
-          description="Em percentual ao ano."
+          label={PORTFOLIO_FORM.LABEL_ANNUAL_INTEREST_RATE}
+          description={
+            PORTFOLIO_FORM.DESCRIPTION_ANNUAL_INTEREST_RATE
+          }
           error={fieldErrors.annualInterestRate}
           htmlFor="annualInterestRate"
         >
-          <PortfolioPercentageInput
+          <EntityPercentageInput
             id="annualInterestRate"
             value={annualInterestRate}
             onChange={(value: string) =>
@@ -141,11 +140,11 @@ function AddPortfolioForm({
           />
         </SharedFormField>
         <SharedFormField
-          label="Alocação mínima"
+          label={PORTFOLIO_FORM.LABEL_MINIMUM_ALLOCATION}
           error={fieldErrors.minAllocation}
           htmlFor="minAllocation"
         >
-          <PortfolioPercentageInput
+          <EntityPercentageInput
             id="minAllocation"
             value={minAllocation}
             onChange={(value: string) =>
@@ -158,11 +157,11 @@ function AddPortfolioForm({
           />
         </SharedFormField>
         <SharedFormField
-          label="Alocação alvo"
+          label={PORTFOLIO_FORM.LABEL_TARGET_ALLOCATION}
           error={fieldErrors.targetAllocation}
           htmlFor="targetAllocation"
         >
-          <PortfolioPercentageInput
+          <EntityPercentageInput
             id="targetAllocation"
             value={targetAllocation}
             onChange={(value: string) =>
@@ -175,11 +174,11 @@ function AddPortfolioForm({
           />
         </SharedFormField>
         <SharedFormField
-          label="Alocação máxima"
+          label={PORTFOLIO_FORM.LABEL_MAXIMUM_ALLOCATION}
           error={fieldErrors.maxAllocation}
           htmlFor="maxAllocation"
         >
-          <PortfolioPercentageInput
+          <EntityPercentageInput
             id="maxAllocation"
             value={maxAllocation}
             onChange={(value: string) =>
