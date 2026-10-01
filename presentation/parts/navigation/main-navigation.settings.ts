@@ -41,6 +41,10 @@ export const MAIN_NAVIGATION: MainNavigationGroup[] = [
     items: [
       { label: "Benchmarks", href: "/benchmark" },
       { label: "Normas", href: "/norm" },
+      {
+        label: "Histórico de Benchmarks",
+        href: "/benchmark-history",
+      },
     ],
   },
   {
