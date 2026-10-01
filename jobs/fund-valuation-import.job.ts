@@ -15,6 +15,13 @@ import type {
 } from "@/services/quota/use-cases/import-fund-valuations.use-case"
 
 // ---------------------------------
+// CONSTANTS
+// ---------------------------------
+
+// Default number of funds processed in a single import slice.
+export const FUND_SLICE_SIZE = 200
+
+// ---------------------------------
 // TYPES
 // ---------------------------------
 

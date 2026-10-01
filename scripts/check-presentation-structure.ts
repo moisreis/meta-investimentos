@@ -275,6 +275,68 @@ function CheckLayering(files: string[]): void {
 }
 
 /**
+ * Reports a presentation file that imports a runtime value from
+ * the service layer.
+ *
+ * @remarks
+ * A screen may name a service shape, because the type of a
+ * response is part of the contract it renders. It may not reach
+ * into the service for behaviour or a constant: the logic runs
+ * inside a use case the composition root wires, and a delivery
+ * layer that executes it would depend on the query it was meant
+ * to hide. Only `composition/` may import a service value, since
+ * it is the one place a use case is chosen.
+ */
+function CheckServiceValueImports(files: string[]): void {
+  for (const file of files) {
+    const rel = ToRelative(file)
+    if (rel.startsWith("presentation/composition/")) continue
+
+    const source = Read(file)
+    const sf = ts.createSourceFile(
+      file,
+      source,
+      ts.ScriptTarget.Latest,
+      true,
+      file.endsWith(".tsx")
+        ? ts.ScriptKind.TSX
+        : ts.ScriptKind.TS
+    )
+
+    for (const statement of sf.statements) {
+      if (!ts.isImportDeclaration(statement)) continue
+      const specifier = statement.moduleSpecifier
+      if (!ts.isStringLiteral(specifier)) continue
+      if (!specifier.text.startsWith("@/services/")) continue
+
+      const clause = statement.importClause
+      if (clause?.isTypeOnly) continue
+
+      const bindings = clause?.namedBindings
+      const importsValue =
+        clause === undefined ||
+        clause.name !== undefined ||
+        bindings === undefined ||
+        ts.isNamespaceImport(bindings) ||
+        bindings.elements.some((element) => !element.isTypeOnly)
+
+      if (!importsValue) continue
+
+      const at =
+        sf.getLineAndCharacterOfPosition(statement.getStart(sf))
+          .line + 1
+
+      Report(
+        "no-service-value-import",
+        rel,
+        `line ${at} imports a runtime value from services/, ` +
+          "take it through composition/ or a presenter"
+      )
+    }
+  }
+}
+
+/**
  * Reports a shared part that imports a route.
  *
  * @remarks
@@ -898,6 +960,7 @@ function Main(): void {
   CheckFileSuffix(files)
   CheckNoBarrel(files)
   CheckLayering(files)
+  CheckServiceValueImports(files)
   CheckPartRouteImports(files)
   CheckActionVerbs(files)
   CheckEntityPrefixes(modules)

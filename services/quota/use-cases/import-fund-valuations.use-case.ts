@@ -11,9 +11,6 @@ import { extractCvmCsvFiles } from "../parsers/cvm-zip.parser"
 // CONSTANTS
 // ---------------------------------
 
-// Maximum number of funds processed in a single slice.
-export const FUND_SLICE_SIZE = 200
-
 // Maximum rows per batched upsert call.
 export const UPSERT_CHUNK_SIZE = 100
 

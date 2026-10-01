@@ -12,7 +12,7 @@ import { FormatSignedPercentage } from "@/presentation/presenters/percentage.pre
 import {
   ResolvePeriodWindow,
   type PerformanceSnapshot,
-} from "@/services/portfolio-performance/calculators/period-window.calculator"
+} from "@/lib/performance/period-window.calculator"
 
 // Copy keys of the performance section of a detail screen.
 // The constants of a route satisfy this interface, so the

@@ -7,7 +7,7 @@ import { EntityId } from "@/value-objects"
 import {
   ChainPeriodReturn,
   ResolvePeriodWindow,
-} from "../calculators/period-window.calculator"
+} from "@/lib/performance/period-window.calculator"
 import { toResponseDTO } from "../mappers/portfolio-performance.mapper"
 
 export interface ResolvePortfolioPeriodReturnsInput {

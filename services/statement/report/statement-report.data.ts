@@ -4,7 +4,7 @@ import {
   SumSeriesCashFlows,
   SumSeriesEarnings,
   type PeriodWindow,
-} from "@/services/portfolio-performance/calculators/period-window.calculator"
+} from "@/lib/performance/period-window.calculator"
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 

@@ -9,11 +9,11 @@ import {
   type ActionResult,
 } from "@/presentation/presenters/action-result.presenter"
 import {
+  FUND_SLICE_SIZE,
   buildImportPlan,
   runFundValuationMonth,
   type FundValuationImportPlan,
 } from "@/jobs/fund-valuation-import.job"
-import { FUND_SLICE_SIZE } from "@/services/quota/use-cases/import-fund-valuations.use-case"
 
 import { START_QUOTA_IMPORT_SCHEMA } from "../validations/quota-actions.validation"
 import {

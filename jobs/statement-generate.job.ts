@@ -11,7 +11,7 @@ import { RenderStatementPdf } from "@/presentation/parts/statement-report/shared
 import { FilterPortfolioActivity } from "@/presentation/routes/portfolio/helpers/filter-portfolio-activity.helper"
 import { BuildPortfolioActivityRows } from "@/presentation/routes/portfolio/helpers/build-portfolio-activity-rows.helper"
 import { BuildStatementPeriod } from "@/presentation/routes/statement/helpers/build-statement-period.helper"
-import { ResolvePeriodWindow } from "@/services/portfolio-performance/calculators/period-window.calculator"
+import { ResolvePeriodWindow } from "@/lib/performance/period-window.calculator"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 import { BuildStatementReportData } from "@/services/statement/report/statement-report.data"
 

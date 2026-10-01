@@ -6,7 +6,7 @@ import {
   ResolvePeriodWindow,
   SumSeriesCashFlows,
   SumSeriesEarnings,
-} from "@/services/portfolio-performance/calculators/period-window.calculator"
+} from "@/lib/performance/period-window.calculator"
 import {
   FormatCurrency,
   FormatSignedCurrency,

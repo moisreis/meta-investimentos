@@ -7,7 +7,7 @@ import {
   FormatCurrency,
 } from "@/presentation/presenters/currency.presenter"
 import { FormatSignedPercentage } from "@/presentation/presenters/percentage.presenter"
-import type { PerformanceSnapshot } from "@/services/portfolio-performance/calculators/period-window.calculator"
+import type { PerformanceSnapshot } from "@/lib/performance/period-window.calculator"
 
 // Copy keys of the annual section of a detail screen. The
 // constants of a route satisfy this interface, so the builder
