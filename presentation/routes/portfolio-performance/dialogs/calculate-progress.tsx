@@ -1,30 +1,20 @@
 "use client"
 
-import {
-  IconAlertCircle,
-  IconCircleCheck,
-  IconLoader,
-} from "@tabler/icons-react"
-
-import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { Button } from "@/presentation/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/presentation/ui/dialog"
-import {
-  Marker,
-  MarkerContent,
-  MarkerIcon,
-} from "@/presentation/ui/marker"
-import {
-  Progress,
-  ProgressValue,
-} from "@/presentation/ui/progress"
 
+import { EntityJobProgressBar } from "@/presentation/parts/dialogs/entity-job-progress-bar"
+import { EntityJobProgressSummary } from "@/presentation/parts/dialogs/entity-job-progress-summary"
+import { EntityStatusMarker } from "@/presentation/parts/dialogs/entity-status-marker"
+
+import { usePortfolioPerformanceProgress } from "../hooks/use-portfolio-performance-progress.hook"
 import { PORTFOLIO_PERFORMANCE_CALCULATE } from "../settings/labels.settings"
 import type { PortfolioPerformanceCalculationProgress } from "../types/portfolio-performance-list.types"
 
@@ -68,26 +58,16 @@ function PortfolioPerformanceCalculateProgressDialog({
   const RUNNING = job === null || job.status === "running"
   const FAILED = job?.status === "error"
 
-  const UNITS_TOTAL = job
-    ? job.portfolioCount * job.daysTotal
-    : 0
-
-  // Skipped units still advanced the run, so the bar counts
-  // them; they are only broken out in the final summary.
-  const PROCESSED = job ? job.calculated + job.skipped : 0
-
-  const PERCENT =
-    UNITS_TOTAL > 0
-      ? Math.round((PROCESSED / UNITS_TOTAL) * 100)
-      : 0
-
-  const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen && RUNNING) return
-    onOpenChange(nextOpen)
-  }
+  const { done, total, summary, warning } =
+    usePortfolioPerformanceProgress(job)
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (nextOpen || !RUNNING) onOpenChange(nextOpen)
+      }}
+    >
       <DialogContent showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>
@@ -110,94 +90,55 @@ function PortfolioPerformanceCalculateProgressDialog({
         {RUNNING ? (
           <>
             {job ? (
-              <Progress
-                value={PERCENT}
-                aria-label="Progresso do cálculo"
-              >
-                <ProgressValue>
-                  {(_formattedValue, value) =>
-                    `${PROCESSED}/${UNITS_TOTAL} · ${
-                      value ?? 0
-                    }%`
-                  }
-                </ProgressValue>
-              </Progress>
+              <EntityJobProgressBar
+                label={
+                  PORTFOLIO_PERFORMANCE_CALCULATE.PROGRESS_LABEL
+                }
+                done={done}
+                total={total}
+              />
             ) : null}
 
-            <Marker role="status">
-              <MarkerIcon>
-                <IconLoader className="animate-spin" />
-              </MarkerIcon>
-              <MarkerContent>
-                {
-                  PORTFOLIO_PERFORMANCE_CALCULATE.PROGRESS_RUNNING_LABEL
-                }
-              </MarkerContent>
-            </Marker>
+            <EntityStatusMarker tone="running" role="status">
+              {
+                PORTFOLIO_PERFORMANCE_CALCULATE.PROGRESS_RUNNING_LABEL
+              }
+            </EntityStatusMarker>
           </>
         ) : FAILED ? (
           <>
-            <Marker>
-              <MarkerIcon>
-                <IconAlertCircle className="text-destructive" />
-              </MarkerIcon>
-              <MarkerContent>
-                {job?.error ??
-                  PORTFOLIO_PERFORMANCE_CALCULATE.ERROR_DESCRIPTION}
-              </MarkerContent>
-            </Marker>
+            <EntityStatusMarker tone="error">
+              {job?.error ??
+                PORTFOLIO_PERFORMANCE_CALCULATE.ERROR_DESCRIPTION}
+            </EntityStatusMarker>
 
-            <div className="flex justify-end gap-2">
+            <DialogFooter>
               <Button variant="outline" onClick={onDone}>
                 {PORTFOLIO_PERFORMANCE_CALCULATE.CLOSE_BUTTON}
               </Button>
-            </div>
+            </DialogFooter>
           </>
         ) : (
           <>
-            <Marker>
-              <MarkerIcon>
-                <IconCircleCheck className="text-primary" />
-              </MarkerIcon>
-              <MarkerContent>
-                {
-                  PORTFOLIO_PERFORMANCE_CALCULATE.SUCCESS_DESCRIPTION
-                }
-              </MarkerContent>
-            </Marker>
+            <EntityStatusMarker tone="success">
+              {
+                PORTFOLIO_PERFORMANCE_CALCULATE.SUCCESS_DESCRIPTION
+              }
+            </EntityStatusMarker>
 
-            <Marker>
-              <MarkerContent>
-                {FormatCount(job?.calculated ?? 0)}{" "}
-                {
-                  PORTFOLIO_PERFORMANCE_CALCULATE.CALCULATED_LABEL
-                }{" "}
-                · {FormatCount(job?.portfolioCount ?? 0)}{" "}
-                {
-                  PORTFOLIO_PERFORMANCE_CALCULATE.PORTFOLIOS_LABEL
-                }
-              </MarkerContent>
-            </Marker>
+            <EntityJobProgressSummary counts={summary} />
 
-            {job && job.skipped > 0 ? (
-              <Marker>
-                <MarkerIcon>
-                  <IconAlertCircle className="text-muted-foreground" />
-                </MarkerIcon>
-                <MarkerContent>
-                  {FormatCount(job.skipped)}{" "}
-                  {
-                    PORTFOLIO_PERFORMANCE_CALCULATE.SKIPPED_LABEL
-                  }
-                </MarkerContent>
-              </Marker>
+            {warning ? (
+              <EntityStatusMarker tone="warning">
+                {warning}
+              </EntityStatusMarker>
             ) : null}
 
-            <div className="flex justify-end gap-2">
+            <DialogFooter>
               <Button onClick={onDone}>
                 {PORTFOLIO_PERFORMANCE_CALCULATE.DONE_BUTTON}
               </Button>
-            </div>
+            </DialogFooter>
           </>
         )}
       </DialogContent>

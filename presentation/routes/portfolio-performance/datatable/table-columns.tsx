@@ -1,10 +1,8 @@
 "use client"
 
-import type {
-  ColumnDef,
-  ColumnHelper,
-} from "@tanstack/react-table"
+import type { ColumnHelper } from "@tanstack/react-table"
 
+import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
@@ -57,11 +55,7 @@ export function CreatePortfolioPerformanceTableColumns(
     PortfolioPerformanceRow
   >,
   options: PortfolioPerformanceTableColumnOptions
-): ColumnDef<
-  EntityTableFeatures,
-  PortfolioPerformanceRow,
-  any
->[] {
+): EntityColumnDef<PortfolioPerformanceRow>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 
@@ -104,7 +98,8 @@ export function CreatePortfolioPerformanceTableColumns(
     }),
 
     columnHelper.accessor("returnDaily", {
-      header: PORTFOLIO_PERFORMANCE_DATATABLE.COLUMN_RETURN_DAILY,
+      header:
+        PORTFOLIO_PERFORMANCE_DATATABLE.COLUMN_RETURN_DAILY,
       size: 130,
       meta: { align: "end", fluid: true },
       cell: (info) => FormatPercentage(info.getValue()),
@@ -120,11 +115,14 @@ export function CreatePortfolioPerformanceTableColumns(
       meta: { pinned: "end", align: "center" },
       cell: ({ row }) => (
         <EntityTableRowMenuDropdown
-          label={PORTFOLIO_PERFORMANCE_DATATABLE.ROW_ACTIONS_LABEL}
+          label={
+            PORTFOLIO_PERFORMANCE_DATATABLE.ROW_ACTIONS_LABEL
+          }
           actions={[
             {
               key: "delete",
-              label: PORTFOLIO_PERFORMANCE_DATATABLE.ROW_DELETE_LABEL,
+              label:
+                PORTFOLIO_PERFORMANCE_DATATABLE.ROW_DELETE_LABEL,
               variant: "destructive",
               onSelect: () => options.onDelete(row.original),
             },

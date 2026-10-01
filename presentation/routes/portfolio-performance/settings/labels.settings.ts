@@ -99,6 +99,9 @@ export const PORTFOLIO_PERFORMANCE_CALCULATE = {
   PROGRESS_DESCRIPTION:
     "Calculando as performances das carteiras no período.",
 
+  // Accessible name of the progress bar.
+  PROGRESS_LABEL: "Progresso do cálculo",
+
   // Running status marker content.
   PROGRESS_RUNNING_LABEL: "Processando cálculos...",
 

@@ -4,15 +4,17 @@ import * as React from "react"
 
 import type { DateRange } from "react-day-picker"
 
-import { EntityDateRangeFilter } from "@/presentation/parts/filters/date-range"
+import { EntityDateRangeFilter } from "@/presentation/parts/filters/entity-date-range"
 import { Button } from "@/presentation/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/presentation/ui/dialog"
+
 import {
   Field,
   FieldContent,
@@ -22,10 +24,10 @@ import {
 } from "@/presentation/ui/field"
 
 import { PortfolioPerformancePortfolioCombobox } from "../forms/portfolio-combobox"
+import { usePortfolioPerformanceWindow } from "../hooks/use-portfolio-performance-window.hook"
 import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 import {
-  PORTFOLIO_PERFORMANCE_ALL_PORTFOLIOS_VALUE,
   PORTFOLIO_PERFORMANCE_CALCULATE,
   PORTFOLIO_PERFORMANCE_DATATABLE,
 } from "../settings/labels.settings"
@@ -85,20 +87,12 @@ function PortfolioPerformanceCalculateConfirmDialog({
   error,
   onConfirm,
 }: PortfolioPerformanceCalculateConfirmDialogProps) {
-  const items = React.useMemo(
-    () =>
-      portfolios.map((portfolio) => ({
-        id: portfolio.id,
-        name: portfolio.name,
-        description: portfolio.acronym,
-      })),
-    [portfolios]
-  )
-
-  const handlePortfolioChange = React.useCallback(
-    (value: string) => onPortfolioChange(value ?? PORTFOLIO_PERFORMANCE_ALL_PORTFOLIOS_VALUE),
-    [onPortfolioChange]
-  )
+  const { items, handlePortfolioChange } =
+    usePortfolioPerformanceWindow({
+      portfolios,
+      portfolioId,
+      onPortfolioChange,
+    })
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -123,13 +117,17 @@ function PortfolioPerformanceCalculateConfirmDialog({
               name="portfolio"
               value={portfolioId}
               onValueChange={handlePortfolioChange}
-              placeholder={PORTFOLIO_PERFORMANCE_DATATABLE.FILTER_PORTFOLIO_PLACEHOLDER}
+              placeholder={
+                PORTFOLIO_PERFORMANCE_DATATABLE.FILTER_PORTFOLIO_PLACEHOLDER
+              }
               items={items}
               disabled={pending}
             />
 
             <FieldDescription>
-              {PORTFOLIO_PERFORMANCE_CALCULATE.FIELD_PORTFOLIO_DESCRIPTION}
+              {
+                PORTFOLIO_PERFORMANCE_CALCULATE.FIELD_PORTFOLIO_DESCRIPTION
+              }
             </FieldDescription>
           </FieldContent>
         </Field>
@@ -153,7 +151,7 @@ function PortfolioPerformanceCalculateConfirmDialog({
           </FieldContent>
         </Field>
 
-        <div className="flex justify-end gap-2">
+        <DialogFooter>
           <Button
             variant="outline"
             disabled={pending}
@@ -161,13 +159,12 @@ function PortfolioPerformanceCalculateConfirmDialog({
           >
             {PORTFOLIO_PERFORMANCE_CALCULATE.CANCEL_BUTTON}
           </Button>
-
           <Button disabled={pending} onClick={onConfirm}>
             {pending
               ? PORTFOLIO_PERFORMANCE_CALCULATE.CONFIRM_PENDING_BUTTON
               : PORTFOLIO_PERFORMANCE_CALCULATE.CONFIRM_BUTTON}
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

@@ -67,7 +67,8 @@ type GetPortfolioPerformanceCalculationProgressValues = z.infer<
   typeof GET_PORTFOLIO_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA
 >
 
-// The payload accepted by the delete portfolio performance action.
+// The payload accepted by the delete portfolio performance
+// action.
 const DELETE_PORTFOLIO_PERFORMANCE_SCHEMA = z.object({
   performanceId: ID_SCHEMA,
 })
@@ -85,4 +86,3 @@ export {
   type GetPortfolioPerformanceCalculationProgressValues,
   type StartPortfolioPerformanceCalculationValues,
 }
-

@@ -1,7 +1,5 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { PortfolioPerformanceContainer } from "@/presentation/composition/portfolio-performance.container"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 import { ToPortfolioPerformanceRows } from "@/presentation/mappers/portfolio-performance-row.mapper"
 import { ToPortfolioRows } from "@/presentation/mappers/portfolio-row.mapper"
 import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-performance-row.types"

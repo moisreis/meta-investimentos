@@ -53,7 +53,8 @@ function usePortfolioPerformanceDatatable(
   const rowActions = usePortfolioPerformanceRowActions()
 
   const rowFor = useCallback(
-    (performanceId: string) => lookups.rows[performanceId] ?? null,
+    (performanceId: string) =>
+      lookups.rows[performanceId] ?? null,
     [lookups]
   )
 

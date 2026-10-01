@@ -2,7 +2,7 @@
 
 import type { DateRange } from "react-day-picker"
 
-import { EntityDateRangeFilter } from "@/presentation/parts/filters/date-range"
+import { EntityDateRangeFilter } from "@/presentation/parts/filters/entity-date-range"
 import type { EntitySelectFilterOption } from "@/presentation/parts/filters/entity-select-filter"
 import { EntitySelectFilter } from "@/presentation/parts/filters/entity-select-filter"
 import { EntityDatatableToolbarSeparator } from "@/presentation/parts/components/entity-datatable-toolbar-separator"

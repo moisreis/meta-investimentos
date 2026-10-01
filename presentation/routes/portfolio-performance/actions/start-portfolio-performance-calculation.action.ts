@@ -13,7 +13,7 @@ import {
   ToActionFailure,
   ToFailureMessage,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 
 import { PORTFOLIO_PERFORMANCE_CALCULATE } from "../settings/labels.settings"
 import { START_PORTFOLIO_PERFORMANCE_CALCULATION_SCHEMA } from "../validations/portfolio-performance-actions.validation"
@@ -22,7 +22,7 @@ import {
   completePortfolioPerformanceCalculationJob,
   createPortfolioPerformanceCalculationJob,
   updatePortfolioPerformanceCalculationJob,
-} from "../jobs/calculate-job.store"
+} from "../jobs/portfolio-performance-calculate-job.store"
 
 // Milliseconds in a single calendar day.
 const DAY_MS = 24 * 60 * 60 * 1000

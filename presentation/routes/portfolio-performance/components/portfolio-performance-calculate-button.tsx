@@ -3,7 +3,7 @@
 import { IconCalculator } from "@tabler/icons-react"
 import type { JSX } from "react"
 
-import { Button } from "@/presentation/ui/button"
+import { EntityDatatableGhostButton } from "@/presentation/parts/components/entity-datatable-ghost-button"
 
 import { PORTFOLIO_PERFORMANCE_CALCULATE } from "../settings/labels.settings"
 
@@ -42,14 +42,11 @@ function PortfolioPerformanceCalculateButton(
   const { onClick } = props
 
   return (
-    <Button
-      variant="ghost"
-      className="font-normal text-muted-foreground"
+    <EntityDatatableGhostButton
+      icon={IconCalculator}
+      label={PORTFOLIO_PERFORMANCE_CALCULATE.BUTTON_LABEL}
       onClick={onClick}
-    >
-      <IconCalculator />
-      <span>{PORTFOLIO_PERFORMANCE_CALCULATE.BUTTON_LABEL}</span>
-    </Button>
+    />
   )
 }
 

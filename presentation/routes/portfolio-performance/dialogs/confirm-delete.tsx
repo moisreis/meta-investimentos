@@ -12,7 +12,9 @@ import type { PortfolioPerformanceRowLookup } from "@/presentation/routes/portfo
  */
 export interface PortfolioPerformanceConfirmDeleteDialogProps {
   dialog: ReturnType<typeof usePortfolioPerformanceRowActions>
-  lookups: { rows: Record<string, PortfolioPerformanceRowLookup> }
+  lookups: {
+    rows: Record<string, PortfolioPerformanceRowLookup>
+  }
 }
 
 /**
@@ -23,7 +25,8 @@ export interface PortfolioPerformanceConfirmDeleteDialogProps {
  * Composes the shared confirm-delete dialog with the
  * portfolio performance copy and the delete result toast.
  * The title and description come from the datatable settings;
- * the portfolio name resolves per row through the lookup presenter.
+ * the portfolio name resolves per row through the lookup
+ * presenter.
  *
  * @param props - Props of the confirm-delete dialog.
  * @param props.dialog - The row actions flow state.
@@ -50,8 +53,12 @@ function PortfolioPerformanceConfirmDeleteDialog({
         onOpenChange={dialog.setDeleteOpen}
         title={PORTFOLIO_PERFORMANCE_DATATABLE.DELETE_TITLE}
         description={LOOKUP ? FormatPortfolioLookup(LOOKUP) : ""}
-        confirmLabel={PORTFOLIO_PERFORMANCE_DATATABLE.DELETE_CONFIRM_LABEL}
-        cancelLabel={PORTFOLIO_PERFORMANCE_DATATABLE.DELETE_CANCEL_LABEL}
+        confirmLabel={
+          PORTFOLIO_PERFORMANCE_DATATABLE.DELETE_CONFIRM_LABEL
+        }
+        cancelLabel={
+          PORTFOLIO_PERFORMANCE_DATATABLE.DELETE_CANCEL_LABEL
+        }
         pending={dialog.deletePending}
         onConfirm={dialog.handleConfirmDelete}
       />
@@ -59,11 +66,15 @@ function PortfolioPerformanceConfirmDeleteDialog({
       <EntityDeleteToast
         status={dialog.deleteStatus}
         errorMessage={dialog.deleteError}
-        successTitle={PORTFOLIO_PERFORMANCE_DATATABLE.DELETE_SUCCESS_TITLE}
+        successTitle={
+          PORTFOLIO_PERFORMANCE_DATATABLE.DELETE_SUCCESS_TITLE
+        }
         successDescription={
           PORTFOLIO_PERFORMANCE_DATATABLE.DELETE_SUCCESS_DESCRIPTION
         }
-        errorTitle={PORTFOLIO_PERFORMANCE_DATATABLE.DELETE_ERROR_TITLE}
+        errorTitle={
+          PORTFOLIO_PERFORMANCE_DATATABLE.DELETE_ERROR_TITLE
+        }
       />
     </>
   )

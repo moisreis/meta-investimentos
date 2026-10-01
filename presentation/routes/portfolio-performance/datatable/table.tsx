@@ -6,8 +6,13 @@ import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-per
 
 interface PortfolioPerformanceDatatableTableProps {
   table: EntityTable<PortfolioPerformanceRow>
-  /** Enables the bulk delete confirm flow for the selected rows. */
-  onBulkDelete?: (items: PortfolioPerformanceRow[]) => void | Promise<void>
+  /**
+   * Enables the bulk delete confirm flow for the selected
+   * rows.
+   */
+  onBulkDelete?: (
+    items: PortfolioPerformanceRow[]
+  ) => void | Promise<void>
 }
 
 /**
@@ -32,7 +37,9 @@ function PortfolioPerformanceDatatableTable({
   table,
   onBulkDelete,
 }: PortfolioPerformanceDatatableTableProps) {
-  return <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+  return (
+    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+  )
 }
 
 export { PortfolioPerformanceDatatableTable }
