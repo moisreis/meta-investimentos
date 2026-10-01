@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { LogWarn } from "@/lib/log/logger"
 import { cn } from "@/lib/utils"
 
 export type AsciiFluidTheme = "light" | "dark" | "auto"
@@ -279,8 +280,9 @@ function compile(
   gl.compileShader(shader)
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     if (isDev()) {
-      console.warn(
-        "AsciiFluid: shader failed to compile\n",
+      LogWarn(
+        "AsciiFluid",
+        "shader failed to compile",
         gl.getShaderInfoLog(shader)
       )
     }
@@ -307,8 +309,9 @@ function createProgram(
   gl.linkProgram(program)
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     if (isDev()) {
-      console.warn(
-        "AsciiFluid: program failed to link\n",
+      LogWarn(
+        "AsciiFluid",
+        "program failed to link",
         gl.getProgramInfoLog(program)
       )
     }

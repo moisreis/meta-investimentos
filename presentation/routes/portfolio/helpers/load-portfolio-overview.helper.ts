@@ -1,4 +1,5 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { LogError, LogWarn } from "@/lib/log/logger"
 import { ApplicationContainer } from "@/presentation/composition/application.container"
 import { BankAccountContainer } from "@/presentation/composition/bank-account.container"
 import { BankContainer } from "@/presentation/composition/bank.container"
@@ -107,8 +108,9 @@ export async function LoadPortfolioOverview(
     })
 
     if (PORTFOLIO.userId !== USER.id) {
-      console.warn(
-        `[LoadPortfolioOverview] portfolio ${portfolioId} does not belong to the session user.`
+      LogWarn(
+        "LoadPortfolioOverview",
+        `portfolio ${portfolioId} does not belong to the session user.`
       )
       return null
     }
@@ -148,8 +150,9 @@ export async function LoadPortfolioOverview(
       portfolios: PICKER_OPTIONS,
     }
   } catch (cause) {
-    console.error(
-      "[LoadPortfolioOverview] failed to resolve the portfolio overview.",
+    LogError(
+      "LoadPortfolioOverview",
+      "failed to resolve the portfolio overview.",
       cause
     )
     return null
@@ -194,8 +197,9 @@ async function LoadPortfolioAddOptions(
 
     return [APPLICATION_OPTIONS, WITHDRAWAL_OPTIONS]
   } catch (cause) {
-    console.error(
-      "[LoadPortfolioAddOptions] failed to resolve the add flow options.",
+    LogError(
+      "LoadPortfolioAddOptions",
+      "failed to resolve the add flow options.",
       cause
     )
     return [
@@ -238,8 +242,9 @@ async function LoadPortfolioPickerOptions(): Promise<
 
     return PORTFOLIOS
   } catch (cause) {
-    console.error(
-      "[LoadPortfolioPickerOptions] failed to resolve the session portfolios.",
+    LogError(
+      "LoadPortfolioPickerOptions",
+      "failed to resolve the session portfolios.",
       cause
     )
     return []
@@ -341,8 +346,9 @@ async function LoadPortfolioOverviewExtras(
       balances: BALANCES,
     }
   } catch (cause) {
-    console.error(
-      "[LoadPortfolioOverviewExtras] failed to resolve the holdings, the activity, the bank accounts and the balances.",
+    LogError(
+      "LoadPortfolioOverviewExtras",
+      "failed to resolve the holdings, the activity, the bank accounts and the balances.",
       cause
     )
     return EMPTY_PORTFOLIO_OVERVIEW_EXTRAS

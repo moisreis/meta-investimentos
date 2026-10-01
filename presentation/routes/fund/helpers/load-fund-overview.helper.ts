@@ -1,4 +1,5 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { LogError } from "@/lib/log/logger"
 import { FundContainer } from "@/presentation/composition/fund.container"
 import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
 import { PositionContainer } from "@/presentation/composition/position.container"
@@ -108,8 +109,9 @@ export async function LoadFundOverview(
       positions: POSITION_ROWS,
     }
   } catch (cause) {
-    console.error(
-      "[LoadFundOverview] failed to resolve the fund overview.",
+    LogError(
+      "LoadFundOverview",
+      "failed to resolve the fund overview.",
       cause
     )
     return null

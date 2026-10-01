@@ -5,6 +5,7 @@ import {
   type PortfolioPerformanceCalculationUnit,
 } from "@/jobs/portfolio-performance-calculate.job"
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { LogError } from "@/lib/log/logger"
 import { PortfolioPerformanceContainer } from "@/presentation/composition/portfolio-performance.container"
 import {
   ActionFailure,
@@ -188,10 +189,7 @@ async function runPortfolioPerformanceCalculationJob(
     // The job snapshot travels to the browser, so it can only
     // carry a safe message. The real cause stays in the server
     // log, otherwise a database failure is undiagnosable.
-    console.error(
-      "[portfolio-performance] cálculo falhou",
-      cause
-    )
+    LogError("portfolio-performance", "cálculo falhou", cause)
 
     completePortfolioPerformanceCalculationJob(
       jobId,

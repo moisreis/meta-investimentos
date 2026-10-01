@@ -1,4 +1,5 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { LogError, LogWarn } from "@/lib/log/logger"
 import { ApplicationContainer } from "@/presentation/composition/application.container"
 import { BankContainer } from "@/presentation/composition/bank.container"
 import { FundContainer } from "@/presentation/composition/fund.container"
@@ -78,8 +79,9 @@ export async function LoadPositionOverview(
     })
 
     if (PORTFOLIO.userId !== USER.id) {
-      console.warn(
-        `[LoadPositionOverview] position ${positionId} does not belong to the session user.`
+      LogWarn(
+        "LoadPositionOverview",
+        `position ${positionId} does not belong to the session user.`
       )
       return null
     }
@@ -112,8 +114,9 @@ export async function LoadPositionOverview(
       activity: EXTRAS.activity,
     }
   } catch (cause) {
-    console.error(
-      "[LoadPositionOverview] failed to resolve the position overview.",
+    LogError(
+      "LoadPositionOverview",
+      "failed to resolve the position overview.",
       cause
     )
     return null
@@ -191,8 +194,9 @@ async function LoadPositionOverviewExtras(
 
     return { activity: ACTIVITY }
   } catch (cause) {
-    console.error(
-      "[LoadPositionOverviewExtras] failed to resolve the position extras.",
+    LogError(
+      "LoadPositionOverviewExtras",
+      "failed to resolve the position extras.",
       cause
     )
     return EMPTY_POSITION_OVERVIEW_EXTRAS

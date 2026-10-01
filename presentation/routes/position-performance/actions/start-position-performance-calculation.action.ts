@@ -5,6 +5,7 @@ import {
   type PositionPerformanceCalculationUnit,
 } from "@/jobs/position-performance-calculate.job"
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { LogError } from "@/lib/log/logger"
 import { PositionPerformanceContainer } from "@/presentation/composition/position-performance.container"
 import {
   ActionFailure,
@@ -190,7 +191,7 @@ async function runPositionPerformanceCalculationJob(
     // The job snapshot travels to the browser, so it can only
     // carry a safe message. The real cause stays in the server
     // log, otherwise a database failure is undiagnosable.
-    console.error("[position-performance] cálculo falhou", cause)
+    LogError("position-performance", "cálculo falhou", cause)
 
     completePositionPerformanceCalculationJob(
       jobId,
