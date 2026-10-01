@@ -1,7 +1,9 @@
 import type { CategoryRow } from "@/presentation/types/category-row.types"
-import type { CategoryRowSummaryDTO } from "@/services/category/use-cases/list-category-row-summaries.use-case"
 
-import type { CategoryRowSummary } from "../types/category-list.types"
+import type {
+  CategoryRowSummary,
+  CategoryRowSummaryInput,
+} from "../types/category-list.types"
 
 /**
  * @summary
@@ -32,7 +34,7 @@ import type { CategoryRowSummary } from "../types/category-list.types"
  */
 export function BuildCategoryRowSummaries(
   categories: CategoryRow[],
-  counts: CategoryRowSummaryDTO[]
+  counts: CategoryRowSummaryInput[]
 ): Record<string, CategoryRowSummary> {
   const COUNTS_BY_CATEGORY = new Map(
     counts.map((entry) => [entry.categoryId, entry])

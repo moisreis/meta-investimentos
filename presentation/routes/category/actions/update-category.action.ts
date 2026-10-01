@@ -8,7 +8,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
 
 import { UPDATE_CATEGORY_SCHEMA } from "../validations/category-actions.validation"

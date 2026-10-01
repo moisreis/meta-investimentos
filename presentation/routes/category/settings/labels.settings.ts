@@ -138,4 +138,3 @@ export const CATEGORY_EMPTY = {
 } as const
 
 export { FormatDeleteCategoryDescription }
-

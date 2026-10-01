@@ -1,11 +1,10 @@
 "use client"
 
-import * as React from "react"
-
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
 
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
+import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
@@ -68,9 +67,7 @@ function EditCategoryForm({
     handleSubmit,
   } = useCategoryEditForm(category)
 
-  React.useEffect(() => {
-    onStatusChange?.(status, error)
-  }, [status, error, onStatusChange])
+  useEntityFormStatus({ status, error, onStatusChange })
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>

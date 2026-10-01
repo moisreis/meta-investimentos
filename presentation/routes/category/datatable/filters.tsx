@@ -1,6 +1,6 @@
 "use client"
 
-import { EntitySearchFilter } from "@/presentation/parts/filters/search"
+import { EntitySearchFilter } from "@/presentation/parts/filters/entity-search"
 import { CATEGORY_DATATABLE } from "@/presentation/routes/category/settings/labels.settings"
 
 interface CategoryDatatableFiltersProps {

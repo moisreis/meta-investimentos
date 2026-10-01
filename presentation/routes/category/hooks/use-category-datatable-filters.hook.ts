@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 
 import type { CategoryRow } from "@/presentation/types/category-row.types"
 

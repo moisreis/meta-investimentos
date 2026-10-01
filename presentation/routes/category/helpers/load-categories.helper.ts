@@ -1,6 +1,5 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { CategoryContainer } from "@/presentation/composition/category.container"
-import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
 import { ToCategoryRows } from "@/presentation/mappers/category-row.mapper"
 import type { CategoryRow } from "@/presentation/types/category-row.types"
 
