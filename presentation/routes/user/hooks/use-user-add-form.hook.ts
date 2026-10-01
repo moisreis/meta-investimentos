@@ -1,0 +1,79 @@
+"use client"
+
+import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
+import { createUserAction } from "@/presentation/routes/user/actions/create-user.action"
+import { USER_ADD_FORM_SCHEMA } from "@/presentation/routes/user/validations/user-form.validation"
+
+/**
+ * @summary
+ * Manages the add user form state, validation and
+ * submission.
+ *
+ * @remarks
+ * Wraps `useEntityForm` with the user schema and the
+ * create user server action.
+ *
+ * @explanation
+ * Use inside the add user form to keep the component
+ * presentational. Wire the returned inputs into
+ * controlled fields and call `handleSubmit` on submit.
+ * Render `fieldErrors` per field to show readable
+ * messages. Use `status` to trigger result toasts.
+ *
+ * @returns Form state and handlers.
+ *
+ * @example
+ * const { name, updateName, email, updateEmail, role,
+ *   updateRole, fieldErrors, status, handleSubmit } =
+ *   useUserAddForm()
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-25
+ */
+function useUserAddForm() {
+  const {
+    values: VALUES,
+    updateField,
+    error: ERROR,
+    pending: PENDING,
+    status: STATUS,
+    fieldErrors: FIELD_ERRORS,
+    handleSubmit,
+  } = useEntityForm({
+    schema: USER_ADD_FORM_SCHEMA,
+    initialValues: {
+      name: "",
+      email: "",
+      firstName: "",
+      lastName: "",
+      cpf: "",
+      role: "",
+    },
+    submit: (values) => createUserAction(values),
+  })
+
+  return {
+    name: VALUES.name,
+    updateName: (value: string) => updateField("name", value),
+    email: VALUES.email,
+    updateEmail: (value: string) => updateField("email", value),
+    firstName: VALUES.firstName,
+    updateFirstName: (value: string) =>
+      updateField("firstName", value),
+    lastName: VALUES.lastName,
+    updateLastName: (value: string) =>
+      updateField("lastName", value),
+    cpf: VALUES.cpf,
+    updateCpf: (value: string) => updateField("cpf", value),
+    role: VALUES.role,
+    updateRole: (value: string) => updateField("role", value),
+    error: ERROR,
+    pending: PENDING,
+    status: STATUS,
+    fieldErrors: FIELD_ERRORS,
+    handleSubmit,
+  }
+}
+
+export { useUserAddForm }
