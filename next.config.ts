@@ -3,6 +3,8 @@ import type { NextConfig } from "next"
 // Stores the application configuration.
 const nextConfig: NextConfig = {
   devIndicators: false,
+  // Keeps the PDF engine un-bundled on the Node runtime.
+  serverExternalPackages: ["@react-pdf/renderer"],
 }
 
 /**

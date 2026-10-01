@@ -4,7 +4,7 @@ import {
   readFileSync,
   statSync,
 } from "node:fs"
-import { join, relative, resolve, sep } from "node:path"
+import { dirname, join, relative, resolve, sep } from "node:path"
 
 // Every folder a route is allowed to own. Anything else is
 // a typo, a stray folder, or shared chrome that leaked in.
@@ -74,6 +74,10 @@ const CROSS_ROUTE_ALLOWLIST: Record<string, string[]> = {
   ],
 }
 
+// An import statement, whichever of the two shapes it takes:
+// `import x from "..."` and the bare `import "..."`.
+const IMPORT_SPECIFIER = /(?:from|import)\s+["']([^"']+)["']/g
+
 // Leading words that turn a hook file into a verb first name.
 // Hooks are named after the thing they serve, so the entity
 // comes first: use-bank-add-form, never use-add-bank-form.
@@ -93,6 +97,13 @@ const VERB_FIRST_HOOK_PREFIX = [
 // The soft line limit. Prettier is the real enforcer, so the
 // rule only has to catch what Prettier would leave alone.
 const MAX_LINE_LENGTH = 65
+
+// A route page composes parts, never markup. An intrinsic
+// element or a class attribute in a page is the leak this
+// rule catches, so the markup and the classes behind a block
+// stay in the part that owns them.
+const PAGE_INTRINSIC_TAG = /<([a-z][a-z0-9-]*)[\s/>]/
+const PAGE_CLASS_ATTRIBUTE = /\bclassName=/
 
 // Line shapes Prettier cannot wrap, so a length rule that
 // counted them would only push authors into worse code.
@@ -126,6 +137,50 @@ const LINE_EXEMPT = [
 // Directories that are not part of the project source. The
 // repo wide rules must not walk into them.
 const SKIPPED_DIRECTORIES = [".git", ".next", "node_modules"]
+
+// The root of the delivery layer, one level above routes.
+const PRESENTATION_ROOT = "presentation"
+
+// The shelf of shared, route independent parts.
+const PARTS_ROOT = "presentation/parts"
+
+// Every part names the shelf it sits on, so a file name and
+// a folder tell the same story and a reader never has to
+// open the file to learn what it is. A hook keeps the `use-`
+// prefix it must carry and then names its shelf.
+const PART_SHELVES = ["entity-", "shared-", "main-"]
+
+const HOOK_PREFIX = "use-"
+
+// The folders the presentation root may hold. A stray
+// `components/` or `hooks/` here is shared chrome that never
+// became a part, or a route that never became a route.
+const ALLOWED_PRESENTATION_FOLDERS = [
+  "composition",
+  "constants",
+  "mappers",
+  "masks",
+  "parts",
+  "presenters",
+  "routes",
+  "theme",
+  "types",
+  "ui",
+]
+
+// Markup belongs to a view, so a `.tsx` may only sit where a
+// view is built: the primitives, the shell behaviour, a
+// part, or a route screen. `datatable/` and a group `layout/`
+// are views too, so they stay on the list.
+const VIEW_FOLDERS = ["ui", "theme"]
+const ROUTE_VIEW_FOLDERS = [
+  "components",
+  "datatable",
+  "dialogs",
+  "forms",
+  "layout",
+  "pages",
+]
 
 // Extra entities that are not route names but still appear
 // in filenames.
@@ -609,6 +664,190 @@ function CheckPageNames(
 
 /**
  * @summary
+ * Reports a route page that renders raw HTML or sets a
+ * className, so a page stays a composition of parts.
+ *
+ * @remarks
+ * A page owns the screen, not the blocks on it. The markup
+ * and the Tailwind classes behind a block belong to the part
+ * or route component that renders it, so a block no part owns
+ * becomes a route component and a block two routes share
+ * becomes a part.
+ *
+ * @param root - Absolute path of the routes root.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-30
+ */
+function CheckPageComposition(root: string): void {
+  for (const route of ListDirectories(root)) {
+    for (const file of ListFiles(join(route, "pages"))) {
+      const SOURCE = readFileSync(file, "utf8")
+      const TAG = PAGE_INTRINSIC_TAG.exec(SOURCE)
+
+      if (TAG) {
+        Report(
+          "page-composition",
+          ToRelative(file),
+          `renders <${TAG[1]}>, so move the markup ` +
+            "into a part or route component"
+        )
+      }
+
+      if (PAGE_CLASS_ATTRIBUTE.test(SOURCE)) {
+        Report(
+          "page-composition",
+          ToRelative(file),
+          "sets className, so move the styling into a part"
+        )
+      }
+    }
+  }
+}
+
+/**
+ * @summary
+ * Reports a main route folder without exactly one page, so
+ * every entry in the navigation resolves to a screen.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
+/**
+ * @summary
+ * Reports a part whose file name does not name its shelf.
+ *
+ * @remarks
+ * A part sits on one of three shelves: the entity kit, the
+ * generic shared kit, and the main shell chrome. Naming the
+ * shelf in the file keeps the folder tree and the file names
+ * telling the same story. A hook keeps the `use-` it must
+ * carry and then names its shelf.
+ *
+ * @param root - Absolute path of the parts root.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-30
+ */
+function CheckPartsShelves(root: string): void {
+  for (const file of ListFiles(resolve(root))) {
+    const BASE = file.split(sep).pop() ?? ""
+    const SHELF = BASE.replace(HOOK_PREFIX, "")
+    const HAS_SHELF = PART_SHELVES.some((prefix) =>
+      SHELF.startsWith(prefix)
+    )
+
+    if (!HAS_SHELF) {
+      Report(
+        "parts-shelf-prefix",
+        ToRelative(file),
+        `name the shelf: ${PART_SHELVES.join(", ")}`
+      )
+    }
+  }
+}
+
+/**
+ * @summary
+ * Reports a folder at the presentation root that is not a
+ * presentation concern.
+ *
+ * @remarks
+ * The delivery layer holds routes, the composition layer,
+ * the shared shelves and the leaf concerns below them.
+ * Anything else is shared chrome that never became a part,
+ * or a route that never became a route, and it belongs one
+ * level down.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-30
+ */
+function CheckPresentationRoot(): void {
+  for (const folder of ListDirectories(
+    resolve(PRESENTATION_ROOT)
+  )) {
+    const NAME = folder.split(sep).pop() ?? ""
+
+    if (!ALLOWED_PRESENTATION_FOLDERS.includes(NAME)) {
+      Report(
+        "presentation-root",
+        ToRelative(folder),
+        `"${NAME}" is not a presentation concern`
+      )
+    }
+  }
+}
+
+/**
+ * @summary
+ * Decides whether a file may hold JSX.
+ *
+ * @remarks
+ * Markup belongs to a view: a primitive under `ui/`, the
+ * shell behaviour under `theme/`, any part, or a route
+ * screen folder. A `.tsx` anywhere else is markup that
+ * escaped the screen it belongs to.
+ *
+ * @param file - Absolute path of a `.tsx` file.
+ *
+ * @returns Whether the file sits in a view folder.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-30
+ */
+function IsViewFile(file: string): boolean {
+  const SEGMENTS = ToRelative(file).split("/")
+  const LAYER = SEGMENTS[1] ?? ""
+
+  if (VIEW_FOLDERS.includes(LAYER)) {
+    return true
+  }
+
+  if (LAYER === "parts") {
+    return true
+  }
+
+  if (LAYER !== "routes") {
+    return false
+  }
+
+  return ROUTE_VIEW_FOLDERS.includes(SEGMENTS[3] ?? "")
+}
+
+/**
+ * @summary
+ * Reports a `.tsx` file outside a view folder, so markup
+ * never leaks into a helper, a type or a data module.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-30
+ */
+function CheckViewLocation(): void {
+  for (const file of ListFiles(resolve(PRESENTATION_ROOT))) {
+    if (!file.endsWith(".tsx")) {
+      continue
+    }
+
+    if (IsViewFile(file)) {
+      continue
+    }
+
+    Report(
+      "view-only-tsx",
+      ToRelative(file),
+      "markup belongs to a view folder"
+    )
+  }
+}
+
+/**
+ * @summary
  * Reports a main route folder without exactly one page, so
  * every entry in the navigation resolves to a screen.
  *
@@ -640,6 +879,55 @@ function CheckMainRoutes(): void {
 
 /**
  * @summary
+ * Resolves the route a file reaches into through one import
+ * specifier.
+ *
+ * @remarks
+ * The specifier is resolved against the real location of the
+ * importing file, so a relative hop that stays inside the
+ * route is not mistaken for a hop into a neighbour. An alias
+ * is resolved against the repository root. Anything that does
+ * not land in an existing route folder is not a route import
+ * and returns `null`.
+ *
+ * @param fromFile - Absolute path of the importing file.
+ * @param specifier - The raw import specifier.
+ *
+ * @returns The route folder the specifier lands in, or `null`.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-30
+ */
+function ResolveRouteTarget(
+  fromFile: string,
+  specifier: string
+): string | null {
+  const ROUTES = resolve(ROUTES_ROOT)
+
+  let target: string
+
+  if (specifier.startsWith("@/")) {
+    target = resolve(specifier.slice(2))
+  } else if (specifier.startsWith(".")) {
+    target = resolve(dirname(fromFile), specifier)
+  } else {
+    return null
+  }
+
+  const RELATIVE = relative(ROUTES, target)
+
+  if (RELATIVE.startsWith("..") || RELATIVE === "") {
+    return null
+  }
+
+  const ROUTE = RELATIVE.split(sep)[0] ?? ""
+
+  return existsSync(join(ROUTES, ROUTE)) ? ROUTE : null
+}
+
+/**
+ * @summary
  * Reports a route that imports from a sibling route. A route
  * owns its screen end to end, so reaching into a neighbour
  * couples two features that can then only be changed together.
@@ -656,32 +944,32 @@ function CheckMainRoutes(): void {
  */
 function CheckCrossRouteImports(): void {
   for (const file of ListFiles(resolve(ROUTES_ROOT))) {
-    const PARTS = ToRelative(file).split("/")
-    const OWN = PARTS[2] ?? ""
+    const OWN = ToRelative(file).split("/")[2] ?? ""
     const SOURCE = readFileSync(file, "utf8")
-    const PATTERNS = [
-      /from "@\/presentation\/routes\/([^/"]+)\//g,
-      /from "\.\.\/\.\.\/([^/"]+)\//g,
-    ]
+    const REPORTED = new Set<string>()
 
-    for (const pattern of PATTERNS) {
-      for (const match of SOURCE.matchAll(pattern)) {
-        const TARGET = match[1] ?? ""
+    for (const match of SOURCE.matchAll(IMPORT_SPECIFIER)) {
+      const TARGET = ResolveRouteTarget(file, match[1] ?? "")
 
-        if (TARGET === OWN) {
-          continue
-        }
-
-        if (CROSS_ROUTE_ALLOWLIST[OWN]?.includes(TARGET)) {
-          continue
-        }
-
-        Report(
-          "no-cross-route-import",
-          ToRelative(file),
-          `reaches into the ${TARGET} route`
-        )
+      if (!TARGET || TARGET === OWN) {
+        continue
       }
+
+      if (CROSS_ROUTE_ALLOWLIST[OWN]?.includes(TARGET)) {
+        continue
+      }
+
+      if (REPORTED.has(TARGET)) {
+        continue
+      }
+
+      REPORTED.add(TARGET)
+
+      Report(
+        "no-cross-route-import",
+        ToRelative(file),
+        `reaches into the ${TARGET} route`
+      )
     }
   }
 }
@@ -842,6 +1130,10 @@ function Main(): void {
   CheckBannedFolders(resolve("."))
   CheckPluralSchemaSuffix(resolve("."))
   CheckNoDefaultExports(ROOT)
+  CheckPageComposition(ROOT)
+  CheckPartsShelves(PARTS_ROOT)
+  CheckPresentationRoot()
+  CheckViewLocation()
   CheckMainRoutes()
   CheckCrossRouteImports()
   CheckTsdocAuthor(ROOT)
