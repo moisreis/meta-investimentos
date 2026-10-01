@@ -550,7 +550,6 @@ function CheckComposition(files: string[]): void {
     "inputMode",
     "method",
     "name",
-    "placeholder",
     "role",
     "rowSpan",
     "scope",

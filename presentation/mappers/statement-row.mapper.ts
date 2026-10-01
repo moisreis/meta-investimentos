@@ -6,10 +6,7 @@ import type { StatementResponseDTO } from "@/services/statement/dto/statement-re
  * Projects a statement read model onto the statement row.
  *
  * @remarks
- * Keeps the 6 fields the screens render
- * and drops 1 that stay in the
- * service layer:
- * `periodEnd`.
+ * Maps the fields rendered by the statement screens.
  *
  * @explanation
  * Use this mapper in the route loaders, the only place
@@ -46,10 +43,7 @@ export function ToStatementRow(
  * Projects the statement read models onto the statement rows.
  *
  * @remarks
- * Keeps the 6 fields the screens render
- * and drops 1 that stay in the
- * service layer:
- * `periodEnd`.
+ * Maps the fields rendered by the statement screens.
  *
  * @explanation
  * Use this mapper in the route loaders, the only place

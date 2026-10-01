@@ -112,7 +112,7 @@ function AddFundForm({
             type="text"
             name="name"
             autoComplete="off"
-            placeholder="Ex.: Fundo Multi Mercado"
+            placeholder={FUND_FORM.PLACEHOLDER_NAME}
             required
             value={name}
             onChange={(e) => updateName(e.target.value)}

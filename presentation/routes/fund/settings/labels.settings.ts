@@ -48,6 +48,9 @@ export const FUND_FORM = {
   DESCRIPTION_ADMINISTRATION_FEE: "Em percentual ao ano.",
   DESCRIPTION_PERFORMANCE_FEE: "Em percentual ao ano.",
 
+  // Field placeholders.
+  PLACEHOLDER_NAME: "Ex.: Fundo Multi Mercado",
+
   // Select placeholders.
   PLACEHOLDER_BANK: "Selecione o banco",
   PLACEHOLDER_BENCHMARK: "Sem benchmark",

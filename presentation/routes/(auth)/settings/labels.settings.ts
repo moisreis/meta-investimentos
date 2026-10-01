@@ -8,8 +8,10 @@ import { BRAND } from "@/presentation/constants/brand.constants"
  *
  * @date 2026-10-01
  */
+const CURRENT_YEAR = new Date().getFullYear()
+
 export const AUTH_COPYRIGHT =
-  `© 2026 ${BRAND.LEGAL_NAME}. ` +
+  `© ${CURRENT_YEAR} ${BRAND.LEGAL_NAME}. ` +
   `Todos os direitos reservados.`
 
 /**
