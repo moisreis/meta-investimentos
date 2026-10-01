@@ -6,13 +6,7 @@ import type {
 
 import { PositionPerformance } from "@domain/position-performance/entities/position-performance.entity"
 import type { IPositionPerformance } from "@domain/position-performance/interfaces/position-performance.interface"
-import {
-  EntityId,
-  PositiveMoney,
-  QuotaQuantity,
-  SignedMoney,
-  SignedPercentage,
-} from "@/value-objects"
+import { EntityId } from "@/value-objects"
 import {
   ToDomain,
   ToInsert,

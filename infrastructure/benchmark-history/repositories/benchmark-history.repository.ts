@@ -6,7 +6,7 @@ import type {
 
 import { BenchmarkHistory } from "@domain/benchmark-history/entities/benchmark-history.entity"
 import type { IBenchmarkHistory } from "@domain/benchmark-history/interfaces/benchmark-history.interface"
-import { EntityId, SignedPercentage } from "@/value-objects"
+import { EntityId } from "@/value-objects"
 import {
   ToDomain,
   ToInsert,

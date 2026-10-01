@@ -34,13 +34,6 @@ export interface PortfolioPeriodReturnsDTO {
   periodReturn: string | null
 }
 
-// Parses a numeric snapshot field to a finite amount.
-function ToAmount(value: string | null | undefined): number {
-  if (value === null || value === undefined) return 0
-  const PARSED = Number.parseFloat(value)
-  return Number.isFinite(PARSED) ? PARSED : 0
-}
-
 /**
  * @summary
  * Resolves the period returns of a portfolio performance

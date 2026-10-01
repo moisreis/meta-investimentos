@@ -6,7 +6,7 @@ import type {
 
 import { NormsPortfolios } from "@domain/norms-portfolio/entities/norms-portfolios.entity"
 import type { INormsPortfolios } from "@domain/norms-portfolio/interfaces/norms-portfolios.interface"
-import { EntityId, SignedPercentage } from "@/value-objects"
+import { EntityId } from "@/value-objects"
 import {
   ToDomain,
   ToInsert,

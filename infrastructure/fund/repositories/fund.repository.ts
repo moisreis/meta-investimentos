@@ -9,11 +9,7 @@ import type {
   CategoryRowCount,
   IFund,
 } from "@domain/fund/interfaces/fund.interface"
-import {
-  CNPJ,
-  EntityId,
-  SignedPercentage,
-} from "@/value-objects"
+import { CNPJ, EntityId } from "@/value-objects"
 import {
   ToDomain,
   ToInsert,

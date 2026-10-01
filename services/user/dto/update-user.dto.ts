@@ -1,5 +1,3 @@
-import type { UserRole } from "@/lib/auth/user-role"
-
 /**
  * @summary
  * Defines the payload for updating a `User` profile.

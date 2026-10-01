@@ -20,7 +20,7 @@ import type {
   UpsertQuota,
   UpsertQuotaResult,
 } from "@domain/quota/interfaces/quota.interface"
-import { EntityId, QuotaPrice } from "@/value-objects"
+import { EntityId } from "@/value-objects"
 import {
   ToDomain,
   ToInsert,

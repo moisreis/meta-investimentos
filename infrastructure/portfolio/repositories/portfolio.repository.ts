@@ -6,7 +6,7 @@ import type {
 
 import { Portfolio } from "@domain/portfolio/entities/portfolio.entity"
 import type { IPortfolio } from "@domain/portfolio/interfaces/portfolio.interface"
-import { EntityId, SignedPercentage } from "@/value-objects"
+import { EntityId } from "@/value-objects"
 import {
   ToDomain,
   ToInsert,

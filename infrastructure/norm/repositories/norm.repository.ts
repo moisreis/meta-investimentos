@@ -6,7 +6,7 @@ import type {
 
 import { Norm } from "@domain/norm/entities/norm.entity"
 import type { INorm } from "@domain/norm/interfaces/norm.interface"
-import { EntityId, SignedPercentage } from "@/value-objects"
+import { EntityId } from "@/value-objects"
 import {
   ToDomain,
   ToInsert,

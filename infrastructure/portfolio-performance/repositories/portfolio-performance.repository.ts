@@ -14,13 +14,7 @@ import type {
 
 import { PortfolioPerformance } from "@domain/portfolio-performance/entities/portfolio-performance.entity"
 import type { IPortfolioPerformance } from "@domain/portfolio-performance/interfaces/portfolio-performance.interface"
-import {
-  EntityId,
-  PositiveMoney,
-  QuotaQuantity,
-  SignedMoney,
-  SignedPercentage,
-} from "@/value-objects"
+import { EntityId } from "@/value-objects"
 import {
   ToDomain,
   ToInsert,

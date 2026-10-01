@@ -10,7 +10,7 @@ import type {
   IPosition,
   PortfolioRowCount,
 } from "@domain/position/interfaces/position.interface"
-import { EntityId, PositiveMoney } from "@/value-objects"
+import { EntityId } from "@/value-objects"
 import {
   ToDomain,
   ToInsert,

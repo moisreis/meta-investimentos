@@ -14,7 +14,7 @@ import type {
 
 import { CheckingAccount } from "@domain/checking-account/entities/checking-account.entity"
 import type { ICheckingAccount } from "@domain/checking-account/interfaces/checking-account.interface"
-import { EntityId, SignedMoney } from "@/value-objects"
+import { EntityId } from "@/value-objects"
 import {
   ToDomain,
   ToInsert,
