@@ -11,9 +11,12 @@ const MOBILE_BREAKPOINT = 768
  * @remarks
  * Subscribes to the media query and unsubscribes on
  * unmount, so the answer follows a resize instead of being
- * frozen at the first render. The first render answers
- * `false` until the effect has read the width, which keeps
- * the server and the client markup in agreement.
+ * frozen at the first render. The question is answered from
+ * the query itself rather than from a mirrored state: the
+ * media query is the source of truth, so there is nothing
+ * to synchronise after subscribing, and the server and the
+ * client markup agree because the first render answers
+ * `false`.
  *
  * @returns Whether the viewport is a mobile one.
  *
@@ -22,21 +25,26 @@ const MOBILE_BREAKPOINT = 768
  * @date 2026-09-23
  */
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<
-    boolean | undefined
-  >(undefined)
+  const QUERY = `(max-width: ${MOBILE_BREAKPOINT - 1}px)`
 
-  React.useEffect(() => {
-    const mql = window.matchMedia(
-      `(max-width: ${MOBILE_BREAKPOINT - 1}px)`
-    )
-    const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    }
-    mql.addEventListener("change", onChange)
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    return () => mql.removeEventListener("change", onChange)
-  }, [])
+  return React.useSyncExternalStore(
+    SubscribeToQuery,
+    () => window.matchMedia(QUERY).matches,
+    () => false
+  )
+}
 
-  return !!isMobile
+/**
+ * Subscribes to the mobile media query.
+ */
+function SubscribeToQuery(onStoreChange: () => void) {
+  const MEDIA_QUERY = window.matchMedia(
+    `(max-width: ${MOBILE_BREAKPOINT - 1}px)`
+  )
+
+  MEDIA_QUERY.addEventListener("change", onStoreChange)
+
+  return () => {
+    MEDIA_QUERY.removeEventListener("change", onStoreChange)
+  }
 }

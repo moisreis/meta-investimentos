@@ -39,29 +39,44 @@ function MainBreadcrumb() {
   const TRAIL = BuildMainBreadcrumbTrail(PATHNAME)
   const CURRENT = TRAIL.at(-1) ?? null
 
-  const [CURRENT_LABEL, setCurrentLabel] = useState<
-    string | null
-  >(null)
+  // Name resolved for a dynamic crumb, tagged with the crumb
+  // it belongs to. Tagging is what removes the need to clear
+  // the state on every navigation: a label is only read when
+  // its tag matches the crumb on screen, so a stale answer can
+  // never surface under a different entity.
+  const [RESOLVED, setResolved] = useState<{
+    key: string
+    name: string | null
+  } | null>(null)
 
   const RESOLVER = CURRENT?.dynamicParentHref
     ? (MAIN_BREADCRUMB_RESOLVERS[CURRENT.dynamicParentHref] ??
       null)
     : null
 
+  const RESOLVE_KEY =
+    RESOLVER && CURRENT?.dynamicId
+      ? `${CURRENT.dynamicParentHref}:${CURRENT.dynamicId}`
+      : null
+
   useEffect(() => {
-    if (!CURRENT?.dynamicId || !RESOLVER) return
+    if (!RESOLVE_KEY || !RESOLVER || !CURRENT?.dynamicId) return
 
     let ACTIVE = true
-    setCurrentLabel(null)
 
     RESOLVER(CURRENT.dynamicId).then((result) => {
-      if (ACTIVE && result.name) setCurrentLabel(result.name)
+      if (ACTIVE) {
+        setResolved({ key: RESOLVE_KEY, name: result.name })
+      }
     })
 
     return () => {
       ACTIVE = false
     }
-  }, [CURRENT?.dynamicId, RESOLVER])
+  }, [CURRENT?.dynamicId, RESOLVE_KEY, RESOLVER])
+
+  const CURRENT_LABEL =
+    RESOLVED?.key === RESOLVE_KEY ? RESOLVED.name : null
 
   return (
     <Breadcrumb>

@@ -80,52 +80,71 @@ function EntityQuotaDateInput({
   // `null` means "not known yet", which is different from
   // "known to be empty". Gating on an empty set would hide
   // every day before the first response arrives.
-  const [AVAILABLE_DATES, setAvailableDates] =
-    useState<Set<string> | null>(null)
-  const [LOADING_DATES, setLoadingDates] = useState(false)
-  // Fund the current selection was made against, so the date
-  // is only cleared when the user switches to another fund.
-  const SELECTED_FUND = useRef<string | undefined>(undefined)
+  // Quota dates of the selected fund, keyed by the fund they
+  // were fetched for. Keying by fund is what makes "still
+  // loading" derivable instead of mirrored: the dates are
+  // pending whenever the settled answer does not belong to
+  // the fund currently selected, so the effect never has to
+  // reset anything.
+  const [QUOTA_DATES, setQuotaDates] = useState<{
+    fundId: string
+    dates: Set<string>
+  } | null>(null)
+
+  const LOADING_DATES =
+    Boolean(fundId) && QUOTA_DATES?.fundId !== fundId
+
   // Day key of the current value. Derived through the shared
   // day-key contract so it names the same day the calendar
   // shows, whatever shape the raw value arrived in.
   const SELECTED = FromDayKey(value)
   const SELECTED_KEY = SELECTED ? ToDayKey(SELECTED) : ""
-  // Latest commit callback, so the reset effect does not have
-  // to depend on an identity the parent recreates each render.
-  const COMMIT = useRef(onValueChange)
-  COMMIT.current = onValueChange
 
   useEffect(() => {
-    if (!fundId) {
-      setAvailableDates(null)
-      setLoadingDates(false)
-      return
-    }
+    if (!fundId) return
 
     let CANCELLED = false
-
-    setAvailableDates(null)
-    setLoadingDates(true)
 
     getQuotaDatesAction({ fundId })
       .then((result) => {
         if (CANCELLED) return
-        setAvailableDates(
-          result.success && result.data
-            ? new Set(result.data)
-            : new Set()
-        )
+        setQuotaDates({
+          fundId,
+          dates:
+            result.success && result.data
+              ? new Set(result.data)
+              : new Set(),
+        })
       })
-      .finally(() => {
+      .catch(() => {
         if (CANCELLED) return
-        setLoadingDates(false)
+        setQuotaDates({ fundId, dates: new Set() })
       })
 
     return () => {
       CANCELLED = true
     }
   }, [fundId])
+
+  // Fund the current selection was made against, so the date
+  // is only cleared when the user switches to another fund.
+  // Read inside the effect below rather than during render.
+  const SELECTED_FUND = useRef<string | undefined>(undefined)
+
+  // Settled dates of the fund currently selected, or `null`
+  // while they are unknown.
+  const AVAILABLE_DATES =
+    fundId && QUOTA_DATES?.fundId === fundId
+      ? QUOTA_DATES.dates
+      : null
+
+  // Latest commit callback, so the reset effect does not have
+  // to depend on an identity the parent recreates each render.
+  const COMMIT = useRef(onValueChange)
+
+  useEffect(() => {
+    COMMIT.current = onValueChange
+  }, [onValueChange])
 
   // Clear a date that belongs to a previously selected fund
   // once the new fund's quota dates are known. The first

@@ -107,10 +107,7 @@ function usePortfolioDatatableFilters(
     const TO = RANGE?.to
     const REQUEST = ++REQUEST_ID.current
 
-    if (!FROM || !TO) {
-      setPerformances({})
-      return
-    }
+    if (!FROM || !TO) return
 
     listPortfolioPerformancesAction({
       from: ToUtcDayKey(FROM),
@@ -128,9 +125,15 @@ function usePortfolioDatatableFilters(
     [AVAILABLE_KEYS]
   )
 
+  // No range means no snapshot was fetched for it, so the
+  // index reads empty rather than handing back the answers of
+  // the range the user just discarded.
+  const HAS_RANGE = Boolean(RANGE?.from && RANGE?.to)
+
   const performanceFor = useCallback(
-    (portfolioId: string) => PERFORMANCES[portfolioId] ?? null,
-    [PERFORMANCES]
+    (portfolioId: string) =>
+      HAS_RANGE ? (PERFORMANCES[portfolioId] ?? null) : null,
+    [HAS_RANGE, PERFORMANCES]
   )
 
   const FILTERED_PORTFOLIOS = useMemo(() => {
