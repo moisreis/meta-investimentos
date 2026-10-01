@@ -15,7 +15,11 @@ import {
 } from "@/presentation/ui/breadcrumb"
 
 import { BuildMainBreadcrumbTrail } from "@/presentation/parts/navigation/main-breadcrumb-trail.helper"
-import { MAIN_BREADCRUMB_RESOLVERS } from "@/presentation/parts/navigation/main-breadcrumb-resolvers.settings"
+import type { MainBreadcrumbResolvers } from "@/presentation/parts/navigation/main-breadcrumb-resolvers.types"
+
+interface MainBreadcrumbProps {
+  resolvers: MainBreadcrumbResolvers
+}
 
 /**
  * @summary
@@ -26,7 +30,12 @@ import { MAIN_BREADCRUMB_RESOLVERS } from "@/presentation/parts/navigation/main-
  * the shared navigation registry. The last crumb is the
  * current page; ancestors link back to their routes.
  * Dynamic detail segments resolve their entity name
- * through the registered breadcrumb resolvers.
+ * through the resolvers handed in by the layout, so the
+ * shell stays free of the routes it points at.
+ *
+ * @param props - Props of the breadcrumb.
+ * @param props.resolvers - Name resolvers keyed by the
+ * parent href of a dynamic segment.
  *
  * @returns The main breadcrumb trail.
  *
@@ -34,7 +43,7 @@ import { MAIN_BREADCRUMB_RESOLVERS } from "@/presentation/parts/navigation/main-
  *
  * @date 2026-09-25
  */
-function MainBreadcrumb() {
+function MainBreadcrumb({ resolvers }: MainBreadcrumbProps) {
   const PATHNAME = usePathname()
   const TRAIL = BuildMainBreadcrumbTrail(PATHNAME)
   const CURRENT = TRAIL.at(-1) ?? null
@@ -50,8 +59,7 @@ function MainBreadcrumb() {
   } | null>(null)
 
   const RESOLVER = CURRENT?.dynamicParentHref
-    ? (MAIN_BREADCRUMB_RESOLVERS[CURRENT.dynamicParentHref] ??
-      null)
+    ? (resolvers[CURRENT.dynamicParentHref] ?? null)
     : null
 
   const RESOLVE_KEY =
@@ -66,7 +74,10 @@ function MainBreadcrumb() {
 
     RESOLVER(CURRENT.dynamicId).then((result) => {
       if (ACTIVE) {
-        setResolved({ key: RESOLVE_KEY, name: result.name })
+        setResolved({
+          key: RESOLVE_KEY,
+          name: result.success ? (result.data ?? null) : null,
+        })
       }
     })
 
