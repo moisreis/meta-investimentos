@@ -6,8 +6,13 @@ import type { PositionPerformanceRow } from "@/presentation/types/position-perfo
 
 interface PositionPerformanceDatatableTableProps {
   table: EntityTable<PositionPerformanceRow>
-  /** Enables the bulk delete confirm flow for the selected rows. */
-  onBulkDelete?: (items: PositionPerformanceRow[]) => void | Promise<void>
+  /**
+   * Enables the bulk delete confirm flow for the selected
+   * rows.
+   */
+  onBulkDelete?: (
+    items: PositionPerformanceRow[]
+  ) => void | Promise<void>
 }
 
 /**
@@ -32,7 +37,9 @@ function PositionPerformanceDatatableTable({
   table,
   onBulkDelete,
 }: PositionPerformanceDatatableTableProps) {
-  return <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+  return (
+    <EntityDatatable table={table} onBulkDelete={onBulkDelete} />
+  )
 }
 
 export { PositionPerformanceDatatableTable }

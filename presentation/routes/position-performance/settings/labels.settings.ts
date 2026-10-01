@@ -47,7 +47,8 @@ export const POSITION_PERFORMANCE_DATATABLE = {
 
   // Delete result toast copy.
   DELETE_SUCCESS_TITLE: "Performance excluída!",
-  DELETE_SUCCESS_DESCRIPTION: "A performance foi excluída com sucesso.",
+  DELETE_SUCCESS_DESCRIPTION:
+    "A performance foi excluída com sucesso.",
   DELETE_ERROR_TITLE: "Não foi possível excluir a performance",
 } as const
 
@@ -97,6 +98,9 @@ export const POSITION_PERFORMANCE_CALCULATE = {
   // Progress dialog description while running.
   PROGRESS_DESCRIPTION:
     "Calculando as performances das posições no período.",
+
+  // Accessible name of the progress bar.
+  PROGRESS_LABEL: "Progresso do cálculo",
 
   // Running status marker content.
   PROGRESS_RUNNING_LABEL: "Processando cálculos...",
@@ -159,4 +163,3 @@ export const POSITION_PERFORMANCE_EMPTY = {
     "Calcule o desempenho das posições para visualizar os resultados.",
   PRIMARY_ACTION_LABEL: "Calcular desempenho",
 } as const
-

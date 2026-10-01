@@ -4,15 +4,17 @@ import * as React from "react"
 
 import type { DateRange } from "react-day-picker"
 
-import { EntityDateRangeFilter } from "@/presentation/parts/filters/date-range"
+import { EntityDateRangeFilter } from "@/presentation/parts/filters/entity-date-range"
 import { Button } from "@/presentation/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/presentation/ui/dialog"
+
 import {
   Field,
   FieldContent,
@@ -22,10 +24,10 @@ import {
 } from "@/presentation/ui/field"
 
 import { PositionPerformancePositionCombobox } from "../forms/position-combobox"
+import { usePositionPerformanceWindow } from "../hooks/use-position-performance-window.hook"
 import type { PositionPerformanceCalculationOption } from "../types/position-performance-list.types"
 
 import {
-  POSITION_PERFORMANCE_ALL_POSITIONS_VALUE,
   POSITION_PERFORMANCE_CALCULATE,
   POSITION_PERFORMANCE_DATATABLE,
 } from "../settings/labels.settings"
@@ -85,20 +87,12 @@ function PositionPerformanceCalculateConfirmDialog({
   error,
   onConfirm,
 }: PositionPerformanceCalculateConfirmDialogProps) {
-  const items = React.useMemo(
-    () =>
-      positionOptions.map((option) => ({
-        id: option.value,
-        name: option.label,
-        description: option.description,
-      })),
-    [positionOptions]
-  )
-
-  const handlePositionChange = React.useCallback(
-    (value: string) => onPositionChange(value ?? POSITION_PERFORMANCE_ALL_POSITIONS_VALUE),
-    [onPositionChange]
-  )
+  const { items, handlePositionChange } =
+    usePositionPerformanceWindow({
+      positionOptions,
+      positionId,
+      onPositionChange,
+    })
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -123,13 +117,17 @@ function PositionPerformanceCalculateConfirmDialog({
               name="position"
               value={positionId}
               onValueChange={handlePositionChange}
-              placeholder={POSITION_PERFORMANCE_DATATABLE.FILTER_POSITION_PLACEHOLDER}
+              placeholder={
+                POSITION_PERFORMANCE_DATATABLE.FILTER_POSITION_PLACEHOLDER
+              }
               items={items}
               disabled={pending}
             />
 
             <FieldDescription>
-              {POSITION_PERFORMANCE_CALCULATE.FIELD_POSITION_DESCRIPTION}
+              {
+                POSITION_PERFORMANCE_CALCULATE.FIELD_POSITION_DESCRIPTION
+              }
             </FieldDescription>
           </FieldContent>
         </Field>
@@ -153,7 +151,7 @@ function PositionPerformanceCalculateConfirmDialog({
           </FieldContent>
         </Field>
 
-        <div className="flex justify-end gap-2">
+        <DialogFooter>
           <Button
             variant="outline"
             disabled={pending}
@@ -161,13 +159,12 @@ function PositionPerformanceCalculateConfirmDialog({
           >
             {POSITION_PERFORMANCE_CALCULATE.CANCEL_BUTTON}
           </Button>
-
           <Button disabled={pending} onClick={onConfirm}>
             {pending
               ? POSITION_PERFORMANCE_CALCULATE.CONFIRM_PENDING_BUTTON
               : POSITION_PERFORMANCE_CALCULATE.CONFIRM_BUTTON}
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

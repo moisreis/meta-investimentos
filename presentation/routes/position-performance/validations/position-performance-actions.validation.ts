@@ -67,7 +67,8 @@ type GetPositionPerformanceCalculationProgressValues = z.infer<
   typeof GET_POSITION_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA
 >
 
-// The payload accepted by the delete position performance action.
+// The payload accepted by the delete position performance
+// action.
 const DELETE_POSITION_PERFORMANCE_SCHEMA = z.object({
   performanceId: ID_SCHEMA,
 })

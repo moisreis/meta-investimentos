@@ -8,7 +8,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 
 import { DELETE_POSITION_PERFORMANCE_SCHEMA } from "../validations/position-performance-actions.validation"
 
@@ -49,7 +49,8 @@ export async function deletePositionPerformanceAction(
     return ActionFailure("Faça login para continuar.")
   }
 
-  const PARSED = DELETE_POSITION_PERFORMANCE_SCHEMA.safeParse(input)
+  const PARSED =
+    DELETE_POSITION_PERFORMANCE_SCHEMA.safeParse(input)
 
   if (!PARSED.success) {
     return RejectInput(PARSED.error)

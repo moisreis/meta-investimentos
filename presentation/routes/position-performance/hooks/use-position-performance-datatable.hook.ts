@@ -53,7 +53,8 @@ function usePositionPerformanceDatatable(
   const rowActions = usePositionPerformanceRowActions()
 
   const rowFor = useCallback(
-    (performanceId: string) => lookups.rows[performanceId] ?? null,
+    (performanceId: string) =>
+      lookups.rows[performanceId] ?? null,
     [lookups]
   )
 

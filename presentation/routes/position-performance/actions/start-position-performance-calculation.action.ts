@@ -13,7 +13,7 @@ import {
   ToActionFailure,
   ToFailureMessage,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 
 import { POSITION_PERFORMANCE_CALCULATE } from "../settings/labels.settings"
 import { START_POSITION_PERFORMANCE_CALCULATION_SCHEMA } from "../validations/position-performance-actions.validation"
@@ -22,7 +22,7 @@ import {
   completePositionPerformanceCalculationJob,
   createPositionPerformanceCalculationJob,
   updatePositionPerformanceCalculationJob,
-} from "../jobs/calculate-job.store"
+} from "../jobs/position-performance-calculate-job.store"
 
 // Milliseconds in a single calendar day.
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -190,10 +190,7 @@ async function runPositionPerformanceCalculationJob(
     // The job snapshot travels to the browser, so it can only
     // carry a safe message. The real cause stays in the server
     // log, otherwise a database failure is undiagnosable.
-    console.error(
-      "[position-performance] cálculo falhou",
-      cause
-    )
+    console.error("[position-performance] cálculo falhou", cause)
 
     completePositionPerformanceCalculationJob(
       jobId,

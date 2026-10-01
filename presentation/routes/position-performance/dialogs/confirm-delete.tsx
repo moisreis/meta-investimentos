@@ -23,7 +23,8 @@ export interface PositionPerformanceConfirmDeleteDialogProps {
  * Composes the shared confirm-delete dialog with the
  * position performance copy and the delete result toast.
  * The title and description come from the datatable settings;
- * the position name resolves per row through the lookup presenter.
+ * the position name resolves per row through the lookup
+ * presenter.
  *
  * @param props - Props of the confirm-delete dialog.
  * @param props.dialog - The row actions flow state.
@@ -50,8 +51,12 @@ function PositionPerformanceConfirmDeleteDialog({
         onOpenChange={dialog.setDeleteOpen}
         title={POSITION_PERFORMANCE_DATATABLE.DELETE_TITLE}
         description={LOOKUP ? FormatPositionLookup(LOOKUP) : ""}
-        confirmLabel={POSITION_PERFORMANCE_DATATABLE.DELETE_CONFIRM_LABEL}
-        cancelLabel={POSITION_PERFORMANCE_DATATABLE.DELETE_CANCEL_LABEL}
+        confirmLabel={
+          POSITION_PERFORMANCE_DATATABLE.DELETE_CONFIRM_LABEL
+        }
+        cancelLabel={
+          POSITION_PERFORMANCE_DATATABLE.DELETE_CANCEL_LABEL
+        }
         pending={dialog.deletePending}
         onConfirm={dialog.handleConfirmDelete}
       />
@@ -59,11 +64,15 @@ function PositionPerformanceConfirmDeleteDialog({
       <EntityDeleteToast
         status={dialog.deleteStatus}
         errorMessage={dialog.deleteError}
-        successTitle={POSITION_PERFORMANCE_DATATABLE.DELETE_SUCCESS_TITLE}
+        successTitle={
+          POSITION_PERFORMANCE_DATATABLE.DELETE_SUCCESS_TITLE
+        }
         successDescription={
           POSITION_PERFORMANCE_DATATABLE.DELETE_SUCCESS_DESCRIPTION
         }
-        errorTitle={POSITION_PERFORMANCE_DATATABLE.DELETE_ERROR_TITLE}
+        errorTitle={
+          POSITION_PERFORMANCE_DATATABLE.DELETE_ERROR_TITLE
+        }
       />
     </>
   )

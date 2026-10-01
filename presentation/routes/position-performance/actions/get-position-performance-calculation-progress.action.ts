@@ -6,12 +6,12 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 
 import type { PositionPerformanceCalculationProgress } from "../types/position-performance-list.types"
 import { GET_POSITION_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA as PROGRESS_SCHEMA } from "../validations/position-performance-actions.validation"
 
-import { getPositionPerformanceCalculationJob } from "../jobs/calculate-job.store"
+import { getPositionPerformanceCalculationJob } from "../jobs/position-performance-calculate-job.store"
 
 /**
  * @summary
