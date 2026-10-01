@@ -8,7 +8,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 
 import { DELETE_APPLICATION_SCHEMA } from "../validations/application-actions.validation"
 
@@ -62,6 +62,9 @@ export async function deleteApplicationAction(
 
     return ActionSuccess(undefined)
   } catch (cause) {
-    return ToActionFailure(cause, "Não foi possível excluir a aplicação.")
+    return ToActionFailure(
+      cause,
+      "Não foi possível excluir a aplicação."
+    )
   }
 }

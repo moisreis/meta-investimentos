@@ -1,44 +1,20 @@
 "use client"
-
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/presentation/ui/combobox"
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "@/presentation/ui/item"
+import { EntityCombobox } from "@/presentation/parts/components/entity-combobox"
 
 import { APPLICATION_FORM } from "../settings/labels.settings"
-
-// Option rendered by the application fund combobox.
-export interface ApplicationFundComboboxItem {
-  // Id submitted to the form.
-  id: string
-  // Primary text rendered in the list and the input.
-  name: string
-  // Secondary text rendered under the name.
-  description?: string
-}
-
+import type { EntityComboboxItem } from "@/presentation/parts/components/entity-combobox"
 interface ApplicationFundComboboxProps {
   id: string
   name: string
   value: string
   onValueChange: (value: string) => void
   placeholder: string
-  items: ApplicationFundComboboxItem[]
+  items: readonly EntityComboboxItem[]
   required?: boolean
   disabled?: boolean
+  clearable?: boolean
   "aria-invalid"?: boolean | "true" | "false"
 }
-
 /**
  * @summary
  * Renders the fund picker of the add application form.
@@ -64,66 +40,25 @@ function ApplicationFundCombobox({
   onValueChange,
   placeholder,
   items,
-  required = false,
-  disabled = false,
+  required,
+  disabled,
   "aria-invalid": ariaInvalid,
+  clearable,
 }: ApplicationFundComboboxProps) {
-  const SELECTED =
-    items.find((item) => item.id === value) ?? null
-
   return (
-    <Combobox
+    <EntityCombobox
+      id={id}
+      name={name}
+      value={value}
+      onValueChange={onValueChange}
+      placeholder={placeholder}
       items={items}
-      value={SELECTED}
-      onValueChange={(next) =>
-        onValueChange(next ? next.id : "")
-      }
-      itemToStringLabel={(item) => item.name}
-      itemToStringValue={(item) => item.id}
-      isItemEqualToValue={(item, selected) =>
-        item.id === selected.id
-      }
-      filter={(item, query) => {
-        const NORMALIZED = query.trim().toLowerCase()
-        if (!NORMALIZED) return true
-        const HAYSTACK =
-          `${item.name} ${item.description ?? ""}`.toLowerCase()
-        return HAYSTACK.includes(NORMALIZED)
-      }}
-      autoHighlight
-    >
-      <ComboboxInput
-        id={id}
-        name={name}
-        placeholder={placeholder}
-        required={required}
-        disabled={disabled}
-        aria-invalid={ariaInvalid}
-      />
-      <ComboboxContent>
-        <ComboboxEmpty>
-          {APPLICATION_FORM.SEARCH_EMPTY}
-        </ComboboxEmpty>
-        <ComboboxList>
-          {(item) => (
-            <ComboboxItem key={item.id} value={item}>
-              <Item size="xs" className="p-0">
-                <ItemContent>
-                  <ItemTitle className="whitespace-nowrap">
-                    {item.name}
-                  </ItemTitle>
-                  {item.description ? (
-                    <ItemDescription className="whitespace-nowrap">
-                      {item.description}
-                    </ItemDescription>
-                  ) : null}
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-          )}
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
+      required={required}
+      disabled={disabled}
+      clearable={clearable}
+      emptyLabel={APPLICATION_FORM.SEARCH_EMPTY}
+      aria-invalid={ariaInvalid}
+    />
   )
 }
 

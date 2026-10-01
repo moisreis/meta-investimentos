@@ -8,7 +8,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 import type { ApplicationResponseDTO } from "@/services/application/dto/application-response.dto"
 
 import { ADD_APPLICATION_SCHEMA } from "../validations/application-actions.validation"
@@ -38,7 +38,7 @@ import { ADD_APPLICATION_SCHEMA } from "../validations/application-actions.valid
  * @returns The recorded application, or a failure result.
  *
  * @example
- * const RESULT = await addApplicationAction({
+ * const RESULT = await createApplicationAction({
  *   portfolioId: "portfolio-1",
  *   fundId: "fund-1",
  *   date: "2026-01-10",
@@ -49,7 +49,7 @@ import { ADD_APPLICATION_SCHEMA } from "../validations/application-actions.valid
  *
  * @date 2026-09-25
  */
-export async function addApplicationAction(
+export async function createApplicationAction(
   input: unknown
 ): Promise<ActionResult<ApplicationResponseDTO>> {
   const USER = await RequireSessionUser()

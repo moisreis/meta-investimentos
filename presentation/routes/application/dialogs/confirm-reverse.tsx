@@ -61,7 +61,9 @@ function ApplicationConfirmReverseDialog({
               )
             : ""
         }
-        confirmLabel={APPLICATION_DATATABLE.REVERSE_CONFIRM_LABEL}
+        confirmLabel={
+          APPLICATION_DATATABLE.REVERSE_CONFIRM_LABEL
+        }
         cancelLabel={APPLICATION_DATATABLE.REVERSE_CANCEL_LABEL}
         pending={dialog.reversePending}
         onConfirm={dialog.handleConfirmReverse}
@@ -70,7 +72,9 @@ function ApplicationConfirmReverseDialog({
       <EntityReverseToast
         status={dialog.reverseStatus}
         errorMessage={dialog.reverseError}
-        successTitle={APPLICATION_DATATABLE.REVERSE_SUCCESS_TITLE}
+        successTitle={
+          APPLICATION_DATATABLE.REVERSE_SUCCESS_TITLE
+        }
         successDescription={
           APPLICATION_DATATABLE.REVERSE_SUCCESS_DESCRIPTION
         }

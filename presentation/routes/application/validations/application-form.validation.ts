@@ -44,9 +44,18 @@ const APPLICATION_EDIT_FORM_SCHEMA = z.object({
 })
 
 // Values of the add application form fields.
-type ApplicationFormValues = z.infer<typeof APPLICATION_FORM_SCHEMA>
+type ApplicationFormValues = z.infer<
+  typeof APPLICATION_FORM_SCHEMA
+>
 
 // Values of the edit application form fields.
-type ApplicationEditFormValues = z.infer<typeof APPLICATION_EDIT_FORM_SCHEMA>
+type ApplicationEditFormValues = z.infer<
+  typeof APPLICATION_EDIT_FORM_SCHEMA
+>
 
-export { APPLICATION_FORM_SCHEMA, APPLICATION_EDIT_FORM_SCHEMA, type ApplicationFormValues, type ApplicationEditFormValues }
+export {
+  APPLICATION_FORM_SCHEMA,
+  APPLICATION_EDIT_FORM_SCHEMA,
+  type ApplicationFormValues,
+  type ApplicationEditFormValues,
+}

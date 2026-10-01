@@ -8,7 +8,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 
 import { REVERSE_APPLICATION_SCHEMA } from "../validations/application-actions.validation"
 
@@ -58,7 +58,8 @@ export async function reverseApplicationAction(
   }
 
   try {
-    const { reverse: REVERSE_APPLICATION } = ApplicationContainer()
+    const { reverse: REVERSE_APPLICATION } =
+      ApplicationContainer()
 
     await REVERSE_APPLICATION.execute({
       applicationId: PARSED.data.applicationId,
@@ -67,6 +68,9 @@ export async function reverseApplicationAction(
 
     return ActionSuccess(undefined)
   } catch (cause) {
-    return ToActionFailure(cause, "Não foi possível reverter a aplicação.")
+    return ToActionFailure(
+      cause,
+      "Não foi possível reverter a aplicação."
+    )
   }
 }

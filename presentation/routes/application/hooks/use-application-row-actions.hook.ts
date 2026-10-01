@@ -23,7 +23,8 @@ import type { ApplicationRow } from "@/presentation/types/application-row.types"
  */
 function useApplicationRowActions() {
   return useEntityRowActions<ApplicationRow>({
-    runDelete: (id) => deleteApplicationAction({ applicationId: id }),
+    runDelete: (id) =>
+      deleteApplicationAction({ applicationId: id }),
     runReverse: (id) =>
       reverseApplicationAction({ applicationId: id }),
   })

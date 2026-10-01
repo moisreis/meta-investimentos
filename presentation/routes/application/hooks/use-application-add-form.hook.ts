@@ -2,7 +2,7 @@
 
 import { UnmaskCurrency } from "@/presentation/masks/currency.mask"
 import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { addApplicationAction } from "@/presentation/routes/application/actions/add-application.action"
+import { createApplicationAction } from "@/presentation/routes/application/actions/create-application.action"
 import { APPLICATION_FORM_SCHEMA } from "@/presentation/routes/application/validations/application-form.validation"
 
 /**
@@ -60,7 +60,7 @@ function useApplicationAddForm(defaultPortfolioId?: string) {
       amount: "",
     },
     submit: (values) =>
-      addApplicationAction({
+      createApplicationAction({
         portfolioId: values.portfolioId,
         fundId: values.fundId,
         date: values.date,

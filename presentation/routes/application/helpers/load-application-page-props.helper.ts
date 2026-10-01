@@ -1,13 +1,10 @@
 import type { ApplicationRow } from "@/presentation/types/application-row.types"
 
-import { EMPTY_APPLICATION_LOOKUPS } from "../helpers/build-application-lookups.helper"
 import { BuildApplicationLookups } from "../helpers/build-application-lookups.helper"
 import { LoadApplications } from "../helpers/load-applications.helper"
-import {
-  BuildApplicationFundOptions,
-  BuildApplicationPortfolioOptions,
-  type ApplicationAddOptions,
-} from "../types/application-add.types"
+import { BuildApplicationFundOptions } from "../helpers/build-application-fund-options.helper"
+import { BuildApplicationPortfolioOptions } from "../helpers/build-application-portfolio-options.helper"
+import type { ApplicationAddOptions } from "../types/application-add.types"
 import type { ApplicationLookups } from "../types/application-list.types"
 import type { ApplicationListProps } from "../pages/list"
 
@@ -51,7 +48,9 @@ export async function LoadApplicationPageProps(): Promise<ApplicationListProps> 
     lookups = BuildApplicationLookups(LOADED)
     options = {
       funds: BuildApplicationFundOptions(LOADED.funds),
-      portfolios: BuildApplicationPortfolioOptions(LOADED.portfolios),
+      portfolios: BuildApplicationPortfolioOptions(
+        LOADED.portfolios
+      ),
     }
   }
 

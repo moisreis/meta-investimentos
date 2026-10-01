@@ -53,7 +53,8 @@ function useApplicationDatatable(
   const addDialog = useEntityAddDialog()
 
   const rowFor = useCallback(
-    (applicationId: string) => lookups.rows[applicationId] ?? null,
+    (applicationId: string) =>
+      lookups.rows[applicationId] ?? null,
     [lookups]
   )
 

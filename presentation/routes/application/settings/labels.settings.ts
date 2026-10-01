@@ -140,7 +140,8 @@ export const APPLICATION_DATATABLE = {
 
   // Delete result toast copy.
   DELETE_SUCCESS_TITLE: "Aplicação excluída!",
-  DELETE_SUCCESS_DESCRIPTION: "A aplicação foi excluída com sucesso.",
+  DELETE_SUCCESS_DESCRIPTION:
+    "A aplicação foi excluída com sucesso.",
   DELETE_ERROR_TITLE: "Não foi possível excluir a aplicação",
 
   // Single reverse dialog.
@@ -190,4 +191,3 @@ export const APPLICATION_EMPTY = {
     "As aplicações aparecerão aqui após serem registradas nas carteiras.",
   PRIMARY_ACTION_LABEL: "Registrar aplicação",
 } as const
-

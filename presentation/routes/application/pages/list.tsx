@@ -62,10 +62,11 @@ function ApplicationList({
     APPLICATIONS,
     lookups
   )
-  const { table, rowActions, addDialog } = useApplicationDatatable(
-    filters.filteredApplications,
-    lookups
-  )
+  const { table, rowActions, addDialog } =
+    useApplicationDatatable(
+      filters.filteredApplications,
+      lookups
+    )
   const kpis = useApplicationKpis({ applications: APPLICATIONS })
 
   return (
@@ -107,7 +108,9 @@ function ApplicationList({
           icon={IconCoin}
           title={APPLICATION_EMPTY.TITLE}
           description={APPLICATION_EMPTY.DESCRIPTION}
-          primaryActionLabel={APPLICATION_EMPTY.PRIMARY_ACTION_LABEL}
+          primaryActionLabel={
+            APPLICATION_EMPTY.PRIMARY_ACTION_LABEL
+          }
           onPrimaryAction={addDialog.handleOpen}
         />
       )}

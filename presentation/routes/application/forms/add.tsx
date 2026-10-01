@@ -1,13 +1,12 @@
 "use client"
 
-import * as React from "react"
-
-import { PortfolioMoneyInput } from "@/presentation/parts/components/portfolio-money-input"
+import { EntityMoneyInput } from "@/presentation/parts/components/entity-money-input"
+import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
+import { EntityQuotaDateInput } from "@/presentation/parts/components/entity-quota-date-input"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { QuotaDateInput } from "@/presentation/routes/quota/components/quota-date-input"
 import { FieldGroup } from "@/presentation/ui/field"
 
 import { useApplicationAddForm } from "../hooks/use-application-add-form.hook"
@@ -92,13 +91,13 @@ function AddApplicationForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useApplicationAddForm(lockedPortfolioId ?? defaultPortfolioId)
+  } = useApplicationAddForm(
+    lockedPortfolioId ?? defaultPortfolioId
+  )
 
   const IS_PORTFOLIO_LOCKED = Boolean(lockedPortfolioId)
 
-  React.useEffect(() => {
-    onStatusChange?.(status, error)
-  }, [status, error, onStatusChange])
+  useEntityFormStatus({ status, error, onStatusChange })
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
@@ -116,7 +115,9 @@ function AddApplicationForm({
               required
               value={portfolioId}
               onValueChange={updatePortfolioId}
-              placeholder={APPLICATION_FORM.PLACEHOLDER_PORTFOLIO}
+              placeholder={
+                APPLICATION_FORM.PLACEHOLDER_PORTFOLIO
+              }
               items={options.portfolios}
               disabled={pending}
               aria-invalid={
@@ -151,7 +152,7 @@ function AddApplicationForm({
           error={fieldErrors.date}
           htmlFor="application-date"
         >
-          <QuotaDateInput
+          <EntityQuotaDateInput
             id="application-date"
             name="date"
             required
@@ -169,7 +170,7 @@ function AddApplicationForm({
           error={fieldErrors.amount}
           htmlFor="application-amount"
         >
-          <PortfolioMoneyInput
+          <EntityMoneyInput
             id="application-amount"
             name="amount"
             required
