@@ -88,6 +88,7 @@ function useFundDatatable(
   const COLUMNS = useMemo(
     () =>
       CreateFundTableColumns(COLUMN_HELPER, {
+        onView: rowActions.handleView,
         onEdit: editDialog.handleOpen,
         onDelete: rowActions.handleDelete,
         summaryFor,
@@ -96,6 +97,7 @@ function useFundDatatable(
         categoryNameFor,
       }),
     [
+      rowActions.handleView,
       editDialog.handleOpen,
       rowActions.handleDelete,
       summaryFor,

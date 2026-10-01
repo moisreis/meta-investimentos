@@ -1,12 +1,11 @@
 "use client"
 
-import * as React from "react"
-
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
 
-import { FundCnpjInput } from "@/presentation/parts/components/fund-cnpj-input"
-import { PortfolioPercentageInput } from "@/presentation/parts/components/portfolio-percentage-input"
+import { EntityCnpjInput } from "@/presentation/parts/components/entity-cnpj-input"
+import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
+import { EntityPercentageInput } from "@/presentation/parts/components/entity-percentage-input"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
@@ -83,9 +82,7 @@ function AddFundForm({
     handleSubmit,
   } = useFundAddForm()
 
-  React.useEffect(() => {
-    onStatusChange?.(status, error)
-  }, [status, error, onStatusChange])
+  useEntityFormStatus({ status, error, onStatusChange })
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
@@ -95,7 +92,7 @@ function AddFundForm({
           error={fieldErrors.cnpj}
           htmlFor="cnpj"
         >
-          <FundCnpjInput
+          <EntityCnpjInput
             id="cnpj"
             name="cnpj"
             required
@@ -196,7 +193,7 @@ function AddFundForm({
           error={fieldErrors.administrationFee}
           htmlFor="administrationFee"
         >
-          <PortfolioPercentageInput
+          <EntityPercentageInput
             id="administrationFee"
             value={administrationFee}
             onChange={(value: string) =>
@@ -214,7 +211,7 @@ function AddFundForm({
           error={fieldErrors.performanceFee}
           htmlFor="performanceFee"
         >
-          <PortfolioPercentageInput
+          <EntityPercentageInput
             id="performanceFee"
             value={performanceFee}
             onChange={(value: string) =>

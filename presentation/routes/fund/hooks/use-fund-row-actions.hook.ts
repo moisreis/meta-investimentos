@@ -12,8 +12,9 @@ import type { FundRow } from "@/presentation/types/fund-row.types"
  *
  * @remarks
  * Maps the row id to the route delete server action
- * only. The shared hook owns the confirm dialog
- * state and the delete result toast status.
+ * and wires the detail screen navigation of the row.
+ * The shared hook owns the confirm dialog state and
+ * the delete result toast status.
  *
  * @returns The row actions and delete dialog state.
  *
@@ -24,6 +25,7 @@ import type { FundRow } from "@/presentation/types/fund-row.types"
 function useFundRowActions(): EntityRowActionsModel<FundRow> {
   return useEntityRowActions<FundRow>({
     runDelete: (id) => deleteFundAction({ fundId: id }),
+    onView: (row, router) => router.push(`/fund/${row.id}`),
   })
 }
 

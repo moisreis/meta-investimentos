@@ -2,7 +2,6 @@
 
 import { EntityEditDialog } from "@/presentation/parts/dialogs/entity-edit"
 import { EntityEditToast } from "@/presentation/parts/toasts/entity-edit-toast"
-import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { EntityEditDialogModel } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { FundRow } from "@/presentation/types/fund-row.types"
 import { EditFundForm } from "@/presentation/routes/fund/forms/edit"

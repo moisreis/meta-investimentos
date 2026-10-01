@@ -92,6 +92,7 @@ export const FUND_DATATABLE = {
 
   // Row actions menu.
   ROW_ACTIONS_LABEL: "Ações",
+  ROW_VIEW_LABEL: "Ver",
   ROW_EDIT_LABEL: "Editar",
   ROW_DELETE_LABEL: "Excluir",
 
@@ -110,8 +111,7 @@ export const FUND_DATATABLE = {
   BULK_DELETE_SUCCESS_TITLE: "Fundos excluídos!",
   BULK_DELETE_SUCCESS_DESCRIPTION:
     "Os fundos selecionados foram excluídos.",
-  BULK_DELETE_ERROR_TITLE:
-    "Não foi possível excluir os fundos",
+  BULK_DELETE_ERROR_TITLE: "Não foi possível excluir os fundos",
 } as const
 
 // Column id to header label used by the edit-columns menu.
@@ -164,5 +164,43 @@ export const FUND_EMPTY = {
   PRIMARY_ACTION_LABEL: FUND_FORM.ADD_BUTTON,
 } as const
 
-export { FormatDeleteFundDescription }
+// Copy of the registry profile of the fund detail screen.
+export const FUND_DETAIL = {
+  // Label of the headline block, naming the registry.
+  NAME_LABEL: "Fundo",
 
+  // Ledger entry labels, in reading order.
+  ENTRY_BANK: "Banco",
+  ENTRY_BENCHMARK: "Benchmark",
+  ENTRY_CATEGORY: "Categoria",
+  ENTRY_ADMINISTRATION_FEE: "Taxa de administração",
+  ENTRY_PERFORMANCE_FEE: "Taxa de performance",
+  ENTRY_POSITIONS: "Posições vinculadas",
+
+  // Empty state copy of the detail screen.
+  EMPTY_TITLE: "Fundo não encontrado",
+  EMPTY_DESCRIPTION:
+    "O fundo não existe ou não está mais cadastrado.",
+} as const
+
+// Copy of the linked positions section of the fund detail
+// screen.
+export const FUND_LINKED_POSITIONS = {
+  // Section title and description.
+  TITLE: "Posições Vinculadas",
+  DESCRIPTION:
+    "Posições das suas carteiras que utilizam este fundo.",
+
+  // Column headers.
+  COLUMN_PORTFOLIO: "Carteira",
+  COLUMN_ALLOCATION: "Alocação",
+  COLUMN_INITIAL_BALANCE: "Saldo inicial",
+
+  // Empty state of the section.
+  EMPTY_TITLE: "Nenhuma posição vinculada",
+  EMPTY_DESCRIPTION:
+    "As posições das suas carteiras que usam este fundo " +
+    "aparecem aqui.",
+} as const
+
+export { FormatDeleteFundDescription }

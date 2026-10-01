@@ -16,13 +16,46 @@ export interface FundSelectOptions {
   categories: CategoryRow[]
 }
 
-// Derived data rendered on a fund row.
+/**
+ * @summary
+ * Counts of one fund row, as resolved by the service.
+ *
+ * @remarks
+ * The raw count carries the fund id, because it arrives
+ * keyed by the database row rather than by the screen row.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-01
+ */
+export interface FundRowSummaryInput {
+  fundId: string
+
+  // Positions linked to the fund.
+  positionCount: number
+}
+
+/**
+ * @summary
+ * Derived data rendered on a fund row.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export interface FundRowSummary {
   // Positions linked to the fund.
   positionCount: number
 }
 
-// Name lookups used by the fund datatable.
+/**
+ * @summary
+ * Name lookups used by the fund datatable.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-26
+ */
 export interface FundNameLookups {
   banks: Record<string, string>
   benchmarks: Record<string, string>

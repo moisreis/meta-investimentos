@@ -52,4 +52,3 @@ export {
   type FundFormValues,
   type FundEditFormValues,
 }
-

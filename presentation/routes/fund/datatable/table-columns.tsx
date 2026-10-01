@@ -1,10 +1,8 @@
 "use client"
 
-import type {
-  ColumnDef,
-  ColumnHelper,
-} from "@tanstack/react-table"
+import type { ColumnHelper } from "@tanstack/react-table"
 
+import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
@@ -18,6 +16,7 @@ import type { FundRow } from "@/presentation/types/fund-row.types"
 import type { FundRowSummary } from "../types/fund-list.types"
 
 export interface FundTableColumnOptions {
+  onView: (fund: FundRow) => void
   onEdit: (fund: FundRow) => void
   onDelete: (fund: FundRow) => void
   summaryFor: (fundId: string) => FundRowSummary | null
@@ -55,7 +54,7 @@ export interface FundTableColumnOptions {
 export function CreateFundTableColumns(
   columnHelper: ColumnHelper<EntityTableFeatures, FundRow>,
   options: FundTableColumnOptions
-): ColumnDef<EntityTableFeatures, FundRow, any>[] {
+): EntityColumnDef<FundRow>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 
@@ -151,6 +150,11 @@ export function CreateFundTableColumns(
         <EntityTableRowMenuDropdown
           label={FUND_DATATABLE.ROW_ACTIONS_LABEL}
           actions={[
+            {
+              key: "view",
+              label: FUND_DATATABLE.ROW_VIEW_LABEL,
+              onSelect: () => options.onView(row.original),
+            },
             {
               key: "edit",
               label: FUND_DATATABLE.ROW_EDIT_LABEL,

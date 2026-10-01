@@ -38,6 +38,36 @@ export interface FundListProps {
   names?: FundNameLookups
 }
 
+/**
+ * @summary
+ * Renders the fund list page.
+ *
+ * @remarks
+ * Composes the KPI group, the toolbar with the search
+ * filter, the empty state and the datatable. The add and
+ * the edit dialogs are opened with the banks, the
+ * benchmarks and the categories the form needs, so the
+ * options travel with the page instead of being fetched
+ * by each dialog.
+ *
+ * @param props - Props of the fund list page.
+ * @param props.data - The fund rows, or `null` while
+ *                     loading.
+ * @param props.options - The bank, benchmark and category
+ *                       options of the add and edit
+ *                       forms.
+ * @param props.summaries - The fund summaries the KPIs and
+ *                          the row actions read.
+ * @param props.names - The fund name lookups the row
+ *                      actions and the delete dialogs
+ *                      read.
+ *
+ * @returns The fund list page.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-30
+ */
 function FundList({
   data,
   options = null,

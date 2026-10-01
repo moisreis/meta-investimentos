@@ -1,7 +1,8 @@
 import type { FundRow } from "@/presentation/types/fund-row.types"
-import type { FundRowSummaryDTO } from "@/services/fund/use-cases/list-fund-row-summaries.use-case"
-
-import type { FundRowSummary } from "../types/fund-list.types"
+import type {
+  FundRowSummary,
+  FundRowSummaryInput,
+} from "../types/fund-list.types"
 
 /**
  * @summary
@@ -31,7 +32,7 @@ import type { FundRowSummary } from "../types/fund-list.types"
  */
 export function BuildFundRowSummaries(
   funds: FundRow[],
-  counts: FundRowSummaryDTO[]
+  counts: FundRowSummaryInput[]
 ): Record<string, FundRowSummary> {
   const COUNTS_BY_FUND = new Map(
     counts.map((entry) => [entry.fundId, entry])

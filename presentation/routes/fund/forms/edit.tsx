@@ -1,11 +1,10 @@
 "use client"
 
-import * as React from "react"
-
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
 
-import { PortfolioPercentageInput } from "@/presentation/parts/components/portfolio-percentage-input"
+import { EntityPercentageInput } from "@/presentation/parts/components/entity-percentage-input"
+import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
@@ -84,9 +83,7 @@ function EditFundForm({
     handleSubmit,
   } = useFundEditForm(fund)
 
-  React.useEffect(() => {
-    onStatusChange?.(status, error)
-  }, [status, error, onStatusChange])
+  useEntityFormStatus({ status, error, onStatusChange })
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
@@ -159,7 +156,7 @@ function EditFundForm({
           error={fieldErrors.administrationFee}
           htmlFor="administrationFee"
         >
-          <PortfolioPercentageInput
+          <EntityPercentageInput
             id="administrationFee"
             value={administrationFee}
             onChange={(value: string) =>
@@ -177,7 +174,7 @@ function EditFundForm({
           error={fieldErrors.performanceFee}
           htmlFor="performanceFee"
         >
-          <PortfolioPercentageInput
+          <EntityPercentageInput
             id="performanceFee"
             value={performanceFee}
             onChange={(value: string) =>
