@@ -38,7 +38,10 @@ export const MAIN_NAVIGATION: MainNavigationGroup[] = [
   },
   {
     label: "Referências",
-    items: [{ label: "Benchmarks", href: "/benchmark" }],
+    items: [
+      { label: "Benchmarks", href: "/benchmark" },
+      { label: "Normas", href: "/norm" },
+    ],
   },
   {
     label: "Instituições bancárias",
