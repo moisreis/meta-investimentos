@@ -1,7 +1,5 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { QuotaContainer } from "@/presentation/composition/quota.container"
-import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
-import type { QuotaResponseDTO } from "@/services/quota/dto/quota-response.dto"
 import { ToQuotaRows } from "@/presentation/mappers/quota-row.mapper"
 import { ToFundRows } from "@/presentation/mappers/fund-row.mapper"
 import type { QuotaRow } from "@/presentation/types/quota-row.types"

@@ -102,6 +102,9 @@ export const QUOTA_IMPORT = {
   PROGRESS_DESCRIPTION:
     "Buscando e gravando as cotações da CVM.",
 
+  // Accessible name of the progress bar.
+  PROGRESS_LABEL: "Progresso da importação",
+
   // Running status marker content.
   PROGRESS_RUNNING_LABEL: "Processando arquivos da CVM...",
 
@@ -157,14 +160,4 @@ export const QUOTA_EMPTY = {
   DESCRIPTION:
     "Importe as cotações de um período direto da CVM.",
   PRIMARY_ACTION_LABEL: "Importar cotas",
-} as const
-
-// Copy of the quota-aware date picker shared by the
-// application and withdrawal forms.
-export const QUOTA_DATE_INPUT = {
-  // Default trigger placeholder.
-  PLACEHOLDER: "Selecione a data",
-
-  // Accessible label of the day grid.
-  GRID_LABEL: "Calendário de dias com cota",
 } as const

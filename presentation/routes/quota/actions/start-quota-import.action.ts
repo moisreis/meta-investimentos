@@ -7,7 +7,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 import {
   buildImportPlan,
   runFundValuationMonth,
@@ -20,7 +20,7 @@ import {
   completeQuotaImportJob,
   createQuotaImportJob,
   updateQuotaImportJob,
-} from "../jobs/import-job.store"
+} from "../jobs/quota-import-job.store"
 
 /**
  * @summary

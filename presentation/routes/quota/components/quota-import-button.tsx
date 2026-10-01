@@ -3,7 +3,7 @@
 import { IconDownload } from "@tabler/icons-react"
 import type { JSX } from "react"
 
-import { Button } from "@/presentation/ui/button"
+import { EntityDatatableGhostButton } from "@/presentation/parts/components/entity-datatable-ghost-button"
 
 import { QUOTA_DATATABLE } from "../settings/labels.settings"
 
@@ -35,14 +35,11 @@ function QuotaImportButton(
   const { onClick } = props
 
   return (
-    <Button
-      variant="ghost"
-      className="font-normal text-muted-foreground"
+    <EntityDatatableGhostButton
+      icon={IconDownload}
+      label={QUOTA_DATATABLE.IMPORT_BUTTON_LABEL}
       onClick={onClick}
-    >
-      <IconDownload />
-      <span>{QUOTA_DATATABLE.IMPORT_BUTTON_LABEL}</span>
-    </Button>
+    />
   )
 }
 

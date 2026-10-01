@@ -1,10 +1,8 @@
 "use client"
 
-import type {
-  ColumnDef,
-  ColumnHelper,
-} from "@tanstack/react-table"
+import type { ColumnHelper } from "@tanstack/react-table"
 
+import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
@@ -45,7 +43,7 @@ export interface QuotaTableColumnOptions {
 export function CreateQuotaTableColumns(
   columnHelper: ColumnHelper<EntityTableFeatures, QuotaRow>,
   options: QuotaTableColumnOptions
-): ColumnDef<EntityTableFeatures, QuotaRow, any>[] {
+): EntityColumnDef<QuotaRow>[] {
   return [
     columnHelper.accessor((row) => options.fundFor(row.id), {
       id: "fund",
@@ -58,7 +56,9 @@ export function CreateQuotaTableColumns(
         return (
           <EntityLookupCell
             title={LOOKUP?.name}
-            subtitle={LOOKUP?.cnpj ? FormatCnpj(LOOKUP.cnpj) : undefined}
+            subtitle={
+              LOOKUP?.cnpj ? FormatCnpj(LOOKUP.cnpj) : undefined
+            }
           />
         )
       },

@@ -8,9 +8,11 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/presentation/ui/dialog"
+
 import {
   Field,
   FieldContent,
@@ -21,10 +23,8 @@ import {
 
 import { QuotaImportWindowCombobox } from "../forms/import-window-combobox"
 
-import {
-  QUOTA_IMPORT,
-  QUOTA_IMPORT_WINDOWS,
-} from "../settings/labels.settings"
+import { useQuotaImportWindow } from "../hooks/use-quota-import-window.hook"
+import { QUOTA_IMPORT } from "../settings/labels.settings"
 
 interface QuotaConfirmImportDialogProps {
   open: boolean
@@ -74,19 +74,10 @@ function QuotaConfirmImportDialog({
   error,
   onConfirm,
 }: QuotaConfirmImportDialogProps) {
-  const items = React.useMemo(
-    () =>
-      QUOTA_IMPORT_WINDOWS.map((option) => ({
-        id: option.value,
-        name: option.label,
-      })),
-    []
-  )
-
-  const handleWindowChange = React.useCallback(
-    (value: string) => onWindowChange((value ?? QUOTA_IMPORT_WINDOWS[0].value) as CvmImportWindow),
-    [onWindowChange]
-  )
+  const { items, handleWindowChange } = useQuotaImportWindow({
+    window,
+    onWindowChange,
+  })
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -122,7 +113,7 @@ function QuotaConfirmImportDialog({
           </FieldContent>
         </Field>
 
-        <div className="flex justify-end gap-2">
+        <DialogFooter>
           <Button
             variant="outline"
             disabled={pending}
@@ -130,13 +121,12 @@ function QuotaConfirmImportDialog({
           >
             {QUOTA_IMPORT.CANCEL_BUTTON}
           </Button>
-
           <Button disabled={pending} onClick={onConfirm}>
             {pending
               ? QUOTA_IMPORT.CONFIRM_PENDING_BUTTON
               : QUOTA_IMPORT.CONFIRM_BUTTON}
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

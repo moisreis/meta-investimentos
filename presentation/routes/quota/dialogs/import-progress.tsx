@@ -1,29 +1,20 @@
 "use client"
 
-import {
-  IconAlertCircle,
-  IconCircleCheck,
-  IconLoader,
-} from "@tabler/icons-react"
-
-import { FormatCount } from "@/presentation/presenters/count.presenter"
 import { Button } from "@/presentation/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/presentation/ui/dialog"
-import {
-  Marker,
-  MarkerContent,
-  MarkerIcon,
-} from "@/presentation/ui/marker"
-import {
-  Progress,
-  ProgressValue,
-} from "@/presentation/ui/progress"
+
+import { EntityJobProgressBar } from "@/presentation/parts/dialogs/entity-job-progress-bar"
+import { EntityJobProgressSummary } from "@/presentation/parts/dialogs/entity-job-progress-summary"
+import { EntityStatusMarker } from "@/presentation/parts/dialogs/entity-status-marker"
+
+import { FormatCount } from "@/presentation/presenters/count.presenter"
 
 import { QUOTA_IMPORT } from "../settings/labels.settings"
 import type { QuotaImportProgress } from "../types/quota-list.types"
@@ -67,18 +58,13 @@ function QuotaImportProgressDialog({
   const RUNNING = job === null || job.status === "running"
   const FAILED = job?.status === "error"
 
-  const PERCENT =
-    job && job.monthsTotal > 0
-      ? Math.round((job.monthsDone / job.monthsTotal) * 100)
-      : 0
-
-  const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen && RUNNING) return
-    onOpenChange(nextOpen)
-  }
-
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (nextOpen || !RUNNING) onOpenChange(nextOpen)
+      }}
+    >
       <DialogContent showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>
@@ -101,71 +87,53 @@ function QuotaImportProgressDialog({
         {RUNNING ? (
           <>
             {job ? (
-              <Progress
-                value={PERCENT}
-                aria-label="Progresso da importação"
-              >
-                <ProgressValue>
-                  {(_formattedValue, value) =>
-                    `${job.monthsDone}/${job.monthsTotal} · ${
-                      value ?? 0
-                    }%`
-                  }
-                </ProgressValue>
-              </Progress>
+              <EntityJobProgressBar
+                label={QUOTA_IMPORT.PROGRESS_LABEL}
+                done={job.monthsDone}
+                total={job.monthsTotal}
+              />
             ) : null}
 
-            <Marker role="status">
-              <MarkerIcon>
-                <IconLoader className="animate-spin" />
-              </MarkerIcon>
-              <MarkerContent>
-                {QUOTA_IMPORT.PROGRESS_RUNNING_LABEL}
-              </MarkerContent>
-            </Marker>
+            <EntityStatusMarker tone="running" role="status">
+              {QUOTA_IMPORT.PROGRESS_RUNNING_LABEL}
+            </EntityStatusMarker>
           </>
         ) : FAILED ? (
           <>
-            <Marker>
-              <MarkerIcon>
-                <IconAlertCircle className="text-destructive" />
-              </MarkerIcon>
-              <MarkerContent>
-                {job?.error ?? QUOTA_IMPORT.ERROR_DESCRIPTION}
-              </MarkerContent>
-            </Marker>
+            <EntityStatusMarker tone="error">
+              {job?.error ?? QUOTA_IMPORT.ERROR_DESCRIPTION}
+            </EntityStatusMarker>
 
-            <div className="flex justify-end gap-2">
+            <DialogFooter>
               <Button variant="outline" onClick={onDone}>
                 {QUOTA_IMPORT.CLOSE_BUTTON}
               </Button>
-            </div>
+            </DialogFooter>
           </>
         ) : (
           <>
-            <Marker>
-              <MarkerIcon>
-                <IconCircleCheck className="text-primary" />
-              </MarkerIcon>
-              <MarkerContent>
-                {QUOTA_IMPORT.SUCCESS_DESCRIPTION}
-              </MarkerContent>
-            </Marker>
+            <EntityStatusMarker tone="success">
+              {QUOTA_IMPORT.SUCCESS_DESCRIPTION}
+            </EntityStatusMarker>
 
-            <Marker>
-              <MarkerContent>
-                {FormatCount(job?.rowsImported ?? 0)}{" "}
-                {QUOTA_IMPORT.ROWS_IMPORTED_LABEL} ·{" "}
-                {FormatCount(job?.skipped ?? 0)}{" "}
-                {QUOTA_IMPORT.SKIPPED_LABEL}
-              </MarkerContent>
-            </Marker>
+            <EntityJobProgressSummary
+              counts={[
+                {
+                  value: FormatCount(job?.rowsImported ?? 0),
+                  label: QUOTA_IMPORT.ROWS_IMPORTED_LABEL,
+                },
+                {
+                  value: FormatCount(job?.skipped ?? 0),
+                  label: QUOTA_IMPORT.SKIPPED_LABEL,
+                },
+              ]}
+            />
 
-            <div className="flex justify-end gap-2">
+            <DialogFooter>
               <Button onClick={onDone}>
                 {QUOTA_IMPORT.DONE_BUTTON}
               </Button>
-            </div>
+            </DialogFooter>
           </>
         )}
       </DialogContent>

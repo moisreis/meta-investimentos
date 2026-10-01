@@ -6,11 +6,11 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 
 import type { QuotaImportProgress } from "../types/quota-list.types"
 import { GET_QUOTA_IMPORT_PROGRESS_SCHEMA } from "../validations/quota-actions.validation"
-import { getQuotaImportJob } from "../jobs/import-job.store"
+import { getQuotaImportJob } from "../jobs/quota-import-job.store"
 
 /**
  * @summary

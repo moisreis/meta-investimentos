@@ -8,7 +8,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 
 import { GET_QUOTA_DATES_SCHEMA } from "../validations/quota-actions.validation"
 
@@ -30,7 +30,7 @@ import { GET_QUOTA_DATES_SCHEMA } from "../validations/quota-actions.validation"
  *
  * @param input - The untrusted fund id payload.
  *
- * @returns Array of date strings in `yyyy-MM-dd` format, or a failure result.
+ * @returns The day keys in `yyyy-MM-dd`, or a failure result.
  *
  * @example
  * const RESULT = await getQuotaDatesAction({
@@ -59,10 +59,15 @@ export async function getQuotaDatesAction(
   try {
     const { list: LIST_QUOTA_DATES } = QuotaContainer()
 
-    const DATES = await LIST_QUOTA_DATES.execute(PARSED.data.fundId)
+    const DATES = await LIST_QUOTA_DATES.execute(
+      PARSED.data.fundId
+    )
 
     return ActionSuccess(DATES)
   } catch (cause) {
-    return ToActionFailure(cause, "Não foi possível obter as datas de cota.")
+    return ToActionFailure(
+      cause,
+      "Não foi possível obter as datas de cota."
+    )
   }
 }
