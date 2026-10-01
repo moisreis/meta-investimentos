@@ -25,6 +25,19 @@ responsibility, with a singular suffix.
 
 New suffixes must be documented here before use.
 
+There is no barrel. A file exports what it declares and
+nothing else, so `export { X } from "./y"` never appears:
+a barrel hides where a symbol lives, and a rename then has
+to be chased through every hop. Import the file that declares
+a symbol, so the caller names the owner.
+
+A `types/` file exports declarations only, never behaviour. A
+`types/` file that builds options is a helper with the wrong
+suffix, and the folder a reader checks first is then the one
+that misleads them. A constant is allowed, because an empty
+collection or a frozen table is part of the shape rather than
+a derivation from other shapes.
+
 There is no `validators/` folder. A predicate such as
 `IsValidCpf` is shared, so it lives in `lib/validation/`
 next to the schemas that use it. A route never reaches
@@ -105,9 +118,73 @@ already describes the file's subject is promoted to TSDoc
 and the author tag is appended to it, rather than putting
 an author block on every member.
 
-`npm run structure` enforces all of the above and fails the
-build on a violation. `npm run verify` runs the typecheck,
-the structure check and the format check together.
+`npm run structure` runs both checkers and fails the build on
+a violation. `npm run verify` runs the typecheck, the
+structure check and the format check together.
+
+## Page composition
+
+A file in `routes/**/pages/` hosts a screen, so it lists
+only the parts, route components and primitives the screen
+is made of, plus the hook that feeds them. It renders no
+intrinsic HTML element and sets no `className`: the markup
+and the Tailwind classes behind a block belong to the part
+or route component that owns them.
+
+When a page needs a block no part owns, the block becomes a
+route component under that route's `components/`; when two
+routes need it, it becomes a part under `presentation/parts/`.
+The page then composes it and never restates it.
+
+`npm run structure` enforces this with the `page-composition`
+rule.
+
+## Parts shelves
+
+Everything under `presentation/parts/` is a part, and a part
+names the shelf it sits on before anything else:
+
+- `entity-` - the reusable entity kit (table, dialog, form,
+  filter, input)
+- `shared-` - a generic building block two routes share
+- `main-` - the chrome of the main application shell
+
+A hook keeps the `use-` prefix it must carry and then names
+its shelf, as in `use-entity-form.hook.ts` and
+`use-main-mobile.hook.ts`. The file name and the folder then
+tell the same story, and a reader never has to open the file
+to learn what it is.
+
+`npm run structure` enforces this with the
+`parts-shelf-prefix` rule.
+
+## Presentation root
+
+The root of `presentation/` holds only these concerns:
+`composition/`, `constants/`, `mappers/`, `masks/`, `parts/`,
+`presenters/`, `routes/`, `theme/`, `types/` and `ui/`. A
+stray `components/` or `hooks/` folder here is shared chrome
+that never became a part, or a route that never became a
+route, and it belongs one level down.
+
+`npm run structure` enforces this with the
+`presentation-root` rule.
+
+## Markup location
+
+Markup belongs to a view, so a `.tsx` file may only live
+where a view is built:
+
+- a primitive under `ui/`, or shell behaviour under `theme/`;
+- anywhere under `parts/`;
+- a route `components/`, `datatable/`, `dialogs/`, `forms/`
+  or `pages/`, and a group `layout/`.
+
+A `.tsx` anywhere else is markup that escaped the screen it
+belongs to, so it moves back into the view that owns it.
+
+`npm run structure` enforces this with the `view-only-tsx`
+rule.
 
 ## Composition layer
 
@@ -134,9 +211,9 @@ Every `*.action.ts`:
   the session, never from the payload;
 - calls exactly one use case from a container;
 - returns `ActionResult<T>` from
-  `presentation/types/action-result.ts`, so callers
-  narrow on `success` instead of guessing from a nullable
-  error. Use cases that return nothing yield
+  `presentation/presenters/action-result.presenter.ts`, so
+  callers narrow on `success` instead of guessing from a
+  nullable error. Use cases that return nothing yield
   `ActionResult<undefined>`.
 
 Action schemas live in
@@ -186,6 +263,114 @@ alone, and it skips the shapes Prettier cannot wrap:
 
 `npm run format` already enforces the width; run it
 on the changed files before committing.
+
+## Composition files
+
+Every `.tsx` under `presentation/routes/` is composition. It
+lists what a screen is made of and passes values down; it does
+not compute, mark up or fetch. Concretely, a composition file
+holds no:
+
+- intrinsic HTML tag — a `<div>`, `<span>` or `<main>` in a
+  route file is a layout need that never became a primitive
+- `className`, inline style, or Tailwind class
+- hard-coded user-facing string, including a `href`
+- `useState`, `useEffect`, `useMemo`, `useCallback`, or any
+  other hook but the one that feeds the screen
+- inline `Zod` schema, or an inline type that is not the
+  file's own props contract
+
+It may import `parts/**`, `ui/**`, its own hooks, helpers,
+labels and types; call one hook at the top; pass props,
+children and slots; and branch with `cond ? <A/> : <B/>`.
+
+An inline arrow passed as a prop is passing a value, so
+`onChange={(next) => set(next || FALLBACK)}` is allowed. An
+inline arrow that _returns markup_ is a component that never
+became a named one, and it does not belong here.
+
+Two consequences follow, and both have been applied across the
+tree. A derivation moves into a hook
+(`use-quota-import-window.hook.ts`,
+`use-withdrawal-position-scope.hook.ts`) rather than staying
+in the body of a dialog. A repeated block becomes a named
+primitive (`EntityCombobox`, `EntityStatusMarker`,
+`EntityJobProgressSummary`, `SharedAuthCard`) rather than
+being written out per route.
+
+## Route module folders
+
+A route module may hold these folders and no others:
+
+`actions/`, `components/`, `datatable/`, `dialogs/`,
+`forms/`, `helpers/`, `hooks/`, `jobs/`, `pages/`,
+`settings/`, `types/`, `validations/`, and `layout/` for a
+module that wraps its screens in a frame.
+
+A variant may omit a folder. It may never invent one or
+rename one. Every omission is a decision, so it is written
+down in `MODULES.md`, which carries the full inventory and
+the reason for each omission. The short version:
+
+| Module              | Omits                                                                    | Why                                                                             |
+| ------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| `audit-log`         | `actions/`, `components/`, `dialogs/`, `forms/`, `jobs/`, `validations/` | read-only registry: nothing deletes or edits an entry                           |
+| `(auth)`            | `actions/`, `datatable/`, `dialogs/`, `helpers/`, `jobs/`, `types/`      | a route group, not an entity; it authenticates on the client                    |
+| `position`          | `forms/`                                                                 | a position is opened from the portfolio screen, not created from its own dialog |
+| `user`              | `types/`                                                                 | every shape it needs is shared, so it owns none                                 |
+| every entity module | `layout/`                                                                | only a group owns chrome, so only `(auth)` has a `layout/`                      |
+
+## Route variants
+
+`(auth)` is a variant, not a special case of the template. It
+has no list, so it has no `datatable/`; it has no
+infrastructure wiring, so it has no container in
+`presentation/composition/`; and it is the one module whose
+chrome is shared chrome rather than route-owned chrome.
+
+Its layout frame lives in `presentation/parts/auth/`. The
+reason is the layering rule, not taste: a part may not import
+a route's settings, so a part that rendered the copy itself
+would either invert the dependency or take the wording as
+props. Taking it as props is what `SharedAuthSecondaryLink`
+and `SharedAuthCopyright` do, and the route decides both the
+wording and, for the link, which way it points.
+
+`audit-log`, and by the same reasoning `quota` and the two
+`*‑performance` modules, are read-only: they start and poll
+work but never write a row the user owns. They therefore carry
+no row-actions hook, and no `validations/` when they own no
+action at all. The checker derives this rather than listing an
+exemption — it looks for a `delete-` action before it asks for
+`use-<entity>-row-actions.hook.ts`.
+
+## Enforcement
+
+Two scripts, both run by `npm run verify`:
+
+| Script                                    | Owns                                                                                                                                                 |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/check-structure.ts`              | folder shape: the canonical route folders, the `parts/` shelves, the view folders, page composition, cross-route imports, line length                |
+| `scripts/check-presentation-structure.ts` | file shape: the mandatory suffix, no barrel, no inner-layer import, route composition, entity prefixes, action verbs, folder contracts, no dead file |
+
+`check-presentation-structure.ts` reads the AST rather than the
+text, so a regex over TypeScript generics cannot produce a
+false alarm. A route `.tsx` is checked for intrinsic tags,
+`className`/`style`, hard-coded copy, hook calls, markup in an
+expression, and inline types other than the file's own
+`*Props` and `*ColumnOptions`.
+
+`npm run lint` runs inside `verify` and fails on any error. It
+allows up to 24 warnings, all of which are logged defects
+rather than tolerated noise: 19 dead type imports in
+`infrastructure/` and `services/`, one `exhaustive-deps` in
+`parts/hooks/use-entity-rows.hook.ts`, and 5 **React
+Compiler** findings in 4 files. Those 5 are downgraded to
+`warn` by the `KNOWN_COMPILER_DEFECTS` list in
+`eslint.config.mjs`, not silenced: they need a behaviour
+change, and the rules stay `error` everywhere else, so the
+next occurrence anywhere new turns the gate red again. Repair
+a file, drop its line from that list, and the rule reverts.
 
 ## Shared primitives
 
