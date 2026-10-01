@@ -27,12 +27,12 @@ interface UseAuthFormOptions<
  * Resolves the post-authentication redirect target.
  *
  * @remarks
- * Reads the `redirect` query parameter set by the middleware.
+ * Reads the `redirect` query parameter set by the proxy.
  * Falls back to the dashboard route (`/`) when
  * it is missing or invalid.
  *
  * @explanation
- * The middleware appends a `redirect` query parameter to the
+ * The proxy appends a `redirect` query parameter to the
  * sign-in/sign-up URL when an unauthenticated user hits a
  * protected route. After a successful attempt this helper
  * restores the original destination instead of the dashboard.

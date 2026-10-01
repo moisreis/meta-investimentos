@@ -23,7 +23,7 @@ const PROTECTED_PREFIXES = [
 
 const AUTH_ROUTES = ["/sign-in", "/sign-up"]
 
-export function middleware(request: NextRequest): NextResponse {
+export function proxy(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl
   const hasSession = request.cookies.has(SESSION_COOKIE)
 
