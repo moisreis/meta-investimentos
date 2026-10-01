@@ -8,7 +8,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 import type { WithdrawalResponseDTO } from "@/services/withdrawal/dto/withdrawal-response.dto"
 
 import { ADD_WITHDRAWAL_SCHEMA } from "../validations/withdrawal-actions.validation"
@@ -35,7 +35,7 @@ import { ADD_WITHDRAWAL_SCHEMA } from "../validations/withdrawal-actions.validat
  * @returns The recorded withdrawal, or a failure result.
  *
  * @example
- * const RESULT = await addWithdrawalAction({
+ * const RESULT = await createWithdrawalAction({
  *   positionId: "position-1",
  *   date: "2026-01-10",
  *   amount: "500",
@@ -45,7 +45,7 @@ import { ADD_WITHDRAWAL_SCHEMA } from "../validations/withdrawal-actions.validat
  *
  * @date 2026-09-25
  */
-export async function addWithdrawalAction(
+export async function createWithdrawalAction(
   input: unknown
 ): Promise<ActionResult<WithdrawalResponseDTO>> {
   const USER = await RequireSessionUser()

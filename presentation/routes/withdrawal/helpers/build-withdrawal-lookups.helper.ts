@@ -94,8 +94,7 @@ export function BuildWithdrawalLookups(
     .map((portfolioId) => ({
       value: portfolioId,
       label: PORTFOLIO_BY_ID[portfolioId]?.name ?? "Carteira",
-      description:
-        PORTFOLIO_BY_ID[portfolioId]?.acronym ?? "",
+      description: PORTFOLIO_BY_ID[portfolioId]?.acronym ?? "",
     }))
     .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"))
 

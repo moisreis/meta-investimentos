@@ -4,7 +4,7 @@ import { useCallback, useState } from "react"
 
 import { UnmaskCurrency } from "@/presentation/masks/currency.mask"
 import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
-import { addWithdrawalAction } from "@/presentation/routes/withdrawal/actions/add-withdrawal.action"
+import { createWithdrawalAction } from "@/presentation/routes/withdrawal/actions/create-withdrawal.action"
 import { WITHDRAWAL_FORM_SCHEMA } from "@/presentation/routes/withdrawal/validations/withdrawal-form.validation"
 
 /**
@@ -74,7 +74,7 @@ function useWithdrawalAddForm(defaultPortfolioId?: string) {
       amount: "",
     },
     submit: (values) =>
-      addWithdrawalAction({
+      createWithdrawalAction({
         positionId: values.positionId,
         date: values.date,
         amount: UnmaskCurrency(values.amount),

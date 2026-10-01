@@ -2,7 +2,9 @@
 
 import * as React from "react"
 
-import { PortfolioMoneyInput } from "@/presentation/parts/components/portfolio-money-input"
+import { EntityMoneyInput } from "@/presentation/parts/components/entity-money-input"
+import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
+import { EntityQuotaDateInput } from "@/presentation/parts/components/entity-quota-date-input"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
@@ -10,12 +12,12 @@ import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-for
 import { FieldGroup } from "@/presentation/ui/field"
 
 import { useWithdrawalAddForm } from "../hooks/use-withdrawal-add-form.hook"
+import { useWithdrawalPositionScope } from "../hooks/use-withdrawal-position-scope.hook"
 import { WITHDRAWAL_FORM } from "../settings/labels.settings"
 import type { WithdrawalAddOptions } from "../types/withdrawal-add.types"
 
 import { PositionCombobox } from "./position-combobox"
 import { WithdrawalPortfolioCombobox } from "./portfolio-combobox"
-import { QuotaDateInput } from "@/presentation/routes/quota/components/quota-date-input"
 
 /**
  * Props for the add withdrawal form.
@@ -97,32 +99,20 @@ function AddWithdrawalForm({
     status,
     fieldErrors,
     handleSubmit,
-  } = useWithdrawalAddForm(lockedPortfolioId ?? defaultPortfolioId)
+  } = useWithdrawalAddForm(
+    lockedPortfolioId ?? defaultPortfolioId
+  )
 
   const IS_PORTFOLIO_LOCKED = Boolean(lockedPortfolioId)
 
-  // A withdrawal can only target a position of the selected
-  // portfolio, so the picker is narrowed down to it. With no
-  // portfolio chosen the list stays empty, which the empty
-  // copy explains instead of leaving the user guessing.
-  const PORTFOLIO_POSITIONS = React.useMemo(
-    () =>
-      options.positions.filter(
-        (position) => position.portfolioId === portfolioId
-      ),
-    [options.positions, portfolioId]
-  )
+  useEntityFormStatus({ status, error, onStatusChange })
 
-  // Find the fundId for the selected position
-  const SELECTED_POSITION = React.useMemo(
-    () => PORTFOLIO_POSITIONS.find((p) => p.id === positionId),
-    [PORTFOLIO_POSITIONS, positionId]
-  )
-  const FUND_ID = SELECTED_POSITION?.fundId
-
-  React.useEffect(() => {
-    onStatusChange?.(status, error)
-  }, [status, error, onStatusChange])
+  const { portfolioPositions, fundId } =
+    useWithdrawalPositionScope({
+      positions: options.positions,
+      portfolioId,
+      positionId,
+    })
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
@@ -158,7 +148,7 @@ function AddWithdrawalForm({
             value={positionId}
             onValueChange={updatePositionId}
             placeholder={WITHDRAWAL_FORM.PLACEHOLDER_POSITION}
-            items={PORTFOLIO_POSITIONS}
+            items={portfolioPositions}
             disabled={pending}
             aria-invalid={
               fieldErrors.positionId ? "true" : undefined
@@ -176,7 +166,7 @@ function AddWithdrawalForm({
           error={fieldErrors.date}
           htmlFor="withdrawal-date"
         >
-          <QuotaDateInput
+          <EntityQuotaDateInput
             id="withdrawal-date"
             name="date"
             required
@@ -185,7 +175,7 @@ function AddWithdrawalForm({
             placeholder={WITHDRAWAL_FORM.PLACEHOLDER_DATE}
             disabled={pending}
             aria-invalid={fieldErrors.date ? "true" : undefined}
-            fundId={FUND_ID}
+            fundId={fundId}
           />
         </SharedFormField>
         <SharedFormField
@@ -194,7 +184,7 @@ function AddWithdrawalForm({
           error={fieldErrors.amount}
           htmlFor="withdrawal-amount"
         >
-          <PortfolioMoneyInput
+          <EntityMoneyInput
             id="withdrawal-amount"
             name="amount"
             required

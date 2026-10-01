@@ -133,7 +133,8 @@ export const WITHDRAWAL_DATATABLE = {
 
   // Delete result toast copy.
   DELETE_SUCCESS_TITLE: "Resgate excluído!",
-  DELETE_SUCCESS_DESCRIPTION: "O resgate foi excluído com sucesso.",
+  DELETE_SUCCESS_DESCRIPTION:
+    "O resgate foi excluído com sucesso.",
   DELETE_ERROR_TITLE: "Não foi possível excluir o resgate",
 
   // Single reverse dialog.
@@ -183,4 +184,3 @@ export const WITHDRAWAL_EMPTY = {
     "Os resgates aparecerão aqui após serem registrados nas carteiras.",
   PRIMARY_ACTION_LABEL: "Registrar resgate",
 } as const
-

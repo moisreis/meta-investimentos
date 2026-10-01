@@ -7,7 +7,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 import { WithdrawalContainer } from "@/presentation/composition/withdrawal.container"
 
 import { REVERSE_WITHDRAWAL_SCHEMA } from "../validations/withdrawal-actions.validation"
@@ -67,6 +67,9 @@ export async function reverseWithdrawalAction(
 
     return ActionSuccess(undefined)
   } catch (cause) {
-    return ToActionFailure(cause, "Não foi possível reverter o resgate.")
+    return ToActionFailure(
+      cause,
+      "Não foi possível reverter o resgate."
+    )
   }
 }

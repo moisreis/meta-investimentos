@@ -3,9 +3,9 @@ import type { WithdrawalRow } from "@/presentation/types/withdrawal-row.types"
 import { EMPTY_WITHDRAWAL_LOOKUPS } from "../helpers/build-withdrawal-lookups.helper"
 import { BuildWithdrawalLookups } from "../helpers/build-withdrawal-lookups.helper"
 import { LoadWithdrawals } from "../helpers/load-withdrawals.helper"
+import { BuildPositionAddOptions } from "../helpers/build-withdrawal-position-add-options.helper"
+import { BuildWithdrawalPortfolioOptions } from "../helpers/build-withdrawal-portfolio-options.helper"
 import {
-  BuildPositionAddOptions,
-  BuildWithdrawalPortfolioOptions,
   type WithdrawalAddOptions,
   EMPTY_WITHDRAWAL_ADD_OPTIONS,
 } from "../types/withdrawal-add.types"
@@ -36,7 +36,8 @@ import type { WithdrawalLookups } from "../types/withdrawal-list.types"
 export async function LoadWithdrawalPageProps(): Promise<WithdrawalListProps> {
   let data: WithdrawalRow[] | null = null
   let lookups: WithdrawalLookups = EMPTY_WITHDRAWAL_LOOKUPS
-  let options: WithdrawalAddOptions = EMPTY_WITHDRAWAL_ADD_OPTIONS
+  let options: WithdrawalAddOptions =
+    EMPTY_WITHDRAWAL_ADD_OPTIONS
 
   const LOADED = await LoadWithdrawals()
 
@@ -49,7 +50,9 @@ export async function LoadWithdrawalPageProps(): Promise<WithdrawalListProps> {
         funds: LOADED.funds,
         weights: LOADED.weights,
       }),
-      portfolios: BuildWithdrawalPortfolioOptions(LOADED.portfolios),
+      portfolios: BuildWithdrawalPortfolioOptions(
+        LOADED.portfolios
+      ),
     }
   }
 

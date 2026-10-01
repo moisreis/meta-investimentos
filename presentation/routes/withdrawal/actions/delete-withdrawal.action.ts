@@ -8,7 +8,7 @@ import {
   RejectInput,
   ToActionFailure,
   type ActionResult,
-} from "@/presentation/types/action-result"
+} from "@/presentation/presenters/action-result.presenter"
 
 import { DELETE_WITHDRAWAL_SCHEMA } from "../validations/withdrawal-actions.validation"
 
@@ -62,6 +62,9 @@ export async function deleteWithdrawalAction(
 
     return ActionSuccess(undefined)
   } catch (cause) {
-    return ToActionFailure(cause, "Não foi possível excluir o resgate.")
+    return ToActionFailure(
+      cause,
+      "Não foi possível excluir o resgate."
+    )
   }
 }

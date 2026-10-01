@@ -68,7 +68,9 @@ export async function LoadWithdrawals(): Promise<LoadedWithdrawalList | null> {
   const PORTFOLIOS = await LIST_PORTFOLIOS.execute({
     userId: USER.id,
   })
-  const PORTFOLIO_IDS = PORTFOLIOS.map((portfolio) => portfolio.id)
+  const PORTFOLIO_IDS = PORTFOLIOS.map(
+    (portfolio) => portfolio.id
+  )
 
   const [FUNDS, POSITIONS, WEIGHTS] = await Promise.all([
     LIST_FUNDS.execute({}),

@@ -1,31 +1,7 @@
 "use client"
 
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/presentation/ui/combobox"
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "@/presentation/ui/item"
-
-import { WITHDRAWAL_FORM } from "../settings/labels.settings"
-
-// Option rendered by the withdrawal position combobox.
-export interface PositionComboboxItem {
-  // Id submitted to the form.
-  id: string
-  // Primary text rendered in the list and the input.
-  name: string
-  // Secondary text rendered under the name.
-  description?: string
-}
+import { EntityCombobox } from "@/presentation/parts/components/entity-combobox"
+import type { EntityComboboxItem } from "@/presentation/parts/components/entity-combobox"
 
 interface PositionComboboxProps {
   id: string
@@ -33,16 +9,13 @@ interface PositionComboboxProps {
   value: string
   onValueChange: (value: string) => void
   placeholder: string
-  items: PositionComboboxItem[]
+  items: readonly EntityComboboxItem[]
+  emptyLabel: string
   required?: boolean
   disabled?: boolean
+  clearable?: boolean
   "aria-invalid"?: boolean | "true" | "false"
-  // Copy shown when no option matches. The form overrides it
-  // while no portfolio is picked, so the empty list explains
-  // the missing filter instead of looking like a failure.
-  emptyLabel?: string
 }
-
 /**
  * @summary
  * Renders the position picker of the add withdrawal form.
@@ -76,65 +49,26 @@ function PositionCombobox({
   onValueChange,
   placeholder,
   items,
-  required = false,
-  disabled = false,
+  emptyLabel,
+  required,
+  disabled,
   "aria-invalid": ariaInvalid,
-  emptyLabel = WITHDRAWAL_FORM.SEARCH_EMPTY,
+  clearable,
 }: PositionComboboxProps) {
-  const SELECTED =
-    items.find((item) => item.id === value) ?? null
-
   return (
-    <Combobox
+    <EntityCombobox
+      id={id}
+      name={name}
+      value={value}
+      onValueChange={onValueChange}
+      placeholder={placeholder}
       items={items}
-      value={SELECTED}
-      onValueChange={(next) =>
-        onValueChange(next ? next.id : "")
-      }
-      itemToStringLabel={(item) => item.name}
-      itemToStringValue={(item) => item.id}
-      isItemEqualToValue={(item, selected) =>
-        item.id === selected.id
-      }
-      filter={(item, query) => {
-        const NORMALIZED = query.trim().toLowerCase()
-        if (!NORMALIZED) return true
-        const HAYSTACK =
-          `${item.name} ${item.description ?? ""}`.toLowerCase()
-        return HAYSTACK.includes(NORMALIZED)
-      }}
-      autoHighlight
-    >
-      <ComboboxInput
-        id={id}
-        name={name}
-        placeholder={placeholder}
-        required={required}
-        disabled={disabled}
-        aria-invalid={ariaInvalid}
-      />
-      <ComboboxContent>
-        <ComboboxEmpty>{emptyLabel}</ComboboxEmpty>
-        <ComboboxList>
-          {(item) => (
-            <ComboboxItem key={item.id} value={item}>
-              <Item size="xs" className="p-0">
-                <ItemContent>
-                  <ItemTitle className="whitespace-nowrap">
-                    {item.name}
-                  </ItemTitle>
-                  {item.description ? (
-                    <ItemDescription className="whitespace-nowrap">
-                      {item.description}
-                    </ItemDescription>
-                  ) : null}
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-          )}
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
+      emptyLabel={emptyLabel}
+      required={required}
+      disabled={disabled}
+      clearable={clearable}
+      aria-invalid={ariaInvalid}
+    />
   )
 }
 

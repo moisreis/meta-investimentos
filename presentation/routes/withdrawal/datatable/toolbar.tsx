@@ -35,7 +35,9 @@ function WithdrawalDatatableToolbar({
   return (
     <EntityDatatableToolbar
       filters={filters}
-      actions={<EntityDatatableAddItemButton onClick={onAddItem} />}
+      actions={
+        <EntityDatatableAddItemButton onClick={onAddItem} />
+      }
     />
   )
 }

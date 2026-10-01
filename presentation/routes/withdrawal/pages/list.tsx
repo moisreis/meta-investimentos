@@ -62,10 +62,8 @@ function WithdrawalList({
     WITHDRAWALS,
     lookups
   )
-  const { table, rowActions, addDialog } = useWithdrawalDatatable(
-    filters.filteredWithdrawals,
-    lookups
-  )
+  const { table, rowActions, addDialog } =
+    useWithdrawalDatatable(filters.filteredWithdrawals, lookups)
   const kpis = useWithdrawalKpis({ withdrawals: WITHDRAWALS })
 
   return (
@@ -107,7 +105,9 @@ function WithdrawalList({
           icon={IconArrowDownCircle}
           title={WITHDRAWAL_EMPTY.TITLE}
           description={WITHDRAWAL_EMPTY.DESCRIPTION}
-          primaryActionLabel={WITHDRAWAL_EMPTY.PRIMARY_ACTION_LABEL}
+          primaryActionLabel={
+            WITHDRAWAL_EMPTY.PRIMARY_ACTION_LABEL
+          }
           onPrimaryAction={addDialog.handleOpen}
         />
       )}

@@ -27,7 +27,9 @@ const DELETE_WITHDRAWAL_SCHEMA = z.object({
 })
 
 // Values of the delete withdrawal action payload.
-type DeleteWithdrawalValues = z.infer<typeof DELETE_WITHDRAWAL_SCHEMA>
+type DeleteWithdrawalValues = z.infer<
+  typeof DELETE_WITHDRAWAL_SCHEMA
+>
 
 // The payload accepted by the reverse withdrawal action.
 const REVERSE_WITHDRAWAL_SCHEMA = z.object({
@@ -35,7 +37,9 @@ const REVERSE_WITHDRAWAL_SCHEMA = z.object({
 })
 
 // Values of the reverse withdrawal action payload.
-type ReverseWithdrawalValues = z.infer<typeof REVERSE_WITHDRAWAL_SCHEMA>
+type ReverseWithdrawalValues = z.infer<
+  typeof REVERSE_WITHDRAWAL_SCHEMA
+>
 
 // The payload accepted by the bulk delete withdrawals action.
 const BULK_DELETE_WITHDRAWALS_SCHEMA = z.object({

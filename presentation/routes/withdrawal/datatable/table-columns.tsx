@@ -1,10 +1,9 @@
 "use client"
 
-import type {
-  ColumnDef,
-  ColumnHelper,
-} from "@tanstack/react-table"
+import type { ColumnHelper } from "@tanstack/react-table"
 
+import { EntityStateBadge } from "@/presentation/parts/datatable/columns/entity-state-badge"
+import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
@@ -13,7 +12,6 @@ import { FormatCnpj } from "@/presentation/presenters/cnpj.presenter"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatDate } from "@/presentation/presenters/date.presenter"
 import { FormatQuotaQuantity } from "@/presentation/presenters/quota-quantity.presenter"
-import { Badge } from "@/presentation/ui/badge"
 import type { WithdrawalRow } from "@/presentation/types/withdrawal-row.types"
 
 import { WITHDRAWAL_DATATABLE } from "../settings/labels.settings"
@@ -60,7 +58,7 @@ export interface WithdrawalTableColumnOptions {
 export function CreateWithdrawalTableColumns(
   columnHelper: ColumnHelper<EntityTableFeatures, WithdrawalRow>,
   options: WithdrawalTableColumnOptions
-): ColumnDef<EntityTableFeatures, WithdrawalRow, any>[] {
+): EntityColumnDef<WithdrawalRow>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 
@@ -69,16 +67,12 @@ export function CreateWithdrawalTableColumns(
       header: WITHDRAWAL_DATATABLE.COLUMN_PORTFOLIO,
       size: 180,
       meta: { fluid: true },
-      cell: (info) => {
-        const LOOKUP = info.getValue()
-
-        return (
-          <EntityLookupCell
-            title={LOOKUP?.portfolioName}
-            subtitle={LOOKUP?.portfolioAcronym}
-          />
-        )
-      },
+      cell: ({ getValue }) => (
+        <EntityLookupCell
+          title={getValue()?.portfolioName}
+          subtitle={getValue()?.portfolioAcronym}
+        />
+      ),
     }),
 
     columnHelper.accessor((row) => options.rowFor(row.id), {
@@ -86,18 +80,16 @@ export function CreateWithdrawalTableColumns(
       header: WITHDRAWAL_DATATABLE.COLUMN_FUND,
       size: 220,
       meta: { fluid: true },
-      cell: (info) => {
-        const LOOKUP = info.getValue()
-
-        return (
-          <EntityLookupCell
-            title={LOOKUP?.fundName}
-            subtitle={
-              LOOKUP?.fundCnpj ? FormatCnpj(LOOKUP.fundCnpj) : undefined
-            }
-          />
-        )
-      },
+      cell: ({ getValue }) => (
+        <EntityLookupCell
+          title={getValue()?.fundName}
+          subtitle={
+            getValue()?.fundCnpj
+              ? FormatCnpj(getValue().fundCnpj)
+              : undefined
+          }
+        />
+      ),
     }),
 
     columnHelper.accessor("date", {
@@ -127,17 +119,15 @@ export function CreateWithdrawalTableColumns(
       size: 110,
       meta: { align: "center", fluid: true },
       enableSorting: false,
-      cell: (info) => {
-        const IS_REVERSED = info.getValue() !== null
-
-        return (
-          <Badge variant={IS_REVERSED ? "destructive" : "default"}>
-            {IS_REVERSED
-              ? WITHDRAWAL_DATATABLE.STATUS_REVERSED_LABEL
-              : WITHDRAWAL_DATATABLE.STATUS_ACTIVE_LABEL}
-          </Badge>
-        )
-      },
+      cell: ({ getValue }) => (
+        <EntityStateBadge
+          matched={getValue() === null}
+          matchedLabel={WITHDRAWAL_DATATABLE.STATUS_ACTIVE_LABEL}
+          unmatchedLabel={
+            WITHDRAWAL_DATATABLE.STATUS_REVERSED_LABEL
+          }
+        />
+      ),
     }),
 
     columnHelper.display({
@@ -162,9 +152,11 @@ export function CreateWithdrawalTableColumns(
               : [
                   {
                     key: "reverse",
-                    label: WITHDRAWAL_DATATABLE.ROW_REVERSE_LABEL,
+                    label:
+                      WITHDRAWAL_DATATABLE.ROW_REVERSE_LABEL,
                     separatorBefore: true,
-                    onSelect: () => options.onReverse(row.original),
+                    onSelect: () =>
+                      options.onReverse(row.original),
                   },
                 ]),
             {

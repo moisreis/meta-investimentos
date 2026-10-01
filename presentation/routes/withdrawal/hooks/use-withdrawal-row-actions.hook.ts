@@ -23,7 +23,8 @@ import type { WithdrawalRow } from "@/presentation/types/withdrawal-row.types"
  */
 function useWithdrawalRowActions() {
   return useEntityRowActions<WithdrawalRow>({
-    runDelete: (id) => deleteWithdrawalAction({ withdrawalId: id }),
+    runDelete: (id) =>
+      deleteWithdrawalAction({ withdrawalId: id }),
     runReverse: (id) =>
       reverseWithdrawalAction({ withdrawalId: id }),
   })
