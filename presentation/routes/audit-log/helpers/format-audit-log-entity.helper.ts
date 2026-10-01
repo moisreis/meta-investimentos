@@ -32,14 +32,14 @@ const AUDIT_ENTITY_LABELS: Record<string, string> = {
  * @returns The display label.
  *
  * @example
- * const LABEL = FormatAuditEntity("Portfolio");
+ * const LABEL = FormatAuditLogEntity("Portfolio");
  * // returns "Carteira"
  *
  * @author Moisés Reis
  *
  * @date 2026-09-25
  */
-export function FormatAuditEntity(entity: string): string {
+export function FormatAuditLogEntity(entity: string): string {
   const KEY = entity.replace(/\s+/g, "").toUpperCase()
 
   return AUDIT_ENTITY_LABELS[KEY] ?? entity

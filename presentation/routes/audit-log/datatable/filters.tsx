@@ -1,6 +1,6 @@
 "use client"
 
-import { EntitySearchFilter } from "@/presentation/parts/filters/search"
+import { EntitySearchFilter } from "@/presentation/parts/filters/entity-search"
 import { AUDIT_LOG_DATATABLE } from "@/presentation/routes/audit-log/settings/labels.settings"
 
 interface AuditLogDatatableFiltersProps {

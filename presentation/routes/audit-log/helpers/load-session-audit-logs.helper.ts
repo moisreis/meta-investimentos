@@ -1,6 +1,5 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { AuditLogContainer } from "@/presentation/composition/audit-log.container"
-import type { AuditLogResponseDTO } from "@/services/audit-log/dto/audit-log-response.dto"
 
 import { BuildAuditLogRowSummaries } from "./build-audit-log-row-summaries.helper"
 import type { AuditLogRowSummary } from "../types/audit-log-list.types"

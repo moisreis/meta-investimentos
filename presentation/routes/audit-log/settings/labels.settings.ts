@@ -48,7 +48,7 @@ export const AUDIT_LOG_KPI = {
   ACTIONS_COMPARISON: "tipos de ação",
 
   // Recent activity card.
-  RECENT_TITLE: "Êltimas 24h",
+  RECENT_TITLE: "Últimas 24h",
   RECENT_COMPARISON: "atividades recentes",
 } as const
 
@@ -59,4 +59,3 @@ export const AUDIT_LOG_EMPTY = {
     "As alterações do sistema aparecerão aqui " +
     "conforme forem registradas.",
 } as const
-

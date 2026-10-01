@@ -34,14 +34,14 @@ const AUDIT_ACTION_LABELS: Record<string, AuditActionDisplay> = {
  * @returns The label and badge variant.
  *
  * @example
- * const DISPLAY = FormatAuditAction("DELETED");
+ * const DISPLAY = FormatAuditLogAction("DELETED");
  * // returns { label: "Excluído", variant: "destructive" }
  *
  * @author Moisés Reis
  *
  * @date 2026-09-25
  */
-export function FormatAuditAction(
+export function FormatAuditLogAction(
   action: string
 ): AuditActionDisplay {
   const KEY = action.trim().toUpperCase()

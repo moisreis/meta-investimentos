@@ -1,18 +1,16 @@
 "use client"
 
-import type {
-  ColumnDef,
-  ColumnHelper,
-} from "@tanstack/react-table"
+import type { ColumnHelper } from "@tanstack/react-table"
 
+import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatDateTime } from "@/presentation/presenters/date.presenter"
 import { PRESENTER_FALLBACK } from "@/presentation/presenters/lookup.presenter"
 import { FormatEntityLookup } from "@/presentation/presenters/lookup.presenter"
 import type { AuditLogRow } from "@/presentation/types/audit-log-row.types"
 
-import { FormatAuditAction } from "../helpers/format-audit-action.helper"
-import { FormatAuditEntity } from "../helpers/format-audit-entity.helper"
+import { FormatAuditLogAction } from "../helpers/format-audit-log-action.helper"
+import { FormatAuditLogEntity } from "../helpers/format-audit-log-entity.helper"
 import { AUDIT_LOG_DATATABLE } from "../settings/labels.settings"
 import type { AuditLogRowSummary } from "../types/audit-log-list.types"
 
@@ -35,14 +33,14 @@ export interface AuditLogTableColumnOptions {
  *
  * @returns The audit log column definitions.
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-25
  */
 export function CreateAuditLogTableColumns(
   columnHelper: ColumnHelper<EntityTableFeatures, AuditLogRow>,
   options: AuditLogTableColumnOptions
-): ColumnDef<EntityTableFeatures, AuditLogRow, any>[] {
+): EntityColumnDef<AuditLogRow>[] {
   return [
     columnHelper.accessor("createdAt", {
       id: "createdAt",
@@ -61,7 +59,7 @@ export function CreateAuditLogTableColumns(
       size: 150,
       enableSorting: false,
       meta: { fluid: true },
-      cell: (info) => FormatAuditEntity(info.getValue()),
+      cell: (info) => FormatAuditLogEntity(info.getValue()),
     }),
 
     columnHelper.accessor("entityId", {
@@ -80,7 +78,7 @@ export function CreateAuditLogTableColumns(
       enableSorting: false,
       meta: { fluid: true },
       cell: (info) => {
-        const DISPLAY = FormatAuditAction(info.getValue())
+        const DISPLAY = FormatAuditLogAction(info.getValue())
 
         return DISPLAY.label
       },

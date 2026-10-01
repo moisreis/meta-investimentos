@@ -16,7 +16,7 @@ import type { AuditLogRowSummary } from "../types/audit-log-list.types"
  * @example
  * const PROPS = await LoadAuditLogPageProps();
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
  * @date 2026-09-27
  */
