@@ -1,16 +1,15 @@
 "use client"
 
-import type {
-  ColumnDef,
-  ColumnHelper,
-} from "@tanstack/react-table"
+import type { ColumnHelper } from "@tanstack/react-table"
 
+import { EntityExternalLink } from "@/presentation/parts/datatable/columns/entity-external-link"
+import { EntityUserCell } from "@/presentation/parts/datatable/columns/entity-user-cell"
+import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatDateTime } from "@/presentation/presenters/date.presenter"
-import { UserAvatar } from "@/presentation/presenters/user-avatar.presenter"
 import { STATEMENT_DATATABLE } from "@/presentation/routes/statement/settings/labels.settings"
 import type { StatementRow } from "@/presentation/types/statement-row.types"
 
@@ -49,7 +48,7 @@ export interface StatementTableColumnOptions {
 export function CreateStatementTableColumns(
   columnHelper: ColumnHelper<EntityTableFeatures, StatementRow>,
   options: StatementTableColumnOptions
-): ColumnDef<EntityTableFeatures, StatementRow, any>[] {
+): EntityColumnDef<StatementRow>[] {
   return [
     CreateEntitySelectColumn(columnHelper),
 
@@ -91,15 +90,11 @@ export function CreateStatementTableColumns(
       size: 90,
       enableSorting: false,
       meta: { fluid: true },
-      cell: (info) => (
-        <a
-          href={info.getValue()}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary hover:underline"
-        >
-          {STATEMENT_DATATABLE.COLUMN_FILE_OPEN_LABEL}
-        </a>
+      cell: ({ getValue }) => (
+        <EntityExternalLink
+          href={getValue()}
+          label={STATEMENT_DATATABLE.COLUMN_FILE_OPEN_LABEL}
+        />
       ),
     }),
 
@@ -109,22 +104,11 @@ export function CreateStatementTableColumns(
       size: 200,
       enableSorting: false,
       meta: { fluid: true },
-      cell: ({ row }) => {
-        const GENERATED_BY =
-          options.summaryFor(row.id)?.generatedBy ?? null
-
-        if (!GENERATED_BY) {
-          return <span className="text-muted-foreground">-</span>
-        }
-
-        return (
-          <UserAvatar
-            firstName={GENERATED_BY.firstName}
-            lastName={GENERATED_BY.lastName}
-            image={GENERATED_BY.image}
-          />
-        )
-      },
+      cell: ({ row }) => (
+        <EntityUserCell
+          user={options.summaryFor(row.id)?.generatedBy ?? null}
+        />
+      ),
     }),
 
     columnHelper.accessor("createdAt", {

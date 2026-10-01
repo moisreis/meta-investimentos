@@ -1,6 +1,6 @@
 "use client"
 
-import { EntitySearchFilter } from "@/presentation/parts/filters/search"
+import { EntitySearchFilter } from "@/presentation/parts/filters/entity-search"
 import { STATEMENT_DATATABLE } from "@/presentation/routes/statement/settings/labels.settings"
 
 interface StatementDatatableFiltersProps {

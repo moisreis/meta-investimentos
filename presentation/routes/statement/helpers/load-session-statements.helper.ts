@@ -1,9 +1,6 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
 import { StatementContainer } from "@/presentation/composition/statement.container"
-import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
-import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
-
 import { ToPortfolioRows } from "@/presentation/mappers/portfolio-row.mapper"
 import { ToStatementRows } from "@/presentation/mappers/statement-row.mapper"
 import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
@@ -58,7 +55,7 @@ export async function LoadSessionStatements(): Promise<LoadSessionStatementsOutp
 
   return {
     userId: USER.id,
-    portfolios: PORTFOLIOS,
-    statements: STATEMENTS,
+    portfolios: ToPortfolioRows(PORTFOLIOS),
+    statements: ToStatementRows(STATEMENTS),
   }
 }

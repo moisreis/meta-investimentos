@@ -3,7 +3,7 @@
 import { IconFileText } from "@tabler/icons-react"
 import type { JSX } from "react"
 
-import { Button } from "@/presentation/ui/button"
+import { EntityDatatableGhostButton } from "@/presentation/parts/components/entity-datatable-ghost-button"
 
 import { STATEMENT_DATATABLE } from "../settings/labels.settings"
 
@@ -41,15 +41,11 @@ function StatementGenerateReportButton(
   const { onClick } = props
 
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      className="font-normal text-muted-foreground"
+    <EntityDatatableGhostButton
+      icon={IconFileText}
+      label={STATEMENT_DATATABLE.GENERATE_REPORT_LABEL}
       onClick={onClick}
-    >
-      <IconFileText />
-      <span>{STATEMENT_DATATABLE.GENERATE_REPORT_LABEL}</span>
-    </Button>
+    />
   )
 }
 

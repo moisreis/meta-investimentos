@@ -1,16 +1,19 @@
-// Base storage path where statement files are served.
-// The file itself is produced by the downstream pipeline.
-const STATEMENT_FILE_URL_PREFIX =
-  "https://files.example.com/statements"
+// Base public url where the app serves the statement pdfs.
+const APP_BASE_URL =
+  process.env.BETTER_AUTH_URL ??
+  process.env.NEXT_PUBLIC_BETTER_AUTH_URL ??
+  "http://localhost:3000"
 
 /**
  * @summary
  * Builds the file url of a generated statement.
  *
  * @remarks
- * The actual file is produced downstream, so the action
- * stores a deterministic placeholder url pointing at the
- * storage location the pipeline will populate.
+ * Points the url at the app's on-demand statement pdf route,
+ * so opening a report renders the file through the same job
+ * the generation pipeline runs. The url stays deterministic:
+ * the portfolio id and the month key fully describe the
+ * report, with no storage dependency.
  *
  * @param input - The target portfolio and month.
  * @param input.portfolioId - The statement portfolio id.
@@ -32,8 +35,10 @@ export function BuildStatementFileUrl(input: {
   portfolioId: string
   month: string
 }): string {
-  return (
-    `${STATEMENT_FILE_URL_PREFIX}/` +
-    `${input.month}/${input.portfolioId}.pdf`
-  )
+  const QUERY = new URLSearchParams({
+    portfolioId: input.portfolioId,
+    month: input.month,
+  })
+
+  return `${APP_BASE_URL}/api/statement-pdf?${QUERY.toString()}`
 }

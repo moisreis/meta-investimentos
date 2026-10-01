@@ -8,7 +8,7 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
+import type { StatementRow } from "@/presentation/types/statement-row.types"
 
 import { CreateStatementTableColumns } from "../datatable/table-columns"
 import { useStatementBulkDelete } from "./use-statement-bulk-delete.hook"
@@ -19,7 +19,7 @@ import type { StatementRowSummary } from "../types/statement-list.types"
 // Column helper bound to the entity table features.
 const COLUMN_HELPER = createColumnHelper<
   EntityTableFeatures,
-  StatementResponseDTO
+  StatementRow
 >()
 
 /**
@@ -44,7 +44,7 @@ const COLUMN_HELPER = createColumnHelper<
  * @date 2026-09-25
  */
 function useStatementDatatable(
-  statements: StatementResponseDTO[],
+  statements: StatementRow[],
   summaries: Record<string, StatementRowSummary> | null = null
 ) {
   const rowActions = useStatementRowActions()

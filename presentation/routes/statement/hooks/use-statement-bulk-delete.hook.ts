@@ -3,7 +3,7 @@
 import { useEntityBulkDeleteAction } from "@/presentation/parts/hooks/use-entity-bulk-delete-action.hook"
 import { bulkDeleteStatementsAction } from "@/presentation/routes/statement/actions/bulk-delete-statements.action"
 import { STATEMENT_DATATABLE } from "@/presentation/routes/statement/settings/labels.settings"
-import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
+import type { StatementRow } from "@/presentation/types/statement-row.types"
 
 /**
  * @summary
@@ -22,7 +22,7 @@ import type { StatementResponseDTO } from "@/services/statement/dto/statement-re
  * @date 2026-09-26
  */
 function useStatementBulkDelete() {
-  return useEntityBulkDeleteAction<StatementResponseDTO>({
+  return useEntityBulkDeleteAction<StatementRow>({
     run: (ids) =>
       bulkDeleteStatementsAction({ statementIds: ids }),
     labels: STATEMENT_DATATABLE,

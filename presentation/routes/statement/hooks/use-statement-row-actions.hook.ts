@@ -2,7 +2,7 @@
 
 import { useEntityRowActions } from "@/presentation/parts/hooks/use-entity-row-actions.hook"
 import { deleteStatementAction } from "@/presentation/routes/statement/actions/delete-statement.action"
-import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
+import type { StatementRow } from "@/presentation/types/statement-row.types"
 
 /**
  * @summary
@@ -22,7 +22,7 @@ import type { StatementResponseDTO } from "@/services/statement/dto/statement-re
  * @date 2026-09-26
  */
 function useStatementRowActions() {
-  return useEntityRowActions<StatementResponseDTO>({
+  return useEntityRowActions<StatementRow>({
     runDelete: (id) =>
       deleteStatementAction({ statementId: id }),
     onView: (row) =>

@@ -30,4 +30,3 @@ export {
   GENERATE_STATEMENT_SCHEMA,
   type GenerateStatementFormValues,
 }
-

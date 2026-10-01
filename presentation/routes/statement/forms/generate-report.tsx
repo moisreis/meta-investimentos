@@ -1,10 +1,12 @@
 "use client"
 
-import * as React from "react"
+import { useStatementPortfolioOptions } from "../hooks/use-statement-portfolio-options.hook"
 
 import { FieldGroup } from "@/presentation/ui/field"
 
+import { EntityMonthInput } from "@/presentation/parts/components/entity-month-input"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
+import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
@@ -16,7 +18,6 @@ import {
 import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 
 import { StatementPortfolioCombobox } from "./portfolio-combobox"
-import { StatementMonthPicker } from "./month-picker"
 
 /**
  * Props for the generate statement form.
@@ -78,25 +79,14 @@ function GenerateStatementForm({
     handleSubmit,
   } = useStatementGenerateForm(defaultPortfolioId)
 
-  React.useEffect(() => {
-    onStatusChange?.(status, error)
-  }, [status, error, onStatusChange])
+  useEntityFormStatus({ status, error, onStatusChange })
 
-  // Wrap updatePortfolioId to handle empty string from Combobox onValueChange
-  const handlePortfolioIdChange = React.useCallback(
-    (value: string) => updatePortfolioId(value ?? ""),
-    [updatePortfolioId]
-  )
-
-  const items = React.useMemo(
-    () =>
-      portfolios.map((portfolio) => ({
-        id: portfolio.id,
-        name: portfolio.name,
-        description: portfolio.acronym,
-      })),
-    [portfolios]
-  )
+  const { items, handlePortfolioIdChange } =
+    useStatementPortfolioOptions({
+      portfolios,
+      portfolioId,
+      updatePortfolioId,
+    })
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>
@@ -128,7 +118,7 @@ function GenerateStatementForm({
           error={fieldErrors.month}
           htmlFor="month"
         >
-          <StatementMonthPicker
+          <EntityMonthInput
             id="month"
             name="month"
             value={month}
@@ -136,6 +126,7 @@ function GenerateStatementForm({
             placeholder={
               STATEMENT_DIALOG.FIELD_MONTH_PLACEHOLDER
             }
+            gridLabel={STATEMENT_DIALOG.FIELD_MONTH_GRID_LABEL}
             required
             disabled={pending}
             aria-invalid={fieldErrors.month ? "true" : undefined}
