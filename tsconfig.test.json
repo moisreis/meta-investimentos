@@ -1,0 +1,33 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["vitest/globals", "node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@errors/*": ["./errors/*"],
+      "@constants/*": ["./constants/*"],
+      "@domain/*": ["./domain/*"],
+      "@clients/*": ["./clients/*"],
+      "@services/*": ["./services/*"],
+      "@infrastructure/*": ["./infrastructure/*"],
+      "@lib/*": ["./lib/*"],
+      "@value-objects": ["./value-objects/index.ts"],
+      "@value-objects/*": ["./value-objects/*"],
+      "@database/*": ["./database/*"],
+      "@db-schemas": ["./database/schemas/index.ts"],
+      "@db-schemas/*": ["./database/schemas/*"],
+      "@db-relations": ["./database/relations/index.ts"],
+      "@db-relations/*": ["./database/relations/*"],
+      "__tests__": ["./__tests__"],
+      "__tests__/*": ["./__tests__/*"]
+    }
+  },
+  "include": [
+    "__tests__/**/*.ts",
+    "__tests__/**/*.tsx",
+    "vitest.config.unit.ts",
+    "vitest.config.integration.ts"
+  ],
+  "exclude": ["node_modules"]
+}

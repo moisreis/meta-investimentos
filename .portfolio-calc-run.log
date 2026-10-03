@@ -1,0 +1,230 @@
+﻿
+[7m[1m[36m RUN [39m[22m[27m [36mv2.0.0[39m [90mC:/Users/moisreis/Projects/meta-investimentos[39m
+
+[90mstdout[2m | __tests__/__unit__/domain/portfolio/calculators/target.calculator.test.ts[22m[39m
+[TEST SETUP] Loading .env.test from: C:\Users\moisreis\Projects\meta-investimentos\.env.test
+Γùç injected env (1) from .env.test // tip: Γîÿ custom filepath { path: '/custom/path/.env' }
+[TEST SETUP] Dotenv result: {
+  parsed: {
+    DATABASE_URL: [32m'postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'[39m
+  }
+}
+[TEST SETUP] DATABASE_URL from .env.test: postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+[TEST SETUP] Set TEST_DATABASE_URL from DATABASE_URL
+[TEST SETUP] Deleted DATABASE_URL, TEST_DATABASE_URL: SET
+
+[90mstdout[2m | __tests__/__unit__/domain/portfolio/calculators/cumulative-target.calculator.test.ts[22m[39m
+[TEST SETUP] Loading .env.test from: C:\Users\moisreis\Projects\meta-investimentos\.env.test
+Γùç injected env (1) from .env.test // tip: Γùê secrets for agents [www.dotenvx.com]
+[TEST SETUP] Dotenv result: {
+  parsed: {
+    DATABASE_URL: [32m'postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'[39m
+  }
+}
+[TEST SETUP] DATABASE_URL from .env.test: postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+[TEST SETUP] Set TEST_DATABASE_URL from DATABASE_URL
+[TEST SETUP] Deleted DATABASE_URL, TEST_DATABASE_URL: SET
+
+[90mstdout[2m | __tests__/__unit__/domain/portfolio/calculators/daily-factor.calculator.test.ts[22m[39m
+[TEST SETUP] Loading .env.test from: C:\Users\moisreis\Projects\meta-investimentos\.env.test
+Γùç injected env (1) from .env.test // tip: Γîÿ suppress logs { quiet: true }
+[TEST SETUP] Dotenv result: {
+  parsed: {
+    DATABASE_URL: [32m'postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'[39m
+  }
+}
+[TEST SETUP] DATABASE_URL from .env.test: postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+[TEST SETUP] Set TEST_DATABASE_URL from DATABASE_URL
+[TEST SETUP] Deleted DATABASE_URL, TEST_DATABASE_URL: SET
+
+[90mstdout[2m | __tests__/__unit__/domain/portfolio/calculators/earnings.calculator.test.ts[22m[39m
+[TEST SETUP] Loading .env.test from: C:\Users\moisreis\Projects\meta-investimentos\.env.test
+Γùç injected env (1) from .env.test // tip: Γùê encrypted .env [www.dotenvx.com]
+[TEST SETUP] Dotenv result: {
+  parsed: {
+    DATABASE_URL: [32m'postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'[39m
+  }
+}
+[TEST SETUP] DATABASE_URL from .env.test: postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+[TEST SETUP] Set TEST_DATABASE_URL from DATABASE_URL
+[TEST SETUP] Deleted DATABASE_URL, TEST_DATABASE_URL: SET
+
+[90mstdout[2m | __tests__/__unit__/domain/portfolio/calculators/return.calculator.test.ts[22m[39m
+[TEST SETUP] Loading .env.test from: C:\Users\moisreis\Projects\meta-investimentos\.env.test
+Γùç injected env (1) from .env.test // tip: Γîÿ custom filepath { path: '/custom/path/.env' }
+[TEST SETUP] Dotenv result: {
+  parsed: {
+    DATABASE_URL: [32m'postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'[39m
+  }
+}
+[TEST SETUP] DATABASE_URL from .env.test: postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+[TEST SETUP] Set TEST_DATABASE_URL from DATABASE_URL
+[TEST SETUP] Deleted DATABASE_URL, TEST_DATABASE_URL: SET
+
+[90mstdout[2m | __tests__/__unit__/domain/portfolio/calculators/cash-flow-net.calculator.test.ts[22m[39m
+[TEST SETUP] Loading .env.test from: C:\Users\moisreis\Projects\meta-investimentos\.env.test
+Γùç injected env (1) from .env.test // tip: Γîÿ override existing { override: true }
+[TEST SETUP] Dotenv result: {
+  parsed: {
+    DATABASE_URL: [32m'postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'[39m
+  }
+}
+[TEST SETUP] DATABASE_URL from .env.test: postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+[TEST SETUP] Set TEST_DATABASE_URL from DATABASE_URL
+[TEST SETUP] Deleted DATABASE_URL, TEST_DATABASE_URL: SET
+
+[90mstdout[2m | __tests__/__unit__/domain/portfolio/calculators/application-quotas-sum.calculator.test.ts[22m[39m
+[TEST SETUP] Loading .env.test from: C:\Users\moisreis\Projects\meta-investimentos\.env.test
+Γùç injected env (1) from .env.test // tip: Γîü auth for agents [www.vestauth.com]
+[TEST SETUP] Dotenv result: {
+  parsed: {
+    DATABASE_URL: [32m'postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'[39m
+  }
+}
+[TEST SETUP] DATABASE_URL from .env.test: postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+[TEST SETUP] Set TEST_DATABASE_URL from DATABASE_URL
+[TEST SETUP] Deleted DATABASE_URL, TEST_DATABASE_URL: SET
+
+ [32mΓ£ô[39m [35m|unit|[39m __tests__/__unit__/domain/portfolio/calculators/application-quotas-sum.calculator.test.ts [2m ([22m[2m6 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32mΓ£ô[39m [35m|unit|[39m __tests__/__unit__/domain/portfolio/calculators/earnings.calculator.test.ts [2m ([22m[2m7 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32mΓ£ô[39m [35m|unit|[39m __tests__/__unit__/domain/portfolio/calculators/cash-flow-net.calculator.test.ts [2m ([22m[2m7 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32mΓ£ô[39m [35m|unit|[39m __tests__/__unit__/domain/portfolio/calculators/return.calculator.test.ts [2m ([22m[2m8 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32mΓ£ô[39m [35m|unit|[39m __tests__/__unit__/domain/portfolio/calculators/cumulative-target.calculator.test.ts [2m ([22m[2m7 tests[22m[2m)[22m[90m 11[2mms[22m[39m
+ [31mΓ¥»[39m [35m|unit|[39m __tests__/__unit__/domain/portfolio/calculators/daily-factor.calculator.test.ts [2m ([22m[2m7 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[90m 19[2mms[22m[39m
+[31m   [31m├ù[31m domain/portfolio/calculators/daily-factor.calculator[2m > [22mcalculatePortfolioDailyFactor[2m > [22mshould throw ValidationError when previous day portfolio value is negative[39m
+[31m     ΓåÆ `GrowthFactor` must be equal or greater than 0.[39m
+ [31mΓ¥»[39m [35m|unit|[39m __tests__/__unit__/domain/portfolio/calculators/target.calculator.test.ts [2m ([22m[2m8 tests[22m [2m|[22m [31m2 failed[39m[2m)[22m[90m 25[2mms[22m[39m
+[31m   [31m├ù[31m domain/portfolio/calculators/target.calculator[2m > [22mcalculatePortfolioTarget[2m > [22mshould calculate monthly target correctly with positive rates[39m
+[31m     ΓåÆ expected '3.57' to be '3.58' // Object.is equality[39m
+[31m   [31m├ù[31m domain/portfolio/calculators/target.calculator[2m > [22mcalculatePortfolioTarget[2m > [22mshould calculate monthly target with negative interest rate above -100%[39m
+[31m     ΓåÆ expected '-0.76' to be '-0.77' // Object.is equality[39m
+[90mstdout[2m | __tests__/__unit__/domain/portfolio/calculators/withdrawal-sum.calculator.test.ts[22m[39m
+[TEST SETUP] Loading .env.test from: C:\Users\moisreis\Projects\meta-investimentos\.env.test
+Γùç injected env (1) from .env.test // tip: Γùê secrets for agents [www.dotenvx.com]
+[TEST SETUP] Dotenv result: {
+  parsed: {
+    DATABASE_URL: [32m'postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'[39m
+  }
+}
+[TEST SETUP] DATABASE_URL from .env.test: postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+[TEST SETUP] Set TEST_DATABASE_URL from DATABASE_URL
+[TEST SETUP] Deleted DATABASE_URL, TEST_DATABASE_URL: SET
+
+[90mstdout[2m | __tests__/__unit__/domain/portfolio/calculators/application-sum.calculator.test.ts[22m[39m
+[TEST SETUP] Loading .env.test from: C:\Users\moisreis\Projects\meta-investimentos\.env.test
+Γùç injected env (1) from .env.test // tip: Γùê secrets for agents [www.dotenvx.com]
+[TEST SETUP] Dotenv result: {
+  parsed: {
+    DATABASE_URL: [32m'postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'[39m
+  }
+}
+[TEST SETUP] DATABASE_URL from .env.test: postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+[TEST SETUP] Set TEST_DATABASE_URL from DATABASE_URL
+[TEST SETUP] Deleted DATABASE_URL, TEST_DATABASE_URL: SET
+
+[90mstdout[2m | __tests__/__unit__/domain/portfolio/calculators/quotas-held-sum.calculator.test.ts[22m[39m
+[TEST SETUP] Loading .env.test from: C:\Users\moisreis\Projects\meta-investimentos\.env.test
+Γùç injected env (1) from .env.test // tip: Γîü auth for agents [www.vestauth.com]
+[TEST SETUP] Dotenv result: {
+  parsed: {
+    DATABASE_URL: [32m'postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'[39m
+  }
+}
+[TEST SETUP] DATABASE_URL from .env.test: postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+[TEST SETUP] Set TEST_DATABASE_URL from DATABASE_URL
+[TEST SETUP] Deleted DATABASE_URL, TEST_DATABASE_URL: SET
+
+[90mstdout[2m | __tests__/__unit__/domain/portfolio/calculators/withdrawal-quotas-sum.calculator.test.ts[22m[39m
+[TEST SETUP] Loading .env.test from: C:\Users\moisreis\Projects\meta-investimentos\.env.test
+Γùç injected env (1) from .env.test // tip: Γîÿ enable debugging { debug: true }
+[TEST SETUP] Dotenv result: {
+  parsed: {
+    DATABASE_URL: [32m'postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'[39m
+  }
+}
+[TEST SETUP] DATABASE_URL from .env.test: postgresql://neondb_owner:npg_RrVLk0A3iwGU@ep-muddy-band-acxjnbbp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+[TEST SETUP] Set TEST_DATABASE_URL from DATABASE_URL
+[TEST SETUP] Deleted DATABASE_URL, TEST_DATABASE_URL: SET
+
+ [32mΓ£ô[39m [35m|unit|[39m __tests__/__unit__/domain/portfolio/calculators/withdrawal-sum.calculator.test.ts [2m ([22m[2m6 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32mΓ£ô[39m [35m|unit|[39m __tests__/__unit__/domain/portfolio/calculators/application-sum.calculator.test.ts [2m ([22m[2m6 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32mΓ£ô[39m [35m|unit|[39m __tests__/__unit__/domain/portfolio/calculators/quotas-held-sum.calculator.test.ts [2m ([22m[2m6 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32mΓ£ô[39m [35m|unit|[39m __tests__/__unit__/domain/portfolio/calculators/withdrawal-quotas-sum.calculator.test.ts [2m ([22m[2m6 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+
+node.exe : [31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1m[7m Failed Tests 3 [27m[22mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([31mΓÄ»ΓÄ»ΓÄ»Γ...»ΓÄ»ΓÄ»ΓÄ»[39m:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+[31m[1m[7m FAIL [27m[22m[39m [35m|unit|[39m 
+__tests__/__unit__/domain/portfolio/calculators/daily-factor.calculator.test.ts[2m > 
+[22mdomain/portfolio/calculators/daily-factor.calculator[2m > [22mcalculatePortfolioDailyFactor[2m > [22mshould 
+throw ValidationError when previous day portfolio value is negative
+[31m[1mValidationError[22m: `GrowthFactor` must be equal or greater than 0.[39m
+[36m [2mΓ¥»[22m GrowthFactor.create value-objects/growth-factor.vo.ts:[2m110:13[22m[39m
+    [90m108| [39m
+    [90m109| [39m    [35mif[39m ([33mDECIMAL_VALUE[39m[33m.[39m[34mlessThan[39m([34m0[39m)) {
+    [90m110| [39m      [35mthrow[39m [35mnew[39m [33mValidationError[39m(
+    [90m   | [39m            [31m^[39m
+    [90m111| [39m        [32m"`GrowthFactor` must be equal or greater than 0."[39m
+    [90m112| [39m      )
+[90m [2mΓ¥»[22m Module.calculatePortfolioDailyFactor 
+domain/portfolio/calculators/daily-factor.calculator.ts:[2m51:23[22m[39m
+[90m [2mΓ¥»[22m __tests__/__unit__/domain/portfolio/calculators/daily-factor.calculator.test.ts:[2m116:22[22m[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/3]ΓÄ»[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m [35m|unit|[39m 
+__tests__/__unit__/domain/portfolio/calculators/target.calculator.test.ts[2m > 
+[22mdomain/portfolio/calculators/target.calculator[2m > [22mcalculatePortfolioTarget[2m > [22mshould calculate 
+monthly target correctly with positive rates
+[31m[1mAssertionError[22m: expected '3.57' to be '3.58' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 3.58[39m
+[31m+ 3.57[39m
+
+[36m [2mΓ¥»[22m __tests__/__unit__/domain/portfolio/calculators/target.calculator.test.ts:[2m18:39[22m[39m
+    [90m 16| [39m
+    [90m 17| [39m      [90m// ( (1 + 0.443)^(1/12) ) * (1 + 0.0045) - 1 = (1.443^(1/12)) ~ [39mΓÇª
+    [90m 18| [39m      [34mexpect[39m(result[33m.[39mvalue[33m.[39m[34mtoFixed[39m([34m2[39m))[33m.[39m[
+34mtoBe[39m([32m"3.58"[39m)
+    [90m   | [39m                                      [31m^[39m
+    [90m 19| [39m    })
+    [90m 20| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/3]ΓÄ»[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m [35m|unit|[39m 
+__tests__/__unit__/domain/portfolio/calculators/target.calculator.test.ts[2m > 
+[22mdomain/portfolio/calculators/target.calculator[2m > [22mcalculatePortfolioTarget[2m > [22mshould calculate 
+monthly target with negative interest rate above -100%
+[31m[1mAssertionError[22m: expected '-0.76' to be '-0.77' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- -0.77[39m
+[31m+ -0.76[39m
+
+[36m [2mΓ¥»[22m __tests__/__unit__/domain/portfolio/calculators/target.calculator.test.ts:[2m58:39[22m[39m
+    [90m 56| [39m
+    [90m 57| [39m      [90m// ((1 - 0.12)^(1/12)) = (0.88^(1/12)) ~ 0.98936, *1.003 = ~0.99[39mΓÇª
+    [90m 58| [39m      [34mexpect[39m(result[33m.[39mvalue[33m.[39m[34mtoFixed[39m([34m2[39m))[33m.[39m[
+34mtoBe[39m([32m"-0.77"[39m)
+    [90m   | [39m                                      [31m^[39m
+    [90m 59| [39m    })
+    [90m 60| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/3]ΓÄ»[22m[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m9 passed[39m[22m[90m (11)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m71 passed[39m[22m[90m (74)[39m
+[2m   Start at [22m 17:27:19
+[2m   Duration [22m 2.10s[2m (transform 746ms, setup 5.62s, collect 460ms, tests 121ms, environment 6ms, prepare 1.97s)[22m
+
