@@ -1,3 +1,5 @@
+import type { ReactNode } from "react"
+
 import { Badge } from "@/presentation/ui/badge"
 
 /**
@@ -16,6 +18,12 @@ export interface EntityStateBadgeProps {
 
   // Label of the unmatched state.
   unmatchedLabel: string
+
+  // Icon rendered before the matched label.
+  matchedIcon?: ReactNode
+
+  // Icon rendered before the unmatched label.
+  unmatchedIcon?: ReactNode
 }
 
 /**
@@ -63,9 +71,12 @@ function EntityStateBadge({
   matched,
   matchedLabel,
   unmatchedLabel,
+  matchedIcon,
+  unmatchedIcon,
 }: EntityStateBadgeProps) {
   return (
-    <Badge variant={matched ? "default" : "destructive"}>
+    <Badge variant="outline">
+      {matched ? matchedIcon : unmatchedIcon}
       {matched ? matchedLabel : unmatchedLabel}
     </Badge>
   )

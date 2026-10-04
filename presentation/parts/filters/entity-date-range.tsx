@@ -130,7 +130,9 @@ function EntityDateRangeFilter({
           selected={value}
           onSelect={(next) => {
             onChange(next)
-            if (next?.from && next.to) setOpen(false)
+            if (next?.to) {
+              setOpen(false)
+            }
           }}
           numberOfMonths={numberOfMonths}
           disabled={isDateDisabled}

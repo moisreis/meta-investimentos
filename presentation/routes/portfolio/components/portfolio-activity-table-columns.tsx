@@ -36,7 +36,7 @@ import { PORTFOLIO_ACTIVITY } from "../settings/labels.settings"
  *   unknown-valued defs, and only the framework `any` bridges
  *   the differing accessor value types of a single list.
  *
- * @author Moisés Reis
+ * @author MoisAcs Reis
  *
  * @date 2026-09-28
  */
@@ -58,46 +58,10 @@ export function CreatePortfolioActivityColumns(
           matched={getValue() === "application"}
           matchedLabel={PORTFOLIO_ACTIVITY.TYPE_APPLICATION}
           unmatchedLabel={PORTFOLIO_ACTIVITY.TYPE_WITHDRAWAL}
+          matchedIcon={PORTFOLIO_ACTIVITY.TYPE_APPLICATION_ICON}
+          unmatchedIcon={PORTFOLIO_ACTIVITY.TYPE_WITHDRAWAL_ICON}
         />
       ),
-    }),
-
-    columnHelper.accessor("fundName", {
-      id: "fund",
-      header: PORTFOLIO_ACTIVITY.COLUMN_FUND,
-      size: 240,
-      meta: { fluid: true },
-      enableSorting: false,
-      cell: (info) => (
-        <EntityLookupCell
-          title={info.getValue()}
-          subtitle={info.row.original.bankName}
-        />
-      ),
-    }),
-
-    columnHelper.accessor("date", {
-      id: "date",
-      header: PORTFOLIO_ACTIVITY.COLUMN_DATE,
-      size: 130,
-      meta: { fluid: true },
-      cell: (info) => FormatDate(info.getValue()),
-    }),
-
-    columnHelper.accessor("amount", {
-      id: "amount",
-      header: PORTFOLIO_ACTIVITY.COLUMN_AMOUNT,
-      size: 150,
-      meta: { align: "end", fluid: true },
-      cell: (info) => FormatCurrency(info.getValue()),
-    }),
-
-    columnHelper.accessor("quotas", {
-      id: "quotas",
-      header: PORTFOLIO_ACTIVITY.COLUMN_QUOTAS,
-      size: 150,
-      meta: { align: "end", fluid: true },
-      cell: (info) => FormatQuotaQuantity(info.getValue()),
     }),
   ]
 }

@@ -1,27 +1,18 @@
+import { redirect } from "next/navigation"
+
 /**
  * @summary
- * Keeps the root page without rendered content.
+ * Redirects the root page to the portfolio list.
  *
  * @remarks
- * The root route has no application entry point.
- * Main and authentication flows use dedicated routes.
+ * The application landing is the portfolio list.
  *
- * @explanation
- * This page exists to keep the root route intentionally empty.
- * The application starts from `/main` or authentication routes.
- * Use those routes for the main and authentication entry points.
- *
- * @returns No rendered content.
- *
- * @example
- * export default function RootPage() {
- *   return null;
- * }
+ * @returns A redirect to /portfolio.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-13
+ * @date 2026-10-03
  */
 export default function RootPage() {
-  return null
+  redirect("/portfolio")
 }

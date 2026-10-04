@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 
 import {
+  IconBook2,
   IconBuildingBank,
   IconCategory,
   IconChartDonut,
@@ -10,7 +11,7 @@ import {
   IconCoin,
   IconCreditCard,
   IconFileAnalytics,
-  IconLayoutDashboard,
+  IconHistory,
   IconLogs,
   IconPigMoney,
   IconUsers,
@@ -30,7 +31,6 @@ import {
 
 // Icons resolved per navigation href.
 const SIDEBAR_ICONS: Record<string, ReactNode> = {
-  "/main": <IconLayoutDashboard />,
   "/portfolio": <IconWallet />,
   "/position": <IconChartDonut />,
   "/application": <IconCircleArrowUp />,
@@ -38,6 +38,9 @@ const SIDEBAR_ICONS: Record<string, ReactNode> = {
   "/statement": <IconFileAnalytics />,
   "/portfolio-performance": <IconWallet />,
   "/position-performance": <IconCoin />,
+  "/benchmark": <IconBook2 />,
+  "/norm": <IconCategory />,
+  "/benchmark-history": <IconHistory />,
   "/bank": <IconBuildingBank />,
   "/bank-account": <IconPigMoney />,
   "/checking-account": <IconCreditCard />,

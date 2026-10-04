@@ -39,10 +39,10 @@ export const MAIN_NAVIGATION: MainNavigationGroup[] = [
   {
     label: "Referências",
     items: [
-      { label: "Benchmarks", href: "/benchmark" },
+      { label: "Índices", href: "/benchmark" },
       { label: "Normas", href: "/norm" },
       {
-        label: "Histórico de Benchmarks",
+        label: "Histórico de índices",
         href: "/benchmark-history",
       },
     ],

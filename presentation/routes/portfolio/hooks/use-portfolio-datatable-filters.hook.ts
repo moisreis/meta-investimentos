@@ -141,9 +141,15 @@ function usePortfolioDatatableFilters(
 
     if (!NORMALIZED) return portfolios
 
-    return portfolios.filter((portfolio) =>
-      portfolio.name.toLowerCase().includes(NORMALIZED)
-    )
+    return portfolios.filter((portfolio) => {
+      const nameMatch = portfolio.name
+        .toLowerCase()
+        .includes(NORMALIZED)
+      const acronymMatch = portfolio.acronym
+        .toLowerCase()
+        .includes(NORMALIZED)
+      return nameMatch || acronymMatch
+    })
   }, [portfolios, QUERY])
 
   return {

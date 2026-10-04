@@ -4,10 +4,10 @@ import {
 } from "./main-navigation.settings"
 
 // Fixed href of the dashboard crumb.
-const DASHBOARD_HREF = "/main"
+const DASHBOARD_HREF = "/portfolio"
 
 // Fixed label of the dashboard crumb.
-const DASHBOARD_LABEL = "Painel"
+const DASHBOARD_LABEL = "Carteiras"
 
 // A single breadcrumb trail segment.
 export interface MainBreadcrumbCrumb {

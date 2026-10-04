@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @summary
  * Form copy for the portfolio add/edit screens.
  *
@@ -249,7 +249,7 @@ export const PORTFOLIO_ACTIVITY = {
 
   // Type badges.
   TYPE_APPLICATION: "Aplicação",
-  TYPE_WITHDRAWAL: "Resgate",
+  TYPE_APPLICATION_ICON: (<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M12 5l-7 7M12 5l7 7" /></svg>),
 
   // Empty state of the section.
   EMPTY_TITLE: "Nenhuma movimentação no período",

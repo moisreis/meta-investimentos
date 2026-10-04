@@ -101,7 +101,7 @@ function SharedDatatableSection<TData extends RowData>({
 }: SharedDatatableSectionProps<TData>) {
   return (
     <section
-      className="flex w-full flex-col gap-4 border-b border-border px-4 py-6 last:border-b-0 sm:px-6"
+      className="flex w-full flex-col gap-4 rounded-md border border-border px-4 py-6 sm:px-6"
       aria-labelledby={titleId}
     >
       <div className="flex flex-col gap-1">
