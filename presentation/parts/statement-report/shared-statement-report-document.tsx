@@ -62,7 +62,9 @@ const SUMMARY_TONE: Record<SummaryTone, string> = {
  * summary block (patrimony headline with the chained month
  * return and the reconciliation entries), the positions
  * datatable and the single movements datatable, newest
- * first. Conforms to **PDF/A-2b** so the file is safe to
+ * first. Every page closes with a running footer carrying
+ * the portfolio, the period and the page number over the
+ * total. Conforms to **PDF/A-2b** so the file is safe to
  * archive.
  *
  * @explanation
@@ -93,13 +95,14 @@ export function BuildStatementReportDocument(
       <Page
         size="A4"
         orientation="landscape"
-        style={tw("bg-background p-8 text-foreground")}
+        style={tw("bg-background p-8 pb-16 text-foreground")}
       >
         <Masthead data={data} />
         <SummarySection data={data} />
         <PositionsSection rows={data.positions} />
         <MovementsSection rows={data.movements} />
-        <Footer data={data} />
+        <ClosingNote />
+        <RunningFooter data={data} />
       </Page>
     </Document>
   )
@@ -481,21 +484,59 @@ function MovementsSection(props: {
 }
 
 /**
- * Renders the report footer.
+ * Marks the end of the statement body.
  */
-function Footer(props: {
+function ClosingNote(): ReactElement {
+  return (
+    <Text style={tw("mt-8 text-center text-xs text-subdued")}>
+      {STATEMENT_REPORT_COPY.footer}
+    </Text>
+  )
+}
+
+/**
+ * Builds the "Página X de Y" label of the running footer.
+ */
+function FormatPageLabel(
+  pageNumber: number,
+  totalPages: number
+): string {
+  return `${STATEMENT_REPORT_COPY.pagePrefix} ${pageNumber} ${STATEMENT_REPORT_COPY.pageSeparator} ${totalPages}`
+}
+
+/**
+ * Renders the running footer stamped on every page.
+ *
+ * @remarks
+ * Stays pinned to the bottom margin so a printed or archived
+ * page is never anonymous: it carries the portfolio, the
+ * period and the page number against the total, which
+ * **react-pdf** resolves in a second pass once the page
+ * count is known.
+ */
+function RunningFooter(props: {
   data: StatementReportData
 }): ReactElement {
   const { data: DATA } = props
 
   return (
-    <View style={tw("mt-8 border-t border-border pt-2")}>
-      <Text style={tw("text-center text-xs text-subdued")}>
-        {STATEMENT_REPORT_COPY.footer}
-      </Text>
-      <Text style={tw("mt-1 text-center text-xs text-subdued")}>
+    <View
+      fixed
+      style={tw(
+        "absolute left-8 right-8 bottom-8 flex-row justify-between items-center border-t border-border pt-2"
+      )}
+    >
+      <Text style={tw("text-xs text-subdued")}>
         {`${DATA.portfolio.name} - ${DATA.periodLabel}`}
       </Text>
+      <Text
+        style={tw("text-xs text-subdued")}
+        render={({ pageNumber, totalPages }) => (
+          <Text style={tw("text-xs text-subdued")}>
+            {FormatPageLabel(pageNumber, totalPages)}
+          </Text>
+        )}
+      />
     </View>
   )
 }

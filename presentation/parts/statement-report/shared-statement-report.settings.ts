@@ -79,5 +79,7 @@ export const STATEMENT_REPORT_COPY = {
   typeApplication: "Aplicação",
   typeWithdrawal: "Resgate",
   footer: "Documento gerado pela plataforma.",
+  pagePrefix: "Página",
+  pageSeparator: "de",
   unavailable: "-",
 }
