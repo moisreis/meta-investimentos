@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { CategoryContainer } from "@/presentation/composition/category.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -60,7 +60,12 @@ export async function deleteCategoryAction(
 
     await REMOVE_CATEGORY.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "Category",
+      entityId: PARSED.data.categoryId,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

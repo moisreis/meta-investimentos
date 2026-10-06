@@ -81,7 +81,17 @@ export async function runStatementPdfGenerate(
     LIST_BANKS.execute({}),
   ])
 
-  const HOLDINGS = BuildPortfolioHoldings(WEIGHTS, FUNDS, BANKS)
+  // The statement describes money and custodians, so the
+  // benchmark registry is not loaded here. The holding rows
+  // still carry the index id of each fund; only the resolved
+  // name is left unresolved, and nothing on the statement
+  // reads it.
+  const HOLDINGS = BuildPortfolioHoldings(
+    WEIGHTS,
+    FUNDS,
+    BANKS,
+    []
+  )
   const POSITION_IDS = HOLDINGS.map(
     (holding) => holding.positionId
   )

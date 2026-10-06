@@ -13,6 +13,7 @@ import type {
   EntityTableFeatures,
 } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
+import type { PortfolioActivityRowActionsModel } from "./use-portfolio-activity-row-actions.hook"
 
 import { CreatePortfolioActivityColumns } from "../components/portfolio-activity-table-columns"
 
@@ -48,6 +49,7 @@ interface UsePortfolioActivityTableOutput {
  * picks by swapping the data the hook is called with.
  *
  * @param rows - The activity rows inside the selected window.
+ * @param rowActions - Row actions (reverse) handler.
  *
  * @returns The table instance and the row gate.
  *
@@ -56,11 +58,13 @@ interface UsePortfolioActivityTableOutput {
  * @date 2026-09-28
  */
 function usePortfolioActivityTable(
-  rows: readonly PortfolioActivityRow[]
+  rows: readonly PortfolioActivityRow[],
+  rowActions: PortfolioActivityRowActionsModel
 ): UsePortfolioActivityTableOutput {
   const COLUMNS = useMemo(
-    () => CreatePortfolioActivityColumns(COLUMN_HELPER),
-    []
+    () =>
+      CreatePortfolioActivityColumns(COLUMN_HELPER, rowActions),
+    [rowActions]
   )
 
   const TABLE = useTable({

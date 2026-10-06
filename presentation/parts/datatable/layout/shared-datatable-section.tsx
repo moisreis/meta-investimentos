@@ -48,6 +48,13 @@ export interface SharedDatatableSectionProps<
  * the frame, the heading and the empty swap are the same
  * everywhere, so only the rows and the words differ.
  *
+ * The section itself carries no border, and neither does the
+ * table inside it. A detail screen is a document of blocks, so
+ * boxing a heading, its supporting line and the table together
+ * would turn a block into a card. The cell grid already rules
+ * every seam it needs — the outer edges included — so a frame
+ * around it would double those lines rather than finish them.
+ *
  * An empty section swaps the table for the shared empty
  * state, so a window or a list without movements explains
  * itself instead of presenting an empty frame.
@@ -101,7 +108,7 @@ function SharedDatatableSection<TData extends RowData>({
 }: SharedDatatableSectionProps<TData>) {
   return (
     <section
-      className="flex w-full flex-col gap-4 rounded-md border border-border px-4 py-6 sm:px-6"
+      className="flex w-full flex-col gap-4 px-4 py-6 sm:px-6"
       aria-labelledby={titleId}
     >
       <div className="flex flex-col gap-1">

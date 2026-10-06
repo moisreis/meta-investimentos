@@ -1,5 +1,8 @@
+import {
+  BuildQuotaFundLookups,
+  EMPTY_QUOTA_FUND_LOOKUPS,
+} from "../helpers/build-quota-fund-lookups.helper"
 import { LoadQuotas } from "../helpers/load-quotas.helper"
-import { BuildQuotaFundLookups } from "../helpers/build-quota-fund-lookups.helper"
 import type { QuotaListProps } from "../pages/list"
 
 /**
@@ -30,5 +33,5 @@ export async function LoadQuotaPageProps(): Promise<QuotaListProps> {
     return { data: QUOTAS, lookups: LOOKUPS }
   }
 
-  return { data: null, lookups: { quotas: {} } }
+  return { data: null, lookups: EMPTY_QUOTA_FUND_LOOKUPS }
 }

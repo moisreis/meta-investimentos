@@ -1,5 +1,6 @@
 import { db } from "@/clients/database.client"
 import { BankAccountRepository } from "@/infrastructure/bank-account/repositories/bank-account.repository"
+import { NormsPortfoliosRepository } from "@/infrastructure/norms-portfolio/repositories/norms-portfolios.repository"
 import { PortfolioPerformanceRepository } from "@/infrastructure/portfolio-performance/repositories/portfolio-performance.repository"
 import { PortfolioRepository } from "@/infrastructure/portfolio/repositories/portfolio.repository"
 import { PositionRepository } from "@/infrastructure/position/repositories/position.repository"
@@ -56,6 +57,8 @@ interface PortfolioUseCases {
  */
 function PortfolioContainer(): PortfolioUseCases {
   const REPOSITORY = new PortfolioRepository(db)
+  const NORMS_PORTFOLIOS_REPOSITORY =
+    new NormsPortfoliosRepository(db)
   const PERFORMANCE_REPOSITORY =
     new PortfolioPerformanceRepository(db)
   const POSITION_REPOSITORY = new PositionRepository(db)
@@ -63,7 +66,10 @@ function PortfolioContainer(): PortfolioUseCases {
 
   return {
     bulkDelete: new BulkDeletePortfoliosUseCase(REPOSITORY),
-    create: new CreatePortfolioUseCase(REPOSITORY),
+    create: new CreatePortfolioUseCase(
+      REPOSITORY,
+      NORMS_PORTFOLIOS_REPOSITORY
+    ),
     get: new GetPortfolioUseCase(REPOSITORY),
     list: new ListPortfoliosUseCase(REPOSITORY),
     listPerformances: new ListPortfolioPerformanceUseCase(
@@ -87,7 +93,10 @@ function PortfolioContainer(): PortfolioUseCases {
         REPOSITORY,
         PERFORMANCE_REPOSITORY
       ),
-    update: new UpdatePortfolioUseCase(REPOSITORY),
+    update: new UpdatePortfolioUseCase(
+      REPOSITORY,
+      NORMS_PORTFOLIOS_REPOSITORY
+    ),
   }
 }
 

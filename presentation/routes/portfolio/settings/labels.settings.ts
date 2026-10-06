@@ -1,3 +1,6 @@
+import type { EntityNormAllocationsCopy } from "@/presentation/parts/dialogs/entity-norm-allocations"
+import type { NormPortfolioAllocation } from "@/presentation/types/norms-portfolio.types"
+
 /**
  * @summary
  * Form copy for the portfolio add/edit screens.
@@ -52,7 +55,115 @@ export const PORTFOLIO_FORM = {
   LABEL_TARGET_ALLOCATION: "Alocação alvo",
   // Field label: the maximum allocation.
   LABEL_MAXIMUM_ALLOCATION: "Alocação máxima",
+  // Field label: the norms bound to the portfolio.
+  LABEL_NORMS: "Normas da carteira",
+  // Field description: the norms bound to the portfolio.
+  DESCRIPTION_NORMS:
+    "Associe uma ou mais normas e defina a alocação " +
+    "mínima, alvo e máxima de cada uma.",
 } as const
+
+/**
+ * @summary
+ * Formats the heading of the attached norms of the dialog.
+ *
+ * @param count - How many norms are attached.
+ *
+ * @returns The heading of the attached list.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-04
+ */
+function FormatAttachedNorms(count: number): string {
+  return `Normas da carteira (${count})`
+}
+
+/**
+ * @summary
+ * Formats the heading of the summary under the trigger.
+ *
+ * @param count - How many norms are attached.
+ *
+ * @returns The heading of the summary.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-04
+ */
+function FormatNormSummaryTitle(count: number): string {
+  const NOUN = count === 1 ? "norma" : "normas"
+  const SUFFIX = count === 1 ? "configurada" : "configuradas"
+
+  return `${count} ${NOUN} ${SUFFIX}`
+}
+
+/**
+ * @summary
+ * Formats the three bounds of one attached norm.
+ *
+ * @param row - The allocation the user typed.
+ *
+ * @returns The bounds of the row, in reading order.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-04
+ */
+function FormatNormSummaryBounds(
+  row: NormPortfolioAllocation
+): string {
+  return (
+    `Mín: ${row.minAllocation}% · ` +
+    `Alvo: ${row.targetAllocation}% · ` +
+    `Máx: ${row.maxAllocation}%`
+  )
+}
+
+// Copy of the norm allocations dialog and of the summary the
+// portfolio form shows under its trigger.
+const NORM_ALLOCATIONS = {
+  // Label of the trigger that opens the dialog.
+  TRIGGER_LABEL: "Adicionar normas",
+
+  // Header of the dialog.
+  TITLE: "Adicionar normas",
+  DESCRIPTION:
+    "Selecione uma ou mais normas e defina os intervalos " +
+    "de alocação de cada uma.",
+
+  // Picker that chooses the norm to attach next.
+  SEARCH_PLACEHOLDER: "Buscar norma por nome ou artigo",
+  SEARCH_EMPTY_LABEL: "Nenhuma norma disponível",
+  ADD_LABEL: "Adicionar",
+
+  // Copy of the two empty states of the dialog.
+  EMPTY_TITLE: "Nenhuma norma adicionada",
+  EMPTY_DESCRIPTION:
+    "Busque uma norma acima para vinculá-la à carteira.",
+  EXHAUSTED_LABEL:
+    "Todas as normas disponíveis já estão vinculadas.",
+
+  // Remove affordance of one attached norm.
+  REMOVE_LABEL: "Remover norma",
+
+  // Bound labels inside the dialog.
+  MIN_LABEL: "Alocação mínima",
+  TARGET_LABEL: "Alocação alvo",
+  MAX_LABEL: "Alocação máxima",
+
+  // Qualifier shown under the norm name.
+  ARTICLE_PREFIX: "Art.",
+
+  // Footer actions of the dialog.
+  CANCEL_LABEL: "Cancelar",
+  CONFIRM_LABEL: "Confirmar",
+
+  // The two headings and the row text of the summary.
+  ATTACHED_TITLE: FormatAttachedNorms,
+  SUMMARY_TITLE: FormatNormSummaryTitle,
+  SUMMARY_BOUNDS: FormatNormSummaryBounds,
+} as const satisfies EntityNormAllocationsCopy
 
 // Dialog copy for the portfolio add/edit flows.
 export const PORTFOLIO_DIALOG = {
@@ -212,10 +323,10 @@ export const PORTFOLIO_CHARTS = {
   MOVEMENT_SERIES_CASH_FLOW: "Fluxo líquido",
 } as const
 
-// Chart copy for the by-position and by-bank distributions
-// of the portfolio detail screen.
+// Chart copy for the by-position, by-bank and by-benchmark
+// distributions of the portfolio detail screen.
 export const PORTFOLIO_DISTRIBUTION = {
-  // Series shared by both rings.
+  // Series shared by all three rings.
   SERIES_INVESTED: "Investido",
 
   // By-position distribution.
@@ -229,6 +340,38 @@ export const PORTFOLIO_DISTRIBUTION = {
   BANK_DESCRIPTION:
     "Proporção do valor investido em cada banco custodiente.",
   BANK_CENTER: "Investido",
+
+  // By-benchmark distribution. A benchmark carries no
+  // composition of its own, so the ring is weighted by the
+  // money sitting in the funds measured against each index.
+  BENCHMARK_TITLE: "Distribuição por Índice",
+  BENCHMARK_DESCRIPTION:
+    "Proporção do valor investido em fundos de cada índice de " +
+    "referência.",
+  BENCHMARK_CENTER: "Investido",
+  // Slice holding the funds that track no index at all.
+  UNTRACKED_LABEL: "Sem índice",
+} as const
+
+// Chart copy for the norm allocations of the portfolio detail
+// screen.
+export const PORTFOLIO_NORM = {
+  // The bound the norm itself imposes. The two corridors are
+  // told apart by color, so the labels carry the owner in words
+  // for the legend and the tooltip.
+  SERIES_NORM_MINIMUM: "Mínimo (norma)",
+  SERIES_NORM_TARGET: "Alvo (norma)",
+  SERIES_NORM_MAXIMUM: "Máximo (norma)",
+
+  // The bound the portfolio adopted for that norm.
+  SERIES_PORTFOLIO_MINIMUM: "Mínimo (carteira)",
+  SERIES_PORTFOLIO_TARGET: "Alvo (carteira)",
+  SERIES_PORTFOLIO_MAXIMUM: "Máximo (carteira)",
+
+  TITLE: "Alocação por Norma",
+  DESCRIPTION:
+    "Os limites de cada norma ao lado dos limites que a " +
+    "carteira adotou para ela.",
 } as const
 
 // Datatable copy for the recent activity section of the
@@ -249,7 +392,11 @@ export const PORTFOLIO_ACTIVITY = {
 
   // Type badges.
   TYPE_APPLICATION: "Aplicação",
-  TYPE_APPLICATION_ICON: (<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M12 5l-7 7M12 5l7 7" /></svg>),
+  TYPE_WITHDRAWAL: "Resgate",
+
+  // Row actions menu.
+  ROW_ACTIONS_LABEL: "Ações",
+  ROW_REVERSE_LABEL: "Reverter",
 
   // Empty state of the section.
   EMPTY_TITLE: "Nenhuma movimentação no período",
@@ -284,6 +431,9 @@ export const PORTFOLIO_CHART_SECTIONS = {
 
   // Holdings distribution section.
   DISTRIBUTIONS_TITLE: "Distribuições",
+
+  // Norm allocation section.
+  NORMS_TITLE: "Normas",
 
   // Checking account section.
   CHECKING_TITLE: "Conta corrente",
@@ -354,4 +504,4 @@ export const PORTFOLIO_POSITIONS = {
     "um fundo aplicado.",
 } as const
 
-export { FormatDeletePortfolioDescription }
+export { FormatDeletePortfolioDescription, NORM_ALLOCATIONS }

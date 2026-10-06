@@ -1,6 +1,10 @@
 "use client"
 
 import type { ColumnHelper } from "@tanstack/react-table"
+import {
+  IconCheck,
+  IconRotateClockwise,
+} from "@tabler/icons-react"
 
 import { EntityStateBadge } from "@/presentation/parts/datatable/columns/entity-state-badge"
 import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
@@ -19,9 +23,7 @@ import type { ApplicationRowLookup } from "../types/application-list.types"
 
 export interface ApplicationTableColumnOptions {
   rowFor: (applicationId: string) => ApplicationRowLookup | null
-  onEdit: (application: ApplicationRow) => void
   onReverse: (application: ApplicationRow) => void
-  onDelete: (application: ApplicationRow) => void
 }
 
 /**
@@ -40,9 +42,8 @@ export interface ApplicationTableColumnOptions {
  * quota columns render the decimal strings aligned to
  * the end and the status column turns the reversal
  * state into an `Ativo` or `Estornado` badge. The
- * actions column is pinned to the end and offers edit,
- * reverse and delete actions for each row; the reverse
- * action is only offered while the row is still active,
+ * actions column is pinned to the end and offers the
+ * reverse action while the row is still active,
  * since a reversed application can no longer be
  * reversed again.
  *
@@ -116,6 +117,13 @@ export function CreateApplicationTableColumns(
       cell: (info) => FormatQuotaQuantity(info.getValue()),
     }),
 
+    columnHelper.accessor("quotaValue", {
+      header: APPLICATION_DATATABLE.COLUMN_QUOTA_VALUE,
+      size: 150,
+      meta: { align: "end", fluid: true },
+      cell: (info) => FormatCurrency(info.getValue()),
+    }),
+
     columnHelper.accessor("reversedAt", {
       id: "status",
       header: APPLICATION_DATATABLE.COLUMN_STATUS,
@@ -130,6 +138,10 @@ export function CreateApplicationTableColumns(
           }
           unmatchedLabel={
             APPLICATION_DATATABLE.STATUS_REVERSED_LABEL
+          }
+          matchedIcon={<IconCheck aria-hidden="true" />}
+          unmatchedIcon={
+            <IconRotateClockwise aria-hidden="true" />
           }
         />
       ),
@@ -147,11 +159,6 @@ export function CreateApplicationTableColumns(
         <EntityTableRowMenuDropdown
           label={APPLICATION_DATATABLE.ROW_ACTIONS_LABEL}
           actions={[
-            {
-              key: "edit",
-              label: APPLICATION_DATATABLE.ROW_EDIT_LABEL,
-              onSelect: () => options.onEdit(row.original),
-            },
             ...(row.original.reversedAt
               ? []
               : [
@@ -159,18 +166,10 @@ export function CreateApplicationTableColumns(
                     key: "reverse",
                     label:
                       APPLICATION_DATATABLE.ROW_REVERSE_LABEL,
-                    separatorBefore: true,
                     onSelect: () =>
                       options.onReverse(row.original),
                   },
                 ]),
-            {
-              key: "delete",
-              label: APPLICATION_DATATABLE.ROW_DELETE_LABEL,
-              variant: "destructive",
-              separatorBefore: true,
-              onSelect: () => options.onDelete(row.original),
-            },
           ]}
         />
       ),

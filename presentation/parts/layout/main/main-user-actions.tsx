@@ -1,10 +1,4 @@
 import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-} from "@/presentation/ui/avatar"
-
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -16,9 +10,41 @@ import {
 
 import { Badge } from "@/presentation/ui/badge"
 
+import { SharedUserAvatar } from "@/presentation/parts/components/shared-user-avatar"
+import type { UserIdentity } from "@/presentation/types/user-identity.types"
+
 import { IconSelector } from "@tabler/icons-react"
 
-function MainUserActions() {
+interface MainUserActionsProps {
+  // The signed-in user naming the account menu, or `null`
+  // while the profile cannot be resolved. The menu stays
+  // available either way: signing out has to remain
+  // reachable when the name behind it is missing.
+  user: UserIdentity | null
+}
+
+/**
+ * @summary
+ * Renders the account menu of the sidebar header.
+ *
+ * @remarks
+ * The trigger names the signed-in user through the shared
+ * avatar part, so the picture and the name read the same way
+ * here and on a detail screen. Without a resolved profile the
+ * identity block is dropped and the menu keeps the chevron
+ * alone, which is a quieter shape than a row of placeholder
+ * initials pretending to be a person.
+ *
+ * @param props - Props of the account menu.
+ * @param props.user - The signed-in user, or `null`.
+ *
+ * @returns The account menu.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-05
+ */
+function MainUserActions({ user }: MainUserActionsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -26,16 +52,15 @@ function MainUserActions() {
         nativeButton={false}
         render={
           <div className="flex h-full w-full flex-row items-center justify-between gap-2">
-            <div className="flex flex-row items-center gap-2">
-              <Avatar className="size-5">
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <span className="text-sm font-normal text-foreground">
-                Moisés Reis
-              </span>
-            </div>
-            <IconSelector className="size-4 text-muted-foreground" />
+            {user ? (
+              <SharedUserAvatar
+                firstName={user.firstName}
+                lastName={user.lastName}
+                image={user.image}
+                className="min-w-0 [&>span]:min-w-0 [&>span]:truncate"
+              />
+            ) : null}
+            <IconSelector className="size-4 shrink-0 text-muted-foreground" />
           </div>
         }
       />

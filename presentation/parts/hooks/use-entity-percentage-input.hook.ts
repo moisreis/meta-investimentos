@@ -1,11 +1,17 @@
 "use client"
 
 import * as React from "react"
-import { MaskPercentage } from "@/presentation/masks/percentage.mask"
+import {
+  MaskPercentage,
+  MaskSignedPercentage,
+} from "@/presentation/masks/percentage.mask"
 
 interface UseEntityPercentageInputParams {
   value?: string
   onChange?: (value: string) => void
+  // Keeps the minus sign of a negative value. Set it for a
+  // field whose value is a delta, such as a rate.
+  signed?: boolean
 }
 
 /**
@@ -14,7 +20,8 @@ interface UseEntityPercentageInputParams {
  *
  * @remarks
  * Supports both controlled and uncontrolled modes.
- * Formats input as `0` to `999,99`.
+ * Formats input as `0` to `999,99`, or as `-999,99` to
+ * `999,99` when `signed` is set.
  *
  * @explanation
  * Use inside the percentage input to keep the
@@ -24,6 +31,7 @@ interface UseEntityPercentageInputParams {
  * @param params - Hook arguments.
  * @param params.value - Controlled masked value.
  * @param params.onChange - Called with masked value on change.
+ * @param params.signed - Keeps the sign of a negative value.
  *
  * @returns Value and change handler.
  *
@@ -38,6 +46,7 @@ interface UseEntityPercentageInputParams {
 function useEntityPercentageInput({
   value,
   onChange,
+  signed = false,
 }: UseEntityPercentageInputParams) {
   const [INTERNAL_VALUE, setInternalValue] = React.useState("")
   const IS_CONTROLLED = value !== undefined
@@ -47,7 +56,9 @@ function useEntityPercentageInput({
   function HandleChange(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
-    const MASKED = MaskPercentage(event.target.value)
+    const MASKED = signed
+      ? MaskSignedPercentage(event.target.value)
+      : MaskPercentage(event.target.value)
 
     if (!IS_CONTROLLED) {
       setInternalValue(MASKED)

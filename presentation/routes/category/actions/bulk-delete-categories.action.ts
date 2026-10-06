@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { CategoryContainer } from "@/presentation/composition/category.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -61,7 +61,16 @@ export async function bulkDeleteCategoriesAction(
 
     await BULK_DELETE_CATEGORIES.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "Category",
+      entityId: PARSED.data.categoryIds[0] ?? "",
+      changes: {
+        ids: PARSED.data.categoryIds,
+        count: PARSED.data.categoryIds.length,
+      },
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -64,7 +64,16 @@ export async function bulkDeletePortfoliosAction(
       userId: USER.id,
     })
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "Portfolio",
+      entityId: PARSED.data.portfolioIds[0] ?? "",
+      changes: {
+        ids: PARSED.data.portfolioIds,
+        count: PARSED.data.portfolioIds.length,
+      },
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

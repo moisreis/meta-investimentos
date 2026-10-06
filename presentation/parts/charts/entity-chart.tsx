@@ -26,14 +26,23 @@ import {
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
-  ChartTooltipContent,
 } from "@/presentation/ui/chart"
 
+import { ResolveValueAxisWidth } from "./entity-chart-axis.helper"
 import {
   BuildChartConfig,
   ResolveColumnFill,
   ResolveSeriesColor,
 } from "./entity-chart-colors.helper"
+import {
+  ENTITY_CHART_NO_VALUE,
+  ENTITY_CHART_PLOT_HEIGHT,
+  EntityChartLegend,
+  EntityChartTooltip,
+  EntityChartTooltipRow,
+  ReadTooltipNumber,
+} from "./entity-chart-overlay"
+import { EntityHorizontalBars } from "./entity-horizontal-bars"
 import type {
   EntityChartModel,
   EntityChartPoint,
@@ -44,29 +53,8 @@ import type {
 // sits on the same level as the category label.
 type EntityChartDatum = Record<string, string | number | null>
 
-// Y axis width, in pixels, when the series have no formatter
-// to measure.
-const DEFAULT_Y_AXIS_WIDTH = 56
-
-// Bounds of the width derived from the longest tick label.
-const MIN_Y_AXIS_WIDTH = 48
-const MAX_Y_AXIS_WIDTH = 132
-
-// Approximate width, in pixels, of one character of a tick
-// label at the axis font size.
-const TICK_CHARACTER_WIDTH = 7
-
 // Color of a reference line and of its label.
 const REFERENCE_COLOR = "var(--muted-foreground)"
-
-// Height shared by every chart kind, so a pie and an area
-// card always rise to the same height inside their card.
-// The pie reserves part of this budget for its slice legend.
-const CHART_PLOT_HEIGHT = "h-96"
-
-// Shown when a tooltip entry has no value, instead of
-// letting a raw `null` reach the screen.
-const NO_VALUE_LABEL = "—"
 
 // Outer radius of a pie ring, in pixels. Fixed so the ring
 // fills the same box whatever the number of slices, and a
@@ -266,64 +254,6 @@ function ReadPieCenter(
   return { x: box.cx, y: box.cy }
 }
 
-interface EntityChartSliceLegendItem {
-  color: string
-  label: string
-}
-
-interface EntityChartSliceLegendProps {
-  items: readonly EntityChartSliceLegendItem[]
-}
-
-/**
- * @summary
- * Renders the category axis a pie chart cannot draw.
- *
- * @remarks
- * A ring has no axis, so the slice names would otherwise
- * exist only inside the tooltip and the ring would answer
- * "how is it split" without ever saying "into what". The
- * names are rendered from the same slice list the ring is
- * drawn from, in the same order and with the same colors, so
- * a legend entry can never describe a slice that is not
- * there. It flows onto as many lines as the slice count
- * needs instead of clipping a long institution name.
- *
- * @param props - Props of the slice legend.
- * @param props.items - The slice names and their colors,
- *     in slice order.
- *
- * @returns The slice legend.
- *
- * @author Moisés Reis
- *
- * @date 2026-09-28
- */
-function EntityChartSliceLegend({
-  items,
-}: EntityChartSliceLegendProps) {
-  if (items.length === 0) return null
-
-  return (
-    <ul className="flex w-full flex-wrap items-start justify-center gap-x-4 gap-y-1.5 pt-1">
-      {items.map((item) => (
-        <li
-          key={item.label}
-          className="flex max-w-full min-w-0 items-center gap-1.5"
-        >
-          <span
-            className="size-2.5 shrink-0 rounded-[2px]"
-            style={{ backgroundColor: item.color }}
-          />
-          <span className="truncate text-muted-foreground">
-            {item.label}
-          </span>
-        </li>
-      ))}
-    </ul>
-  )
-}
-
 /**
  * @summary
  * Flattens the chart points into the rows recharts reads.
@@ -352,137 +282,6 @@ export function FlattenChartPoints(
     label: point.label,
     ...point.values,
   }))
-}
-
-/**
- * @summary
- * Derives the vertical axis width from the tick labels.
- *
- * @remarks
- * Measures the longest label the first series can produce
- * over the plotted values, so a currency axis is not clipped
- * and a percentage axis is not padded. Falls back to the
- * default width when the series exposes no formatter or the
- * first series never plots a value.
- *
- * @param series - The first series of the chart, which owns
- *   the axis labels.
- * @param points - The points of the chart.
- *
- * @returns The axis width, in pixels.
- *
- * @example
- * const WIDTH = ResolveYAxisWidth(SERIES[0], POINTS);
- *
- * @author Moisés Reis
- *
- * @date 2026-09-28
- */
-export function ResolveYAxisWidth(
-  series: EntityChartSeries | undefined,
-  points: readonly EntityChartPoint[]
-): number {
-  const FORMAT = series?.formatTick ?? series?.formatValue
-  if (!series || !FORMAT) return DEFAULT_Y_AXIS_WIDTH
-
-  const LONGEST = points.reduce((longest, point) => {
-    const VALUE = point.values[series.key]
-    if (VALUE === null || VALUE === undefined) return longest
-    return Math.max(longest, FORMAT(VALUE).length)
-  }, 0)
-
-  if (LONGEST === 0) return DEFAULT_Y_AXIS_WIDTH
-
-  return Math.min(
-    Math.max(
-      LONGEST * TICK_CHARACTER_WIDTH + 12,
-      MIN_Y_AXIS_WIDTH
-    ),
-    MAX_Y_AXIS_WIDTH
-  )
-}
-
-/**
- * @summary
- * Reads a tooltip value as a number, or `null` when the
- * point has no value at that series.
- *
- * @remarks
- * Recharts types a tooltip value as a union that also covers
- * a missing entry, so the payload is narrowed here once
- * instead of at every formatter.
- *
- * @param value - The raw tooltip value, which recharts
- *   types as a union that also covers a missing entry and a
- *   multi-value range.
- *
- * @returns The value, or `null` when absent or unparsable.
- *
- * @example
- * const AMOUNT = ReadTooltipNumber(VALUE);
- *
- * @author Moisés Reis
- *
- * @date 2026-09-28
- */
-export function ReadTooltipNumber(
-  value: TooltipValueType | null | undefined
-): number | null {
-  if (value === null || value === undefined) return null
-  if (typeof value !== "number" && typeof value !== "string")
-    return null
-
-  const PARSED =
-    typeof value === "number" ? value : Number.parseFloat(value)
-
-  return Number.isFinite(PARSED) ? PARSED : null
-}
-
-interface EntityChartTooltipRowProps {
-  color: string
-  label: string
-  value: string
-}
-
-/**
- * @summary
- * Renders a single formatted row of a chart tooltip.
- *
- * @remarks
- * Replaces the raw recharts row, which prints the unformatted
- * number, with a colored dot, the series label and the value
- * the series itself formats. Reused by every chart kind.
- *
- * @param props - Props of the tooltip row.
- * @param props.color - Color of the series dot.
- * @param props.label - Label of the series.
- * @param props.value - Formatted value of the point.
- *
- * @returns The tooltip row.
- *
- * @author Moisés Reis
- *
- * @date 2026-09-28
- */
-function EntityChartTooltipRow({
-  color,
-  label,
-  value,
-}: EntityChartTooltipRowProps) {
-  return (
-    <div className="flex w-full items-center justify-between gap-4">
-      <div className="flex items-center gap-2">
-        <div
-          className="size-2.5 shrink-0 rounded-[2px]"
-          style={{ backgroundColor: color }}
-        />
-        <span className="text-muted-foreground">{label}</span>
-      </div>
-      <span className="font-mono font-medium text-foreground tabular-nums">
-        {value}
-      </span>
-    </div>
-  )
 }
 
 /**
@@ -564,7 +363,7 @@ function EntityChartPieTooltip({
             label={NAME}
             value={
               NUMBER === null
-                ? NO_VALUE_LABEL
+                ? ENTITY_CHART_NO_VALUE
                 : series.formatValue(NUMBER)
             }
           />
@@ -640,23 +439,12 @@ function EntityChart({ model }: EntityChartProps) {
     [model.points]
   )
 
-  const SERIES_BY_KEY = React.useMemo(
-    () =>
-      new Map(
-        model.series.map((series, index) => [
-          series.key,
-          { series, index },
-        ])
-      ),
-    [model.series]
-  )
-
   if (model.points.length === 0) return null
 
   const AXIS_SERIES = model.series[0]
   const FORMAT_TICK =
     AXIS_SERIES?.formatTick ?? AXIS_SERIES?.formatValue
-  const Y_AXIS_WIDTH = ResolveYAxisWidth(
+  const Y_AXIS_WIDTH = ResolveValueAxisWidth(
     AXIS_SERIES,
     model.points
   )
@@ -704,114 +492,91 @@ function EntityChart({ model }: EntityChartProps) {
     />
   ))
 
-  const TOOLTIP = (
-    <ChartTooltip
-      content={
-        <ChartTooltipContent
-          indicator="dot"
-          formatter={(value, name) => {
-            const ENTRY = SERIES_BY_KEY.get(String(name))
-            const NUMBER = ReadTooltipNumber(value)
+  const TOOLTIP = <EntityChartTooltip series={model.series} />
 
-            return (
-              <EntityChartTooltipRow
-                color={
-                  ENTRY
-                    ? ResolveSeriesColor(ENTRY.index)
-                    : REFERENCE_COLOR
-                }
-                label={ENTRY?.series.label ?? String(name)}
-                value={
-                  NUMBER === null
-                    ? NO_VALUE_LABEL
-                    : (ENTRY?.series.formatValue(NUMBER) ??
-                      NO_VALUE_LABEL)
-                }
-              />
-            )
-          }}
-        />
-      }
-    />
-  )
-
-  const LEGEND =
-    model.series.length > 1 ? (
-      <ChartLegend content={<ChartLegendContent />} />
-    ) : null
+  const LEGEND = <EntityChartLegend series={model.series} />
 
   if (model.kind === "pie") {
     const SLICES = BuildPieSlices(AXIS_SERIES, model.points)
     const TOTAL = SumPieSlices(SLICES)
 
+    const LEGEND_ITEMS = SLICES.map((slice, index) => ({
+      key: slice.name,
+      name: slice.name,
+      color: ResolveSeriesColor(index),
+      value: String(slice.value),
+      payload: {
+        fill: ResolveSeriesColor(index),
+        value: String(slice.value),
+      },
+    }))
+
     return (
-      <div
+      <ChartContainer
+        id={model.id}
+        config={CONFIG}
         className={cn(
-          "flex w-full flex-col gap-2",
-          CHART_PLOT_HEIGHT
+          "aspect-auto w-full",
+          ENTITY_CHART_PLOT_HEIGHT
         )}
       >
-        <ChartContainer
-          id={model.id}
-          config={CONFIG}
-          className="aspect-auto min-h-0 w-full flex-1"
+        <PieChart
+          margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
         >
-          <PieChart
-            margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
+          <Pie
+            data={SLICES}
+            dataKey="value"
+            nameKey="name"
+            innerRadius={PIE_INNER_RADIUS}
+            outerRadius={PIE_OUTER_RADIUS}
+            startAngle={90}
+            endAngle={-PIE_TOTAL_ANGLE}
+            paddingAngle={2}
+            strokeWidth={0}
+            isAnimationActive={false}
           >
-            <Pie
-              data={SLICES}
-              dataKey="value"
-              nameKey="name"
-              innerRadius={PIE_INNER_RADIUS}
-              outerRadius={PIE_OUTER_RADIUS}
-              startAngle={90}
-              endAngle={-PIE_TOTAL_ANGLE}
-              paddingAngle={2}
-              strokeWidth={0}
-              isAnimationActive={false}
-            >
-              {SLICES.map((slice, index) => (
-                <Cell
-                  key={`${model.id}-${slice.name}-${index}`}
-                  fill={ResolveSeriesColor(index)}
-                />
-              ))}
-
-              <Label
-                position="center"
-                content={({ viewBox }) => (
-                  <PieCenterTotal
-                    center={ReadPieCenter(viewBox)}
-                    total={
-                      AXIS_SERIES
-                        ? AXIS_SERIES.formatValue(TOTAL)
-                        : NO_VALUE_LABEL
-                    }
-                    label={model.centerLabel}
-                  />
-                )}
+            {SLICES.map((slice, index) => (
+              <Cell
+                key={`${model.id}-${slice.name}-${index}`}
+                fill={ResolveSeriesColor(index)}
               />
-            </Pie>
+            ))}
 
-            <ChartTooltip
-              content={
-                <EntityChartPieTooltip
-                  slices={SLICES}
-                  series={AXIS_SERIES}
+            <Label
+              position="center"
+              content={({ viewBox }) => (
+                <PieCenterTotal
+                  center={ReadPieCenter(viewBox)}
+                  total={
+                    AXIS_SERIES
+                      ? AXIS_SERIES.formatValue(TOTAL)
+                      : ENTITY_CHART_NO_VALUE
+                  }
+                  label={model.centerLabel}
                 />
-              }
+              )}
             />
-          </PieChart>
-        </ChartContainer>
+          </Pie>
 
-        <EntityChartSliceLegend
-          items={SLICES.map((slice, index) => ({
-            color: ResolveSeriesColor(index),
-            label: slice.name,
-          }))}
-        />
-      </div>
+          <ChartTooltip
+            content={
+              <EntityChartPieTooltip
+                slices={SLICES}
+                series={AXIS_SERIES}
+              />
+            }
+          />
+
+          <ChartLegend
+            content={
+              <ChartLegendContent
+                payload={LEGEND_ITEMS}
+                verticalAlign="bottom"
+              />
+            }
+          />
+        </PieChart>
+      </ChartContainer>
     )
   }
 
@@ -820,7 +585,10 @@ function EntityChart({ model }: EntityChartProps) {
       <ChartContainer
         id={model.id}
         config={CONFIG}
-        className={cn("aspect-auto w-full", CHART_PLOT_HEIGHT)}
+        className={cn(
+          "aspect-auto w-full",
+          ENTITY_CHART_PLOT_HEIGHT
+        )}
       >
         <BarChart
           data={DATA}
@@ -833,7 +601,7 @@ function EntityChart({ model }: EntityChartProps) {
               key={series.key}
               dataKey={series.key}
               name={series.key}
-              fill={ResolveSeriesColor(index)}
+              fill={ResolveSeriesColor(index, series)}
               maxBarSize={28}
               radius={[4, 4, 0, 0]}
             >
@@ -856,12 +624,19 @@ function EntityChart({ model }: EntityChartProps) {
     )
   }
 
+  if (model.kind === "horizontal-bar") {
+    return <EntityHorizontalBars model={model} />
+  }
+
   if (model.kind === "line") {
     return (
       <ChartContainer
         id={model.id}
         config={CONFIG}
-        className={cn("aspect-auto w-full", CHART_PLOT_HEIGHT)}
+        className={cn(
+          "aspect-auto w-full",
+          ENTITY_CHART_PLOT_HEIGHT
+        )}
       >
         <LineChart
           data={DATA}
@@ -875,7 +650,7 @@ function EntityChart({ model }: EntityChartProps) {
               type="monotone"
               dataKey={series.key}
               name={series.key}
-              stroke={ResolveSeriesColor(index)}
+              stroke={ResolveSeriesColor(index, series)}
               strokeWidth={2}
               dot={false}
               activeDot={{ r: 4 }}
@@ -893,7 +668,10 @@ function EntityChart({ model }: EntityChartProps) {
     <ChartContainer
       id={model.id}
       config={CONFIG}
-      className={cn("aspect-auto w-full", CHART_PLOT_HEIGHT)}
+      className={cn(
+        "aspect-auto w-full",
+        ENTITY_CHART_PLOT_HEIGHT
+      )}
     >
       <AreaChart
         data={DATA}
@@ -909,12 +687,12 @@ function EntityChart({ model }: EntityChartProps) {
           >
             <stop
               offset="5%"
-              stopColor={ResolveSeriesColor(0)}
+              stopColor={ResolveSeriesColor(0, AXIS_SERIES)}
               stopOpacity={0.35}
             />
             <stop
               offset="95%"
-              stopColor={ResolveSeriesColor(0)}
+              stopColor={ResolveSeriesColor(0, AXIS_SERIES)}
               stopOpacity={0.02}
             />
           </linearGradient>
@@ -928,7 +706,7 @@ function EntityChart({ model }: EntityChartProps) {
             type="monotone"
             dataKey={series.key}
             name={series.key}
-            stroke={ResolveSeriesColor(index)}
+            stroke={ResolveSeriesColor(index, series)}
             strokeWidth={2}
             fill={index === 0 ? `url(#${GRADIENT_ID})` : "none"}
             fillOpacity={1}

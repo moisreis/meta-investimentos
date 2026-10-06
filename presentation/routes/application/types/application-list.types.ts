@@ -23,6 +23,8 @@ export interface ApplicationRowLookup {
   fundName: string
   // Fund cnpj shown as the row subtitle.
   fundCnpj: string
+  // Quota value used to create the application.
+  quotaValue: string
 }
 
 // Lookups consumed by the application datatable.

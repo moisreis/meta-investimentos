@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { CategoryContainer } from "@/presentation/composition/category.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -60,7 +60,13 @@ export async function updateCategoryAction(
     const { update: UPDATE_CATEGORY } = CategoryContainer()
     const CATEGORY = await UPDATE_CATEGORY.execute(PARSED.data)
 
-    return ActionSuccess(CATEGORY)
+    return ActionAudited(CATEGORY, {
+      userId: USER.id,
+      action: "UPDATED",
+      entity: "Category",
+      entityId: CATEGORY.id,
+      entityName: CATEGORY.name,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

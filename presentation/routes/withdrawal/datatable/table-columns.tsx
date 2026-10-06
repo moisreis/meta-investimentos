@@ -1,6 +1,10 @@
 "use client"
 
 import type { ColumnHelper } from "@tanstack/react-table"
+import {
+  IconCheck,
+  IconRotateClockwise,
+} from "@tabler/icons-react"
 
 import { EntityStateBadge } from "@/presentation/parts/datatable/columns/entity-state-badge"
 import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
@@ -19,9 +23,7 @@ import type { WithdrawalRowLookup } from "../types/withdrawal-list.types"
 
 export interface WithdrawalTableColumnOptions {
   rowFor: (withdrawalId: string) => WithdrawalRowLookup | null
-  onEdit: (withdrawal: WithdrawalRow) => void
   onReverse: (withdrawal: WithdrawalRow) => void
-  onDelete: (withdrawal: WithdrawalRow) => void
 }
 
 /**
@@ -40,9 +42,8 @@ export interface WithdrawalTableColumnOptions {
  * quota columns render the decimal strings aligned to
  * the end and the status column turns the reversal
  * state into an `Ativo` or `Estornado` badge. The
- * actions column is pinned to the end and offers edit,
- * reverse and delete actions for each row; the reverse
- * action is only offered while the row is still active,
+ * actions column is pinned to the end and offers the
+ * reverse action while the row is still active,
  * since a reversed withdrawal can no longer be
  * reversed again.
  *
@@ -113,6 +114,13 @@ export function CreateWithdrawalTableColumns(
       cell: (info) => FormatQuotaQuantity(info.getValue()),
     }),
 
+    columnHelper.accessor("quotaValue", {
+      header: WITHDRAWAL_DATATABLE.COLUMN_QUOTA_VALUE,
+      size: 150,
+      meta: { align: "end", fluid: true },
+      cell: (info) => FormatCurrency(info.getValue()),
+    }),
+
     columnHelper.accessor("reversedAt", {
       id: "status",
       header: WITHDRAWAL_DATATABLE.COLUMN_STATUS,
@@ -125,6 +133,10 @@ export function CreateWithdrawalTableColumns(
           matchedLabel={WITHDRAWAL_DATATABLE.STATUS_ACTIVE_LABEL}
           unmatchedLabel={
             WITHDRAWAL_DATATABLE.STATUS_REVERSED_LABEL
+          }
+          matchedIcon={<IconCheck aria-hidden="true" />}
+          unmatchedIcon={
+            <IconRotateClockwise aria-hidden="true" />
           }
         />
       ),
@@ -142,11 +154,6 @@ export function CreateWithdrawalTableColumns(
         <EntityTableRowMenuDropdown
           label={WITHDRAWAL_DATATABLE.ROW_ACTIONS_LABEL}
           actions={[
-            {
-              key: "edit",
-              label: WITHDRAWAL_DATATABLE.ROW_EDIT_LABEL,
-              onSelect: () => options.onEdit(row.original),
-            },
             ...(row.original.reversedAt
               ? []
               : [
@@ -154,18 +161,10 @@ export function CreateWithdrawalTableColumns(
                     key: "reverse",
                     label:
                       WITHDRAWAL_DATATABLE.ROW_REVERSE_LABEL,
-                    separatorBefore: true,
                     onSelect: () =>
                       options.onReverse(row.original),
                   },
                 ]),
-            {
-              key: "delete",
-              label: WITHDRAWAL_DATATABLE.ROW_DELETE_LABEL,
-              variant: "destructive",
-              separatorBefore: true,
-              onSelect: () => options.onDelete(row.original),
-            },
           ]}
         />
       ),

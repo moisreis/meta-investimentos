@@ -8,12 +8,14 @@ import {
   type ActionResult,
 } from "@/presentation/presenters/action-result.presenter"
 
+import { useSharedAuditNotification } from "@/presentation/parts/hooks/use-shared-audit-notification.hook"
+
 type EntityFormStatus =
   "idle" | "attempting" | "success" | "error"
 
 interface UseEntityFormOptions<
   TSchema extends z.ZodTypeAny,
-  TValues extends Record<string, string>,
+  TValues extends Record<string, unknown>,
 > {
   schema: TSchema
   initialValues: TValues
@@ -46,10 +48,15 @@ function ToFirstFieldErrors(
  *
  * @remarks
  * Holds arbitrary string-keyed field values, error, pending,
- * status and per-field error state. Validates with **Zod**
- * before calling the given submit function. Re-validates a
- * field as it changes after an invalid attempt. On success,
- * sets the status to `success` so callers can react.
+ * status and per-field error state. A field may hold any value
+ * the schema accepts, so a form that edits a collection of rows
+ * keeps it in its own state like any other field. Validates
+ * with **Zod** before calling the given submit function.
+ * Re-validates a field as it changes after an invalid attempt.
+ * On success, sets the status to `success` so callers can react
+ * and raises the header notification from the audit payload the
+ * action returned, so a saved change announces itself without
+ * the caller having to say anything.
  *
  * The action is the security boundary, so its field errors
  * are rendered exactly like the client ones: a server
@@ -81,12 +88,13 @@ function ToFirstFieldErrors(
  */
 function useEntityForm<
   TSchema extends z.ZodTypeAny,
-  TValues extends Record<string, string>,
+  TValues extends Record<string, unknown>,
 >({
   schema,
   initialValues,
   submit,
 }: UseEntityFormOptions<TSchema, TValues>) {
+  const NOTIFY = useSharedAuditNotification()
   const [VALUES, setValues] =
     React.useState<TValues>(initialValues)
   const [ERROR, setError] = React.useState<string | null>(null)
@@ -149,7 +157,10 @@ function useEntityForm<
    *
    * @date 2026-09-24
    */
-  function UpdateField(key: keyof TValues, value: string) {
+  function UpdateField(
+    key: keyof TValues,
+    value: TValues[keyof TValues]
+  ) {
     const NEXT_VALUES = { ...VALUES, [key]: value }
 
     setValues(NEXT_VALUES)
@@ -164,7 +175,8 @@ function useEntityForm<
    * Validates with the schema and calls `submit`. Reports
    * the action outcome: a failure message goes to the
    * form-level alert and its field messages, when the
-   * action reports any, go to the matching inputs.
+   * action reports any, go to the matching inputs. A success
+   * announces the recorded act in the header notification.
    *
    * @explanation
    * Use as the form submit handler. It renders errors
@@ -211,6 +223,7 @@ function useEntityForm<
       const RESULT = await submit(PARSED.data as TValues)
 
       if (RESULT.success) {
+        NOTIFY(RESULT.audit)
         setStatus("success")
         return
       }

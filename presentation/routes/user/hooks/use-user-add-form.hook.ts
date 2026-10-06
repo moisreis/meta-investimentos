@@ -49,6 +49,7 @@ function useUserAddForm() {
       lastName: "",
       cpf: "",
       role: "",
+      image: "",
     },
     submit: (values) => createUserAction(values),
   })
@@ -68,6 +69,9 @@ function useUserAddForm() {
     updateCpf: (value: string) => updateField("cpf", value),
     role: VALUES.role,
     updateRole: (value: string) => updateField("role", value),
+    image: VALUES.image ?? "",
+    updateImage: (value: string | null) =>
+      updateField("image", value ?? ""),
     error: ERROR,
     pending: PENDING,
     status: STATUS,

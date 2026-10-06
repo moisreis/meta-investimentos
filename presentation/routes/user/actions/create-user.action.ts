@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { UserContainer } from "@/presentation/composition/user.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -64,9 +64,20 @@ export async function createUserAction(
   try {
     const { create: CREATE_USER } = UserContainer()
 
-    await CREATE_USER.execute(PARSED.data)
+    const CREATED_USER = await CREATE_USER.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "CREATED",
+      entity: "User",
+      entityId: CREATED_USER.id,
+      entityName: CREATED_USER.name,
+      changes: {
+        name: PARSED.data.name,
+        email: PARSED.data.email,
+        role: PARSED.data.role,
+      },
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

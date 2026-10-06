@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { WithdrawalContainer } from "@/presentation/composition/withdrawal.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -60,7 +60,12 @@ export async function deleteWithdrawalAction(
 
     await DELETE_WITHDRAWAL.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "Withdrawal",
+      entityId: PARSED.data.withdrawalId,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

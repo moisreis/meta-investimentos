@@ -1,13 +1,19 @@
-import { Button } from "@/presentation/ui/button"
-import { IconBell } from "@tabler/icons-react"
+import { NotificationsDropdown } from "./main-notifications-dropdown"
 
+/**
+ * @summary
+ * Mounts the notifications bell in the header.
+ *
+ * @remarks
+ * A thin wrapper so the header names the slot rather than the
+ * dropdown it happens to render today.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-09-27
+ */
 function MainNotificationsToggle() {
-  return (
-    <Button variant="ghost" size="icon" className="relative">
-      <IconBell />
-      <div className="absolute right-1 bottom-1 h-2 w-2 rounded-full bg-green-600"></div>
-    </Button>
-  )
+  return <NotificationsDropdown />
 }
 
 export { MainNotificationsToggle }

@@ -41,7 +41,7 @@ export const FUND_FORM = {
   FIELD_ADMINISTRATION_FEE: "Taxa de administração",
   FIELD_PERFORMANCE_FEE: "Taxa de performance",
   FIELD_BANK: "Banco",
-  FIELD_BENCHMARK: "Benchmark",
+  FIELD_BENCHMARK: "Índice",
   FIELD_CATEGORY: "Categoria",
 
   // Field descriptions.
@@ -53,7 +53,7 @@ export const FUND_FORM = {
 
   // Select placeholders.
   PLACEHOLDER_BANK: "Selecione o banco",
-  PLACEHOLDER_BENCHMARK: "Sem benchmark",
+  PLACEHOLDER_BENCHMARK: "Sem índice",
   PLACEHOLDER_CATEGORY: "Sem categoria",
 
   // Registry combobox empty copy.
@@ -87,7 +87,7 @@ export const FUND_DATATABLE = {
   COLUMN_ADMINISTRATION_FEE: "Taxa Adm.",
   COLUMN_PERFORMANCE_FEE: "Taxa Perf.",
   COLUMN_BANK: "Banco",
-  COLUMN_BENCHMARK: "Benchmark",
+  COLUMN_BENCHMARK: "Índice",
   COLUMN_CATEGORY: "Categoria",
 
   // Toolbar filter copy.
@@ -174,7 +174,7 @@ export const FUND_DETAIL = {
 
   // Ledger entry labels, in reading order.
   ENTRY_BANK: "Banco",
-  ENTRY_BENCHMARK: "Benchmark",
+  ENTRY_BENCHMARK: "Índice",
   ENTRY_CATEGORY: "Categoria",
   ENTRY_ADMINISTRATION_FEE: "Taxa de administração",
   ENTRY_PERFORMANCE_FEE: "Taxa de performance",

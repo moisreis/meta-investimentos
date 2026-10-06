@@ -8,6 +8,7 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { ENTITY_TABLE_DEFAULT_PAGE_SIZE } from "@/presentation/parts/datatable/settings/entity-table-labels.settings"
 import type { PositionRow } from "@/presentation/types/position-row.types"
 
 import { CreatePositionTableColumns } from "../datatable/table-columns"
@@ -29,7 +30,7 @@ const COLUMN_HELPER = createColumnHelper<
  * Creates the shared table instance used by the
  * datatable and the pagination, wiring the portfolio and
  * fund name resolution into the column definitions. The
- * pagination starts at ten rows per page; it is seeded
+ * pagination starts at twenty rows per page; it is seeded
  * through `initialState` so the slice stays mutable.
  *
  * @param positions - The rows rendered by the table.
@@ -68,7 +69,10 @@ function usePositionDatatable(
     data: positions,
     getRowId: (row) => row.id,
     initialState: {
-      pagination: { pageIndex: 0, pageSize: 10 },
+      pagination: {
+        pageIndex: 0,
+        pageSize: ENTITY_TABLE_DEFAULT_PAGE_SIZE,
+      },
     },
   })
 

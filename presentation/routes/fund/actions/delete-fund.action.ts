@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { FundContainer } from "@/presentation/composition/fund.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -58,7 +58,12 @@ export async function deleteFundAction(
 
     await REMOVE_FUND.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "Fund",
+      entityId: PARSED.data.fundId,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

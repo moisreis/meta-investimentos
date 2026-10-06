@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { BankAccountContainer } from "@/presentation/composition/bank-account.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -62,7 +62,16 @@ export async function bulkDeleteBankAccountsAction(
 
     await BULK_DELETE_BANK_ACCOUNTS.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "BankAccount",
+      entityId: PARSED.data.bankAccountIds[0] ?? "",
+      changes: {
+        ids: PARSED.data.bankAccountIds,
+        count: PARSED.data.bankAccountIds.length,
+      },
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

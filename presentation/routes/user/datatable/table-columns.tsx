@@ -1,6 +1,12 @@
 "use client"
 
 import type { ColumnHelper } from "@tanstack/react-table"
+import {
+  IconMail,
+  IconMailOff,
+  IconUser,
+  IconUsers,
+} from "@tabler/icons-react"
 
 import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import { EntityStateBadge } from "@/presentation/parts/datatable/columns/entity-state-badge"
@@ -14,7 +20,6 @@ import {
   USER_EMAIL_VERIFIED_LABELS,
   USER_ROLE_LABELS,
 } from "@/presentation/routes/user/settings/labels.settings"
-import type { UserRole } from "@/lib/auth/user-role"
 import type { UserRow } from "@/presentation/types/user-row.types"
 
 export interface UserTableColumnOptions {
@@ -57,6 +62,8 @@ export function CreateUserTableColumns(
         <EntityLookupCell
           title={info.row.original.name}
           subtitle={info.row.original.email}
+          showAvatar
+          image={info.row.original.image}
         />
       ),
     }),
@@ -74,8 +81,15 @@ export function CreateUserTableColumns(
       header: USER_DATATABLE.COLUMN_ROLE,
       size: 120,
       meta: { fluid: true },
-      cell: (info) =>
-        USER_ROLE_LABELS[info.getValue() as UserRole],
+      cell: ({ getValue }) => (
+        <EntityStateBadge
+          matched={getValue() === "MANAGER"}
+          matchedLabel={USER_ROLE_LABELS.MANAGER}
+          unmatchedLabel={USER_ROLE_LABELS.USER}
+          matchedIcon={<IconUsers aria-hidden="true" />}
+          unmatchedIcon={<IconUser aria-hidden="true" />}
+        />
+      ),
     }),
 
     columnHelper.accessor("emailVerified", {
@@ -88,6 +102,8 @@ export function CreateUserTableColumns(
           matched={getValue()}
           matchedLabel={USER_EMAIL_VERIFIED_LABELS.YES}
           unmatchedLabel={USER_EMAIL_VERIFIED_LABELS.NO}
+          matchedIcon={<IconMail aria-hidden="true" />}
+          unmatchedIcon={<IconMailOff aria-hidden="true" />}
         />
       ),
     }),

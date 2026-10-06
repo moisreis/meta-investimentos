@@ -9,6 +9,7 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { ENTITY_TABLE_DEFAULT_PAGE_SIZE } from "@/presentation/parts/datatable/settings/entity-table-labels.settings"
 import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { FundRow } from "@/presentation/types/fund-row.types"
@@ -34,7 +35,7 @@ const COLUMN_HELPER: ColumnHelper<EntityTableFeatures, FundRow> =
  * toolbar, the datatable and the pagination, wiring
  * the row actions, the add/edit dialogs and the bulk
  * delete flow into the column definitions.
- * The pagination starts at ten rows per page; it is
+ * The pagination starts at twenty rows per page; it is
  * seeded through `initialState` so the slice stays
  * mutable — the `state` option would treat it as
  * controlled and ignore every page and page-size
@@ -113,7 +114,10 @@ function useFundDatatable(
     data: funds,
     getRowId: (row) => row.id,
     initialState: {
-      pagination: { pageIndex: 0, pageSize: 10 },
+      pagination: {
+        pageIndex: 0,
+        pageSize: ENTITY_TABLE_DEFAULT_PAGE_SIZE,
+      },
     },
   })
 

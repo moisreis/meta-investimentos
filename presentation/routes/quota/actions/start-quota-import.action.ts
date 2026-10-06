@@ -1,9 +1,9 @@
 "use server"
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -77,7 +77,12 @@ export async function startQuotaImportAction(
 
     void runQuotaImportJob(JOB_ID, PLAN)
 
-    return ActionSuccess(JOB_ID)
+    return ActionAudited(JOB_ID, {
+      userId: USER.id,
+      action: "IMPORTED",
+      entity: "Quota",
+      entityId: JOB_ID,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

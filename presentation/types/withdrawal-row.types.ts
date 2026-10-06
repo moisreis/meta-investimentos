@@ -26,6 +26,8 @@ export interface WithdrawalRow {
   date: string
   amount: string
   quotas: string
+  // Quota value used to redeem the withdrawal.
+  quotaValue: string
   // Null while the withdrawal has not been reversed.
   reversedAt: string | null
 }

@@ -24,6 +24,8 @@ export interface ApplicationResponseDTO {
   date: string
   amount: string
   quotas: string
+  // Quota value used to create the application.
+  quotaValue: string
   // Null while the application has not been reversed.
   reversedAt: string | null
   reversedByUserId: string | null

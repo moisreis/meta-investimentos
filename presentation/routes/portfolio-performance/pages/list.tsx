@@ -19,6 +19,7 @@ import { usePortfolioPerformanceCalculation } from "../hooks/use-portfolio-perfo
 import { usePortfolioPerformanceDatatable } from "../hooks/use-portfolio-performance-datatable.hook"
 import { usePortfolioPerformanceDatatableFilters } from "../hooks/use-portfolio-performance-datatable-filters.hook"
 import { usePortfolioPerformanceKpis } from "../hooks/use-portfolio-performance-kpis.hook"
+import { useSharedCommandOpen } from "@/presentation/parts/hooks/use-shared-command-open.hook"
 import { PORTFOLIO_PERFORMANCE_EMPTY } from "../settings/labels.settings"
 import type { PortfolioPerformanceLookups } from "../types/portfolio-performance-list.types"
 
@@ -71,6 +72,14 @@ function PortfolioPerformanceList({
     performances: PERFORMANCES,
   })
   const calculation = usePortfolioPerformanceCalculation()
+
+  // The shell reaches this flow without naming it: Ctrl+P and
+  // the palette row both land on the same command id, and
+  // this page opens the confirm dialog when it sees it.
+  useSharedCommandOpen(
+    "calculate-performance",
+    calculation.handleOpenConfirm
+  )
 
   return (
     <>

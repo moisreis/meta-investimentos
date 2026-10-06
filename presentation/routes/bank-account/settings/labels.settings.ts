@@ -37,7 +37,7 @@ export const BANK_ACCOUNT_FORM = {
 
   // Field labels.
   FIELD_PORTFOLIO: "Carteira",
-  FIELD_BANK: "Banco",
+  FIELD_BANK: "Nome do banco",
   FIELD_AGENCY: "Agência",
   FIELD_ACCOUNT_NUMBER: "Conta",
 

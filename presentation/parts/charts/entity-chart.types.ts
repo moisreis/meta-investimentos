@@ -27,11 +27,21 @@
  * has no axis at all, so it can express a share of a whole
  * without inventing an order the data does not have.
  *
+ * `horizontal-bar` is the same geometry as `bar` with the
+ * axes swapped, so the categories run down the left and the
+ * values run across the bottom. It exists because a category
+ * label is words and a value label is a number: laid out
+ * vertically, a long norm name is truncated on a category
+ * axis that has to share its width with the numbers beside
+ * it, while laid out horizontally the words get a column of
+ * their own and the numbers get the whole width of the card.
+ *
  * @author Moisés Reis
  *
  * @date 2026-09-28
  */
-export type EntityChartKind = "area" | "line" | "bar" | "pie"
+export type EntityChartKind =
+  "area" | "line" | "bar" | "horizontal-bar" | "pie"
 
 /**
  * @summary
@@ -42,6 +52,14 @@ export type EntityChartKind = "area" | "line" | "bar" | "pie"
  * it must be stable across renders. `tone: "sign"` colors
  * each column by the sign of its own value, which is what
  * makes a gain or a loss readable at a glance.
+ *
+ * `color` overrides the palette, which is what lets a chart
+ * carry more series than the ramp has steps without two of
+ * them sharing a swatch. A series that names a color keeps it
+ * everywhere it appears — the column, the legend swatch and
+ * the tooltip dot — so the three can never disagree. It wins
+ * over `tone`, because a series that states its own color is
+ * not asking to be recolored by its own values.
  *
  * A `pie` chart reads only the first series: its points are
  * the slices, so a second series would have no axis and no
@@ -69,6 +87,10 @@ export interface EntityChartSeries {
   // When `"sign"`, columns take a positive and a negative
   // color derived from the value of each point.
   tone?: "default" | "sign"
+  // Color of the series, overriding the palette ramp. Any CSS
+  // color works, so a chart can pair a solid bar with a
+  // translucent one that says the same thing more quietly.
+  color?: string
 }
 
 /**

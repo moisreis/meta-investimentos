@@ -25,6 +25,15 @@ export interface EntitySearchFilterProps {
  * icon. The leading addon focuses the input when clicked
  * and the input reports every change up to the caller.
  *
+ * The icon states its own size rather than inheriting the
+ * one `InputGroupText` would give it. The group is as tall
+ * as a default button, and a default button draws its icon
+ * at `size-3.5`; the inherited `size-4` would put a 16px
+ * glyph next to the 14px glyphs of the toolbar actions and
+ * leave one row carrying two icon scales. Naming the size
+ * also opts the icon out of the group rule, which is written
+ * to stand aside whenever an icon states a size of its own.
+ *
  * @param props - The filter contract.
  * @param props.value - The current query.
  * @param props.onChange - Reports the next query.
@@ -47,7 +56,7 @@ function EntitySearchFilter({
     <InputGroup className="w-52 border-none">
       <InputGroupAddon align="inline-start">
         <InputGroupText aria-hidden="true">
-          <IconSearch />
+          <IconSearch className="size-3.5" />
         </InputGroupText>
       </InputGroupAddon>
       <InputGroupInput

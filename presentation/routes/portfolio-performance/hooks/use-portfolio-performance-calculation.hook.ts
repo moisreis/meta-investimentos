@@ -6,6 +6,8 @@ import type { DateRange } from "react-day-picker"
 
 import { ToDayKey } from "@/lib/date/day-key"
 
+import { useSharedAuditNotification } from "@/presentation/parts/hooks/use-shared-audit-notification.hook"
+
 import { PORTFOLIO_PERFORMANCE_ALL_PORTFOLIOS_VALUE } from "../settings/labels.settings"
 import { PORTFOLIO_PERFORMANCE_CALCULATE } from "../settings/labels.settings"
 
@@ -24,9 +26,12 @@ const CALCULATION_POLL_INTERVAL_MS = 750
  * Owns the confirm dialog state, the selected portfolio,
  * the selected period, the start action request and the
  * progress polling loop that reads the job snapshot until
- * it reaches a terminal status. Refreshes the router
- * after a successful calculation so the datatable
- * reflects the new rows.
+ * it reaches a terminal status. The start request announces
+ * itself in the header notification as soon as it is
+ * accepted, before the long calculation finishes, so the
+ * user is told the job started rather than left wondering.
+ * Refreshes the router after a successful calculation so the
+ * datatable reflects the new rows.
  *
  * `defaultPortfolioId` preselects a portfolio instead of the
  * aggregated option, so a screen that already shows one
@@ -51,6 +56,7 @@ function usePortfolioPerformanceCalculation(
   defaultPortfolioId: string | null = null
 ) {
   const ROUTER = useRouter()
+  const NOTIFY = useSharedAuditNotification()
 
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [portfolioId, setPortfolioId] = useState<string>(
@@ -140,6 +146,7 @@ function usePortfolioPerformanceCalculation(
         return
       }
 
+      NOTIFY(RESULT.audit)
       setJobId(RESULT.data)
       setJob(null)
       setConfirmOpen(false)
@@ -147,7 +154,7 @@ function usePortfolioPerformanceCalculation(
     } finally {
       setStarting(false)
     }
-  }, [portfolioId, dateRange])
+  }, [portfolioId, dateRange, NOTIFY])
 
   useEffect(() => {
     if (!jobId) return

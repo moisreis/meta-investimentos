@@ -8,9 +8,11 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { ENTITY_TABLE_DEFAULT_PAGE_SIZE } from "@/presentation/parts/datatable/settings/entity-table-labels.settings"
 import type { StatementRow } from "@/presentation/types/statement-row.types"
 
 import { CreateStatementTableColumns } from "../datatable/table-columns"
+import { useSharedCommandOpen } from "@/presentation/parts/hooks/use-shared-command-open.hook"
 import { useStatementBulkDelete } from "./use-statement-bulk-delete.hook"
 import { useStatementGenerateDialog } from "./use-statement-generate-dialog.hook"
 import { useStatementRowActions } from "./use-statement-row-actions.hook"
@@ -51,6 +53,14 @@ function useStatementDatatable(
   const bulkDelete = useStatementBulkDelete()
   const generateDialog = useStatementGenerateDialog()
 
+  // The shell reaches this dialog without naming it: Ctrl+S and
+  // the palette row both land on `?command=generate-statement`,
+  // and this screen opens itself when it sees its own id.
+  useSharedCommandOpen(
+    "generate-statement",
+    generateDialog.handleOpen
+  )
+
   const summaryFor = useCallback(
     (statementId: string) => summaries?.[statementId] ?? null,
     [summaries]
@@ -73,7 +83,10 @@ function useStatementDatatable(
     getRowId: (row) => row.id,
     initialState: {
       sorting: [{ id: "period", desc: true }],
-      pagination: { pageIndex: 0, pageSize: 10 },
+      pagination: {
+        pageIndex: 0,
+        pageSize: ENTITY_TABLE_DEFAULT_PAGE_SIZE,
+      },
     },
   })
 

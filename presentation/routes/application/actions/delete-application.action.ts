@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { ApplicationContainer } from "@/presentation/composition/application.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -60,7 +60,12 @@ export async function deleteApplicationAction(
 
     await DELETE_APPLICATION.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "Application",
+      entityId: PARSED.data.applicationId,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

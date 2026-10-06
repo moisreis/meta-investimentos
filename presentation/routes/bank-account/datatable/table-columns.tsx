@@ -7,7 +7,7 @@ import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-
 import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import { FormatCount } from "@/presentation/presenters/count.presenter"
+import { FormatCountOrDash } from "@/presentation/presenters/count.presenter"
 import { FormatBankLookup } from "@/presentation/presenters/lookup.presenter"
 import { BANK_ACCOUNT_DATATABLE } from "@/presentation/routes/bank-account/settings/labels.settings"
 import type { BankAccountRow } from "@/presentation/types/bank-account-row.types"
@@ -109,7 +109,7 @@ export function CreateBankAccountTableColumns(
         header: BANK_ACCOUNT_DATATABLE.COLUMN_CHECKING_COUNT,
         size: 110,
         meta: { align: "end", fluid: true },
-        cell: (info) => FormatCount(info.getValue()),
+        cell: (info) => FormatCountOrDash(info.getValue()),
       }
     ),
 

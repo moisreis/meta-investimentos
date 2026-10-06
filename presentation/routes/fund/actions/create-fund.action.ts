@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { FundContainer } from "@/presentation/composition/fund.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -61,7 +61,13 @@ export async function createFundAction(
     const { create: CREATE_FUND } = FundContainer()
     const FUND = await CREATE_FUND.execute(PARSED.data)
 
-    return ActionSuccess(FUND)
+    return ActionAudited(FUND, {
+      userId: USER.id,
+      action: "CREATED",
+      entity: "Fund",
+      entityId: FUND.id,
+      entityName: FUND.name,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

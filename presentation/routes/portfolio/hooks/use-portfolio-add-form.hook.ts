@@ -4,6 +4,8 @@ import { UnmaskPercentage } from "@/presentation/masks/percentage.mask"
 import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { createPortfolioAction } from "@/presentation/routes/portfolio/actions/create-portfolio.action"
 import { PORTFOLIO_FORM_SCHEMA } from "@/presentation/routes/portfolio/validations/portfolio-form.validation"
+import { ToNormAllocationInput } from "@/presentation/mappers/norm-portfolio-allocation.mapper"
+import type { NormPortfolioAllocation } from "@/presentation/types/norms-portfolio.types"
 
 /**
  * @summary
@@ -13,7 +15,9 @@ import { PORTFOLIO_FORM_SCHEMA } from "@/presentation/routes/portfolio/validatio
  * @remarks
  * Wraps `useEntityForm` with the portfolio schema and the
  * create portfolio server action, unmasking the percentage
- * fields before they are sent.
+ * fields before they are sent. The norm bounds are
+ * unmasked the same way, because a masked comma would
+ * otherwise reach `SignedPercentage.create` as NaN.
  *
  * @explanation
  * Use inside the add portfolio form to keep the component
@@ -50,6 +54,7 @@ function usePortfolioAddForm() {
       minAllocation: "",
       maxAllocation: "",
       targetAllocation: "",
+      norms: [] as NormPortfolioAllocation[],
     },
     submit: (values) =>
       createPortfolioAction({
@@ -63,6 +68,7 @@ function usePortfolioAddForm() {
         targetAllocation: UnmaskPercentage(
           values.targetAllocation
         ),
+        norms: values.norms.map(ToNormAllocationInput),
       }),
   })
 
@@ -84,6 +90,9 @@ function usePortfolioAddForm() {
     targetAllocation: VALUES.targetAllocation,
     updateTargetAllocation: (value: string) =>
       updateField("targetAllocation", value),
+    norms: VALUES.norms,
+    updateNorms: (value: NormPortfolioAllocation[]) =>
+      updateField("norms", value),
     error: ERROR,
     pending: PENDING,
     status: STATUS,

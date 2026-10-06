@@ -8,6 +8,7 @@ import {
   PORTFOLIO_DIALOG,
   PORTFOLIO_FORM,
 } from "@/presentation/routes/portfolio/settings/labels.settings"
+import type { NormOptionRegistry } from "@/presentation/types/norms-portfolio.types"
 
 import { PortfolioAddAnotherDialog } from "./add-another"
 
@@ -16,6 +17,7 @@ import { PortfolioAddAnotherDialog } from "./add-another"
  */
 export interface PortfolioAddDialogProps {
   dialog: EntityAddDialogModel
+  norms: NormOptionRegistry | null
 }
 
 /**
@@ -31,6 +33,7 @@ export interface PortfolioAddDialogProps {
  *
  * @param props - Props of the portfolio add dialog.
  * @param props.dialog - The add dialog flow state.
+ * @param props.norms - The norms the form may attach.
  *
  * @returns The portfolio add dialog flow.
  *
@@ -40,6 +43,7 @@ export interface PortfolioAddDialogProps {
  */
 function PortfolioAddDialog({
   dialog,
+  norms,
 }: PortfolioAddDialogProps) {
   return (
     <>
@@ -52,6 +56,7 @@ function PortfolioAddDialog({
         <AddPortfolioForm
           key={dialog.formKey}
           onStatusChange={dialog.handleStatusChange}
+          normOptions={norms?.options ?? []}
         />
       </EntityAddDialog>
 

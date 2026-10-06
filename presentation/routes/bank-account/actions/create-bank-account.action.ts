@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { BankAccountContainer } from "@/presentation/composition/bank-account.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -67,7 +67,12 @@ export async function createBankAccountAction(
       PARSED.data
     )
 
-    return ActionSuccess(BANK_ACCOUNT)
+    return ActionAudited(BANK_ACCOUNT, {
+      userId: USER.id,
+      action: "CREATED",
+      entity: "BankAccount",
+      entityId: BANK_ACCOUNT.id,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

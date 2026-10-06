@@ -9,8 +9,10 @@ import {
 import { UpdatePortfolioUseCase } from "@/services/portfolio/use-cases/update-portfolio.use-case"
 import { NotFoundError } from "@errors/not-found.error"
 import { createFakePortfolioRepository } from "__tests__/__setup__/_fakes.setup"
+import { createFakeNormsPortfoliosRepository } from "__tests__/__setup__/_fakes.setup"
 import {
   buildEntityId,
+  buildNormsPortfolios,
   buildPortfolio,
 } from "__tests__/__setup__/_factories.setup"
 import {
@@ -24,10 +26,15 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
   let portfolioRepository: ReturnType<
     typeof createFakePortfolioRepository
   >
+  let normsPortfoliosRepository: ReturnType<
+    typeof createFakeNormsPortfoliosRepository
+  >
 
   beforeEach(() => {
     useFixedClock()
     portfolioRepository = createFakePortfolioRepository()
+    normsPortfoliosRepository =
+      createFakeNormsPortfoliosRepository()
   })
 
   afterEach(() => {
@@ -40,7 +47,8 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         buildPortfolio({ id: buildEntityId(ID) })
       )
       const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository
+        portfolioRepository,
+        normsPortfoliosRepository
       )
 
       const response = await useCase.execute({
@@ -60,7 +68,8 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         buildPortfolio({ id: buildEntityId(ID) })
       )
       const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository
+        portfolioRepository,
+        normsPortfoliosRepository
       )
 
       const response = await useCase.execute({
@@ -80,7 +89,8 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         buildPortfolio({ id: buildEntityId(ID) })
       )
       const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository
+        portfolioRepository,
+        normsPortfoliosRepository
       )
 
       const response = await useCase.execute({
@@ -97,7 +107,8 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         buildPortfolio({ id: buildEntityId(ID) })
       )
       const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository
+        portfolioRepository,
+        normsPortfoliosRepository
       )
 
       const response = await useCase.execute({
@@ -115,7 +126,8 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         buildPortfolio({ id: buildEntityId(ID) })
       )
       const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository
+        portfolioRepository,
+        normsPortfoliosRepository
       )
 
       const response = await useCase.execute({
@@ -133,7 +145,8 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         buildPortfolio({ id: buildEntityId(ID) })
       )
       const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository
+        portfolioRepository,
+        normsPortfoliosRepository
       )
 
       const response = await useCase.execute({
@@ -151,7 +164,8 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         buildPortfolio({ id: buildEntityId(ID) })
       )
       const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository
+        portfolioRepository,
+        normsPortfoliosRepository
       )
 
       const response = await useCase.execute({
@@ -171,7 +185,8 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         buildPortfolio({ id: buildEntityId(ID) })
       )
       const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository
+        portfolioRepository,
+        normsPortfoliosRepository
       )
 
       const response = await useCase.execute({
@@ -196,7 +211,8 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         })
       )
       const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository
+        portfolioRepository,
+        normsPortfoliosRepository
       )
 
       const response = await useCase.execute({
@@ -210,7 +226,8 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
 
     it("should throw NotFoundError when the portfolio does not exist", async () => {
       const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository
+        portfolioRepository,
+        normsPortfoliosRepository
       )
 
       await expect(
@@ -226,7 +243,8 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         })
       )
       const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository
+        portfolioRepository,
+        normsPortfoliosRepository
       )
 
       await expect(
@@ -247,7 +265,8 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         })
       )
       const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository
+        portfolioRepository,
+        normsPortfoliosRepository
       )
 
       await expect(
@@ -262,6 +281,217 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         (await portfolioRepository.findById(buildEntityId(ID)))
           ?.name
       ).toBe("Original")
+    })
+  })
+
+  describe("execute with norms", () => {
+    it("should attach a relation per submitted norm when the payload carries norms", async () => {
+      const saved = await portfolioRepository.save(
+        buildPortfolio({ id: buildEntityId(ID) })
+      )
+      const useCase = new UpdatePortfolioUseCase(
+        portfolioRepository,
+        normsPortfoliosRepository
+      )
+
+      await useCase.execute({
+        portfolioId: saved.id!,
+        norms: [
+          {
+            normId: "norm-1",
+            minAllocation: "5",
+            targetAllocation: "10",
+            maxAllocation: "15",
+          },
+          {
+            normId: "norm-2",
+            minAllocation: "0",
+            targetAllocation: "50",
+            maxAllocation: "60",
+          },
+        ],
+      })
+
+      const stored =
+        await normsPortfoliosRepository.findAllByPortfolioId(
+          buildEntityId(ID)
+        )
+
+      expect(stored.length).toBe(2)
+    })
+
+    it("should re-bound a kept relation instead of recreating it", async () => {
+      const saved = await portfolioRepository.save(
+        buildPortfolio({ id: buildEntityId(ID) })
+      )
+      const original = await normsPortfoliosRepository.save(
+        buildNormsPortfolios({
+          normId: buildEntityId("norm-1"),
+          portfolioId: buildEntityId(ID),
+        })
+      )
+      const useCase = new UpdatePortfolioUseCase(
+        portfolioRepository,
+        normsPortfoliosRepository
+      )
+
+      await useCase.execute({
+        portfolioId: saved.id!,
+        norms: [
+          {
+            normId: "norm-1",
+            minAllocation: "8",
+            targetAllocation: "9",
+            maxAllocation: "11",
+          },
+        ],
+      })
+
+      const stored =
+        await normsPortfoliosRepository.findByNormIdAndPortfolioId(
+          buildEntityId("norm-1"),
+          buildEntityId(ID)
+        )
+
+      expect(stored?.minAllocation.value.toString()).toBe("8")
+      expect(stored?.targetAllocation.value.toString()).toBe("9")
+      expect(stored?.maxAllocation.value.toString()).toBe("11")
+      expect(stored?.createdAt).toStrictEqual(original.createdAt)
+    })
+
+    it("should detach a relation the user removed from the portfolio", async () => {
+      const saved = await portfolioRepository.save(
+        buildPortfolio({ id: buildEntityId(ID) })
+      )
+      await normsPortfoliosRepository.save(
+        buildNormsPortfolios({
+          normId: buildEntityId("norm-1"),
+          portfolioId: buildEntityId(ID),
+        })
+      )
+      await normsPortfoliosRepository.save(
+        buildNormsPortfolios({
+          normId: buildEntityId("norm-2"),
+          portfolioId: buildEntityId(ID),
+        })
+      )
+      const useCase = new UpdatePortfolioUseCase(
+        portfolioRepository,
+        normsPortfoliosRepository
+      )
+
+      await useCase.execute({
+        portfolioId: saved.id!,
+        norms: [
+          {
+            normId: "norm-2",
+            minAllocation: "0",
+            targetAllocation: "50",
+            maxAllocation: "60",
+          },
+        ],
+      })
+
+      const detached =
+        await normsPortfoliosRepository.findByNormIdAndPortfolioId(
+          buildEntityId("norm-1"),
+          buildEntityId(ID)
+        )
+      const kept =
+        await normsPortfoliosRepository.findByNormIdAndPortfolioId(
+          buildEntityId("norm-2"),
+          buildEntityId(ID)
+        )
+
+      expect(detached).toBeNull()
+      expect(kept).not.toBeNull()
+    })
+
+    it("should keep every relation when the payload omits the norms", async () => {
+      const saved = await portfolioRepository.save(
+        buildPortfolio({ id: buildEntityId(ID) })
+      )
+      await normsPortfoliosRepository.save(
+        buildNormsPortfolios({
+          normId: buildEntityId("norm-1"),
+          portfolioId: buildEntityId(ID),
+        })
+      )
+      const useCase = new UpdatePortfolioUseCase(
+        portfolioRepository,
+        normsPortfoliosRepository
+      )
+
+      await useCase.execute({
+        portfolioId: saved.id!,
+        name: "Renamed",
+      })
+
+      const stored =
+        await normsPortfoliosRepository.findAllByPortfolioId(
+          buildEntityId(ID)
+        )
+
+      expect(stored.length).toBe(1)
+    })
+
+    it("should drop every relation when the payload submits an empty norm list", async () => {
+      const saved = await portfolioRepository.save(
+        buildPortfolio({ id: buildEntityId(ID) })
+      )
+      await normsPortfoliosRepository.save(
+        buildNormsPortfolios({
+          normId: buildEntityId("norm-1"),
+          portfolioId: buildEntityId(ID),
+        })
+      )
+      const useCase = new UpdatePortfolioUseCase(
+        portfolioRepository,
+        normsPortfoliosRepository
+      )
+
+      await useCase.execute({
+        portfolioId: saved.id!,
+        norms: [],
+      })
+
+      const stored =
+        await normsPortfoliosRepository.findAllByPortfolioId(
+          buildEntityId(ID)
+        )
+
+      expect(stored.length).toBe(0)
+    })
+
+    it("should leave no relation behind when a submitted range breaks the entity rule", async () => {
+      const saved = await portfolioRepository.save(
+        buildPortfolio({ id: buildEntityId(ID) })
+      )
+      const useCase = new UpdatePortfolioUseCase(
+        portfolioRepository,
+        normsPortfoliosRepository
+      )
+
+      await expect(
+        useCase.execute({
+          portfolioId: saved.id!,
+          norms: [
+            {
+              normId: "norm-1",
+              minAllocation: "50",
+              targetAllocation: "10",
+              maxAllocation: "15",
+            },
+          ],
+        })
+      ).rejects.toThrow()
+
+      const stored =
+        await normsPortfoliosRepository.findAllByPortfolioId(
+          buildEntityId(ID)
+        )
+
+      expect(stored.length).toBe(0)
     })
   })
 })

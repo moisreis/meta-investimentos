@@ -105,3 +105,60 @@ export function FormatSignedPercentage(
 
   return PARSED > 0 ? `+ ${FORMATTED}` : FORMATTED
 }
+
+/**
+ * @summary
+ * Formats a percentage without a sign, keeping zero.
+ *
+ * @remarks
+ * `FormatSignedPercentage` prefixes a positive value with a
+ * sign, which is what a chart series wants when a bar going
+ * up and a bar going down are two different facts. An
+ * allocation bound is not a delta: a minimum of 0% is not a
+ * loss and a target of 10% is not a gain, so the sign would
+ * state a direction the data does not have. On a value axis
+ * it would also repeat on every tick of a series that can only
+ * move one way.
+ *
+ * `FormatPercentage` is no better here, because it swaps a
+ * zero for the fallback and a bound of zero is exactly the
+ * value a reader needs to see.
+ *
+ * @explanation
+ * Use this function for the ticks and tooltips of a series
+ * that cannot go negative, such as an allocation minimum,
+ * target and maximum.
+ *
+ * @param value - The raw percentage in percent units.
+ *
+ * @returns The percentage string, or the fallback when the
+ *   value is nil or unparsable.
+ *
+ * @example
+ * const PERCENT = FormatUnsignedPercentage(0);
+ * // returns "0,00%"
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-05
+ */
+export function FormatUnsignedPercentage(
+  value: string | number | null | undefined
+): string {
+  const PARSED =
+    typeof value === "string" ? Number.parseFloat(value) : value
+
+  if (
+    PARSED === null ||
+    PARSED === undefined ||
+    !Number.isFinite(PARSED)
+  ) {
+    return PRESENTER_FALLBACK
+  }
+
+  return new Intl.NumberFormat("pt-BR", {
+    style: "percent",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(PARSED / 100)
+}

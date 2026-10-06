@@ -323,6 +323,152 @@ export class NormsPortfolios {
   }
 
   // ---------------------------------
+  // MUTATIONS
+  // ---------------------------------
+
+  /**
+   * @summary
+   * Updates the allocation bounds of this norm-portfolio relation.
+   *
+   * @remarks
+   * Returns new NormsPortfolios with updated bounds.
+   * Enforces min <= target <= max.
+   *
+   * @explanation
+   * Use to change allocation constraints.
+   * Original instance unchanged.
+   *
+   * @param minAllocation - New minimum SignedPercentage.
+   * @param targetAllocation - New target SignedPercentage.
+   * @param maxAllocation - New maximum SignedPercentage.
+   *
+   * @returns New allocation bounds.
+   *
+   * @example
+   * const UPDATED = relation.updateAllocation(
+   *   SignedPercentage.create("3"),
+   *   SignedPercentage.create("10"),
+   *   SignedPercentage.create("25"),
+   * );
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-10-04
+   */
+  public updateAllocation(
+    minAllocation: SignedPercentage,
+    targetAllocation: SignedPercentage,
+    maxAllocation: SignedPercentage
+  ): NormsPortfolios {
+    if (!minAllocation) {
+      throw new ValidationError(
+        "`NormsPortfolios` must have a minimum allocation."
+      )
+    }
+    if (!targetAllocation) {
+      throw new ValidationError(
+        "`NormsPortfolios` must have a target allocation."
+      )
+    }
+    if (!maxAllocation) {
+      throw new ValidationError(
+        "`NormsPortfolios` must have a maximum allocation."
+      )
+    }
+    if (minAllocation.value.gt(targetAllocation.value)) {
+      throw new ValidationError(
+        "`NormsPortfolios` minimum allocation must not exceed target allocation."
+      )
+    }
+    if (targetAllocation.value.gt(maxAllocation.value)) {
+      throw new ValidationError(
+        "`NormsPortfolios` target allocation must not exceed maximum allocation."
+      )
+    }
+
+    return new NormsPortfolios(
+      {
+        ...this.props,
+        minAllocation,
+        targetAllocation,
+        maxAllocation,
+      },
+      this._id
+    )
+  }
+
+  /**
+   * @summary
+   * Updates the mutable fields of this norm-portfolio relation.
+   *
+   * @remarks
+   * Only provided fields changed; ordering re-validated.
+   *
+   * @explanation
+   * Returns new NormsPortfolios instance with updated fields.
+   * Original unchanged.
+   *
+   * @param options - Fields to update.
+   *
+   * @returns Updated NormsPortfolios.
+   *
+   * @example
+   * const UPDATED = relation.update({
+   *   minAllocation: SignedPercentage.create("3"),
+   * });
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-10-04
+   */
+  public update(options: {
+    minAllocation?: SignedPercentage
+    maxAllocation?: SignedPercentage
+    targetAllocation?: SignedPercentage
+  }): NormsPortfolios {
+    const MIN = options.minAllocation ?? this.props.minAllocation
+    const MAX = options.maxAllocation ?? this.props.maxAllocation
+    const TARGET =
+      options.targetAllocation ?? this.props.targetAllocation
+
+    if (!MIN) {
+      throw new ValidationError(
+        "`NormsPortfolios` must have a minimum allocation."
+      )
+    }
+    if (!MAX) {
+      throw new ValidationError(
+        "`NormsPortfolios` must have a maximum allocation."
+      )
+    }
+    if (!TARGET) {
+      throw new ValidationError(
+        "`NormsPortfolios` must have a target allocation."
+      )
+    }
+    if (MIN.value.gt(TARGET.value)) {
+      throw new ValidationError(
+        "`NormsPortfolios` minimum allocation must not exceed target allocation."
+      )
+    }
+    if (TARGET.value.gt(MAX.value)) {
+      throw new ValidationError(
+        "`NormsPortfolios` target allocation must not exceed maximum allocation."
+      )
+    }
+
+    return new NormsPortfolios(
+      {
+        ...this.props,
+        minAllocation: MIN,
+        maxAllocation: MAX,
+        targetAllocation: TARGET,
+      },
+      this._id
+    )
+  }
+
+  // ---------------------------------
   // COMPARISON
   // ---------------------------------
 

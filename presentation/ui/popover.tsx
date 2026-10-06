@@ -8,15 +8,8 @@ function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />
 }
 
-function PopoverTrigger({
-  ...props
-}: PopoverPrimitive.Trigger.Props) {
-  return (
-    <PopoverPrimitive.Trigger
-      data-slot="popover-trigger"
-      {...props}
-    />
-  )
+function PopoverTrigger({ ...props }: PopoverPrimitive.Trigger.Props) {
+  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
 }
 
 function PopoverContent({
@@ -53,10 +46,7 @@ function PopoverContent({
   )
 }
 
-function PopoverHeader({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="popover-header"
@@ -66,10 +56,7 @@ function PopoverHeader({
   )
 }
 
-function PopoverTitle({
-  className,
-  ...props
-}: PopoverPrimitive.Title.Props) {
+function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
   return (
     <PopoverPrimitive.Title
       data-slot="popover-title"

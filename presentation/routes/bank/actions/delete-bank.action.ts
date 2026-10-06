@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { BankContainer } from "@/presentation/composition/bank.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -58,7 +58,12 @@ export async function deleteBankAction(
 
     await REMOVE_BANK.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "Bank",
+      entityId: PARSED.data.bankId,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

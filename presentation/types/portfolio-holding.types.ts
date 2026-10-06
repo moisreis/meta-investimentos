@@ -3,10 +3,11 @@
  * A holding of a portfolio, resolved down to its custodian.
  *
  * @remarks
- * Joins the three registries a distribution needs into one
+ * Joins the four registries a distribution needs into one
  * flat record: the money a position holds, the fund that
- * position is invested in, and the bank that custodies that
- * fund. Resolving the names in the loader is what lets the
+ * position is invested in, the bank that custodies that
+ * fund, and the index that fund is measured against.
+ * Resolving the names in the loader is what lets the
  * chart builders stay pure — they group and format, and
  * never look a name up.
  *
@@ -41,6 +42,17 @@ export interface PortfolioHolding {
   // Bank code, rendered under the bank name so two
   // institutions of the same group stay apart.
   bankCode: string
+  // Index the fund is measured against, or `null` when the
+  // fund tracks no index. It is the grouping key of the
+  // benchmark distribution, so it stays nullable here rather
+  // than being dropped: a fund without an index is a slice of
+  // the portfolio, not an absence of one.
+  benchmarkId: string | null
+  // Name of that index, resolved from the registry. `null`
+  // for a fund that tracks none, and for a fund whose index
+  // is missing from the registry, so the chart can fall back
+  // to a single untracked slice instead of a blank one.
+  benchmarkName: string | null
   // Share of the portfolio the position holds (%).
   weight: string
   // Money currently invested in the position.

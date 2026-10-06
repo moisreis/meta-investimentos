@@ -4,6 +4,7 @@ import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
 
 import { EntityPercentageInput } from "@/presentation/parts/components/entity-percentage-input"
+import { EntityNormAllocations } from "@/presentation/parts/dialogs/entity-norm-allocations"
 import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
@@ -11,9 +12,13 @@ import { SharedSubmitButton } from "@/presentation/parts/components/shared-submi
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { usePortfolioEditForm } from "../hooks/use-portfolio-edit-form.hook"
 
-import { PORTFOLIO_FORM } from "@/presentation/routes/portfolio/settings/labels.settings"
+import {
+  NORM_ALLOCATIONS,
+  PORTFOLIO_FORM,
+} from "@/presentation/routes/portfolio/settings/labels.settings"
 
 import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { NormOptionRegistry } from "@/presentation/types/norms-portfolio.types"
 
 /**
  * Props for the edit portfolio form.
@@ -24,6 +29,7 @@ export interface EditPortfolioFormProps {
     status: EntityFormStatus,
     error: string | null
   ) => void
+  normRegistry: NormOptionRegistry | null
 }
 
 /**
@@ -39,6 +45,12 @@ export interface EditPortfolioFormProps {
  * submit status through `onStatusChange` so the parent
  * dialog can react to the outcome.
  *
+ * `norms` carries the norms to offer and, per portfolio, the
+ * bounds already stored, so opening the dialog shows what is
+ * in effect and submitting without touching them leaves them
+ * as they were. A missing registry offers no norm and leaves
+ * the stored relations out of the payload.
+ *
  * @explanation
  * Use as the edit component of the portfolio dialog flow.
  * The parent renders the result toast and closes on
@@ -47,12 +59,15 @@ export interface EditPortfolioFormProps {
  * @param props - Props of the edit portfolio form.
  * @param props.portfolio - Portfolio being edited.
  * @param props.onStatusChange - Reports submit outcomes.
+ * @param props.normRegistry - The norm registry of the
+ *   screen.
  *
  * @returns The edit portfolio form.
  *
  * @example
  * <EditPortfolioForm portfolio={portfolio}
- *   onStatusChange={(status, error) => handle(status, error)} />
+ *   onStatusChange={(status, error) => handle(status, error)}
+ *   normRegistry={registry} />
  *
  * @author Moisés Reis
  *
@@ -61,6 +76,7 @@ export interface EditPortfolioFormProps {
 function EditPortfolioForm({
   portfolio,
   onStatusChange,
+  normRegistry,
 }: EditPortfolioFormProps) {
   const {
     acronym,
@@ -75,12 +91,14 @@ function EditPortfolioForm({
     updateMaxAllocation,
     targetAllocation,
     updateTargetAllocation,
+    norms,
+    updateNorms,
     error,
     pending,
     status,
     fieldErrors,
     handleSubmit,
-  } = usePortfolioEditForm(portfolio)
+  } = usePortfolioEditForm(portfolio, normRegistry)
 
   useEntityFormStatus({ status, error, onStatusChange })
 
@@ -194,6 +212,20 @@ function EditPortfolioForm({
             aria-invalid={
               fieldErrors.maxAllocation ? "true" : undefined
             }
+          />
+        </SharedFormField>
+
+        <SharedFormField
+          label={PORTFOLIO_FORM.LABEL_NORMS}
+          description={PORTFOLIO_FORM.DESCRIPTION_NORMS}
+        >
+          <EntityNormAllocations
+            allocations={norms}
+            onAllocationsChange={updateNorms}
+            options={normRegistry?.options ?? []}
+            copy={NORM_ALLOCATIONS}
+            error={fieldErrors.norms}
+            disabled={pending}
           />
         </SharedFormField>
       </FieldGroup>

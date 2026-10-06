@@ -6,7 +6,7 @@ import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/en
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import { FormatCount } from "@/presentation/presenters/count.presenter"
+import { FormatCountOrDash } from "@/presentation/presenters/count.presenter"
 import { BANK_DATATABLE } from "@/presentation/routes/bank/settings/labels.settings"
 import type { BankRow } from "@/presentation/types/bank-row.types"
 
@@ -71,7 +71,7 @@ export function CreateBankTableColumns(
         header: BANK_DATATABLE.COLUMN_ACCOUNT_COUNT,
         size: 110,
         meta: { align: "end", fluid: true },
-        cell: (info) => FormatCount(info.getValue()),
+        cell: (info) => FormatCountOrDash(info.getValue()),
       }
     ),
 

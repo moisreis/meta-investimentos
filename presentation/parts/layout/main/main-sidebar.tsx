@@ -1,7 +1,6 @@
 import type { ReactNode } from "react"
 
 import {
-  IconBook2,
   IconBuildingBank,
   IconCategory,
   IconChartDonut,
@@ -14,11 +13,14 @@ import {
   IconHistory,
   IconLogs,
   IconPigMoney,
+  IconTrendingUp,
   IconUsers,
   IconWallet,
 } from "@tabler/icons-react"
 
 import { Sidebar, SidebarRail } from "@/presentation/ui/sidebar"
+
+import type { UserIdentity } from "@/presentation/types/user-identity.types"
 
 import { MainSidebarGroup } from "./main-sidebar-group"
 import { MainUserActions } from "./main-user-actions"
@@ -38,7 +40,7 @@ const SIDEBAR_ICONS: Record<string, ReactNode> = {
   "/statement": <IconFileAnalytics />,
   "/portfolio-performance": <IconWallet />,
   "/position-performance": <IconCoin />,
-  "/benchmark": <IconBook2 />,
+  "/benchmark": <IconTrendingUp />,
   "/norm": <IconCategory />,
   "/benchmark-history": <IconHistory />,
   "/bank": <IconBuildingBank />,
@@ -71,11 +73,17 @@ function SidebarIconFor(item: MainNavigationItem): ReactNode {
   return SIDEBAR_ICONS[item.href] ?? null
 }
 
-function MainSidebar() {
+interface MainSidebarProps {
+  // The signed-in user naming the account menu of the
+  // header, or `null` while the profile is unresolved.
+  user: UserIdentity | null
+}
+
+function MainSidebar({ user }: MainSidebarProps) {
   return (
     <Sidebar>
       <MainSidebarHeader>
-        <MainUserActions />
+        <MainUserActions user={user} />
       </MainSidebarHeader>
 
       <MainSidebarContent>

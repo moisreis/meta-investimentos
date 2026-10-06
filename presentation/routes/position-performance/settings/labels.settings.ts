@@ -22,7 +22,7 @@ export const POSITION_PERFORMANCE_DATATABLE = {
   COLUMN_PATRIMONY: "Patrimônio",
 
   // Quotas column header.
-  COLUMN_QUOTAS: "Quotas",
+  COLUMN_QUOTAS: "Cotas",
 
   // Daily return column header.
   COLUMN_RETURN_DAILY: "Rentabilidade",

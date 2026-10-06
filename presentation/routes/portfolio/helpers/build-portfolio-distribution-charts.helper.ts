@@ -13,6 +13,7 @@ import { PORTFOLIO_DISTRIBUTION } from "../settings/labels.settings"
 // chart.
 const POSITION_CHART_ID = "portfolio-position-distribution"
 const BANK_CHART_ID = "portfolio-bank-distribution"
+const BENCHMARK_CHART_ID = "portfolio-benchmark-distribution"
 
 // Series key of both distributions. A ring reads one value
 // per slice, so the key only has to be unique inside its own
@@ -28,7 +29,7 @@ interface DistributionSlice {
   value: number
 }
 
-// Series shared by both distributions: the money a slice
+// Series shared by all three distributions: the money a slice
 // stands for, formatted in **BRL** in the tooltip and in the
 // total of the ring.
 function BuildInvestedSeries(): EntityChartSeries[] {
@@ -202,16 +203,112 @@ export function BuildBankDistributionChart(
   }
 }
 
+// Grouping key of the holdings that sit in no measured fund.
+// It is not a benchmark id, so it cannot collide with a real
+// one, and it keeps a fund that tracks nothing on the ring
+// instead of quietly shrinking the total it is measured
+// against.
+const UNTRACKED_KEY = "untracked"
+
+// Names a benchmark slice, keeping the first name that
+// resolved it so the label never flips between the funds of
+// the same index.
+//
+// Two funds measured against one index can resolve it
+// differently: a fund whose index is missing from the
+// registry yields no name at all. Without this guard the last
+// fund of the group would overwrite the slice label and a
+// measured portfolio would be read as unmeasured money.
+function ResolveBenchmarkLabel(
+  holding: PortfolioHolding,
+  current: string | undefined
+): string {
+  if (current !== undefined) return current
+
+  const FALLBACK = PORTFOLIO_DISTRIBUTION.UNTRACKED_LABEL
+
+  return holding.benchmarkName ?? FALLBACK
+}
+
+/**
+ * @summary
+ * Builds the by-benchmark distribution of the portfolio
+ * detail screen.
+ *
+ * @remarks
+ * Groups the holdings by the index their fund is measured
+ * against and plots one slice per index, sized by the money
+ * sitting in the funds that track it, so the reader sees how
+ * much of the portfolio is compared against CDI and how much
+ * against IBOV.
+ *
+ * A benchmark in this domain carries no composition of its
+ * own — no percentages per asset class — so the ring cannot
+ * plot what an index is made of. What it can honestly plot is
+ * the split of the money by the yardstick it is measured with,
+ * which is why the slices are weighted by the invested value
+ * and not by the benchmark.
+ *
+ * Holdings whose fund tracks no index, or whose index is
+ * missing from the registry, fall into a single untracked
+ * slice. Dropping them would leave the ring summing to less
+ * than the portfolio, which reads as the reader losing money
+ * somewhere; naming them says plainly how much is not being
+ * measured.
+ *
+ * @param holdings - The resolved holdings of the portfolio.
+ *
+ * @returns The by-benchmark distribution model.
+ *
+ * @example
+ * const MODEL = BuildBenchmarkDistributionChart(HOLDINGS);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-05
+ */
+export function BuildBenchmarkDistributionChart(
+  holdings: readonly PortfolioHolding[]
+): EntityChartModel | null {
+  const BY_BENCHMARK = new Map<string, DistributionSlice>()
+
+  for (const holding of holdings) {
+    const KEY = holding.benchmarkId ?? UNTRACKED_KEY
+    const CURRENT = BY_BENCHMARK.get(KEY)
+
+    BY_BENCHMARK.set(KEY, {
+      label: ResolveBenchmarkLabel(holding, CURRENT?.label),
+      value:
+        (CURRENT?.value ?? 0) + ToAmount(holding.investedValue),
+    })
+  }
+
+  const SLICES = ResolveSlices([...BY_BENCHMARK.values()])
+
+  if (SLICES.length === 0) return null
+
+  return {
+    id: BENCHMARK_CHART_ID,
+    title: PORTFOLIO_DISTRIBUTION.BENCHMARK_TITLE,
+    description: PORTFOLIO_DISTRIBUTION.BENCHMARK_DESCRIPTION,
+    kind: "pie",
+    series: BuildInvestedSeries(),
+    points: ToPoints(SLICES),
+    centerLabel: PORTFOLIO_DISTRIBUTION.BENCHMARK_CENTER,
+  }
+}
+
 /**
  * @summary
  * Builds the distribution charts of the portfolio detail
  * screen.
  *
  * @remarks
- * Derives the by-position and the by-bank distributions from
- * the resolved holdings. Both are read from the same records
- * and the same invested value, so the two rings can never
- * disagree about how much money the portfolio holds.
+ * Derives the by-position, by-bank and by-benchmark
+ * distributions from the resolved holdings. All three are
+ * read from the same records and the same invested value, so
+ * the rings can never disagree about how much money the
+ * portfolio holds.
  *
  * Unlike the performance charts, the distributions are not
  * clamped to the selected window: a holding is a fact about
@@ -222,7 +319,7 @@ export function BuildBankDistributionChart(
  *
  * @explanation
  * Use this helper from the overview hook. It is pure, so the
- * slices can be asserted without a browser and a third
+ * slices can be asserted without a browser and a fourth
  * distribution can be added later by adding one builder and
  * one entry here.
  *
@@ -243,5 +340,6 @@ export function BuildPortfolioDistributionCharts(
   return [
     BuildPositionDistributionChart(holdings),
     BuildBankDistributionChart(holdings),
+    BuildBenchmarkDistributionChart(holdings),
   ].filter((model) => model !== null)
 }

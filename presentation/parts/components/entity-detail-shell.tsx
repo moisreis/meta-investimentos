@@ -20,6 +20,21 @@ interface EntityDetailShellProps {
  * carries and which blocks follow it, never the scroll
  * container or the sticky wrapper behind them.
  *
+ * The document takes the room the header left rather than a
+ * full screen of it. Asking for `min-h-full` instead would
+ * measure the whole shell against the viewport, so a
+ * `h-svh` column would hand the document one screen of
+ * height on top of the header that sits above it: the last
+ * strip of every page would sit under the header, out of the
+ * scroll port and unreachable. `flex-1` with `min-h-0` takes
+ * what remains and lets the block shrink, which is what
+ * makes this the scroll port the sticky toolbar pins inside.
+ *
+ * The padding is on the shell rather than on the last block
+ * because the last block is whichever table or summary the
+ * screen happens to end on, and none of them can promise the
+ * document ends with breathing room.
+ *
  * @explanation
  * Use this shell as the root element of a `pages/detail`
  * screen. A screen without a toolbar still uses it, so the
@@ -45,7 +60,7 @@ function EntityDetailShell({
   children,
 }: EntityDetailShellProps) {
   return (
-    <div className="min-h-full overflow-auto">
+    <div className="min-h-0 flex-1 overflow-auto pb-6">
       {toolbar ? (
         <div className="sticky top-0 z-50 h-11 w-full bg-background">
           {toolbar}

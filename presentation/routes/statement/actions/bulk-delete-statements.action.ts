@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { StatementContainer } from "@/presentation/composition/statement.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -61,7 +61,16 @@ export async function bulkDeleteStatementsAction(
 
     await BULK_DELETE_STATEMENTS.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "Statement",
+      entityId: PARSED.data.statementIds[0] ?? "",
+      changes: {
+        ids: PARSED.data.statementIds,
+        count: PARSED.data.statementIds.length,
+      },
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

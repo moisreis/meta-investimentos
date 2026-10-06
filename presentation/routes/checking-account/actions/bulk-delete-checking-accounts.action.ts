@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { CheckingAccountContainer } from "@/presentation/composition/checking-account.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -62,7 +62,16 @@ export async function bulkDeleteCheckingAccountsAction(
 
     await BULK_DELETE_CHECKING_ACCOUNTS.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "CheckingAccount",
+      entityId: PARSED.data.checkingAccountIds[0] ?? "",
+      changes: {
+        ids: PARSED.data.checkingAccountIds,
+        count: PARSED.data.checkingAccountIds.length,
+      },
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

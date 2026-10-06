@@ -32,9 +32,12 @@ export interface PortfolioChartSection {
   // Section title, rendered as the heading.
   title: string
   // When `true`, the first model spans the full width of the
-  // section and the remaining ones lay out in the grid, so a
-  // headline chart — such as the period patrimony — reads
-  // first.
+  // section and the remaining ones lay out in the grid. Two
+  // charts earn it: a headline chart, such as the period
+  // patrimony, which is worth the width on its own, and a
+  // chart whose category labels are words, such as the norm
+  // allocations, which loses names to truncation in half a
+  // row.
   featured?: boolean
   // The charts of the section, in render order.
   models: readonly EntityChartModel[]

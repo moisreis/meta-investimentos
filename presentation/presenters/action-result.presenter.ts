@@ -1,6 +1,8 @@
 import { DomainError } from "@/errors"
 import { z } from "zod"
 
+import type { AuditNotification } from "@/presentation/parts/audit/shared-audit-notification.types"
+
 // Form-level message used when a rejected input carries no
 // field message of its own.
 const ACTION_INVALID_INPUT = "Verifique os campos informados."
@@ -16,9 +18,14 @@ type ActionFieldErrors = Record<string, string[]>
  * instead of guessing from a nullable error. Failures
  * carry a user-facing message and, when the failure came
  * from schema validation, the per-field messages.
+ *
+ * A success from an action that changed something also
+ * carries the `audit` payload, so the browser can raise the
+ * header notification from what the action already knows
+ * rather than asking again what just happened.
  */
 type ActionResult<T> =
-  | { success: true; data: T }
+  | { success: true; data: T; audit?: AuditNotification }
   | {
       success: false
       error: string
@@ -29,21 +36,34 @@ type ActionResult<T> =
  * @summary
  * Builds a successful action result.
  *
+ * @remarks
+ * Pass the audit payload when the action changed something,
+ * which is what raises the header notification. Read-only
+ * actions omit it: nothing happened, so there is nothing to
+ * announce.
+ *
  * @explanation
  * Use to return the use case payload from an action.
  *
  * @param data - The payload produced by the use case.
+ * @param audit - What the action recorded, when it did.
  * @returns The successful result.
  *
  * @example
  * return ActionSuccess(BANK);
+ * return ActionSuccess(BANK, AUDIT);
  *
  * @author Moisés Reis
  *
  * @date 2026-09-26
  */
-function ActionSuccess<T>(data: T): ActionResult<T> {
-  return { success: true, data }
+function ActionSuccess<T>(
+  data: T,
+  audit?: AuditNotification
+): ActionResult<T> {
+  return audit
+    ? { success: true, data, audit }
+    : { success: true, data }
 }
 
 /**

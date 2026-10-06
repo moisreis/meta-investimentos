@@ -184,6 +184,7 @@ function usePortfolioOverview(
       BuildPortfolioChartSections({
         performances: data.performances,
         holdings: data.holdings,
+        normAllocations: data.normAllocations,
         bankAccounts: data.bankAccounts,
         balances: data.balances,
         dateRange: DATE_RANGE,
@@ -192,6 +193,7 @@ function usePortfolioOverview(
     [
       data.performances,
       data.holdings,
+      data.normAllocations,
       data.bankAccounts,
       data.balances,
       DATE_RANGE,

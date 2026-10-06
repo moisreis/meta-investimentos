@@ -18,7 +18,14 @@ const SERIES_COLORS = [
 // theme so a gain, a loss, a headline figure and a ledger row
 // all read as the same two colors on light and on dark.
 const SIGN_POSITIVE_COLOR = "var(--color-positive)"
-const SIGN_NEGATIVE_COLOR = "var(--color-negative)"
+
+// The red this chart system paints with, resolved from the
+// theme. Exported because a route may want a series to wear it
+// deliberately, not because its value went negative: the token
+// is the only definition of "the data red", so a route reusing
+// it stays on the same one the sign tone uses.
+export const ENTITY_CHART_NEGATIVE_COLOR =
+  "var(--color-negative)"
 
 /**
  * @summary
@@ -27,11 +34,16 @@ const SIGN_NEGATIVE_COLOR = "var(--color-negative)"
  * @remarks
  * Cycles the `--chart-*` ramp, so the first series of every
  * chart shares the primary color regardless of the key. A
- * `sign` tone series keeps this identity color for its
+ * series that names its own color keeps it instead, which is
+ * what stops a chart with more series than the ramp has steps
+ * from painting two of them the same. A `sign` tone series
+ * keeps this identity color for its
  * legend swatch and only recolors its columns, so the
  * legend stays readable next to a two-color bar.
  *
  * @param index - Zero-based render order of the series.
+ * @param series - The series owning the color, when it states
+ *   one.
  *
  * @returns The CSS color of the series.
  *
@@ -42,7 +54,12 @@ const SIGN_NEGATIVE_COLOR = "var(--color-negative)"
  *
  * @date 2026-09-28
  */
-export function ResolveSeriesColor(index: number): string {
+export function ResolveSeriesColor(
+  index: number,
+  series?: EntityChartSeries
+): string {
+  if (series?.color !== undefined) return series.color
+
   return SERIES_COLORS[index % SERIES_COLORS.length]
 }
 
@@ -55,6 +72,10 @@ export function ResolveSeriesColor(index: number): string {
  * `--color-<key>` custom properties and what resolves the
  * legend and tooltip labels, so the series key is used as
  * the config key and the series label as its text.
+ *
+ * A series that names its own color contributes it here, which
+ * is what keeps its legend swatch on the same color as its
+ * column instead of falling back to the ramp.
  *
  * @param series - The series of the chart, in render order.
  *
@@ -73,7 +94,7 @@ export function BuildChartConfig(
   return series.reduce<ChartConfig>((config, item, index) => {
     config[item.key] = {
       label: item.label,
-      color: ResolveSeriesColor(index),
+      color: ResolveSeriesColor(index, item),
     }
     return config
   }, {})
@@ -85,8 +106,9 @@ export function BuildChartConfig(
  *
  * @remarks
  * Zero counts as positive, so a flat day is not painted as
- * a loss. A series without the `sign` tone always takes its
- * identity color.
+ * a loss. A series that names its own color always keeps it,
+ * since an explicit color is a decision and a sign tone is a
+ * default. A series without either takes its identity color.
  *
  * @param series - The series owning the column.
  * @param index - Zero-based render order of the series.
@@ -106,9 +128,13 @@ export function ResolveColumnFill(
   index: number,
   value: number | null
 ): string {
+  if (series.color !== undefined) return series.color
+
   if (series.tone !== "sign" || value === null) {
     return ResolveSeriesColor(index)
   }
 
-  return value < 0 ? SIGN_NEGATIVE_COLOR : SIGN_POSITIVE_COLOR
+  return value < 0
+    ? ENTITY_CHART_NEGATIVE_COLOR
+    : SIGN_POSITIVE_COLOR
 }

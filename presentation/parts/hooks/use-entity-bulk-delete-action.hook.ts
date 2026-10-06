@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation"
 import { useEntityFormToast } from "@/presentation/parts/hooks/use-entity-form-toast.hook"
 import type { ActionResult } from "@/presentation/presenters/action-result.presenter"
 
+import { useSharedAuditNotification } from "@/presentation/parts/hooks/use-shared-audit-notification.hook"
+
 /**
  * Bulk delete copy of an entity route.
  */
@@ -38,8 +40,10 @@ export interface EntityBulkDeleteModel<TData> {
  *
  * @remarks
  * Runs the bulk delete server action with the ids of the
- * selected rows, toasts the outcome and refreshes the
- * server data after a successful deletion.
+ * selected rows, toasts the outcome, announces the recorded
+ * act in the header notification and refreshes the server data
+ * after a successful deletion. One run writes one audit entry
+ * and raises one notification, however many rows it removed.
  *
  * @explanation
  * Use as the `onBulkDelete` callback of the entity table
@@ -75,6 +79,7 @@ function useEntityBulkDeleteAction<
   labels,
 }: EntityBulkDeleteConfig): EntityBulkDeleteModel<TData> {
   const ROUTER = useRouter()
+  const NOTIFY = useSharedAuditNotification()
   const { showSuccess, showError } = useEntityFormToast({
     successTitle: labels.BULK_DELETE_SUCCESS_TITLE,
     successDescription: labels.BULK_DELETE_SUCCESS_DESCRIPTION,
@@ -89,6 +94,7 @@ function useEntityBulkDeleteAction<
       return
     }
 
+    NOTIFY(RESULT.audit)
     showSuccess()
     ROUTER.refresh()
   }

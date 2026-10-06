@@ -83,7 +83,7 @@ function AddBankAccountForm({
   const BANK_ITEMS = options.banks.map((bank) => ({
     id: bank.id,
     name: bank.name,
-    description: `Código ${bank.code}`,
+    description: bank.code,
   }))
 
   useEntityFormStatus({ status, error, onStatusChange })

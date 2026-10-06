@@ -5,9 +5,14 @@ import {
   UnmaskPercentage,
 } from "@/presentation/masks/percentage.mask"
 import { useEntityForm } from "@/presentation/parts/hooks/use-entity-form.hook"
+import { ToNormAllocationInput } from "@/presentation/mappers/norm-portfolio-allocation.mapper"
 import { updatePortfolioAction } from "@/presentation/routes/portfolio/actions/update-portfolio.action"
 import { PORTFOLIO_FORM_SCHEMA } from "@/presentation/routes/portfolio/validations/portfolio-form.validation"
 import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type {
+  NormOptionRegistry,
+  NormPortfolioAllocation,
+} from "@/presentation/types/norms-portfolio.types"
 
 /**
  * @summary
@@ -20,6 +25,18 @@ import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
  * from the provided portfolio, masking its percentages, and
  * unmask them before they are sent back.
  *
+ * The stored bounds of every attached norm are seeded the
+ * same way, which matters because the update use case
+ * reconciles the relations against the submitted list: a
+ * form seeded with no norms would silently detach all of
+ * them on a rename.
+ *
+ * A missing norm registry means the norms could not be read,
+ * so `norms` is left out of the payload entirely and the use
+ * case keeps the relations as they are. Sending an empty
+ * list instead would read as "this portfolio has no norms"
+ * and detach them on a query that merely failed.
+ *
  * @explanation
  * Use inside the edit portfolio form to keep the component
  * presentational. Pass the portfolio being edited so the
@@ -28,19 +45,24 @@ import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
  * submit. Use `status` to trigger result toasts.
  *
  * @param portfolio - Portfolio being edited.
+ * @param norms - The norm registry, or `null` when it could
+ *                not be resolved.
  *
  * @returns Form state and handlers.
  *
  * @example
  * const { acronym, updateAcronym, name, updateName,
  *   fieldErrors, status, handleSubmit } =
- *   usePortfolioEditForm(portfolio)
+ *   usePortfolioEditForm(portfolio, norms)
  *
  * @author Moisés Reis
  *
  * @date 2026-09-24
  */
-function usePortfolioEditForm(portfolio: PortfolioRow) {
+function usePortfolioEditForm(
+  portfolio: PortfolioRow,
+  norms: NormOptionRegistry | null
+) {
   const {
     values: VALUES,
     updateField,
@@ -62,6 +84,7 @@ function usePortfolioEditForm(portfolio: PortfolioRow) {
       targetAllocation: MaskPercentage(
         portfolio.targetAllocation
       ),
+      norms: norms?.allocations[portfolio.id] ?? [],
     },
     submit: (values) =>
       updatePortfolioAction({
@@ -76,6 +99,9 @@ function usePortfolioEditForm(portfolio: PortfolioRow) {
         targetAllocation: UnmaskPercentage(
           values.targetAllocation
         ),
+        ...(norms
+          ? { norms: values.norms.map(ToNormAllocationInput) }
+          : {}),
       }),
   })
 
@@ -97,6 +123,9 @@ function usePortfolioEditForm(portfolio: PortfolioRow) {
     targetAllocation: VALUES.targetAllocation,
     updateTargetAllocation: (value: string) =>
       updateField("targetAllocation", value),
+    norms: VALUES.norms,
+    updateNorms: (value: NormPortfolioAllocation[]) =>
+      updateField("norms", value),
     error: ERROR,
     pending: PENDING,
     status: STATUS,

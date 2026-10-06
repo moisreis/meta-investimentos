@@ -36,6 +36,11 @@ export function ToWithdrawalRow(
     date: dto.date,
     amount: dto.amount,
     quotas: dto.quotas,
+    quotaValue:
+      dto.quotaValue ??
+      (dto.quotas !== "0"
+        ? (Number(dto.amount) / Number(dto.quotas)).toFixed(4)
+        : "0"),
     reversedAt: dto.reversedAt,
   }
 }

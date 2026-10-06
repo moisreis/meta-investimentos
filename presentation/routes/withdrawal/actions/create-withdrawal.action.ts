@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { WithdrawalContainer } from "@/presentation/composition/withdrawal.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -64,7 +64,12 @@ export async function createWithdrawalAction(
     const { add: ADD_WITHDRAWAL } = WithdrawalContainer()
     const WITHDRAWAL = await ADD_WITHDRAWAL.execute(PARSED.data)
 
-    return ActionSuccess(WITHDRAWAL)
+    return ActionAudited(WITHDRAWAL, {
+      userId: USER.id,
+      action: "CREATED",
+      entity: "Withdrawal",
+      entityId: WITHDRAWAL.id,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

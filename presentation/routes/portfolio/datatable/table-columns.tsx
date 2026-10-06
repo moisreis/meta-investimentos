@@ -7,7 +7,7 @@ import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/en
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import { FormatCount } from "@/presentation/presenters/count.presenter"
+import { FormatCountOrDash } from "@/presentation/presenters/count.presenter"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatPercentage } from "@/presentation/presenters/percentage.presenter"
 import { PORTFOLIO_DATATABLE } from "@/presentation/routes/portfolio/settings/labels.settings"
@@ -90,7 +90,7 @@ export function CreatePortfolioTableColumns(
         header: PORTFOLIO_DATATABLE.COLUMN_FUND_COUNT,
         size: 110,
         meta: { align: "end", fluid: true },
-        cell: (info) => FormatCount(info.getValue()),
+        cell: (info) => FormatCountOrDash(info.getValue()),
       }
     ),
 
@@ -101,7 +101,7 @@ export function CreatePortfolioTableColumns(
         header: PORTFOLIO_DATATABLE.COLUMN_BANK_ACCOUNT_COUNT,
         size: 150,
         meta: { align: "end", fluid: true },
-        cell: (info) => FormatCount(info.getValue()),
+        cell: (info) => FormatCountOrDash(info.getValue()),
       }
     ),
 

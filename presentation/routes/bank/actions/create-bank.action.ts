@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { BankContainer } from "@/presentation/composition/bank.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -60,7 +60,13 @@ export async function createBankAction(
     const { create: CREATE_BANK } = BankContainer()
     const BANK = await CREATE_BANK.execute(PARSED.data)
 
-    return ActionSuccess(BANK)
+    return ActionAudited(BANK, {
+      userId: USER.id,
+      action: "CREATED",
+      entity: "Bank",
+      entityId: BANK.id,
+      entityName: BANK.name,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

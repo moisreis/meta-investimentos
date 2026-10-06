@@ -51,6 +51,7 @@ function useUserEditForm(user: UserRow) {
       name: user.name,
       firstName: user.firstName,
       lastName: user.lastName,
+      image: user.image ?? "",
     },
     submit: (values) =>
       updateUserAction({
@@ -58,6 +59,7 @@ function useUserEditForm(user: UserRow) {
         name: values.name,
         firstName: values.firstName,
         lastName: values.lastName,
+        image: values.image,
       }),
   })
 
@@ -70,6 +72,9 @@ function useUserEditForm(user: UserRow) {
     lastName: VALUES.lastName,
     updateLastName: (value: string) =>
       updateField("lastName", value),
+    image: VALUES.image ?? "",
+    updateImage: (value: string | null) =>
+      updateField("image", value ?? ""),
     error: ERROR,
     pending: PENDING,
     status: STATUS,

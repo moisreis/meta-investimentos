@@ -69,6 +69,13 @@ export interface EntityDateRangeFilterProps {
  * in the calendar and the popover closes once a full range
  * is picked.
  *
+ * The calendar hides the outside days. With more than one
+ * month on screen the leading and trailing days of every
+ * grid are the neighbouring month's days, so drawing them
+ * would render each boundary date twice and, once a range
+ * spans the boundary, paint the same day as both an edge of
+ * the previous month and an edge of the current one.
+ *
  * `variant` picks the trigger look, so the same control
  * serves the datatable toolbar and the calculation forms.
  * The `toolbar` variant is a borderless ghost button that
@@ -101,6 +108,9 @@ function EntityDateRangeFilter({
   className,
 }: EntityDateRangeFilterProps) {
   const [OPEN, setOpen] = useState(false)
+  const [previousRange, setPreviousRange] = useState<
+    DateRange | undefined
+  >(value)
   const TRIGGER = TRIGGER_PRESENTATION[variant]
 
   const TRIGGER_LABEL =
@@ -130,12 +140,23 @@ function EntityDateRangeFilter({
           selected={value}
           onSelect={(next) => {
             onChange(next)
-            if (next?.to) {
+            // Only close when transitioning from a partial range
+            // (start date only) to a complete range (both dates).
+            const wasPartial =
+              previousRange?.from && !previousRange?.to
+            const isComplete = next?.from && next?.to
+            if (wasPartial && isComplete) {
               setOpen(false)
             }
+            setPreviousRange(next)
           }}
           numberOfMonths={numberOfMonths}
           disabled={isDateDisabled}
+          // Each month grid already spills into its neighbour,
+          // so rendering outside days would draw every boundary
+          // date twice and highlight the same day in both
+          // months once a range crosses the boundary.
+          showOutsideDays={false}
         />
       </PopoverContent>
     </Popover>

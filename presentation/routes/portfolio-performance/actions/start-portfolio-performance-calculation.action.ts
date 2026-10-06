@@ -7,9 +7,9 @@ import {
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { LogError } from "@/lib/log/logger"
 import { PortfolioPerformanceContainer } from "@/presentation/composition/portfolio-performance.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   ToFailureMessage,
@@ -136,7 +136,12 @@ export async function startPortfolioPerformanceCalculationAction(
 
     void runPortfolioPerformanceCalculationJob(JOB_ID, PLAN)
 
-    return ActionSuccess(JOB_ID)
+    return ActionAudited(JOB_ID, {
+      userId: USER.id,
+      action: "CALCULATED",
+      entity: "PortfolioPerformance",
+      entityId: JOB_ID,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

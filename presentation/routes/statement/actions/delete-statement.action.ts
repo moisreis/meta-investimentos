@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { StatementContainer } from "@/presentation/composition/statement.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -60,7 +60,12 @@ export async function deleteStatementAction(
 
     await REMOVE_STATEMENT.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "Statement",
+      entityId: PARSED.data.statementId,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

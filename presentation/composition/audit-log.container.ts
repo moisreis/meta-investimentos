@@ -2,11 +2,13 @@ import { db } from "@/clients/database.client"
 import { AuditLogRepository } from "@/infrastructure/audit-log/repositories/audit-log.repository"
 import { UserRepository } from "@/infrastructure/user/repositories/user.repository"
 import { ListAuditLogsUseCase } from "@/services/audit-log/use-cases/list-audit-logs.use-case"
+import { CreateAuditLogUseCase } from "@/services/audit-log/use-cases/create-audit-log.use-case"
 import { ListUsersByIdsUseCase } from "@/services/user/use-cases/list-users-by-ids.use-case"
 
 // The audit log use cases, already wired to the repository.
 interface AuditLogUseCases {
   list: ListAuditLogsUseCase
+  create: CreateAuditLogUseCase
   listUsers: ListUsersByIdsUseCase
 }
 
@@ -28,7 +30,7 @@ interface AuditLogUseCases {
  * @returns The wired audit log use cases.
  *
  * @example
- * const { list: LIST_AUDIT_LOGS } = AuditLogContainer();
+ * const { list: LIST_AUDIT_LOGS, create: CREATE_AUDIT_LOG } = AuditLogContainer();
  *
  * @author Moisés Reis
  *
@@ -40,6 +42,7 @@ function AuditLogContainer(): AuditLogUseCases {
 
   return {
     list: new ListAuditLogsUseCase(AUDIT_LOG_REPOSITORY),
+    create: new CreateAuditLogUseCase(AUDIT_LOG_REPOSITORY),
     listUsers: new ListUsersByIdsUseCase(USER_REPOSITORY),
   }
 }

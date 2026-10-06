@@ -100,12 +100,16 @@ export function toReverseApplicationProps(
 export function toResponseDTO(
   entity: Application
 ): ApplicationResponseDTO {
+  const quotaValue = !entity.quotas.value.equals(0)
+    ? entity.amount.value.div(entity.quotas.value).toFixed(4)
+    : "0"
   return {
     id: entity.id as string,
     positionId: entity.positionId,
     date: entity.date.toISOString(),
-    amount: entity.amount.value.toString(),
-    quotas: entity.quotas.value.toString(),
+    amount: entity.amount.value.toFixed(),
+    quotas: entity.quotas.value.toFixed(),
+    quotaValue,
     reversedAt: entity.reversedAt
       ? entity.reversedAt.toISOString()
       : null,

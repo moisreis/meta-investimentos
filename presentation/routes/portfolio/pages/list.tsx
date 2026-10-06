@@ -6,6 +6,7 @@ import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-d
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
 import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { NormOptionRegistry } from "@/presentation/types/norms-portfolio.types"
 
 import { PortfolioDatatableFilters } from "../datatable/filters"
 import { PortfolioDatatableTable } from "../datatable/table"
@@ -23,6 +24,7 @@ export interface PortfolioListProps {
   data: PortfolioRow[] | null
   availableDates?: string[]
   summaries?: Record<string, PortfolioRowSummary> | null
+  normRegistry: NormOptionRegistry | null
 }
 
 /**
@@ -35,7 +37,9 @@ export interface PortfolioListProps {
  * datatable. The window filter is handed the performance
  * days of the session, so it can hide a day the
  * performance has no entry for instead of querying a
- * range nothing was calculated for.
+ * range nothing was calculated for. The norm registry
+ * travels to the add and edit dialogs, which are the only
+ * places that offer a norm or seed its stored bounds.
  *
  * @param props - Props of the portfolio list page.
  * @param props.data - The portfolio rows, or `null`
@@ -44,6 +48,8 @@ export interface PortfolioListProps {
  *                               has an entry for.
  * @param props.summaries - The portfolio summaries the
  *                          KPIs and the row actions read.
+ * @param props.normRegistry - The norms the forms offer and
+ *                             the bounds stored per row.
  *
  * @returns The portfolio list page.
  *
@@ -55,6 +61,7 @@ function PortfolioList({
   data,
   availableDates = [],
   summaries = null,
+  normRegistry,
 }: PortfolioListProps) {
   const PENDING = data === null
   const PORTFOLIOS = data ?? []
@@ -129,8 +136,14 @@ function PortfolioList({
         />
       )}
 
-      <PortfolioAddDialog dialog={addDialog} />
-      <PortfolioEditDialog dialog={editDialog} />
+      <PortfolioAddDialog
+        dialog={addDialog}
+        norms={normRegistry}
+      />
+      <PortfolioEditDialog
+        dialog={editDialog}
+        norms={normRegistry}
+      />
       <PortfolioConfirmDeleteDialog dialog={rowActions} />
     </>
   )

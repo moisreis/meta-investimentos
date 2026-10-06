@@ -4,6 +4,7 @@ import { IconArrowDownRight } from "@tabler/icons-react"
 
 import { SharedDatatableSection } from "@/presentation/parts/datatable/layout/shared-datatable-section"
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
+import type { PortfolioActivityRowActionsModel } from "../hooks/use-portfolio-activity-row-actions.hook"
 
 import { usePortfolioActivityTable } from "../hooks/use-portfolio-activity-table.hook"
 import { PORTFOLIO_ACTIVITY } from "../settings/labels.settings"
@@ -14,6 +15,8 @@ import { PORTFOLIO_ACTIVITY } from "../settings/labels.settings"
 export interface PortfolioActivityDatatableProps {
   // The activity rows inside the selected window.
   rows: readonly PortfolioActivityRow[]
+  // Row actions (reverse) from the parent detail page.
+  rowActions: PortfolioActivityRowActionsModel
 }
 
 /**
@@ -31,11 +34,15 @@ export interface PortfolioActivityDatatableProps {
  * @param props - Props of the recent activity section.
  * @param props.rows - The activity rows inside the selected
  *   window.
+ * @param props.rowActions - Row actions (reverse) handler.
  *
  * @returns The recent activity section.
  *
  * @example
- * <PortfolioActivityDatatable rows={ROWS} />
+ * <PortfolioActivityDatatable
+ *   rows={ROWS}
+ *   rowActions={ACTIONS}
+ * />
  *
  * @author Moisés Reis
  *
@@ -43,8 +50,12 @@ export interface PortfolioActivityDatatableProps {
  */
 function PortfolioActivityDatatable({
   rows,
+  rowActions,
 }: PortfolioActivityDatatableProps) {
-  const { hasRows, table } = usePortfolioActivityTable(rows)
+  const { hasRows, table } = usePortfolioActivityTable(
+    rows,
+    rowActions
+  )
 
   return (
     <SharedDatatableSection

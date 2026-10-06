@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 
 import { MainShell } from "@/presentation/parts/layout/main/main-shell"
 import type { MainBreadcrumbResolvers } from "@/presentation/parts/navigation/main-breadcrumb-resolvers.types"
+import { LoadSessionUser } from "@/presentation/routes/user/helpers/load-session-user.helper"
 import { getPortfolioNameAction } from "@/presentation/routes/portfolio/actions/get-portfolio-name.action"
 import { getPositionNameAction } from "@/presentation/routes/position/actions/get-position-name.action"
 
@@ -19,17 +20,30 @@ const BREADCRUMB_RESOLVERS: MainBreadcrumbResolvers = {
  * Chrome shared by every authenticated screen: the
  * shell that hosts the header and the sidebar.
  *
+ * @remarks
+ * The layout is the one place every authenticated screen
+ * passes through, so it resolves the signed-in user once and
+ * hands the identity to the shell. Reading the profile here
+ * rather than in the sidebar keeps the account name off the
+ * client fetch path: it arrives with the first render, and a
+ * screen that opens the account menu never waits for it.
+ *
  * @author Moisés Reis
  *
  * @date 2026-09-26
  */
-export default function MainRouteLayout({
+export default async function MainRouteLayout({
   children,
 }: Readonly<{
   children: ReactNode
 }>) {
+  const USER = await LoadSessionUser()
+
   return (
-    <MainShell breadcrumbResolvers={BREADCRUMB_RESOLVERS}>
+    <MainShell
+      breadcrumbResolvers={BREADCRUMB_RESOLVERS}
+      user={USER}
+    >
       {children}
     </MainShell>
   )

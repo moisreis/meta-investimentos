@@ -24,6 +24,8 @@ export interface WithdrawalResponseDTO {
   date: string
   amount: string
   quotas: string
+  // Quota value used to redeem the withdrawal.
+  quotaValue: string
   // Null while the withdrawal has not been reversed.
   reversedAt: string | null
   reversedByUserId: string | null

@@ -3,8 +3,7 @@ import {
   Geist,
   Geist_Mono,
   Roboto_Slab,
-  Manrope,
-} from "next/font/google"
+  Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/presentation/theme/theme-provider"
 import { TooltipProvider } from "@/presentation/ui/tooltip"
@@ -14,10 +13,7 @@ import { BRAND } from "@/presentation/constants/brand.constants"
 
 // Stores the **Manrope** heading font configuration, used by
 // the titles of the shared surfaces.
-const manropeHeading = Manrope({
-  subsets: ["latin"],
-  variable: "--font-heading",
-})
+const geistHeading = Geist({subsets:['latin'],variable:'--font-heading'})
 
 // Stores the **Roboto Slab** figure font configuration. The
 // slab is reserved for figures of account — the headline
@@ -29,10 +25,7 @@ const slabFigure = Roboto_Slab({
 })
 
 // Stores the **Geist** sans-serif font configuration.
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
+const inter = Inter({subsets:['latin'],variable:'--font-sans'})
 
 // Stores the **Geist Mono** font configuration.
 const FONT_MONO = Geist_Mono({
@@ -89,8 +82,8 @@ export default function RootLayout({
         "antialiased",
         FONT_MONO.variable,
         "font-sans",
-        geist.variable,
-        manropeHeading.variable,
+        inter.variable,
+        geistHeading.variable,
         slabFigure.variable
       )}
     >

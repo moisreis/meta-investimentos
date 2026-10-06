@@ -90,6 +90,7 @@ export function BuildApplicationLookups(
       fundId: POSITION.fundId,
       fundName: FUND?.name ?? "Fundo",
       fundCnpj: FUND?.cnpj ?? "",
+      quotaValue: application.quotaValue,
     }
   }
 

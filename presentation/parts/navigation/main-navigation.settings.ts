@@ -16,10 +16,6 @@ export interface MainNavigationGroup {
 // they appear in the sidebar.
 export const MAIN_NAVIGATION: MainNavigationGroup[] = [
   {
-    label: "Visão Geral",
-    items: [{ label: "Painel", href: "/main" }],
-  },
-  {
     label: "Carteiras",
     items: [
       { label: "Carteiras", href: "/portfolio" },

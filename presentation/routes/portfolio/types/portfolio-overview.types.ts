@@ -7,6 +7,8 @@ import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activi
 import type { PortfolioBankAccountView } from "@/presentation/types/portfolio-checking.types"
 import type { PortfolioHolding } from "@/presentation/types/portfolio-holding.types"
 import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { NormPortfolioAllocation } from "@/presentation/types/norms-portfolio.types"
+import type { UserIdentity } from "@/presentation/types/user-identity.types"
 
 /**
  * @summary
@@ -46,6 +48,15 @@ export interface PortfolioOverviewData {
   // Portfolios of the session user, offered by the
   // calculate performance and the generate report dialogs.
   portfolios: PortfolioRow[]
+  // The user who owns the portfolio, naming it beside the
+  // headline figure of the summary. Null while the profile
+  // cannot be resolved, so the summary falls back to the
+  // figure alone.
+  owner: UserIdentity | null
+  // Allocation bounds of every norm bound to this portfolio.
+  // Empty while the registry cannot be resolved, so the chart
+  // is dropped rather than drawn as an empty axis.
+  normAllocations: NormPortfolioAllocation[]
 }
 
 // Neutral payload rendered while the loader returns null.
@@ -60,4 +71,6 @@ export const EMPTY_PORTFOLIO_OVERVIEW: PortfolioOverviewData = {
   applicationOptions: { funds: [], portfolios: [] },
   withdrawalOptions: { positions: [], portfolios: [] },
   portfolios: [],
+  owner: null,
+  normAllocations: [],
 }

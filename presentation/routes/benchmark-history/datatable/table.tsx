@@ -15,8 +15,9 @@ interface BenchmarkHistoryDatatableTableProps {
  * Renders the benchmark history datatable.
  *
  * @remarks
- * Composes the shared entity datatable. Benchmark history
- * entries are immutable and read-only.
+ * Composes the shared entity datatable. A rate is corrected
+ * through its row menu, so the table carries the actions
+ * column alongside the three data columns.
  *
  * @param props - The table instance.
  * @param props.table - The shared table instance.

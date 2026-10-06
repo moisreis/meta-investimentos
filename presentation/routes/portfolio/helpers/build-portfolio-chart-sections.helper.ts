@@ -10,6 +10,8 @@ import { BuildPortfolioAnnualCharts } from "./build-portfolio-annual-charts.help
 import { BuildPortfolioCharts } from "./build-portfolio-charts.helper"
 import { BuildPortfolioCheckingCharts } from "./build-portfolio-checking-charts.helper"
 import { BuildPortfolioDistributionCharts } from "./build-portfolio-distribution-charts.helper"
+import { BuildPortfolioNormCharts } from "./build-portfolio-norm-charts.helper"
+import type { NormPortfolioAllocation } from "@/presentation/types/norms-portfolio.types"
 
 import { PORTFOLIO_CHART_SECTIONS } from "../settings/labels.settings"
 
@@ -22,6 +24,9 @@ export interface BuildPortfolioChartSectionsInput {
   performances: readonly PortfolioPerformanceResponseDTO[]
   // Holdings of the portfolio, feeding the distributions.
   holdings: readonly PortfolioHolding[]
+  // Allocation bounds of the norms bound to the portfolio,
+  // feeding the norm allocation chart.
+  normAllocations: readonly NormPortfolioAllocation[]
   // Bank accounts of the portfolio, feeding the checking
   // charts.
   bankAccounts: readonly PortfolioBankAccountView[]
@@ -41,10 +46,17 @@ export interface BuildPortfolioChartSectionsInput {
  *
  * @remarks
  * Groups the charts into their titled sections: the windowed
- * performance, the holdings distributions, the checking
- * accounts and the annual monthly history. The performance
- * section features its patrimony chart full width, because it
- * is the headline of the screen. A section whose models are
+ * performance, the holdings distributions, the norm
+ * allocations, the checking accounts and the annual monthly
+ * history.
+ *
+ * Two sections feature a chart full width. The performance
+ * section features its patrimony chart, the headline of the
+ * screen. The norms section features its only chart, because
+ * its category labels are norm names and half a row is where
+ * a name starts getting truncated.
+ *
+ * A section whose models are
  * empty is dropped, so neither an empty ring nor an empty
  * frame is ever rendered, and the sections read in render
  * order.
@@ -64,6 +76,7 @@ export interface BuildPortfolioChartSectionsInput {
  * const SECTIONS = BuildPortfolioChartSections({
  *   performances,
  *   holdings,
+ *   normAllocations,
  *   bankAccounts,
  *   balances,
  *   dateRange,
@@ -91,6 +104,12 @@ export function BuildPortfolioChartSections(
       id: "distributions",
       title: PORTFOLIO_CHART_SECTIONS.DISTRIBUTIONS_TITLE,
       models: BuildPortfolioDistributionCharts(input.holdings),
+    },
+    {
+      id: "norms",
+      title: PORTFOLIO_CHART_SECTIONS.NORMS_TITLE,
+      featured: true,
+      models: BuildPortfolioNormCharts(input.normAllocations),
     },
     {
       id: "checking",

@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { NormContainer } from "@/presentation/composition/norm.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -64,7 +64,13 @@ export async function createNormAction(
     const { create: CREATE_NORM } = NormContainer()
     const NORM = await CREATE_NORM.execute(PARSED.data)
 
-    return ActionSuccess(NORM)
+    return ActionAudited(NORM, {
+      userId: USER.id,
+      action: "CREATED",
+      entity: "Norm",
+      entityId: NORM.id,
+      entityName: NORM.name,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

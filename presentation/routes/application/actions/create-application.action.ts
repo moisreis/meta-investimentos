@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { ApplicationContainer } from "@/presentation/composition/application.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -70,7 +70,12 @@ export async function createApplicationAction(
       PARSED.data
     )
 
-    return ActionSuccess(APPLICATION)
+    return ActionAudited(APPLICATION, {
+      userId: USER.id,
+      action: "CREATED",
+      entity: "Application",
+      entityId: APPLICATION.id,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

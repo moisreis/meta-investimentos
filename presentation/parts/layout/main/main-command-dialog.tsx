@@ -12,15 +12,25 @@ import {
   CommandList,
   CommandShortcut,
 } from "@/presentation/ui/command"
+import { MAIN_COMMANDS } from "./main-command.settings"
+import type { MainCommandSetting } from "./main-command.settings"
 
 interface MainCommandDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  // Runs a row's command. The dialog only names it: reaching
+  // the route and closing the palette belong to the trigger,
+  // so a row and its keyboard shortcut cannot drift apart.
+  onCommand: (command: MainCommandSetting) => void
 }
 
-export function MainCommandDialog({
+// The palette itself. The rows come from the command registry
+// rather than from markup here, which is what keeps the
+// shortcut a row advertises the shortcut the trigger binds.
+function MainCommandDialog({
   open,
   onOpenChange,
+  onCommand,
 }: MainCommandDialogProps) {
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
@@ -31,29 +41,22 @@ export function MainCommandDialog({
             Nenhum resultado foi encontrado.
           </CommandEmpty>
           <CommandGroup heading="Comandos principais">
-            <CommandItem>
-              <span>Registrar aplicação</span>
-              <CommandShortcut>Ctrl + A</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <span>Registrar resgate</span>
-              <CommandShortcut>Ctrl + R</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <span>Gerar relatório</span>
-              <CommandShortcut>Ctrl + S</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <span>Recalcular performance</span>
-              <CommandShortcut>Ctrl + P</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <span>Importar cotas</span>
-              <CommandShortcut>Ctrl + Q</CommandShortcut>
-            </CommandItem>
+            {MAIN_COMMANDS.map((command) => (
+              <CommandItem
+                key={command.id}
+                onSelect={() => onCommand(command)}
+              >
+                <span>{command.label}</span>
+                <CommandShortcut>
+                  {command.shortcutLabel}
+                </CommandShortcut>
+              </CommandItem>
+            ))}
           </CommandGroup>
         </CommandList>
       </Command>
     </CommandDialog>
   )
 }
+
+export { MainCommandDialog }

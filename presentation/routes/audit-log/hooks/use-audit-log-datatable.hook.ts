@@ -8,6 +8,7 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { ENTITY_TABLE_DEFAULT_PAGE_SIZE } from "@/presentation/parts/datatable/settings/entity-table-labels.settings"
 import type { AuditLogResponseDTO } from "@/services/audit-log/dto/audit-log-response.dto"
 
 import { CreateAuditLogTableColumns } from "../datatable/table-columns"
@@ -62,7 +63,10 @@ function useAuditLogDatatable(
     getRowId: (row) => row.id,
     initialState: {
       sorting: [{ id: "createdAt", desc: true }],
-      pagination: { pageIndex: 0, pageSize: 10 },
+      pagination: {
+        pageIndex: 0,
+        pageSize: ENTITY_TABLE_DEFAULT_PAGE_SIZE,
+      },
     },
   })
 

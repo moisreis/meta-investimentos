@@ -3,6 +3,7 @@ import { LogError, LogWarn } from "@/lib/log/logger"
 import { ApplicationContainer } from "@/presentation/composition/application.container"
 import { BankAccountContainer } from "@/presentation/composition/bank-account.container"
 import { BankContainer } from "@/presentation/composition/bank.container"
+import { BenchmarkContainer } from "@/presentation/composition/benchmark.container"
 import { CheckingAccountContainer } from "@/presentation/composition/checking-account.container"
 import { FundContainer } from "@/presentation/composition/fund.container"
 import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
@@ -12,6 +13,8 @@ import { WithdrawalContainer } from "@/presentation/composition/withdrawal.conta
 import { BuildPortfolioActivityRows } from "./build-portfolio-activity-rows.helper"
 import { LoadPortfolioApplicationOptions } from "./load-portfolio-application-options.helper"
 import { LoadPortfolioWithdrawalOptions } from "./load-portfolio-withdrawal-options.helper"
+import { LoadPortfolioOwner } from "./load-portfolio-owner.helper"
+import { LoadPortfolioNormRegistry } from "./load-portfolio-norm-registry.helper"
 import { LoadSessionPortfolios } from "./load-session-portfolios.helper"
 
 import { EMPTY_APPLICATION_ADD_OPTIONS } from "@/presentation/routes/application/types/application-add.types"
@@ -73,6 +76,9 @@ const EMPTY_PORTFOLIO_OVERVIEW_EXTRAS: LoadedPortfolioOverviewExtras =
  * explain the missing records through their own empty copy.
  * Returns null when there is no session, the portfolio is
  * missing, or the portfolio is not owned by the session user.
+ * The owner of the portfolio joins the same parallel batch,
+ * read by the id the portfolio carries, and degrades to a
+ * null byline rather than failing the screen.
  *
  * @explanation
  * Use this helper from the page loader so the session
@@ -131,10 +137,14 @@ export async function LoadPortfolioOverview(
       [APPLICATION_OPTIONS, WITHDRAWAL_OPTIONS],
       PICKER_OPTIONS,
       EXTRAS,
+      OWNER,
+      NORM_REGISTRY,
     ] = await Promise.all([
       LoadPortfolioAddOptions(portfolioId),
       LoadPortfolioPickerOptions(),
       LoadPortfolioOverviewExtras(portfolioId),
+      LoadPortfolioOwner(PORTFOLIO.userId),
+      LoadPortfolioNormRegistry([portfolioId]),
     ])
 
     return {
@@ -148,6 +158,9 @@ export async function LoadPortfolioOverview(
       applicationOptions: APPLICATION_OPTIONS,
       withdrawalOptions: WITHDRAWAL_OPTIONS,
       portfolios: PICKER_OPTIONS,
+      owner: OWNER,
+      normAllocations:
+        NORM_REGISTRY?.allocations[portfolioId] ?? [],
     }
   } catch (cause) {
     LogError(
@@ -292,6 +305,7 @@ async function LoadPortfolioOverviewExtras(
     const { listWeights: LIST_WEIGHTS } = PositionContainer()
     const { list: LIST_FUNDS } = FundContainer()
     const { list: LIST_BANKS } = BankContainer()
+    const { list: LIST_BENCHMARKS } = BenchmarkContainer()
     const { list: LIST_BANK_ACCOUNTS } = BankAccountContainer()
     const { listAllApplications: LIST_APPLICATIONS } =
       ApplicationContainer()
@@ -300,18 +314,20 @@ async function LoadPortfolioOverviewExtras(
     const { listByBankAccounts: LIST_CHECKING_BY_ACCOUNTS } =
       CheckingAccountContainer()
 
-    const [WEIGHTS, FUNDS, BANKS, BANK_ACCOUNTS] =
+    const [WEIGHTS, FUNDS, BANKS, BENCHMARKS, BANK_ACCOUNTS] =
       await Promise.all([
         LIST_WEIGHTS.execute({ portfolioIds: [portfolioId] }),
         LIST_FUNDS.execute({}),
         LIST_BANKS.execute({}),
+        LIST_BENCHMARKS.execute({}),
         LIST_BANK_ACCOUNTS.execute({}),
       ])
 
     const HOLDINGS = BuildPortfolioHoldings(
       WEIGHTS,
       FUNDS,
-      BANKS
+      BANKS,
+      BENCHMARKS
     )
     const BANK_ACCOUNT_VIEWS = BuildPortfolioBankAccountViews(
       BANK_ACCOUNTS,

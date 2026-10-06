@@ -98,6 +98,9 @@ export const WITHDRAWAL_DATATABLE = {
   // Quotas column header.
   COLUMN_QUOTAS: "Cotas",
 
+  // Quota value column header.
+  COLUMN_QUOTA_VALUE: "Valor da cota",
+
   // Status column header.
   COLUMN_STATUS: "Status",
 
@@ -122,20 +125,7 @@ export const WITHDRAWAL_DATATABLE = {
 
   // Row actions menu.
   ROW_ACTIONS_LABEL: "Ações",
-  ROW_EDIT_LABEL: "Editar",
   ROW_REVERSE_LABEL: "Reverter",
-  ROW_DELETE_LABEL: "Excluir",
-
-  // Single delete dialog.
-  DELETE_TITLE: "Excluir resgate",
-  DELETE_CONFIRM_LABEL: "Excluir",
-  DELETE_CANCEL_LABEL: "Cancelar",
-
-  // Delete result toast copy.
-  DELETE_SUCCESS_TITLE: "Resgate excluído!",
-  DELETE_SUCCESS_DESCRIPTION:
-    "O resgate foi excluído com sucesso.",
-  DELETE_ERROR_TITLE: "Não foi possível excluir o resgate",
 
   // Single reverse dialog.
   REVERSE_TITLE: "Reverter resgate",

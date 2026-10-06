@@ -1,6 +1,10 @@
 "use client"
 
 import type { ColumnHelper } from "@tanstack/react-table"
+import {
+  IconCircleArrowDown,
+  IconCircleArrowUp,
+} from "@tabler/icons-react"
 
 import { EntityStateBadge } from "@/presentation/parts/datatable/columns/entity-state-badge"
 import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
@@ -58,6 +62,10 @@ export function CreatePositionActivityColumns(
           matched={getValue() === "application"}
           matchedLabel={POSITION_ACTIVITY.TYPE_APPLICATION}
           unmatchedLabel={POSITION_ACTIVITY.TYPE_WITHDRAWAL}
+          matchedIcon={<IconCircleArrowUp aria-hidden="true" />}
+          unmatchedIcon={
+            <IconCircleArrowDown aria-hidden="true" />
+          }
         />
       ),
     }),

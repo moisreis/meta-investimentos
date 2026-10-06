@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { CheckingAccountContainer } from "@/presentation/composition/checking-account.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -64,7 +64,12 @@ export async function updateCheckingAccountAction(
       PARSED.data
     )
 
-    return ActionSuccess(ENTRY)
+    return ActionAudited(ENTRY, {
+      userId: USER.id,
+      action: "UPDATED",
+      entity: "CheckingAccount",
+      entityId: ENTRY.id,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

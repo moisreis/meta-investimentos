@@ -5,16 +5,18 @@ import { BenchmarkHistoryContainer } from "@/presentation/composition/benchmark-
 import { ToBenchmarkRows } from "@/presentation/mappers/benchmark-row.mapper"
 import { ToBenchmarkHistoryRows } from "@/presentation/mappers/benchmark-history-row.mapper"
 import type { BenchmarkHistoryRow } from "@/presentation/types/benchmark-history-row.types"
+import type { BenchmarkRow } from "@/presentation/types/benchmark-row.types"
 
 // Data resolved by the benchmark history list loader.
 export interface LoadedBenchmarkHistoryList {
   history: BenchmarkHistoryRow[]
+  benchmarks: BenchmarkRow[]
 }
 
 /**
  * @summary
- * Resolves the session user and the benchmark history across
- * all benchmarks, composed server-side.
+ * Resolves the session user, the benchmarks and the benchmark
+ * history across all of them, composed server-side.
  *
  * @remarks
  * Lists all benchmarks, then fetches the history for each
@@ -22,12 +24,19 @@ export interface LoadedBenchmarkHistoryList {
  * index and attaches the benchmark name and acronym to each
  * row. Returns null when there is no active session.
  *
+ * The benchmarks travel back with the history rather than
+ * being loaded again by the screen: the record dialog needs
+ * them for its index picker, and the loader already read them
+ * to compose the rows, so handing them over is free and keeps
+ * the picker from ever offering an index the list did not.
+ *
  * @explanation
  * Use this helper from the page loader so the session
  * resolution and the benchmark history composition stay in a
  * single composition point.
  *
- * @returns The benchmark history rows, or null.
+ * @returns The benchmark history rows and the benchmarks, or
+ * null.
  *
  * @example
  * const LOADED = await LoadBenchmarkHistory();
@@ -64,5 +73,6 @@ export async function LoadBenchmarkHistory(): Promise<LoadedBenchmarkHistoryList
       HISTORY_GROUPS.flat(),
       BENCHMARKS_BY_ID
     ),
+    benchmarks: BENCHMARKS,
   }
 }

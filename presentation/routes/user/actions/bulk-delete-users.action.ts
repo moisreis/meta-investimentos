@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { UserContainer } from "@/presentation/composition/user.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -60,7 +60,16 @@ export async function bulkDeleteUsersAction(
 
     await BULK_DELETE_USERS.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "User",
+      entityId: PARSED.data.userIds[0] ?? "",
+      changes: {
+        ids: PARSED.data.userIds,
+        count: PARSED.data.userIds.length,
+      },
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

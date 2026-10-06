@@ -52,8 +52,14 @@ export const QUOTA_IMPORT_WINDOWS: readonly QuotaImportWindowOption[] =
 
 // Datatable copy for the quota list screen.
 export const QUOTA_DATATABLE = {
-  // Search filter placeholder.
-  FILTER_SEARCH_PLACEHOLDER: "Buscar por fundo, cnpj ou data",
+  // Fund filter accessible label.
+  FILTER_FUND_LABEL: "Filtrar por fundo",
+
+  // Fund filter placeholder.
+  FILTER_FUND_PLACEHOLDER: "Selecione o fundo",
+
+  // Date range filter placeholder.
+  FILTER_DATE_PLACEHOLDER: "Selecione um período",
 
   // Fund column header.
   COLUMN_FUND: "Fundo",

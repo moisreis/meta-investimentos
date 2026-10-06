@@ -22,12 +22,12 @@ import { AddWithdrawalButton } from "@/presentation/routes/withdrawal/components
 import { PortfolioActivityDatatable } from "../components/portfolio-activity-datatable"
 import { PortfolioPositionsDatatable } from "../components/portfolio-positions-datatable"
 import { usePortfolioOverview } from "../hooks/use-portfolio-overview.hook"
+import { usePortfolioActivityRowActions } from "../hooks/use-portfolio-activity-row-actions.hook"
 import { PORTFOLIO_SUMMARY } from "../settings/labels.settings"
 import {
   EMPTY_PORTFOLIO_OVERVIEW,
   type PortfolioOverviewData,
 } from "../types/portfolio-overview.types"
-
 interface PortfolioDetailProps {
   data: PortfolioOverviewData | null
 }
@@ -47,12 +47,23 @@ interface PortfolioDetailProps {
  *
  * The filter in the toolbar selects the window the summary,
  * the performance charts and the movements are computed
- * from; the values, the chart sections and the rows come from
- * the overview hook and never from component-local logic. The
+ * from. It is the same window control the portfolio list
+ * offers, down to the two months side by side, so moving
+ * between the two screens does not teach a new gesture; only
+ * the enabled days differ, since here the window narrows a
+ * single portfolio rather than the session. The values, the
+ * chart sections and the rows come from the overview hook and
+ * never from component-local logic. The
  * distributions, the checking balances, the positions and
  * the annual monthly history are the exception by design: a
  * holding and a balance are facts about the portfolio today,
  * and the year is a fixed horizon, so they ignore the window.
+ *
+ * The summary is handed the owner of the portfolio as well,
+ * so the block names whose figures they are. The owner comes
+ * from the overview data and not from the hook, because a
+ * person does not change with the window the way the figures
+ * do.
  *
  * Without a single snapshot the summary gives way to the
  * shared empty state. The rest of the screen still renders,
@@ -94,6 +105,12 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
   )
   const generateDialog = useStatementGenerateDialog()
 
+  // Row actions for the activity datatable: reverse an
+  // application or a withdrawal. The hook owns the confirm
+  // dialog and the result toast, dispatching to the
+  // appropriate server action based on the movement kind.
+  const activityRowActions = usePortfolioActivityRowActions()
+
   return (
     <EntityDetailShell
       toolbar={
@@ -108,7 +125,6 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
               placeholder={
                 PORTFOLIO_SUMMARY.FILTER_DATE_PLACEHOLDER
               }
-              numberOfMonths={1}
             />
           }
           actions={
@@ -137,7 +153,7 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
       }
     >
       {SUMMARY ? (
-        <EntityDetailSummary {...SUMMARY} />
+        <EntityDetailSummary {...SUMMARY} owner={DATA.owner} />
       ) : (
         <EntityEmptyTable
           icon={IconChartLine}
@@ -150,7 +166,10 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
 
       <PortfolioPositionsDatatable holdings={DATA.holdings} />
 
-      <PortfolioActivityDatatable rows={overview.activityRows} />
+      <PortfolioActivityDatatable
+        rows={overview.activityRows}
+        rowActions={activityRowActions}
+      />
 
       <PortfolioPerformanceCalculateConfirmDialog
         open={calculation.confirmOpen}

@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -63,7 +63,12 @@ export async function deletePortfolioAction(
       userId: USER.id,
     })
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "Portfolio",
+      entityId: PARSED.data.portfolioId,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

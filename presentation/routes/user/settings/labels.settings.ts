@@ -1,4 +1,6 @@
 ﻿import type { UserRole } from "@/lib/auth/user-role"
+import type { SharedAvatarUploadLabels } from "@/presentation/parts/components/shared-avatar-upload"
+import { FormatAvatarUploadMaxBytesLabel } from "@/presentation/parts/settings/shared-avatar-upload.settings"
 
 /**
  * @summary
@@ -60,9 +62,44 @@ export const USER_FORM = {
   LABEL_ROLE: "Perfil",
   // Field placeholder: the role.
   PLACEHOLDER_ROLE: "Selecione o perfil",
+  // Field label: the avatar.
+  LABEL_AVATAR: "Avatar",
+  // Field description: the avatar.
+  DESCRIPTION_AVATAR:
+    "Imagem quadrada usada como avatar do perfil.",
   // Copy shown when no option matches the query.
   SEARCH_EMPTY: "Nenhum perfil encontrado",
 } as const
+
+// Copy of the avatar upload section. The size ceiling is
+// formatted from the limit the check enforces, so the number
+// the user is held to is the number the code applies.
+export const USER_AVATAR_UPLOAD: SharedAvatarUploadLabels = {
+  // Title shown before a file is picked.
+  emptyTitle: "Nenhuma imagem selecionada",
+
+  // Description shown before a file is picked.
+  emptyDescription: `PNG, JPG ou WEBP · até ${FormatAvatarUploadMaxBytesLabel()}`,
+
+  // Description shown while the picked file is being read.
+  uploadingDescription: "Enviando imagem…",
+
+  // Accessible name of the trigger that opens the picker.
+  uploadAction: "Selecionar imagem",
+
+  // Accessible name of the remove action.
+  removeAction: "Remover imagem",
+
+  // Copy for a file that is not an accepted image.
+  invalidTypeError: "Selecione uma imagem PNG, JPG ou WEBP.",
+
+  // Copy for an accepted image above the size ceiling.
+  tooLargeError: `A imagem deve ter no máximo ${FormatAvatarUploadMaxBytesLabel()}.`,
+
+  // Copy for a file the browser refused to read.
+  readFailedError:
+    "Não foi possível ler a imagem. Selecione outra.",
+}
 
 // Dialog copy for the user add/edit flows.
 export const USER_DIALOG = {

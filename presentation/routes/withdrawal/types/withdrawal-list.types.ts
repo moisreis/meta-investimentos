@@ -23,6 +23,8 @@ export interface WithdrawalRowLookup {
   fundName: string
   // Fund cnpj shown as the row subtitle.
   fundCnpj: string
+  // Quota value used to redeem the withdrawal.
+  quotaValue: string
 }
 
 // Lookups consumed by the withdrawal datatable.

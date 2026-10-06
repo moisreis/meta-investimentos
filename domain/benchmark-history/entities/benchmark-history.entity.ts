@@ -18,7 +18,7 @@ export interface BenchmarkHistoryProps {
  *
  * @explanation
  * Stores daily benchmark rates for spread calculations.
- * Supports rate updates.
+ * Supports rate and period updates.
  *
  * @author Moisés Reis
  *
@@ -236,38 +236,50 @@ export class BenchmarkHistory {
 
   /**
    * @summary
-   * Updates the rate of this benchmark history.
+   * Updates the mutable fields of this benchmark history.
    *
    * @remarks
-   * Returns new BenchmarkHistory instance with updated rate.
+   * The index and the date identify the entry, so an
+   * incorrect one is a correction rather than a new fact:
+   * the three fields are rewritten together, re-validated,
+   * and the identity and creation instant are carried over.
+   *
+   * The caller owns the question of whether the resulting
+   * `(index, date)` pair is free, because only the caller
+   * knows which other entries exist.
    *
    * @explanation
-   * Corrects a quoted rate without touching other fields.
+   * Corrects a rate recorded against the wrong index or the
+   * wrong month without deleting and re-recording it.
    *
-   * @param rate - New SignedPercentage rate.
+   * @param options - Fields to update.
    *
-   * @returns Updated history rate.
+   * @returns Updated benchmark history.
    *
    * @example
-   * const UPDATED = history.updateRate(
-   *   SignedPercentage.create("12.50")
-   * );
+   * const UPDATED = history.update({
+   *   benchmarkId: EntityId.create(
+   *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
+   *   ),
+   *   date: new Date("2026-02-01T00:00:00.000Z"),
+   *   rate: SignedPercentage.create("12.50"),
+   * });
    *
    * @author Moisés Reis
    *
-   * @date 2026-09-13
+   * @date 2026-10-05
    */
-  public updateRate(rate: SignedPercentage): BenchmarkHistory {
-    if (!rate) {
-      throw new ValidationError(
-        "`BenchmarkHistory` must have a rate."
-      )
-    }
-
-    return new BenchmarkHistory(
+  public update(options: {
+    benchmarkId: EntityId
+    date: Date
+    rate: SignedPercentage
+  }): BenchmarkHistory {
+    return BenchmarkHistory.create(
       {
-        ...this.props,
-        rate,
+        benchmarkId: options.benchmarkId,
+        date: options.date,
+        rate: options.rate,
+        createdAt: this.props.createdAt,
       },
       this._id
     )

@@ -9,6 +9,7 @@ import {
 
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { ENTITY_TABLE_DEFAULT_PAGE_SIZE } from "@/presentation/parts/datatable/settings/entity-table-labels.settings"
 import type { QuotaRow } from "@/presentation/types/quota-row.types"
 
 import { CreateQuotaTableColumns } from "../datatable/table-columns"
@@ -29,7 +30,7 @@ const COLUMN_HELPER: ColumnHelper<
  * Creates the shared table instance used by the
  * datatable and the pagination, wiring the fund name
  * resolution into the column definitions. The pagination
- * starts at ten rows per page; it is seeded through
+ * starts at twenty rows per page; it is seeded through
  * `initialState` so the slice stays mutable — the `state`
  * option would treat it as controlled and ignore every
  * page and page-size change.
@@ -63,7 +64,10 @@ function useQuotaDatatable(
     data: quotas,
     getRowId: (row) => row.id,
     initialState: {
-      pagination: { pageIndex: 0, pageSize: 10 },
+      pagination: {
+        pageIndex: 0,
+        pageSize: ENTITY_TABLE_DEFAULT_PAGE_SIZE,
+      },
     },
   })
 

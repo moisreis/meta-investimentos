@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { BenchmarkContainer } from "@/presentation/composition/benchmark.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -61,11 +61,17 @@ export async function updateBenchmarkAction(
     const { update: UPDATE_BENCHMARK } = BenchmarkContainer()
     const BENCHMARK = await UPDATE_BENCHMARK.execute(PARSED.data)
 
-    return ActionSuccess(BENCHMARK)
+    return ActionAudited(BENCHMARK, {
+      userId: USER.id,
+      action: "UPDATED",
+      entity: "Benchmark",
+      entityId: BENCHMARK.id,
+      entityName: BENCHMARK.name,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,
-      "Não foi possível atualizar o benchmark."
+      "Não foi possível atualizar o índice."
     )
   }
 }

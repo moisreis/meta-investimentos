@@ -3,12 +3,12 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
 } from "@/presentation/presenters/action-result.presenter"
 import { WithdrawalContainer } from "@/presentation/composition/withdrawal.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 
 import { REVERSE_WITHDRAWAL_SCHEMA } from "../validations/withdrawal-actions.validation"
 
@@ -65,7 +65,12 @@ export async function reverseWithdrawalAction(
       reversedByUserId: USER.id,
     })
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "REVERSED",
+      entity: "Withdrawal",
+      entityId: PARSED.data.withdrawalId,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

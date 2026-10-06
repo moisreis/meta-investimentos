@@ -37,6 +37,13 @@ export const ENTITY_TABLE_PAGE_SIZES = [
   10, 20, 30, 40, 50,
 ] as const
 
+// Page size a list table opens with, before the user picks
+// another one from the dropdown. Named here rather than typed
+// into each table's initial state so the offering and the
+// starting point cannot drift apart: a list reads as a list,
+// not as the stub a ten row page makes of it.
+export const ENTITY_TABLE_DEFAULT_PAGE_SIZE = 20
+
 // Copy for the selection column.
 export const ENTITY_TABLE_SELECT_ALL_LABEL = "Selecionar todos"
 export const ENTITY_TABLE_SELECT_ROW_LABEL = "Selecionar linha"

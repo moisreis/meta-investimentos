@@ -9,6 +9,7 @@ import {
 
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { ENTITY_TABLE_FEATURES } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
+import { ENTITY_TABLE_DEFAULT_PAGE_SIZE } from "@/presentation/parts/datatable/settings/entity-table-labels.settings"
 import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
 import type { BenchmarkRow } from "@/presentation/types/benchmark-row.types"
@@ -30,7 +31,7 @@ const COLUMN_HELPER: ColumnHelper<
  * the datatable and the pagination, wiring the row edit
  * action and the add/edit dialogs into the column
  * definitions.
- * The pagination starts at ten rows per page; it is seeded
+ * The pagination starts at twenty rows per page; it is seeded
  * through `initialState` so the slice stays mutable — the
  * `state` option would treat it as controlled and ignore
  * every page and page-size change.
@@ -61,7 +62,10 @@ function useBenchmarkDatatable(benchmarks: BenchmarkRow[]) {
     data: benchmarks,
     getRowId: (row) => row.id,
     initialState: {
-      pagination: { pageIndex: 0, pageSize: 10 },
+      pagination: {
+        pageIndex: 0,
+        pageSize: ENTITY_TABLE_DEFAULT_PAGE_SIZE,
+      },
     },
   })
 

@@ -2,7 +2,6 @@
 
 import type { ColumnHelper } from "@tanstack/react-table"
 
-import { EntityExternalLink } from "@/presentation/parts/datatable/columns/entity-external-link"
 import { EntityUserCell } from "@/presentation/parts/datatable/columns/entity-user-cell"
 import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
@@ -83,20 +82,6 @@ export function CreateStatementTableColumns(
         },
       }
     ),
-
-    columnHelper.accessor("fileUrl", {
-      id: "file",
-      header: STATEMENT_DATATABLE.COLUMN_FILE,
-      size: 90,
-      enableSorting: false,
-      meta: { fluid: true },
-      cell: ({ getValue }) => (
-        <EntityExternalLink
-          href={getValue()}
-          label={STATEMENT_DATATABLE.COLUMN_FILE_OPEN_LABEL}
-        />
-      ),
-    }),
 
     columnHelper.accessor("generatedByUserId", {
       id: "generatedBy",

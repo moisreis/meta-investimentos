@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { CheckingAccountContainer } from "@/presentation/composition/checking-account.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -60,7 +60,12 @@ export async function deleteCheckingAccountAction(
 
     await REMOVE_CHECKING_ACCOUNT.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "DELETED",
+      entity: "CheckingAccount",
+      entityId: PARSED.data.checkingAccountId,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

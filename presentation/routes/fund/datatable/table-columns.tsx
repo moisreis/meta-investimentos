@@ -6,7 +6,7 @@ import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/en
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import { FormatCount } from "@/presentation/presenters/count.presenter"
+import { FormatCountOrDash } from "@/presentation/presenters/count.presenter"
 import { FormatCnpj } from "@/presentation/presenters/cnpj.presenter"
 import { FormatPercentage } from "@/presentation/presenters/percentage.presenter"
 import { FormatText } from "@/presentation/presenters/text.presenter"
@@ -81,7 +81,7 @@ export function CreateFundTableColumns(
         header: FUND_DATATABLE.COLUMN_POSITION_COUNT,
         size: 110,
         meta: { align: "end", fluid: true },
-        cell: (info) => FormatCount(info.getValue()),
+        cell: (info) => FormatCountOrDash(info.getValue()),
       }
     ),
 

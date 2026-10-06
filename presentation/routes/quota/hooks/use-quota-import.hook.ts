@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 import type { CvmImportWindow } from "@/lib/quota/cvm-import-window"
+import { useSharedAuditNotification } from "@/presentation/parts/hooks/use-shared-audit-notification.hook"
 
 import { getQuotaImportProgressAction } from "../actions/get-quota-import-progress.action"
 import { startQuotaImportAction } from "../actions/start-quota-import.action"
@@ -20,8 +21,12 @@ const IMPORT_POLL_INTERVAL_MS = 750
  * Owns the confirm dialog state, the selected window, the
  * start action request and the progress polling loop that
  * reads the job snapshot until it reaches a terminal
- * status. Refreshes the router after a successful import
- * so the datatable reflects the new rows.
+ * status. The start request announces itself in the header
+ * notification as soon as it is accepted, so the import is
+ * reported the moment the job is handed off rather than
+ * left unmentioned while it runs. Refreshes the router
+ * after a successful import so the datatable reflects the
+ * new rows.
  *
  * @explanation
  * Use as the single source of truth for the quota import
@@ -35,6 +40,7 @@ const IMPORT_POLL_INTERVAL_MS = 750
  */
 function useQuotaImport() {
   const ROUTER = useRouter()
+  const NOTIFY = useSharedAuditNotification()
 
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [importWindow, setImportWindow] =
@@ -91,6 +97,7 @@ function useQuotaImport() {
         return
       }
 
+      NOTIFY(RESULT.audit)
       setJobId(RESULT.data)
       setJob(null)
       setConfirmOpen(false)
@@ -98,7 +105,7 @@ function useQuotaImport() {
     } finally {
       setStarting(false)
     }
-  }, [importWindow])
+  }, [importWindow, NOTIFY])
 
   useEffect(() => {
     if (!jobId) return

@@ -9,12 +9,14 @@ import {
   PORTFOLIO_DIALOG,
   PORTFOLIO_FORM,
 } from "@/presentation/routes/portfolio/settings/labels.settings"
+import type { NormOptionRegistry } from "@/presentation/types/norms-portfolio.types"
 
 /**
  * Props for the portfolio edit dialog.
  */
 export interface PortfolioEditDialogProps {
   dialog: EntityEditDialogModel<PortfolioRow>
+  norms: NormOptionRegistry | null
 }
 
 /**
@@ -27,8 +29,17 @@ export interface PortfolioEditDialogProps {
  * success or error; on success the dialog closes and the
  * server data refreshes.
  *
+ * The bounds already stored for the target row are seeded
+ * into the form from the same registry that supplies the
+ * picker, so submitting without touching the norms leaves
+ * the relations as they were. A missing registry keeps the
+ * stored relations out of the payload instead of claiming
+ * the portfolio has no norms.
+ *
  * @param props - Props of the portfolio edit dialog.
  * @param props.dialog - The edit dialog flow state.
+ * @param props.norms - The norms the form may attach, and
+ *                      the bounds stored per portfolio.
  *
  * @returns The portfolio edit dialog flow.
  *
@@ -38,7 +49,10 @@ export interface PortfolioEditDialogProps {
  */
 function PortfolioEditDialog({
   dialog,
+  norms,
 }: PortfolioEditDialogProps) {
+  const TARGET_ID = dialog.target?.id
+
   return (
     <>
       <EntityEditDialog
@@ -47,10 +61,12 @@ function PortfolioEditDialog({
         title={PORTFOLIO_DIALOG.EDIT_TITLE}
         description={PORTFOLIO_DIALOG.EDIT_DESCRIPTION}
       >
-        {dialog.target ? (
+        {dialog.target && TARGET_ID ? (
           <EditPortfolioForm
+            key={TARGET_ID}
             portfolio={dialog.target}
             onStatusChange={dialog.handleStatusChange}
+            normRegistry={norms}
           />
         ) : null}
       </EntityEditDialog>

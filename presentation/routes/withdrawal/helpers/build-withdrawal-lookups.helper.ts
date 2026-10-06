@@ -87,6 +87,7 @@ export function BuildWithdrawalLookups(
       fundId: POSITION.fundId,
       fundName: FUND?.name ?? "Fundo",
       fundCnpj: FUND?.cnpj ?? "",
+      quotaValue: withdrawal.quotaValue,
     }
   }
 

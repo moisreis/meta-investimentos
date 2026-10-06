@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { BenchmarkContainer } from "@/presentation/composition/benchmark.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -60,11 +60,17 @@ export async function createBenchmarkAction(
     const { create: CREATE_BENCHMARK } = BenchmarkContainer()
     const BENCHMARK = await CREATE_BENCHMARK.execute(PARSED.data)
 
-    return ActionSuccess(BENCHMARK)
+    return ActionAudited(BENCHMARK, {
+      userId: USER.id,
+      action: "CREATED",
+      entity: "Benchmark",
+      entityId: BENCHMARK.id,
+      entityName: BENCHMARK.name,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,
-      "Não foi possível criar o benchmark."
+      "Não foi possível criar o índice."
     )
   }
 }

@@ -7,7 +7,8 @@ import type { BenchmarkHistoryListProps } from "../types/benchmark-history-list.
  *
  * @remarks
  * Loads the session benchmark history rows composed across
- * all benchmarks.
+ * all benchmarks, together with the benchmarks the record
+ * dialog offers as options.
  *
  * @returns The benchmark history list props, or empty props when
  * there is no active session.
@@ -25,10 +26,12 @@ export async function LoadBenchmarkHistoryPageProps(): Promise<BenchmarkHistoryL
   if (LOADED) {
     return {
       data: LOADED.history,
+      benchmarks: LOADED.benchmarks,
     }
   }
 
   return {
     data: null,
+    benchmarks: [],
   }
 }

@@ -105,6 +105,9 @@ export const APPLICATION_DATATABLE = {
   // Quotas column header.
   COLUMN_QUOTAS: "Cotas",
 
+  // Quota value column header.
+  COLUMN_QUOTA_VALUE: "Valor da cota",
+
   // Status column header.
   COLUMN_STATUS: "Status",
 
@@ -129,20 +132,7 @@ export const APPLICATION_DATATABLE = {
 
   // Row actions menu.
   ROW_ACTIONS_LABEL: "Ações",
-  ROW_EDIT_LABEL: "Editar",
   ROW_REVERSE_LABEL: "Reverter",
-  ROW_DELETE_LABEL: "Excluir",
-
-  // Single delete dialog.
-  DELETE_TITLE: "Excluir aplicação",
-  DELETE_CONFIRM_LABEL: "Excluir",
-  DELETE_CANCEL_LABEL: "Cancelar",
-
-  // Delete result toast copy.
-  DELETE_SUCCESS_TITLE: "Aplicação excluída!",
-  DELETE_SUCCESS_DESCRIPTION:
-    "A aplicação foi excluída com sucesso.",
-  DELETE_ERROR_TITLE: "Não foi possível excluir a aplicação",
 
   // Single reverse dialog.
   REVERSE_TITLE: "Reverter aplicação",

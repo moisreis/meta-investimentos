@@ -6,7 +6,7 @@ import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/en
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import { FormatCount } from "@/presentation/presenters/count.presenter"
+import { FormatCountOrDash } from "@/presentation/presenters/count.presenter"
 import { CATEGORY_DATATABLE } from "@/presentation/routes/category/settings/labels.settings"
 import type { CategoryRow } from "@/presentation/types/category-row.types"
 
@@ -61,7 +61,7 @@ export function CreateCategoryTableColumns(
         header: CATEGORY_DATATABLE.COLUMN_FUND_COUNT,
         size: 110,
         meta: { align: "end", fluid: true },
-        cell: (info) => FormatCount(info.getValue()),
+        cell: (info) => FormatCountOrDash(info.getValue()),
       }
     ),
 

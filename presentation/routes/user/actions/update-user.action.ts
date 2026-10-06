@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { UserContainer } from "@/presentation/composition/user.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -64,7 +64,12 @@ export async function updateUserAction(
 
     await UPDATE_USER.execute(PARSED.data)
 
-    return ActionSuccess(undefined)
+    return ActionAudited(undefined, {
+      userId: USER.id,
+      action: "UPDATED",
+      entity: "User",
+      entityId: PARSED.data.userId,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

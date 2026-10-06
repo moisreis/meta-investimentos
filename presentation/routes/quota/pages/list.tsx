@@ -17,6 +17,7 @@ import { useQuotaDatatable } from "../hooks/use-quota-datatable.hook"
 import { useQuotaDatatableFilters } from "../hooks/use-quota-datatable-filters.hook"
 import { useQuotaKpis } from "../hooks/use-quota-kpis.hook"
 import { useQuotaImport } from "../hooks/use-quota-import.hook"
+import { useSharedCommandOpen } from "@/presentation/parts/hooks/use-shared-command-open.hook"
 import { QUOTA_EMPTY } from "../settings/labels.settings"
 import type { QuotaFundLookups } from "../types/quota-list.types"
 
@@ -55,12 +56,21 @@ function QuotaList({
   const HAS_QUOTAS = QUOTAS.length > 0
 
   const filters = useQuotaDatatableFilters(QUOTAS, lookups)
+
   const { table } = useQuotaDatatable(
     filters.filteredQuotas,
     lookups
   )
   const kpis = useQuotaKpis({ quotas: QUOTAS })
   const importFlow = useQuotaImport()
+
+  // The shell reaches this flow without naming it: Ctrl+Q and
+  // the palette row both land on `?command=import-quotas`, and
+  // this page opens the confirm dialog when it sees the id.
+  useSharedCommandOpen(
+    "import-quotas",
+    importFlow.handleOpenConfirm
+  )
 
   return (
     <>
@@ -82,8 +92,11 @@ function QuotaList({
         onImport={importFlow.handleOpenConfirm}
         filters={
           <QuotaDatatableFilters
-            query={filters.query}
-            onQueryChange={filters.onQueryChange}
+            fundId={filters.fundId}
+            onFundChange={filters.onFundChange}
+            fundOptions={lookups.fundOptions}
+            dateRange={filters.dateRange}
+            onDateRangeChange={filters.onDateRangeChange}
           />
         }
       />

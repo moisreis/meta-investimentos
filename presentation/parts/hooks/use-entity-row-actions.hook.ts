@@ -7,6 +7,8 @@ import type { EntityDeleteToastStatus } from "@/presentation/parts/toasts/entity
 import type { EntityReverseToastStatus } from "@/presentation/parts/toasts/entity-reverse-toast"
 import type { ActionResult } from "@/presentation/presenters/action-result.presenter"
 
+import { useSharedAuditNotification } from "@/presentation/parts/hooks/use-shared-audit-notification.hook"
+
 // Router instance returned by the navigation use router hook.
 type EntityRouter = ReturnType<typeof useRouter>
 
@@ -59,7 +61,9 @@ export interface EntityRowActionsModel<TData> {
  * and the reverse target selection with the confirmed
  * reverse flow. Each confirm handler runs its server
  * action, reports the result status for the matching
- * toast and refreshes the server data after a success.
+ * toast, announces the recorded act in the header
+ * notification and refreshes the server data after a
+ * success.
  *
  * @explanation
  * Use inside the route datatable to keep the row action
@@ -99,6 +103,7 @@ function useEntityRowActions<TData extends { id: string }>({
   onView,
 }: EntityRowActionsConfig<TData>): EntityRowActionsModel<TData> {
   const ROUTER = useRouter()
+  const NOTIFY = useSharedAuditNotification()
   const [DELETE_TARGET, setDeleteTarget] =
     useState<TData | null>(null)
   const [DELETE_PENDING, setDeletePending] = useState(false)
@@ -144,9 +149,10 @@ function useEntityRowActions<TData extends { id: string }>({
     }
 
     setDeleteStatus("success")
+    NOTIFY(RESULT.audit)
     setDeleteTarget(null)
     ROUTER.refresh()
-  }, [DELETE_TARGET, runDelete, ROUTER])
+  }, [DELETE_TARGET, runDelete, ROUTER, NOTIFY])
 
   const UpdateDeleteOpen = useCallback((open: boolean) => {
     if (!open) {
@@ -177,9 +183,10 @@ function useEntityRowActions<TData extends { id: string }>({
     }
 
     setReverseStatus("success")
+    NOTIFY(RESULT.audit)
     setReverseTarget(null)
     ROUTER.refresh()
-  }, [REVERSE_TARGET, runReverse, ROUTER])
+  }, [REVERSE_TARGET, runReverse, ROUTER, NOTIFY])
 
   const UpdateReverseOpen = useCallback((open: boolean) => {
     if (!open) {

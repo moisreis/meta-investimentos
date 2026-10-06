@@ -2,9 +2,9 @@
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -23,7 +23,9 @@ import { CREATE_PORTFOLIO_SCHEMA } from "../validations/portfolio-actions.valida
  * the user id taken from the session, never from the
  * payload. The caller sends unmasked decimal percentage
  * strings. Returns a human-readable error when anything
- * fails.
+ * fails. A best-effort audit entry is written afterwards, so
+ * the creation shows up in the system activity screen even
+ * when the user is not watching the portfolio list.
  *
  * @explanation
  * Use as the submit target of the add portfolio form.
@@ -40,6 +42,14 @@ import { CREATE_PORTFOLIO_SCHEMA } from "../validations/portfolio-actions.valida
  *   minAllocation: "5",
  *   maxAllocation: "20",
  *   targetAllocation: "12",
+ *   norms: [
+ *     {
+ *       normId: "norm-1",
+ *       minAllocation: "5",
+ *       targetAllocation: "10",
+ *       maxAllocation: "15",
+ *     },
+ *   ],
  * });
  *
  * @author Moisés Reis
@@ -68,7 +78,13 @@ export async function createPortfolioAction(
       userId: USER.id,
     })
 
-    return ActionSuccess(PORTFOLIO)
+    return ActionAudited(PORTFOLIO, {
+      userId: USER.id,
+      action: "CREATED",
+      entity: "Portfolio",
+      entityId: PORTFOLIO.id,
+      entityName: PORTFOLIO.name,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

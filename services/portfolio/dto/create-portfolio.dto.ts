@@ -1,3 +1,5 @@
+import type { PortfolioNormAllocationDTO } from "./portfolio-norm-allocation.dto"
+
 /**
  * @summary
  * Defines the payload for creating a `Portfolio`.
@@ -20,6 +22,14 @@
  *   minAllocation: "5",
  *   maxAllocation: "20",
  *   targetAllocation: "12",
+ *   norms: [
+ *     {
+ *       normId: "norm-1",
+ *       minAllocation: "5",
+ *       targetAllocation: "10",
+ *       maxAllocation: "15",
+ *     },
+ *   ],
  * };
  *
  * @author Moisés Reis
@@ -34,4 +44,5 @@ export interface CreatePortfolioDTO {
   minAllocation: string
   maxAllocation: string
   targetAllocation: string
+  norms?: PortfolioNormAllocationDTO[]
 }

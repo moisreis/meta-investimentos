@@ -7,9 +7,9 @@ import {
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { LogError } from "@/lib/log/logger"
 import { PositionPerformanceContainer } from "@/presentation/composition/position-performance.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   ToFailureMessage,
@@ -142,7 +142,12 @@ export async function startPositionPerformanceCalculationAction(
 
     void runPositionPerformanceCalculationJob(JOB_ID, PLAN)
 
-    return ActionSuccess(JOB_ID)
+    return ActionAudited(JOB_ID, {
+      userId: USER.id,
+      action: "CALCULATED",
+      entity: "PositionPerformance",
+      entityId: JOB_ID,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,

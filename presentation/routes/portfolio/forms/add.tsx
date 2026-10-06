@@ -4,6 +4,7 @@ import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
 
 import { EntityPercentageInput } from "@/presentation/parts/components/entity-percentage-input"
+import { EntityNormAllocations } from "@/presentation/parts/dialogs/entity-norm-allocations"
 import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
@@ -11,7 +12,11 @@ import { SharedSubmitButton } from "@/presentation/parts/components/shared-submi
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { usePortfolioAddForm } from "@/presentation/routes/portfolio/hooks/use-portfolio-add-form.hook"
 
-import { PORTFOLIO_FORM } from "@/presentation/routes/portfolio/settings/labels.settings"
+import {
+  NORM_ALLOCATIONS,
+  PORTFOLIO_FORM,
+} from "@/presentation/routes/portfolio/settings/labels.settings"
+import type { NormOption } from "@/presentation/types/norms-portfolio.types"
 
 /**
  * Props for the add portfolio form.
@@ -21,6 +26,7 @@ export interface AddPortfolioFormProps {
     status: EntityFormStatus,
     error: string | null
   ) => void
+  normOptions: NormOption[]
 }
 
 /**
@@ -35,6 +41,10 @@ export interface AddPortfolioFormProps {
  * submit status through `onStatusChange` so the parent
  * dialog can react to the outcome.
  *
+ * The norms are not a field of the form but a collection of
+ * bounded rows, so they live in their own dialog and are
+ * reported back through `updateNorms`.
+ *
  * @explanation
  * Use as the add component of the portfolio dialog flow.
  * The parent renders the result toast and the follow-up
@@ -42,12 +52,14 @@ export interface AddPortfolioFormProps {
  *
  * @param props - Props of the add portfolio form.
  * @param props.onStatusChange - Reports submit outcomes.
+ * @param props.normOptions - The norms to offer.
  *
  * @returns The add portfolio form.
  *
  * @example
  * <AddPortfolioForm
- *   onStatusChange={(status, error) => handle(status, error)} />
+ *   onStatusChange={(status, error) => handle(status, error)}
+ *   normOptions={options} />
  *
  * @author Moisés Reis
  *
@@ -55,6 +67,7 @@ export interface AddPortfolioFormProps {
  */
 function AddPortfolioForm({
   onStatusChange,
+  normOptions,
 }: AddPortfolioFormProps) {
   const {
     acronym,
@@ -69,6 +82,8 @@ function AddPortfolioForm({
     updateMaxAllocation,
     targetAllocation,
     updateTargetAllocation,
+    norms,
+    updateNorms,
     error,
     pending,
     status,
@@ -188,6 +203,19 @@ function AddPortfolioForm({
             aria-invalid={
               fieldErrors.maxAllocation ? "true" : undefined
             }
+          />
+        </SharedFormField>
+        <SharedFormField
+          label={PORTFOLIO_FORM.LABEL_NORMS}
+          description={PORTFOLIO_FORM.DESCRIPTION_NORMS}
+        >
+          <EntityNormAllocations
+            allocations={norms}
+            onAllocationsChange={updateNorms}
+            options={normOptions}
+            copy={NORM_ALLOCATIONS}
+            error={fieldErrors.norms}
+            disabled={pending}
           />
         </SharedFormField>
       </FieldGroup>

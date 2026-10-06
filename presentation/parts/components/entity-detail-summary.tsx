@@ -7,6 +7,8 @@ import type { JSX } from "react"
 import { cn } from "cn"
 
 import { Badge } from "@/presentation/ui/badge"
+import { SharedUserAvatar } from "@/presentation/parts/components/shared-user-avatar"
+import type { UserIdentity } from "@/presentation/types/user-identity.types"
 
 /**
  * @summary
@@ -93,6 +95,30 @@ export interface EntitySummaryNote {
   tone: EntitySummaryTone
 }
 
+/**
+ * @summary
+ * The opening block of a detail screen, and the person whose
+ * subject it describes.
+ *
+ * @remarks
+ * The owner is not part of the summary itself: a figure of
+ * account is a fact about the subject, and the person behind
+ * the subject is a fact about the page. Keeping them apart
+ * lets a screen that has no single owner, a bank or a fund,
+ * leave the byline out instead of inventing one.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-05
+ */
+export interface EntityDetailSummaryProps extends EntitySummary {
+  // The user the subject belongs to, named beside the
+  // headline label. Absent or `null` while the profile
+  // cannot be resolved, so the block opens on the figure
+  // alone rather than on an empty name.
+  owner?: UserIdentity | null
+}
+
 // Text colour per tone. A neutral figure stays ink, so the
 // only colour on the block is a gain or a loss.
 const TONE_TEXT: Record<EntitySummaryTone, string> = {
@@ -127,6 +153,14 @@ const TONE_TEXT: Record<EntitySummaryTone, string> = {
  * formatted and signed by the builder, so the direction of
  * money never depends on the colour alone.
  *
+ * The owner, when the subject belongs to someone, is a byline
+ * on the same line as the headline label, opposite it, so the
+ * first line answers whose the figures are before the eye
+ * reaches for what they are. The byline is set quieter than
+ * the figure and carries no box of its own: a name is not
+ * worth the attention a number is, and the avatar is small
+ * enough to read as a signature rather than as a portrait.
+ *
  * @explanation
  * Use this part as the first block of any detail screen
  * whose subject is a balance that moves over a period.
@@ -137,11 +171,12 @@ const TONE_TEXT: Record<EntitySummaryTone, string> = {
  * @param props.note - The return of the window, or `null`
  *   while it is unresolved.
  * @param props.entries - The reconciliation figures.
+ * @param props.owner - The user the subject belongs to.
  *
  * @returns The detail summary.
  *
  * @example
- * <EntityDetailSummary {...SUMMARY} />
+ * <EntityDetailSummary {...SUMMARY} owner={OWNER} />
  *
  * @author Moisés Reis
  *
@@ -153,10 +188,24 @@ export function EntityDetailSummary({
   caption,
   note,
   entries,
-}: EntitySummary): JSX.Element {
+  owner,
+}: EntityDetailSummaryProps): JSX.Element {
   return (
     <section className="flex flex-col gap-6 border-b border-border px-4 py-6 sm:px-6">
-      <h2 className="text-xs text-muted-foreground">{label}</h2>
+      <div className="flex items-center justify-between gap-4">
+        {owner ? (
+          <SharedUserAvatar
+            firstName={owner.firstName}
+            lastName={owner.lastName}
+            image={owner.image}
+            className="min-w-0 text-muted-foreground [&>span]:min-w-0 [&>span]:truncate"
+          />
+        ) : null}
+
+        <h2 className="shrink-0 text-xs text-muted-foreground">
+          {label}
+        </h2>
+      </div>
 
       <div className="flex flex-col gap-3">
         <p className="font-figure text-4xl leading-none tracking-tight text-foreground tabular-nums sm:text-6xl">

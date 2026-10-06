@@ -7,10 +7,7 @@ import { cn } from "cn"
 import { Label } from "@/presentation/ui/label"
 import { Separator } from "@/presentation/ui/separator"
 
-function FieldSet({
-  className,
-  ...props
-}: React.ComponentProps<"fieldset">) {
+function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
   return (
     <fieldset
       data-slot="field-set"
@@ -27,9 +24,7 @@ function FieldLegend({
   className,
   variant = "legend",
   ...props
-}: React.ComponentProps<"legend"> & {
-  variant?: "legend" | "label"
-}) {
+}: React.ComponentProps<"legend"> & { variant?: "legend" | "label" }) {
   return (
     <legend
       data-slot="field-legend"
@@ -43,10 +38,7 @@ function FieldLegend({
   )
 }
 
-function FieldGroup({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="field-group"
@@ -81,8 +73,7 @@ function Field({
   className,
   orientation = "vertical",
   ...props
-}: React.ComponentProps<"div"> &
-  VariantProps<typeof fieldVariants>) {
+}: React.ComponentProps<"div"> & VariantProps<typeof fieldVariants>) {
   return (
     <div
       role="group"
@@ -94,10 +85,7 @@ function Field({
   )
 }
 
-function FieldContent({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="field-content"
@@ -127,10 +115,7 @@ function FieldLabel({
   )
 }
 
-function FieldTitle({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function FieldTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="field-label"
@@ -143,10 +128,7 @@ function FieldTitle({
   )
 }
 
-function FieldDescription({
-  className,
-  ...props
-}: React.ComponentProps<"p">) {
+function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       data-slot="field-description"
@@ -209,9 +191,7 @@ function FieldError({
     }
 
     const uniqueErrors = [
-      ...new Map(
-        errors.map((error) => [error?.message, error])
-      ).values(),
+      ...new Map(errors.map((error) => [error?.message, error])).values(),
     ]
 
     if (uniqueErrors?.length == 1) {
@@ -222,9 +202,7 @@ function FieldError({
       <ul className="ml-4 flex list-disc flex-col gap-1">
         {uniqueErrors.map(
           (error, index) =>
-            error?.message && (
-              <li key={index}>{error.message}</li>
-            )
+            error?.message && <li key={index}>{error.message}</li>
         )}
       </ul>
     )
@@ -238,10 +216,7 @@ function FieldError({
     <div
       role="alert"
       data-slot="field-error"
-      className={cn(
-        "text-xs/relaxed font-normal text-destructive",
-        className
-      )}
+      className={cn("text-xs/relaxed font-normal text-destructive", className)}
       {...props}
     >
       {content}

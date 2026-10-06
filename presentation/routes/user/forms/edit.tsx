@@ -3,13 +3,17 @@
 import { FieldGroup } from "@/presentation/ui/field"
 import { Input } from "@/presentation/ui/input"
 
+import { SharedAvatarUpload } from "@/presentation/parts/components/shared-avatar-upload"
 import { SharedFormField } from "@/presentation/parts/components/shared-form-field"
 import { useEntityFormStatus } from "@/presentation/parts/hooks/use-entity-form-status.hook"
 import { SharedFormWrapper } from "@/presentation/parts/components/shared-form-wrapper"
 import { SharedSubmitButton } from "@/presentation/parts/components/shared-submit-button"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 import { useUserEditForm } from "../hooks/use-user-edit-form.hook"
-import { USER_FORM } from "@/presentation/routes/user/settings/labels.settings"
+import {
+  USER_AVATAR_UPLOAD,
+  USER_FORM,
+} from "@/presentation/routes/user/settings/labels.settings"
 
 import type { UserRow } from "@/presentation/types/user-row.types"
 
@@ -63,6 +67,8 @@ function EditUserForm({
     updateFirstName,
     lastName,
     updateLastName,
+    image,
+    updateImage,
     error,
     pending,
     status,
@@ -135,6 +141,18 @@ function EditUserForm({
             }
           />
         </SharedFormField>
+
+        <SharedAvatarUpload
+          id="image"
+          name="image"
+          value={image}
+          onValueChange={updateImage}
+          label={USER_FORM.LABEL_AVATAR}
+          description={USER_FORM.DESCRIPTION_AVATAR}
+          error={fieldErrors.image}
+          disabled={pending}
+          labels={USER_AVATAR_UPLOAD}
+        />
       </FieldGroup>
 
       <SharedSubmitButton

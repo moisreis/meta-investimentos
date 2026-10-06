@@ -11,7 +11,9 @@ export const db = new Proxy({} as ReturnType<typeof drizzle>, {
     if (!_db) {
       const url = process.env.DATABASE_URL
       if (!url) {
-        throw new Error("DATABASE_URL is not set. Please configure it in your environment variables.")
+        throw new Error(
+          "DATABASE_URL is not set. Please configure it in your environment variables."
+        )
       }
       _db = drizzle(url)
     }

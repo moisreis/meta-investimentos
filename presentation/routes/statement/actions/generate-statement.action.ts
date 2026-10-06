@@ -3,9 +3,9 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
 import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
 import { StatementContainer } from "@/presentation/composition/statement.container"
+import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
-  ActionSuccess,
   RejectInput,
   ToActionFailure,
   type ActionResult,
@@ -93,7 +93,12 @@ export async function generateStatementAction(
       fileUrl: FILE_URL,
     })
 
-    return ActionSuccess(STATEMENT)
+    return ActionAudited(STATEMENT, {
+      userId: USER.id,
+      action: "GENERATED",
+      entity: "Statement",
+      entityId: STATEMENT.id,
+    })
   } catch (cause) {
     return ToActionFailure(
       cause,
