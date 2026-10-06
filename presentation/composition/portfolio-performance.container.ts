@@ -1,5 +1,7 @@
 import { db } from "@/clients/database.client"
 import { ApplicationRepository } from "@/infrastructure/application/repositories/application.repository"
+import { BenchmarkHistoryRepository } from "@/infrastructure/benchmark-history/repositories/benchmark-history.repository"
+import { BenchmarkRepository } from "@/infrastructure/benchmark/repositories/benchmark.repository"
 import { FundRepository } from "@/infrastructure/fund/repositories/fund.repository"
 import { NormRepository } from "@/infrastructure/norm/repositories/norm.repository"
 import { NormsPortfoliosRepository } from "@/infrastructure/norms-portfolio/repositories/norms-portfolios.repository"
@@ -39,7 +41,9 @@ interface PortfolioPerformanceUseCases {
  * reads positions, quotas, movements and both performance
  * histories. It also takes the position performance use
  * case, so each position is valued for the day before the
- * portfolio aggregates it.
+ * portfolio aggregates it. The benchmark pair comes from
+ * here too, because the target reads the inflation index
+ * off the benchmark series rather than off a caller.
  *
  * @explanation
  * Use this container from any server module that needs a
@@ -86,7 +90,12 @@ function PortfolioPerformanceContainer(): PortfolioPerformanceUseCases {
       WITHDRAWAL_REPOSITORY,
       POSITION_PERFORMANCE_REPOSITORY,
       PORTFOLIO_PERFORMANCE_REPOSITORY,
-      POSITION_PERFORMANCE_CALCULATE_USE_CASE
+      POSITION_PERFORMANCE_CALCULATE_USE_CASE,
+      // The target reads the inflation index from these
+      // two, so the calculation no longer depends on a
+      // caller remembering to pass one.
+      new BenchmarkRepository(db),
+      new BenchmarkHistoryRepository(db)
     ),
     delete: new DeletePortfolioPerformanceUseCase(
       PORTFOLIO_PERFORMANCE_REPOSITORY

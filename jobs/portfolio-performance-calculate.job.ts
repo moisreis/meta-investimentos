@@ -2,6 +2,8 @@ import "dotenv/config"
 
 import { db } from "@/clients/database.client"
 import { ApplicationRepository } from "@/infrastructure/application/repositories/application.repository"
+import { BenchmarkHistoryRepository } from "@/infrastructure/benchmark-history/repositories/benchmark-history.repository"
+import { BenchmarkRepository } from "@/infrastructure/benchmark/repositories/benchmark.repository"
 import { FundRepository } from "@/infrastructure/fund/repositories/fund.repository"
 import { NormRepository } from "@/infrastructure/norm/repositories/norm.repository"
 import { NormsPortfoliosRepository } from "@/infrastructure/norms-portfolio/repositories/norms-portfolios.repository"
@@ -134,7 +136,9 @@ export async function runPortfolioPerformanceCalculation(
       POSITION_PERFORMANCE_REPO,
       new NormRepository(db),
       new NormsPortfoliosRepository(db)
-    )
+    ),
+    new BenchmarkRepository(db),
+    new BenchmarkHistoryRepository(db)
   )
 
   return USE_CASE.execute({

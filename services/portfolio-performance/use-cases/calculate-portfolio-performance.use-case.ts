@@ -8,6 +8,8 @@ import { IPositionPerformance } from "@domain/position-performance/interfaces/po
 import { IQuota } from "@domain/quota/interfaces/quota.interface"
 import { IApplication } from "@domain/application/interfaces/application.interface"
 import { IWithdrawal } from "@domain/withdrawal/interfaces/withdrawal.interface"
+import { IBenchmark } from "@domain/benchmark/interfaces/benchmark.interface"
+import { IBenchmarkHistory } from "@domain/benchmark-history/interfaces/benchmark-history.interface"
 import { Application } from "@domain/application/entities/application.entity"
 import { Withdrawal } from "@domain/withdrawal/entities/withdrawal.entity"
 import { calculatePortfolioApplicationQuotasSum } from "@domain/portfolio/calculators/application-quotas-sum.calculator"
@@ -24,6 +26,9 @@ import { calculatePortfolioWithdrawalSum } from "@domain/portfolio/calculators/w
 import { calculatePortfolioInflationSpread } from "@domain/benchmark/calculators/inflation-spread.calculator"
 import { calculatePortfolioRiskFreeSpread } from "@domain/benchmark/calculators/risk-free-spread.calculator"
 import { calculatePortfolioMarketSpread } from "@domain/benchmark/calculators/market-spread.calculator"
+import { calculateMonthlyInflationRates } from "@domain/benchmark/calculators/monthly-inflation-rates.calculator"
+import type { MonthlyInflationEntry } from "@domain/benchmark/calculators/monthly-inflation-rates.calculator"
+import { INFLATION_BENCHMARK_ACRONYM } from "@/constants/benchmark/inflation-benchmark.constants"
 import { CalculatePositionPerformanceUseCase } from "@/services/position-performance/use-cases/calculate-position-performance.use-case"
 import {
   EntityId,
@@ -41,6 +46,9 @@ import { toResponseDTO } from "../mappers/portfolio-performance.mapper"
 export interface CalculatePortfolioPerformanceInput {
   portfolioId: string
   date: string
+  // Overrides the recorded inflation index of the target
+  // month. Left unset, the index comes from the benchmark
+  // series, which is how every production caller uses it.
   inflationRate?: string | null
   riskFreeRate?: string | null
   marketRate?: string | null
@@ -64,8 +72,10 @@ export interface CalculatePortfolioPerformanceInput {
  *
  * @explanation
  * Patrimony aggregates the position values for the date.
- * The optional rates feed the target and the benchmark
- * spreads, remaining null when not provided.
+ * The target reads the inflation index from the benchmark
+ * series it owns, so it no longer depends on a caller
+ * passing one. The two spread rates stay optional and
+ * remain null when not provided.
  *
  * @example
  * const RESULT = await USE_CASE.execute({
@@ -79,6 +89,13 @@ export interface CalculatePortfolioPerformanceInput {
  * @date 2026-09-15
  */
 export class CalculatePortfolioPerformanceUseCase {
+  // The recorded inflation readings, read once per
+  // instance: a calculation run walks a whole date range
+  // against the same benchmark, so re-reading it per day
+  // would repeat a query whose answer cannot change
+  // mid-run.
+  private inflationEntries: MonthlyInflationEntry[] | null = null
+
   constructor(
     private portfolioRepository: IPortfolio,
     private positionRepository: IPosition,
@@ -87,7 +104,9 @@ export class CalculatePortfolioPerformanceUseCase {
     private withdrawalRepository: IWithdrawal,
     private positionPerformanceRepository: IPositionPerformance,
     private portfolioPerformanceRepository: IPortfolioPerformance,
-    private calculatePositionPerformanceUseCase: CalculatePositionPerformanceUseCase
+    private calculatePositionPerformanceUseCase: CalculatePositionPerformanceUseCase,
+    private benchmarkRepository: IBenchmark,
+    private benchmarkHistoryRepository: IBenchmarkHistory
   ) {}
 
   /**
@@ -101,8 +120,10 @@ export class CalculatePortfolioPerformanceUseCase {
    *
    * @explanation
    * Patrimony aggregates the position values for the date.
-   * The optional rates feed the target and the benchmark
-   * spreads, remaining null when not provided.
+   * The optional rates feed the benchmark spreads and
+   * remain null when not provided. The target does not
+   * need one any more: it reads the inflation index from
+   * the benchmark series the use case owns.
    *
    * A day on which no fund of the portfolio publishes a
    * quota is a non-trading day, not a failure: there is no
@@ -151,6 +172,10 @@ export class CalculatePortfolioPerformanceUseCase {
     )
 
     if (POSITION_IDS.length === 0) {
+      const EMPTY_TARGETS = await this.resolveTargets(
+        input,
+        PORTFOLIO.annualInterestRate
+      )
       const EMPTY = PortfolioPerformance.create({
         portfolioId: PORTFOLIO_ID,
         date: TARGET_DATE,
@@ -161,10 +186,10 @@ export class CalculatePortfolioPerformanceUseCase {
         cashFlowNet: SignedMoney.create("0"),
         earnings: SignedMoney.create("0"),
         returnDaily: SignedPercentage.create("0"),
-        target: await this.resolveTarget(
-          input,
-          PORTFOLIO.annualInterestRate
-        ),
+        // The accumulated target is left unset on purpose: a
+        // portfolio holding nothing has no year to accumulate
+        // over, and the day only needs to be marked as seen.
+        target: EMPTY_TARGETS.target,
       })
       const SAVED =
         await this.portfolioPerformanceRepository.save(EMPTY)
@@ -306,6 +331,11 @@ export class CalculatePortfolioPerformanceUseCase {
         PREVIOUS_PORTFOLIO?.patrimony ?? null,
     })
 
+    const TARGETS = await this.resolveTargets(
+      input,
+      PORTFOLIO.annualInterestRate
+    )
+
     const PERFORMANCE = PortfolioPerformance.create({
       portfolioId: PORTFOLIO_ID,
       date: TARGET_DATE,
@@ -331,25 +361,8 @@ export class CalculatePortfolioPerformanceUseCase {
         targetDate: TARGET_DATE,
         months: 12,
       }),
-      target: await this.resolveTarget(
-        input,
-        PORTFOLIO.annualInterestRate
-      ),
-      cumulativeTarget: input.inflationRate
-        ? calculatePortfolioCumulativeTarget({
-            monthlyTargets: [
-              {
-                value: calculatePortfolioTarget({
-                  annualInterestRate:
-                    PORTFOLIO.annualInterestRate,
-                  inflationRate: SignedPercentage.create(
-                    input.inflationRate
-                  ),
-                }),
-              },
-            ],
-          })
-        : null,
+      target: TARGETS.target,
+      cumulativeTarget: TARGETS.cumulativeTarget,
       inflationSpread: input.inflationRate
         ? calculatePortfolioInflationSpread({
             portfolioReturn: RETURN_DAILY,
@@ -606,19 +619,115 @@ export class CalculatePortfolioPerformanceUseCase {
     })
   }
 
-  private resolveTarget(
+  /**
+   * @summary
+   * Resolves the target return of the day.
+   *
+   * @remarks
+   * The accumulated target chains January through the
+   * target month, so it grows through the year instead of
+   * repeating the month. It stays null while any month of
+   * that run has no recorded index, because a chain is only
+   * as honest as the weakest link in it.
+   *
+   * @explanation
+   * `input.inflationRate` overrides the recorded index of
+   * the target month only. The months before it always come
+   * from the series, since the override says nothing about
+   * them.
+   *
+   * @param input - The day being calculated and the optional
+   *   override of its inflation index.
+   * @param annualInterestRate - The annual rate of the
+   *   portfolio the target belongs to.
+   *
+   * @returns The monthly and accumulated target, each `null`
+   *   when no inflation index resolves for it.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-10-06
+   */
+  private async resolveTargets(
     input: CalculatePortfolioPerformanceInput,
     annualInterestRate: SignedPercentage
-  ): SignedPercentage | null {
-    if (!input.inflationRate) {
-      return null
-    }
-    return calculatePortfolioTarget({
-      annualInterestRate,
-      inflationRate: SignedPercentage.create(
-        input.inflationRate
-      ),
+  ): Promise<{
+    target: SignedPercentage | null
+    cumulativeTarget: SignedPercentage | null
+  }> {
+    const TARGET_DATE = new Date(input.date)
+    const { rates: RATES } = calculateMonthlyInflationRates({
+      entries: await this.loadInflationEntries(),
+      targetDate: TARGET_DATE,
     })
+
+    if (input.inflationRate) {
+      RATES[TARGET_DATE.getUTCMonth()] = SignedPercentage.create(
+        input.inflationRate
+      )
+    }
+
+    const MONTHLY = RATES[TARGET_DATE.getUTCMonth()] ?? null
+
+    return {
+      target: MONTHLY
+        ? calculatePortfolioTarget({
+            annualInterestRate,
+            inflationRate: MONTHLY,
+          })
+        : null,
+      cumulativeTarget: resolveCumulativeTarget(
+        RATES,
+        annualInterestRate
+      ),
+    }
+  }
+
+  /**
+   * @summary
+   * Reads the recorded inflation readings once per run.
+   *
+   * @remarks
+   * Caches the result on the instance, because a calculation
+   * run walks a whole date range against the same benchmark
+   * and the answer cannot change mid-run. An empty series is
+   * a cached answer too: a portfolio whose operator never
+   * recorded the index must not query for it on every day.
+   *
+   * @explanation
+   * Returns an empty series when no benchmark carries the
+   * inflation acronym, which leaves the target null instead
+   * of failing the calculation.
+   *
+   * @returns The readings of the inflation benchmark.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-10-06
+   */
+  private async loadInflationEntries(): Promise<
+    MonthlyInflationEntry[]
+  > {
+    if (this.inflationEntries !== null) {
+      return this.inflationEntries
+    }
+
+    const BENCHMARK =
+      await this.benchmarkRepository.findByAcronym(
+        INFLATION_BENCHMARK_ACRONYM
+      )
+    const HISTORY = BENCHMARK?.id
+      ? await this.benchmarkHistoryRepository.findAllByBenchmarkId(
+          BENCHMARK.id
+        )
+      : []
+
+    this.inflationEntries = HISTORY.map((entry) => ({
+      date: entry.date,
+      rate: entry.rate,
+    }))
+
+    return this.inflationEntries
   }
 
   private addMonths(date: Date, months: number): Date {
@@ -626,4 +735,51 @@ export class CalculatePortfolioPerformanceUseCase {
     RESULT.setMonth(RESULT.getMonth() + months)
     return RESULT
   }
+}
+
+/**
+ * @summary
+ * Chains a monthly inflation series into an accumulated
+ * target.
+ *
+ * @remarks
+ * Returns null as soon as one month of the series is
+ * missing. A chain that silently skipped a month would
+ * understate the target the portfolio is measured against,
+ * which is worse than showing no target at all.
+ *
+ * @param rates - The inflation index of January through the
+ *   target month, in order.
+ * @param annualInterestRate - The annual rate the portfolio
+ *   compounds against each of those months.
+ *
+ * @returns The accumulated target, or `null` while the
+ *   series is incomplete.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-06
+ */
+function resolveCumulativeTarget(
+  rates: (SignedPercentage | null)[],
+  annualInterestRate: SignedPercentage
+): SignedPercentage | null {
+  const MONTHLY_TARGETS: { value: SignedPercentage }[] = []
+
+  for (const RATE of rates) {
+    if (RATE === null) {
+      return null
+    }
+
+    MONTHLY_TARGETS.push({
+      value: calculatePortfolioTarget({
+        annualInterestRate,
+        inflationRate: RATE,
+      }),
+    })
+  }
+
+  return calculatePortfolioCumulativeTarget({
+    monthlyTargets: MONTHLY_TARGETS,
+  })
 }

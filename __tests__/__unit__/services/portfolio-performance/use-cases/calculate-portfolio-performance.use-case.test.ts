@@ -4,6 +4,7 @@ import {
   expect,
   beforeEach,
   afterEach,
+  vi,
 } from "vitest"
 
 import { CalculatePortfolioPerformanceUseCase } from "@/services/portfolio-performance/use-cases/calculate-portfolio-performance.use-case"
@@ -12,6 +13,8 @@ import { NotFoundError } from "@errors/not-found.error"
 import { ValidationError } from "@errors/validation.error"
 import {
   createFakeApplicationRepository,
+  createFakeBenchmarkHistoryRepository,
+  createFakeBenchmarkRepository,
   createFakeFundRepository,
   createFakeNormsPortfoliosRepository,
   createFakeNormRepository,
@@ -24,6 +27,8 @@ import {
 } from "__tests__/__setup__/_fakes.setup"
 import {
   buildApplication,
+  buildBenchmark,
+  buildBenchmarkHistory,
   buildEntityId,
   buildFund,
   buildPortfolio,
@@ -45,7 +50,10 @@ import {
 
 const TARGET_DATE = new Date("2026-01-15T00:00:00.000Z")
 const PREVIOUS_DATE = new Date("2026-01-14T00:00:00.000Z")
+const NEXT_DATE = new Date("2026-01-16T00:00:00.000Z")
+const MARCH_DATE = new Date("2026-03-15T00:00:00.000Z")
 const DATE_INPUT = "2026-01-15T00:00:00.000Z"
+const MARCH_INPUT = "2026-03-15T00:00:00.000Z"
 
 describe("services/portfolio-performance/use-cases/calculate-portfolio-performance.use-case", () => {
   let portfolioRepository: ReturnType<
@@ -70,6 +78,12 @@ describe("services/portfolio-performance/use-cases/calculate-portfolio-performan
     typeof createFakePortfolioPerformanceRepository
   >
   let fundRepository: ReturnType<typeof createFakeFundRepository>
+  let benchmarkRepository: ReturnType<
+    typeof createFakeBenchmarkRepository
+  >
+  let benchmarkHistoryRepository: ReturnType<
+    typeof createFakeBenchmarkHistoryRepository
+  >
   let useCase: CalculatePortfolioPerformanceUseCase
 
   beforeEach(() => {
@@ -84,6 +98,9 @@ describe("services/portfolio-performance/use-cases/calculate-portfolio-performan
     portfolioPerformanceRepository =
       createFakePortfolioPerformanceRepository()
     fundRepository = createFakeFundRepository()
+    benchmarkRepository = createFakeBenchmarkRepository()
+    benchmarkHistoryRepository =
+      createFakeBenchmarkHistoryRepository()
     useCase = new CalculatePortfolioPerformanceUseCase(
       portfolioRepository,
       positionRepository,
@@ -101,7 +118,9 @@ describe("services/portfolio-performance/use-cases/calculate-portfolio-performan
         positionPerformanceRepository,
         createFakeNormRepository(),
         createFakeNormsPortfoliosRepository()
-      )
+      ),
+      benchmarkRepository,
+      benchmarkHistoryRepository
     )
   })
 
@@ -679,6 +698,260 @@ describe("services/portfolio-performance/use-cases/calculate-portfolio-performan
       expect(response?.inflationSpread).toBe("-0.44")
       expect(response?.riskFreeSpread).toBe("-0.1")
       expect(response?.marketSpread).toBe("-1.5")
+    })
+
+    it("should resolve the target from the recorded inflation benchmark", async () => {
+      await portfolioRepository.save(
+        buildPortfolio({
+          id: buildEntityId("portfolio-1"),
+          userId: buildEntityId("user-1"),
+          annualInterestRate: buildSignedPercentage("10.5"),
+        })
+      )
+      await positionRepository.save(
+        buildPosition({
+          id: buildEntityId("position-1"),
+          portfolioId: buildEntityId("portfolio-1"),
+          fundId: buildEntityId("fund-1"),
+          initialBalance: buildPositiveMoney("0"),
+        })
+      )
+      await fundRepository.save(
+        buildFund({ id: buildEntityId("fund-1") })
+      )
+      await quotaRepository.save(
+        buildQuota({
+          fundId: buildEntityId("fund-1"),
+          date: TARGET_DATE,
+          price: buildQuotaPrice("10.00"),
+        })
+      )
+      await applicationRepository.save(
+        buildApplication({
+          positionId: buildEntityId("position-1"),
+          date: TARGET_DATE,
+          amount: buildPositiveMoney("1000.00"),
+          quotas: buildQuotaQuantity("100.00"),
+        })
+      )
+      await benchmarkRepository.save(
+        buildBenchmark({
+          id: buildEntityId("benchmark-ipca"),
+          acronym: "IPCA",
+          name: "IPCA",
+        })
+      )
+      await benchmarkHistoryRepository.save(
+        buildBenchmarkHistory({
+          benchmarkId: buildEntityId("benchmark-ipca"),
+          date: new Date("2026-01-01T00:00:00.000Z"),
+          rate: buildSignedPercentage("0.45"),
+        })
+      )
+
+      const response = await useCase.execute({
+        portfolioId: "portfolio-1",
+        date: DATE_INPUT,
+      })
+
+      expect(response?.target).toBe("1.29")
+      expect(response?.cumulativeTarget).toBe(response?.target)
+    })
+
+    it("should chain the accumulated target across the months of the year", async () => {
+      await portfolioRepository.save(
+        buildPortfolio({
+          id: buildEntityId("portfolio-1"),
+          userId: buildEntityId("user-1"),
+          annualInterestRate: buildSignedPercentage("10.5"),
+        })
+      )
+      await positionRepository.save(
+        buildPosition({
+          id: buildEntityId("position-1"),
+          portfolioId: buildEntityId("portfolio-1"),
+          fundId: buildEntityId("fund-1"),
+          initialBalance: buildPositiveMoney("0"),
+        })
+      )
+      await fundRepository.save(
+        buildFund({ id: buildEntityId("fund-1") })
+      )
+      await quotaRepository.save(
+        buildQuota({
+          fundId: buildEntityId("fund-1"),
+          date: MARCH_DATE,
+          price: buildQuotaPrice("10.00"),
+        })
+      )
+      await applicationRepository.save(
+        buildApplication({
+          positionId: buildEntityId("position-1"),
+          date: MARCH_DATE,
+          amount: buildPositiveMoney("1000.00"),
+          quotas: buildQuotaQuantity("100.00"),
+        })
+      )
+      await benchmarkRepository.save(
+        buildBenchmark({
+          id: buildEntityId("benchmark-ipca"),
+          acronym: "IPCA",
+          name: "IPCA",
+        })
+      )
+      await benchmarkHistoryRepository.save(
+        buildBenchmarkHistory({
+          benchmarkId: buildEntityId("benchmark-ipca"),
+          date: new Date("2026-01-01T00:00:00.000Z"),
+          rate: buildSignedPercentage("0.45"),
+        })
+      )
+      await benchmarkHistoryRepository.save(
+        buildBenchmarkHistory({
+          benchmarkId: buildEntityId("benchmark-ipca"),
+          date: new Date("2026-02-01T00:00:00.000Z"),
+          rate: buildSignedPercentage("0.52"),
+        })
+      )
+
+      const response = await useCase.execute({
+        portfolioId: "portfolio-1",
+        date: MARCH_INPUT,
+      })
+
+      // March has no reading of its own yet, so it takes
+      // February's, and the chain runs January to March.
+      expect(response?.target).toBe("1.36")
+      expect(response?.cumulativeTarget).toBe("4.06")
+    })
+
+    it("should keep the accumulated target null while a month of the chain has no recorded inflation", async () => {
+      await portfolioRepository.save(
+        buildPortfolio({
+          id: buildEntityId("portfolio-1"),
+          userId: buildEntityId("user-1"),
+          annualInterestRate: buildSignedPercentage("10.5"),
+        })
+      )
+      await positionRepository.save(
+        buildPosition({
+          id: buildEntityId("position-1"),
+          portfolioId: buildEntityId("portfolio-1"),
+          fundId: buildEntityId("fund-1"),
+          initialBalance: buildPositiveMoney("0"),
+        })
+      )
+      await fundRepository.save(
+        buildFund({ id: buildEntityId("fund-1") })
+      )
+      await quotaRepository.save(
+        buildQuota({
+          fundId: buildEntityId("fund-1"),
+          date: MARCH_DATE,
+          price: buildQuotaPrice("10.00"),
+        })
+      )
+      await applicationRepository.save(
+        buildApplication({
+          positionId: buildEntityId("position-1"),
+          date: MARCH_DATE,
+          amount: buildPositiveMoney("1000.00"),
+          quotas: buildQuotaQuantity("100.00"),
+        })
+      )
+      await benchmarkRepository.save(
+        buildBenchmark({
+          id: buildEntityId("benchmark-ipca"),
+          acronym: "IPCA",
+          name: "IPCA",
+        })
+      )
+      await benchmarkHistoryRepository.save(
+        buildBenchmarkHistory({
+          benchmarkId: buildEntityId("benchmark-ipca"),
+          date: new Date("2026-03-01T00:00:00.000Z"),
+          rate: buildSignedPercentage("0.61"),
+        })
+      )
+
+      const response = await useCase.execute({
+        portfolioId: "portfolio-1",
+        date: MARCH_INPUT,
+      })
+
+      expect(response?.target).toBe("1.45")
+      expect(response?.cumulativeTarget).toBeNull()
+    })
+
+    it("should read the inflation benchmark once for the whole run", async () => {
+      await portfolioRepository.save(
+        buildPortfolio({
+          id: buildEntityId("portfolio-1"),
+          userId: buildEntityId("user-1"),
+          annualInterestRate: buildSignedPercentage("10.5"),
+        })
+      )
+      await positionRepository.save(
+        buildPosition({
+          id: buildEntityId("position-1"),
+          portfolioId: buildEntityId("portfolio-1"),
+          fundId: buildEntityId("fund-1"),
+          initialBalance: buildPositiveMoney("0"),
+        })
+      )
+      await fundRepository.save(
+        buildFund({ id: buildEntityId("fund-1") })
+      )
+      await quotaRepository.save(
+        buildQuota({
+          fundId: buildEntityId("fund-1"),
+          date: TARGET_DATE,
+          price: buildQuotaPrice("10.00"),
+        })
+      )
+      await quotaRepository.save(
+        buildQuota({
+          fundId: buildEntityId("fund-1"),
+          date: NEXT_DATE,
+          price: buildQuotaPrice("10.00"),
+        })
+      )
+      await applicationRepository.save(
+        buildApplication({
+          positionId: buildEntityId("position-1"),
+          date: TARGET_DATE,
+          amount: buildPositiveMoney("1000.00"),
+          quotas: buildQuotaQuantity("100.00"),
+        })
+      )
+      await benchmarkRepository.save(
+        buildBenchmark({
+          id: buildEntityId("benchmark-ipca"),
+          acronym: "IPCA",
+          name: "IPCA",
+        })
+      )
+      await benchmarkHistoryRepository.save(
+        buildBenchmarkHistory({
+          benchmarkId: buildEntityId("benchmark-ipca"),
+          date: new Date("2026-01-01T00:00:00.000Z"),
+          rate: buildSignedPercentage("0.45"),
+        })
+      )
+      const READ = vi.spyOn(benchmarkRepository, "findByAcronym")
+
+      const FIRST = await useCase.execute({
+        portfolioId: "portfolio-1",
+        date: DATE_INPUT,
+      })
+      const SECOND = await useCase.execute({
+        portfolioId: "portfolio-1",
+        date: "2026-01-16T00:00:00.000Z",
+      })
+
+      expect(FIRST?.target).toBe("1.29")
+      expect(SECOND?.target).toBe("1.29")
+      expect(READ).toHaveBeenCalledTimes(1)
     })
   })
 })
