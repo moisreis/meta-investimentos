@@ -41,6 +41,10 @@ export const metadata: Metadata = {
     default: BRAND.SHORT_NAME,
   },
   description: BRAND.LEGAL_NAME,
+  icons: {
+    // The institutional favicon shipped under `public/`.
+    icon: "/favicon.ico",
+  },
 }
 
 /**

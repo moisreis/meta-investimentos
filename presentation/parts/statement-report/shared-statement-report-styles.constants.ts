@@ -39,5 +39,9 @@ export const tw = createTw({
     border: STATEMENT_REPORT_PALETTE.border,
     positive: STATEMENT_REPORT_PALETTE.positive,
     negative: STATEMENT_REPORT_PALETTE.negative,
+    brandBlue: STATEMENT_REPORT_PALETTE.brandBlue,
+    brandPurple: STATEMENT_REPORT_PALETTE.brandPurple,
+    brandTint: STATEMENT_REPORT_PALETTE.brandTint,
+    track: STATEMENT_REPORT_PALETTE.track,
   },
 })
