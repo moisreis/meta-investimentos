@@ -6,6 +6,13 @@ import { LoadSessionUser } from "@/presentation/routes/user/helpers/load-session
 import { getPortfolioNameAction } from "@/presentation/routes/portfolio/actions/get-portfolio-name.action"
 import { getPositionNameAction } from "@/presentation/routes/position/actions/get-position-name.action"
 
+// Every authenticated screen resolves the session from request
+// headers and reads the database to render, so the whole group
+// must be rendered per request. Never let the build statically
+// prerender these pages: there is no session at build time and
+// no database to answer it.
+export const dynamic = "force-dynamic"
+
 // Name resolvers of the dynamic breadcrumb segments, keyed
 // by the parent href of the segment. The layout is the one
 // place that may import the routes, so it builds the map

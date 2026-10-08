@@ -1,6 +1,5 @@
-import { Image, Text, View } from "@react-pdf/renderer"
+import { Text, View } from "@react-pdf/renderer"
 import type { ReactElement } from "react"
-import { readFileSync } from "node:fs"
 
 import type { StatementReportData } from "@/services/statement/report/statement-report.types"
 

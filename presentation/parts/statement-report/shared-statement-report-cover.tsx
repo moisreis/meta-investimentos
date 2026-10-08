@@ -43,6 +43,8 @@ export function StatementReportCoverSection(props: {
           "flex-row gap-1 justify-start items-center w-full"
         )}
       >
+        {/* The logo is a decorative brand mark with no readable text. */}
+        {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt prop. */}
         <Image
           src={readFileSync("public/logo.svg")}
           style={{ width: 16, height: 16 }}
@@ -197,14 +199,17 @@ export function StatementReportCoverSection(props: {
           </View>
         </View>
         {/* Column with illustration */}
-        <View
-          style={tw(
-            "flex flex-col gap-2 w-1/2 h-full"
-          )}
-        >
+        <View style={tw("flex flex-col gap-2 w-1/2 h-full")}>
+          {/* The illustration is decorative and carries no readable text. */}
+          {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt prop. */}
           <Image
             src={readFileSync("public/flat-8.png")}
-            style={{ width: '100%', height: '100%', objectFit: "cover", opacity: 0.1 }}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              opacity: 0.1,
+            }}
           />
         </View>
       </View>
