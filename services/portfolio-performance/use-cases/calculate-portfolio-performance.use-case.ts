@@ -30,6 +30,7 @@ import { calculateMonthlyInflationRates } from "@domain/benchmark/calculators/mo
 import type { MonthlyInflationEntry } from "@domain/benchmark/calculators/monthly-inflation-rates.calculator"
 import { INFLATION_BENCHMARK_ACRONYM } from "@/constants/benchmark/inflation-benchmark.constants"
 import { CalculatePositionPerformanceUseCase } from "@/services/position-performance/use-cases/calculate-position-performance.use-case"
+import { resolvePositionOpening } from "@/services/position-performance/helpers/resolve-position-opening.helper"
 import {
   EntityId,
   GrowthFactor,
@@ -246,15 +247,48 @@ export class CalculatePortfolioPerformanceUseCase {
     const PREVIOUS_POSITIONS_BY_ID = new Map(
       PREVIOUS_POSITIONS.map((performance) => [
         performance.positionId as string,
-        performance.quotasHeld,
+        performance,
       ])
     )
 
+    // The opening of a position is the snapshot before the day
+    // when one exists; when it does not, it is rebuilt from
+    // every movement recorded before the day. A position
+    // entered as pre-range applications has no snapshot yet,
+    // and rebuilding is what lets the portfolio open with its
+    // real quotas and balance instead of zero. The opening
+    // balances are accumulated to seed the earnings baseline
+    // on the first calculated day, when no portfolio snapshot
+    // precedes the target.
     const QUOTAS_BY_POSITION = new Map<string, QuotaQuantity>()
+    let OPENING_BALANCE_TOTAL = new Decimal(0)
     for (const position of POSITIONS) {
-      const LAST_PERIOD =
-        PREVIOUS_POSITIONS_BY_ID.get(position.id as string) ??
-        QuotaQuantity.create("0")
+      const PREVIOUS = PREVIOUS_POSITIONS_BY_ID.get(
+        position.id as string
+      )
+      const OPENING = PREVIOUS
+        ? {
+            previous: PREVIOUS,
+            quotasHeld: PREVIOUS.quotasHeld,
+            balance: SignedMoney.create(
+              PREVIOUS.patrimony.value
+            ),
+          }
+        : await resolvePositionOpening({
+            positionId: position.id as EntityId,
+            fundId: position.fundId,
+            initialBalance: position.initialBalance,
+            initialBalanceDate: position.initialBalanceDate,
+            targetDate: TARGET_DATE,
+            positionPerformanceRepository:
+              this.positionPerformanceRepository,
+            quotaRepository: this.quotaRepository,
+            applicationRepository: this.applicationRepository,
+            withdrawalRepository: this.withdrawalRepository,
+          })
+      OPENING_BALANCE_TOTAL = OPENING_BALANCE_TOTAL.plus(
+        OPENING.balance.value
+      )
       const DAY_APPLICATIONS = APPLICATIONS.filter(
         (application) => application.positionId === position.id
       )
@@ -276,7 +310,7 @@ export class CalculatePortfolioPerformanceUseCase {
       QUOTAS_BY_POSITION.set(
         position.id as string,
         QuotaQuantity.create(
-          LAST_PERIOD.value
+          OPENING.quotasHeld.value
             .plus(HELD_APPLICATION_QUOTAS.value)
             .minus(HELD_WITHDRAWAL_QUOTAS.value)
         )
@@ -314,11 +348,9 @@ export class CalculatePortfolioPerformanceUseCase {
       sumOfPositionCurrentBalances: SignedMoney.create(
         PATRIMONY.value
       ),
-      sumOfPositionInitialBalance: SignedMoney.create(
-        PREVIOUS_PORTFOLIO
-          ? PREVIOUS_PORTFOLIO.patrimony.value
-          : "0"
-      ),
+      sumOfPositionInitialBalance: PREVIOUS_PORTFOLIO
+        ? SignedMoney.create(PREVIOUS_PORTFOLIO.patrimony.value)
+        : SignedMoney.create(OPENING_BALANCE_TOTAL),
       cashFlow: DAILY_CALCULATION.cashFlowNet,
     })
 

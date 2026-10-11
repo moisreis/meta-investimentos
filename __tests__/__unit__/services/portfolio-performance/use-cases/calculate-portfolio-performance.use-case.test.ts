@@ -252,6 +252,64 @@ describe("services/portfolio-performance/use-cases/calculate-portfolio-performan
       expect(response?.returnDaily).toBe("0")
     })
 
+    it("should rebuild a position opening from pre-range applications when no snapshot precedes the day", async () => {
+      await portfolioRepository.save(
+        buildPortfolio({
+          id: buildEntityId("portfolio-1"),
+          userId: buildEntityId("user-1"),
+        })
+      )
+      await positionRepository.save(
+        buildPosition({
+          id: buildEntityId("position-1"),
+          portfolioId: buildEntityId("portfolio-1"),
+          fundId: buildEntityId("fund-1"),
+          initialBalance: buildPositiveMoney("0"),
+        })
+      )
+      await fundRepository.save(
+        buildFund({ id: buildEntityId("fund-1") })
+      )
+      await quotaRepository.save(
+        buildQuota({
+          fundId: buildEntityId("fund-1"),
+          date: PREVIOUS_DATE,
+          price: buildQuotaPrice("1.90"),
+        })
+      )
+      await quotaRepository.save(
+        buildQuota({
+          fundId: buildEntityId("fund-1"),
+          date: TARGET_DATE,
+          price: buildQuotaPrice("2.00"),
+        })
+      )
+      // The opening position was entered as an application dated
+      // before the first calculated day. The portfolio must open
+      // the day with those quotas and balance, not with zero.
+      await applicationRepository.save(
+        buildApplication({
+          positionId: buildEntityId("position-1"),
+          date: PREVIOUS_DATE,
+          amount: buildPositiveMoney("1900.00"),
+          quotas: buildQuotaQuantity("1000.00"),
+        })
+      )
+
+      const response = await useCase.execute({
+        portfolioId: "portfolio-1",
+        date: DATE_INPUT,
+      })
+
+      expect(response?.quotasHeld).toBe("1000")
+      expect(response?.patrimony).toBe("2000")
+      expect(response?.applicationTotal).toBe("0")
+      expect(response?.redemptionTotal).toBe("0")
+      expect(response?.cashFlowNet).toBe("0")
+      expect(response?.earnings).toBe("100")
+      expect(response?.returnDaily).toBe("0")
+    })
+
     it("should leave the trailing returns null when the portfolio has no earlier snapshot", async () => {
       await portfolioRepository.save(
         buildPortfolio({

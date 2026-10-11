@@ -393,6 +393,105 @@ describe("services/position-performance/use-cases/calculate-position-performance
       expect(response?.earnings).toBe("0")
     })
 
+    it("should rebuild the opening from applications dated before the target day when no snapshot precedes it", async () => {
+      await seedPosition(null)
+      await seedFund()
+      await fakes.quota.save(
+        buildQuota({
+          fundId: buildEntityId(FUND_ID),
+          date: PREVIOUS,
+          price: buildQuotaPrice("1.90"),
+        })
+      )
+      await fakes.quota.save(
+        buildQuota({
+          fundId: buildEntityId(FUND_ID),
+          date: TARGET,
+          price: buildQuotaPrice("2.00"),
+        })
+      )
+      // The opening position was entered as an application dated
+      // before the first calculated day, leaving no snapshot
+      // behind. It must still open the day with its quotas.
+      await fakes.application.save(
+        buildApplication({
+          positionId: buildEntityId(POSITION_ID),
+          date: PREVIOUS,
+          amount: buildPositiveMoney("1900.00"),
+          quotas: buildQuotaQuantity("1000.00"),
+        })
+      )
+      const useCase = buildUseCase()
+
+      const response = await useCase.execute({
+        positionId: POSITION_ID,
+        date: TARGET.toISOString(),
+      })
+
+      expect(response?.quotasHeld).toBe("1000")
+      expect(response?.patrimony).toBe("2000")
+      expect(response?.earnings).toBe("100")
+      expect(response?.returnDaily).toBe("5.26")
+      expect(response?.applicationTotal).toBe("0")
+
+      const stored =
+        await fakes.positionPerformance.findByPositionIdAndDate(
+          buildEntityId(POSITION_ID),
+          TARGET
+        )
+
+      expect(stored).not.toBeNull()
+      expect(stored?.quotasHeld.value.toString()).toBe("1000")
+    })
+
+    it("should seed the opening from the initial balance and fold in later movements", async () => {
+      await seedPosition()
+      await seedFund()
+      await fakes.quota.save(
+        buildQuota({
+          fundId: buildEntityId(FUND_ID),
+          date: new Date("2026-01-01T00:00:00.000Z"),
+          price: buildQuotaPrice("2.00"),
+        })
+      )
+      await fakes.quota.save(
+        buildQuota({
+          fundId: buildEntityId(FUND_ID),
+          date: PREVIOUS,
+          price: buildQuotaPrice("1.90"),
+        })
+      )
+      await fakes.quota.save(
+        buildQuota({
+          fundId: buildEntityId(FUND_ID),
+          date: TARGET,
+          price: buildQuotaPrice("2.00"),
+        })
+      )
+      // The seed is the 10000.00 recorded on 2026-01-01, priced at
+      // 2.00 for 5000 quotas. The movement after the seed date adds
+      // its quotas and amount on top.
+      await fakes.application.save(
+        buildApplication({
+          positionId: buildEntityId(POSITION_ID),
+          date: PREVIOUS,
+          amount: buildPositiveMoney("190.00"),
+          quotas: buildQuotaQuantity("100.00"),
+        })
+      )
+      const useCase = buildUseCase()
+
+      const response = await useCase.execute({
+        positionId: POSITION_ID,
+        date: TARGET.toISOString(),
+      })
+
+      expect(response?.quotasHeld).toBe("5100")
+      expect(response?.patrimony).toBe("10200")
+      expect(response?.earnings).toBe("10")
+      expect(response?.returnDaily).toBe("5.26")
+    })
+
     it("should resolve the allocation from the norm of the category", async () => {
       await seedPosition()
       await seedFund()

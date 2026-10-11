@@ -29,6 +29,7 @@ import {
 import { NotFoundError } from "@errors/not-found.error"
 import type { PositionPerformanceResponseDTO } from "../dto/position-performance-response.dto"
 import { toResponseDTO } from "../mappers/position-performance.mapper"
+import { resolvePositionOpening } from "../helpers/resolve-position-opening.helper"
 
 export interface CalculatePositionPerformanceInput {
   positionId: string
@@ -137,16 +138,24 @@ export class CalculatePositionPerformanceUseCase {
       return null
     }
 
-    // Bounded by TARGET_DATE so a recalculated day reads the
-    // snapshot before it, never its own. Without the bound, a
-    // re-run of a period that already has data would carry the
-    // day twice and then trip the `(position_id, date)`
-    // unique index.
-    const PREVIOUS =
-      await this.positionPerformanceRepository.findLatestByPositionId(
-        POSITION_ID,
-        TARGET_DATE
-      )
+    // The opening is the snapshot before the day when one
+    // exists, otherwise it is rebuilt from every movement
+    // recorded before the day. A client may enter an opening
+    // position as applications dated before the first
+    // calculated day, leaving no snapshot behind; rebuilding
+    // is what keeps that first day from starting at zero.
+    const OPENING = await resolvePositionOpening({
+      positionId: POSITION_ID,
+      fundId: POSITION.fundId,
+      initialBalance: POSITION.initialBalance,
+      initialBalanceDate: POSITION.initialBalanceDate,
+      targetDate: TARGET_DATE,
+      positionPerformanceRepository:
+        this.positionPerformanceRepository,
+      quotaRepository: this.quotaRepository,
+      applicationRepository: this.applicationRepository,
+      withdrawalRepository: this.withdrawalRepository,
+    })
 
     const APPLICATIONS =
       await this.applicationRepository.findAllByPositionIdInPeriod(
@@ -167,9 +176,7 @@ export class CalculatePositionPerformanceUseCase {
     })
 
     const QUOTAS_TODAY = calculateQuotasHeld({
-      lastPeriodQuotaQuantity: PREVIOUS
-        ? PREVIOUS.quotasHeld
-        : QuotaQuantity.create("0"),
+      lastPeriodQuotaQuantity: OPENING.quotasHeld,
       applicationQuotasQuantity:
         DAILY_CALCULATION.applicationQuotas,
       withdrawalQuotasQuantity:
@@ -190,13 +197,7 @@ export class CalculatePositionPerformanceUseCase {
 
     const EARNINGS = calculateEarnings({
       currentBalance: SignedMoney.create(PATRIMONY.value),
-      initialBalance: SignedMoney.create(
-        PREVIOUS
-          ? PREVIOUS.patrimony.value
-          : POSITION.initialBalance
-            ? POSITION.initialBalance.value
-            : "0"
-      ),
+      initialBalance: OPENING.balance,
       cashFlow: DAILY_CALCULATION.cashFlowNet,
     })
 
@@ -204,7 +205,7 @@ export class CalculatePositionPerformanceUseCase {
       positionId: POSITION_ID,
       fundId: POSITION.fundId,
       targetDate: TARGET_DATE,
-      previousQuotasHeld: PREVIOUS?.quotasHeld ?? null,
+      previousQuotasHeld: OPENING.quotasHeld,
     })
 
     const PERFORMANCE = PositionPerformance.create({
@@ -235,7 +236,7 @@ export class CalculatePositionPerformanceUseCase {
       allocation: await this.resolveAllocation({
         categoryId: FUND.categoryId,
         portfolioId: POSITION.portfolioId,
-        previousAllocation: PREVIOUS?.allocation ?? null,
+        previousAllocation: OPENING.previous?.allocation ?? null,
       }),
     })
 
