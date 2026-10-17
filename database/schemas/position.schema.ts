@@ -20,7 +20,7 @@ export const position = pgSchema("portfolio").table(
     id: uuid("id").primaryKey().defaultRandom(),
     portfolioId: uuid("portfolio_id")
       .notNull()
-      .references(() => portfolio.id),
+      .references(() => portfolio.id, { onDelete: "cascade" }),
     fundId: uuid("fund_id")
       .notNull()
       .references(() => fund.id),

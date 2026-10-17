@@ -16,7 +16,7 @@ export const checkingAccount = pgSchema("bank").table(
     id: uuid("id").primaryKey().defaultRandom(),
     bankAccountId: uuid("bank_account_id")
       .notNull()
-      .references(() => bankAccount.id),
+      .references(() => bankAccount.id, { onDelete: "cascade" }),
     date: timestamp("date", { withTimezone: true }).notNull(),
     value: numeric("value", {
       precision: 18,

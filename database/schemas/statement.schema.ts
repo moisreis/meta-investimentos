@@ -16,7 +16,8 @@ export const statement = pgSchema("report").table(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     portfolioId: uuid("portfolio_id").references(
-      () => portfolio.id
+      () => portfolio.id,
+      { onDelete: "cascade" }
     ),
     periodStart: date("period_start").notNull(),
     periodEnd: date("period_end").notNull(),

@@ -1,0 +1,1 @@
+ALTER TABLE "bank"."checking_account" DROP CONSTRAINT "checking_account_bank_account_id_bank_account_id_fkey", ADD CONSTRAINT "checking_account_bank_account_id_bank_account_id_fkey" FOREIGN KEY ("bank_account_id") REFERENCES "bank"."bank_account"("id") ON DELETE CASCADE;

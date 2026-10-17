@@ -20,7 +20,7 @@ export const withdrawal = pgSchema("portfolio").table(
     id: uuid("id").primaryKey().defaultRandom(),
     positionId: uuid("position_id")
       .notNull()
-      .references(() => position.id),
+      .references(() => position.id, { onDelete: "cascade" }),
     date: timestamp("date", { withTimezone: true }).notNull(),
     amount: numeric("amount", {
       precision: 18,

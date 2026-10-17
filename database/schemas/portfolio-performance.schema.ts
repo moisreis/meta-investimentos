@@ -18,7 +18,7 @@ export const portfolioPerformance = pgSchema(
     id: uuid("id").primaryKey().defaultRandom(),
     portfolioId: uuid("portfolio_id")
       .notNull()
-      .references(() => portfolio.id),
+      .references(() => portfolio.id, { onDelete: "cascade" }),
     date: timestamp("date", { withTimezone: true }).notNull(),
     quotasHeld: numeric("quotas_held", {
       precision: 18,

@@ -17,7 +17,7 @@ export const bankAccount = pgSchema("bank").table(
     id: uuid("id").primaryKey().defaultRandom(),
     portfolioId: uuid("portfolio_id")
       .notNull()
-      .references(() => portfolio.id),
+      .references(() => portfolio.id, { onDelete: "cascade" }),
     bankId: uuid("bank_id")
       .notNull()
       .references(() => bank.id),

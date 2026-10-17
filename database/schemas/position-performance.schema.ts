@@ -16,7 +16,7 @@ export const positionPerformance = pgSchema("performance").table(
     id: uuid("id").primaryKey().defaultRandom(),
     positionId: uuid("position_id")
       .notNull()
-      .references(() => position.id),
+      .references(() => position.id, { onDelete: "cascade" }),
     date: timestamp("date", { withTimezone: true }).notNull(),
     quotasHeld: numeric("quotas_held", {
       precision: 18,
