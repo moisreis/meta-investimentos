@@ -76,7 +76,7 @@ function EntityTablePagination<TData extends RowData>({
     )
 
   return (
-    <div className="flex h-11 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border px-3">
+    <div className="flex h-11 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-3">
       <div className="flex flex-1 items-center gap-3 text-sm text-muted-foreground">
         {HAS_SELECTION ? (
           <>

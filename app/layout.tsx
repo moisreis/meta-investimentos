@@ -3,7 +3,10 @@ import {
   Geist,
   Geist_Mono,
   Roboto_Slab,
-  Inter } from "next/font/google"
+  Inter,
+  Manrope,
+  Schibsted_Grotesk,
+} from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/presentation/theme/theme-provider"
 import { TooltipProvider } from "@/presentation/ui/tooltip"
@@ -13,7 +16,10 @@ import { BRAND } from "@/presentation/constants/brand.constants"
 
 // Stores the **Manrope** heading font configuration, used by
 // the titles of the shared surfaces.
-const geistHeading = Geist({subsets:['latin'],variable:'--font-heading'})
+const manropeHeading = Manrope({
+  subsets: ["latin"],
+  variable: "--font-heading",
+})
 
 // Stores the **Roboto Slab** figure font configuration. The
 // slab is reserved for figures of account — the headline
@@ -25,12 +31,24 @@ const slabFigure = Roboto_Slab({
 })
 
 // Stores the **Geist** sans-serif font configuration.
-const inter = Inter({subsets:['latin'],variable:'--font-sans'})
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
 // Stores the **Geist Mono** font configuration.
 const FONT_MONO = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+})
+
+// Stores the **Schibsted Grotesk** display font configuration.
+// The display face titles the statement report, on the page
+// headings and on the subtitles of every block, so a printed
+// page reads in one typeface from the top down.
+const schibstedGrotesk = Schibsted_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
 })
 
 // Defines default application metadata for **Next.js**.
@@ -86,9 +104,10 @@ export default function RootLayout({
         "antialiased",
         FONT_MONO.variable,
         "font-sans",
-        inter.variable,
-        geistHeading.variable,
-        slabFigure.variable
+        geist.variable,
+        manropeHeading.variable,
+        slabFigure.variable,
+        schibstedGrotesk.variable
       )}
     >
       <body>

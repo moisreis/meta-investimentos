@@ -6,7 +6,7 @@
   "tailwind": {
     "config": "",
     "css": "app/globals.css",
-    "baseColor": "neutral",
+    "baseColor": "olive",
     "cssVariables": true,
     "prefix": ""
   },
@@ -19,8 +19,8 @@
     "lib": "@/lib",
     "hooks": "@/presentation/hooks"
   },
-  "menuColor": "default-translucent",
-  "menuAccent": "subtle",
+  "menuColor": "default",
+  "menuAccent": "bold",
   "registries": {
     "@23rd": "https://23rd.dev/r/{name}.json"
   }
