@@ -23,6 +23,7 @@ import { calculatePortfolioReturn } from "@domain/portfolio/calculators/return.c
 import { calculatePortfolioTarget } from "@domain/portfolio/calculators/target.calculator"
 import { calculatePortfolioWithdrawalQuotasSum } from "@domain/portfolio/calculators/withdrawal-quotas-sum.calculator"
 import { calculatePortfolioWithdrawalSum } from "@domain/portfolio/calculators/withdrawal-sum.calculator"
+import { calculateQuotasHeld } from "@domain/position/calculators/quotas-held.calculator"
 import { calculatePortfolioInflationSpread } from "@domain/benchmark/calculators/inflation-spread.calculator"
 import { calculatePortfolioRiskFreeSpread } from "@domain/benchmark/calculators/risk-free-spread.calculator"
 import { calculatePortfolioMarketSpread } from "@domain/benchmark/calculators/market-spread.calculator"
@@ -309,11 +310,11 @@ export class CalculatePortfolioPerformanceUseCase {
         })
       QUOTAS_BY_POSITION.set(
         position.id as string,
-        QuotaQuantity.create(
-          OPENING.quotasHeld.value
-            .plus(HELD_APPLICATION_QUOTAS.value)
-            .minus(HELD_WITHDRAWAL_QUOTAS.value)
-        )
+        calculateQuotasHeld({
+          lastPeriodQuotaQuantity: OPENING.quotasHeld,
+          applicationQuotasQuantity: HELD_APPLICATION_QUOTAS,
+          withdrawalQuotasQuantity: HELD_WITHDRAWAL_QUOTAS,
+        })
       )
     }
 

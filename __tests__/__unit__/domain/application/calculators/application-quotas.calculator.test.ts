@@ -47,7 +47,7 @@ describe("domain/application/calculators/application-quotas.calculator", () => {
       expect(result.value.toFixed(6)).toBe("333.333333")
     })
 
-    it("should round the quotient up on the seventh decimal digit when the price does not divide evenly", () => {
+    it("should truncate the quotient on the seventh decimal digit when the price does not divide evenly", () => {
       const application = PositiveMoney.create("1000.00")
       const quota = QuotaPrice.create("7.00")
 
@@ -56,7 +56,7 @@ describe("domain/application/calculators/application-quotas.calculator", () => {
         quota,
       })
 
-      expect(result.value.toFixed(6)).toBe("142.857143")
+      expect(result.value.toFixed(6)).toBe("142.857142")
     })
 
     it("should return the exact quotient when the price divides the amount evenly", () => {

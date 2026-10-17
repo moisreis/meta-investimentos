@@ -8,11 +8,13 @@ import { PRESENTER_FALLBACK } from "../constants/presenter.constants"
  * Portuguese locale.
  *
  * @remarks
- * Formats a non-negative number with the `pt-BR` locale
- * and up to **QUANTITY_DECIMAL_PLACES** fractional
- * digits. Returns the fallback for nil, non-finite or
- * negative values. Renders zero as "0" instead of the
- * fallback.
+ * Formats a non-negative number with the `pt-BR` locale and
+ * exactly **QUANTITY_DECIMAL_PLACES** fractional digits.
+ * Returns the fallback for nil, non-finite or negative
+ * values. A fixed number of decimals is used so the display
+ * matches the account statements published by the fund
+ * administrators, which always show six decimal places.
+ * Renders zero as "0,000000" instead of the fallback.
  *
  * @explanation
  * Use this function to display quota quantities in
@@ -25,7 +27,7 @@ import { PRESENTER_FALLBACK } from "../constants/presenter.constants"
  *
  * @example
  * const QUANTITY = FormatQuotaQuantity("1234.567890");
- * // returns "1.234,56789"
+ * // returns "1.234,567890"
  *
  * @author Moisés Reis
  *
@@ -47,6 +49,7 @@ export function FormatQuotaQuantity(
   }
 
   return new Intl.NumberFormat("pt-BR", {
+    minimumFractionDigits: QUANTITY_DECIMAL_PLACES,
     maximumFractionDigits: QUANTITY_DECIMAL_PLACES,
   }).format(PARSED)
 }

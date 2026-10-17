@@ -1,6 +1,7 @@
 import Decimal from "decimal.js"
 
 import { calculateApplicationQuotas } from "@domain/application/calculators/application-quotas.calculator"
+import { calculateQuotasHeld } from "@domain/position/calculators/quotas-held.calculator"
 import type { IApplication } from "@domain/application/interfaces/application.interface"
 import type { IPositionPerformance } from "@domain/position-performance/interfaces/position-performance.interface"
 import type { PositionPerformance } from "@domain/position-performance/entities/position-performance.entity"
@@ -187,11 +188,13 @@ export async function resolvePositionOpening(
 
   return {
     previous: null,
-    quotasHeld: QuotaQuantity.create(
-      seedQuotas.value
-        .plus(APPLICATIONS.quotas?.value ?? 0)
-        .minus(WITHDRAWALS.quotas?.value ?? 0)
-    ),
+    quotasHeld: calculateQuotasHeld({
+      lastPeriodQuotaQuantity: seedQuotas,
+      applicationQuotasQuantity:
+        APPLICATIONS.quotas ?? QuotaQuantity.create("0"),
+      withdrawalQuotasQuantity:
+        WITHDRAWALS.quotas ?? QuotaQuantity.create("0"),
+    }),
     balance: SignedMoney.create(
       seedBalance
         .plus(APPLICATIONS.amount?.value ?? 0)

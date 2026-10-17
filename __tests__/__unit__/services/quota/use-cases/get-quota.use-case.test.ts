@@ -41,7 +41,7 @@ describe("services/quota/use-cases/get-quota.use-case", () => {
       expect(response.id).toBe(ID)
       expect(response.fundId).toBe(FUND_ID)
       expect(response.date).toBe("2026-01-15T00:00:00.000Z")
-      expect(response.price).toBe("1234.56789")
+      expect(response.price).toBe("1234.5678901")
       expect(response.createdAt).toBe(
         saved.createdAt.toISOString()
       )

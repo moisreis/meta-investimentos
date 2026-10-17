@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest"
 
 import { calculateQuotasHeld } from "@/domain/position/calculators/quotas-held.calculator"
-import { ValidationError } from "@/errors"
 import { QuotaQuantity } from "@/value-objects"
 
 describe("domain/position/calculators/quotas-held.calculator", () => {
@@ -98,33 +97,66 @@ describe("domain/position/calculators/quotas-held.calculator", () => {
       expect(result.value.toString()).toBe("0")
     })
 
-    it("should throw ValidationError when the withdrawals exceed the held quotas", () => {
+    it("should floor the balance at zero when a full redemption overshoots by a rounding residual", () => {
+      const lastPeriodQuotaQuantity =
+        QuotaQuantity.create("147719.530004")
+      const applicationQuotasQuantity = QuotaQuantity.create("0")
+      const withdrawalQuotasQuantity =
+        QuotaQuantity.create("147719.530175")
+
+      const result = calculateQuotasHeld({
+        lastPeriodQuotaQuantity,
+        applicationQuotasQuantity,
+        withdrawalQuotasQuantity,
+      })
+
+      expect(result.value.toString()).toBe("0")
+    })
+
+    it("should floor the balance at zero when the withdrawals exceed the held quotas", () => {
       const lastPeriodQuotaQuantity = QuotaQuantity.create("10")
       const applicationQuotasQuantity = QuotaQuantity.create("0")
       const withdrawalQuotasQuantity = QuotaQuantity.create("20")
 
-      expect(() =>
-        calculateQuotasHeld({
-          lastPeriodQuotaQuantity,
-          applicationQuotasQuantity,
-          withdrawalQuotasQuantity,
-        })
-      ).toThrow(ValidationError)
+      const result = calculateQuotasHeld({
+        lastPeriodQuotaQuantity,
+        applicationQuotasQuantity,
+        withdrawalQuotasQuantity,
+      })
+
+      expect(result.value.toString()).toBe("0")
     })
 
-    it("should throw ValidationError when a withdrawal is made on an empty position", () => {
+    it("should floor the balance at zero when a withdrawal is made on an empty position", () => {
       const lastPeriodQuotaQuantity = QuotaQuantity.create("0")
       const applicationQuotasQuantity = QuotaQuantity.create("0")
       const withdrawalQuotasQuantity =
         QuotaQuantity.create("0.000001")
 
-      expect(() =>
-        calculateQuotasHeld({
-          lastPeriodQuotaQuantity,
-          applicationQuotasQuantity,
-          withdrawalQuotasQuantity,
-        })
-      ).toThrow(ValidationError)
+      const result = calculateQuotasHeld({
+        lastPeriodQuotaQuantity,
+        applicationQuotasQuantity,
+        withdrawalQuotasQuantity,
+      })
+
+      expect(result.value.toString()).toBe("0")
+    })
+
+    it("should preserve a positive balance when a partial redemption leaves quotas behind", () => {
+      const lastPeriodQuotaQuantity =
+        QuotaQuantity.create("147719.530004")
+      const applicationQuotasQuantity =
+        QuotaQuantity.create("10")
+      const withdrawalQuotasQuantity =
+        QuotaQuantity.create("147719.530175")
+
+      const result = calculateQuotasHeld({
+        lastPeriodQuotaQuantity,
+        applicationQuotasQuantity,
+        withdrawalQuotasQuantity,
+      })
+
+      expect(result.value.toFixed(6)).toBe("9.999829")
     })
 
     it("should not mutate the provided quantities when closing the period", () => {

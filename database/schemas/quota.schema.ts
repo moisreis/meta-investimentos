@@ -22,7 +22,7 @@ export const quota = pgSchema("fund").table(
     date: timestamp("date", { withTimezone: true }).notNull(),
     price: numeric("price", {
       precision: 18,
-      scale: 6,
+      scale: 9,
     }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()

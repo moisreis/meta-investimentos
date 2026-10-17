@@ -68,8 +68,8 @@ describe("domain/position/calculators/application-quotas-sum.calculator", () => 
       expect(result.value.toFixed(6)).toBe("0.000006")
     })
 
-    it("should round the total half up to six decimal places when raw quantities carry more precision", () => {
-      // 0.1234565 + 0.0000004 = 0.1234569, which the value object rounds
+    it("should truncate the total to six decimal places when raw quantities carry more precision", () => {
+      // 0.1234565 + 0.0000004 = 0.1234569, which the value object truncates
       // to the six decimal places allowed by `QUANTITY_DECIMAL_PLACES`.
       const quotaQuantity = [
         { value: { value: new Decimal("0.1234565") } },
@@ -82,7 +82,7 @@ describe("domain/position/calculators/application-quotas-sum.calculator", () => 
         quotaQuantity,
       })
 
-      expect(result.value.toFixed(6)).toBe("0.123457")
+      expect(result.value.toFixed(6)).toBe("0.123456")
     })
 
     it("should not mutate the provided quantities when summing them", () => {

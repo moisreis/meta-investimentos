@@ -55,7 +55,7 @@ describe("services/transaction-allocation/mappers/transaction-allocation.mapper"
       expect(props.quotasConsumed.value.toString()).toBe("250.5")
     })
 
-    it("should round the consumed quotas to quantity precision when mapping a create DTO", () => {
+    it("should truncate the consumed quotas to quantity precision when mapping a create DTO", () => {
       const props = toCreateTransactionAllocationProps({
         applicationId: "application-1",
         withdrawId: "withdrawal-1",
@@ -63,7 +63,7 @@ describe("services/transaction-allocation/mappers/transaction-allocation.mapper"
       })
 
       expect(props.quotasConsumed.value.toFixed(6)).toBe(
-        "120.123457"
+        "120.123456"
       )
     })
 

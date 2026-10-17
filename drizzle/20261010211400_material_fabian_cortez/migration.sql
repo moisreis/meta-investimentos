@@ -1,0 +1,1 @@
+ALTER TABLE "fund"."quota" ALTER COLUMN "price" SET DATA TYPE numeric(18,9) USING "price"::numeric(18,9);

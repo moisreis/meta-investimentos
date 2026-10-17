@@ -26,10 +26,10 @@ describe("value-objects/quota-quantity.vo", () => {
       expect(quantity.value.toFixed(6)).toBe("10.123456")
     })
 
-    it("should round to 6 decimal places", () => {
+    it("should truncate to 6 decimal places", () => {
       const quantity = QuotaQuantity.create("10.1234567")
 
-      expect(quantity.value.toFixed(6)).toBe("10.123457")
+      expect(quantity.value.toFixed(6)).toBe("10.123456")
     })
 
     it("should throw ValidationError when value is undefined", () => {

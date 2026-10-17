@@ -1,7 +1,7 @@
 import Decimal from "decimal.js"
 import {
   QUANTITY_DECIMAL_PLACES,
-  ROUNDING_MODE,
+  QUANTITY_ROUNDING_MODE,
 } from "@/constants/value-objects/rounding.constants"
 import { ValidationError } from "@/errors"
 
@@ -15,8 +15,8 @@ interface QuotaQuantityProps {
  *
  * @remarks
  * Uses **Decimal.js** to handle high-precision operations.
- * Enforces non-negative constraints and rounds values using
- * **QUANTITY_DECIMAL_PLACES**.
+ * Enforces non-negative constraints and truncates values using
+ * **QUANTITY_DECIMAL_PLACES** and **QUANTITY_ROUNDING_MODE**.
  *
  * @explanation
  * Use this domain value object to model quota quantities in
@@ -99,7 +99,7 @@ export class QuotaQuantity {
     return new QuotaQuantity({
       value: DECIMAL_VALUE.toDecimalPlaces(
         QUANTITY_DECIMAL_PLACES,
-        ROUNDING_MODE
+        QUANTITY_ROUNDING_MODE
       ),
     })
   }

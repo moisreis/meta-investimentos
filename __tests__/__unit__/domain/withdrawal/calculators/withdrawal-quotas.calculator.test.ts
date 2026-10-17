@@ -35,7 +35,7 @@ describe("domain/withdrawal/calculators/withdrawal-quotas.calculator", () => {
       expect(result.value.toFixed(6)).toBe("224675.226343")
     })
 
-    it("should round the repeating quotient half up to six decimal places", () => {
+    it("should truncate the repeating quotient to six decimal places", () => {
       const withdrawal = PositiveMoney.create("500.00")
       const quota = QuotaPrice.create("3.00")
 
@@ -44,10 +44,10 @@ describe("domain/withdrawal/calculators/withdrawal-quotas.calculator", () => {
         quota,
       })
 
-      expect(result.value.toFixed(6)).toBe("166.666667")
+      expect(result.value.toFixed(6)).toBe("166.666666")
     })
 
-    it("should round the quotient up on the seventh decimal digit when the price does not divide evenly", () => {
+    it("should truncate the quotient on the seventh decimal digit when the price does not divide evenly", () => {
       const withdrawal = PositiveMoney.create("500.00")
       const quota = QuotaPrice.create("7.00")
 
