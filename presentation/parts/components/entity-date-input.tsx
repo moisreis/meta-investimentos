@@ -4,7 +4,7 @@ import { useState } from "react"
 import { ptBR } from "date-fns/locale"
 import { IconCalendar, IconLoader2 } from "@tabler/icons-react"
 
-import { FromDayKey, ToDayKey } from "@/lib/date/day-key"
+import { FromStoredDayValue, ToDayKey } from "@/lib/date/day-key"
 import { Button } from "@/presentation/ui/button"
 import { Calendar } from "@/presentation/ui/calendar"
 import {
@@ -60,7 +60,10 @@ export interface EntityDateInputProps {
  * @param props - Props of the date input.
  * @param props.id - Id linked to the field label.
  * @param props.name - Name of the field.
- * @param props.value - The selected `yyyy-MM-dd` value.
+ * @param props.value - The selected day, as a `yyyy-MM-dd`
+ * key or a stored UTC ISO value such as one a row DTO
+ * carries. The stored-day decoder recovers the same day
+ * from either shape.
  * @param props.onValueChange - Reports the next day.
  * @param props.placeholder - Copy while nothing is set.
  * @param props.required - Marks the field as required.
@@ -95,7 +98,7 @@ function EntityDateInput({
 }: EntityDateInputProps) {
   const [OPEN, setOpen] = useState(false)
 
-  const SELECTED = FromDayKey(value)
+  const SELECTED = FromStoredDayValue(value)
   const TRIGGER_LABEL = SELECTED
     ? FormatDate(SELECTED)
     : placeholder

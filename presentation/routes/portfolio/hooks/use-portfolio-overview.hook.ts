@@ -12,6 +12,7 @@ import type { DateRange } from "react-day-picker"
 import type { PortfolioPeriodReturns } from "@/presentation/types/portfolio-period-returns.types"
 import type { EntitySummary } from "@/presentation/parts/components/entity-detail-summary"
 
+import { ToDayKey } from "@/lib/date/day-key"
 import { getPortfolioPeriodReturnsAction } from "../actions/get-portfolio-period-returns.action"
 import { FilterPortfolioActivity } from "../helpers/filter-portfolio-activity.helper"
 import { BuildPortfolioChartSections } from "../helpers/build-portfolio-chart-sections.helper"
@@ -31,11 +32,6 @@ const EMPTY_PERIOD_RETURNS: PortfolioPeriodReturns = {
 function FromUtcDayKey(key: string): Date {
   const [YEAR, MONTH, DAY] = key.split("-").map(Number)
   return new Date(YEAR, MONTH - 1, DAY)
-}
-
-// Extracts the UTC day key of a date.
-function ToUtcDayKey(date: Date): string {
-  return date.toISOString().slice(0, 10)
 }
 
 // Builds the initial range covering every snapshot day.
@@ -139,8 +135,8 @@ function usePortfolioOverview(
 
     getPortfolioPeriodReturnsAction({
       portfolioId: data.portfolioId,
-      from: ToUtcDayKey(FROM),
-      to: ToUtcDayKey(TO),
+      from: ToDayKey(FROM),
+      to: ToDayKey(TO),
     }).then((RESULT) => {
       if (REQUEST !== REQUEST_ID.current || !RESULT.success)
         return
@@ -152,7 +148,7 @@ function usePortfolioOverview(
   }, [data.portfolioId, DATE_RANGE, RETURNS_CACHE])
 
   const isPerformanceDay = useCallback(
-    (date: Date) => AVAILABLE_KEYS.has(ToUtcDayKey(date)),
+    (date: Date) => AVAILABLE_KEYS.has(ToDayKey(date)),
     [AVAILABLE_KEYS]
   )
 
@@ -225,7 +221,7 @@ function BuildRangeKey(
   from: Date,
   to: Date
 ): string {
-  return `${portfolioId}:${ToUtcDayKey(from)}:${ToUtcDayKey(to)}`
+  return `${portfolioId}:${ToDayKey(from)}:${ToDayKey(to)}`
 }
 
 // Reads the returns of the window from the cache, falling

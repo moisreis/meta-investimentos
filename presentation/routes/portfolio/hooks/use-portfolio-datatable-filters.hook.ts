@@ -14,15 +14,12 @@ import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-per
 
 import { listPortfolioPerformancesAction } from "../actions/list-portfolio-performances.action"
 
+import { ToDayKey } from "@/lib/date/day-key"
+
 // Builds a local-midnight date from a UTC day key.
 function FromUtcDayKey(key: string): Date {
   const [YEAR, MONTH, DAY] = key.split("-").map(Number)
   return new Date(YEAR, MONTH - 1, DAY)
-}
-
-// Extracts the UTC day key of a date.
-function ToUtcDayKey(date: Date): string {
-  return date.toISOString().slice(0, 10)
 }
 
 // Builds the initial range covering every available day.
@@ -110,8 +107,8 @@ function usePortfolioDatatableFilters(
     if (!FROM || !TO) return
 
     listPortfolioPerformancesAction({
-      from: ToUtcDayKey(FROM),
-      to: ToUtcDayKey(TO),
+      from: ToDayKey(FROM),
+      to: ToDayKey(TO),
     }).then((RESULT) => {
       if (REQUEST !== REQUEST_ID.current) return
       setPerformances(
@@ -121,7 +118,7 @@ function usePortfolioDatatableFilters(
   }, [RANGE])
 
   const isPerformanceDay = useCallback(
-    (date: Date) => AVAILABLE_KEYS.has(ToUtcDayKey(date)),
+    (date: Date) => AVAILABLE_KEYS.has(ToDayKey(date)),
     [AVAILABLE_KEYS]
   )
 

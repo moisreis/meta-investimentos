@@ -5,6 +5,7 @@ import { useCallback } from "react"
 import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
+import { FormatUtcDate } from "@/presentation/presenters/date.presenter"
 import type { BenchmarkHistoryRow } from "@/presentation/types/benchmark-history-row.types"
 
 import { BENCHMARK_HISTORY_KPI } from "../settings/labels.settings"
@@ -40,9 +41,9 @@ function BuildBenchmarkHistoryKpis(
 
   const RANGE_TEXT =
     DATES.length >= 2
-      ? `${new Date(DATES[0]).toLocaleDateString("pt-BR")} – ${new Date(DATES[DATES.length - 1]).toLocaleDateString("pt-BR")}`
+      ? `${FormatUtcDate(DATES[0])} – ${FormatUtcDate(DATES[DATES.length - 1])}`
       : DATES.length === 1
-        ? new Date(DATES[0]).toLocaleDateString("pt-BR")
+        ? FormatUtcDate(DATES[0])
         : "—"
 
   return [

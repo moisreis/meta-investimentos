@@ -11,7 +11,7 @@ import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/en
 import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-lookup-cell"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
-import { FormatDate } from "@/presentation/presenters/date.presenter"
+import { FormatUtcDate } from "@/presentation/presenters/date.presenter"
 import { FormatQuotaQuantity } from "@/presentation/presenters/quota-quantity.presenter"
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
 
@@ -89,7 +89,7 @@ export function CreatePositionActivityColumns(
       header: POSITION_ACTIVITY.COLUMN_DATE,
       size: 130,
       meta: { fluid: true },
-      cell: (info) => FormatDate(info.getValue()),
+      cell: (info) => FormatUtcDate(info.getValue()),
     }),
 
     columnHelper.accessor("amount", {

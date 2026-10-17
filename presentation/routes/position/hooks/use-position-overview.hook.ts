@@ -14,6 +14,7 @@ import type { EntitySummary } from "@/presentation/parts/components/entity-detai
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
 import type { PositionPeriodReturns } from "@/presentation/types/position-period-returns.types"
 
+import { ToDayKey } from "@/lib/date/day-key"
 import { getPositionPeriodReturnsAction } from "../actions/get-position-period-returns.action"
 import { BuildPositionChartSections } from "../helpers/build-position-chart-sections.helper"
 import { BuildPositionSummary } from "../helpers/build-position-summary.helper"
@@ -31,11 +32,6 @@ const EMPTY_PERIOD_RETURNS: PositionPeriodReturns = {
 function FromUtcDayKey(key: string): Date {
   const [YEAR, MONTH, DAY] = key.split("-").map(Number)
   return new Date(YEAR, MONTH - 1, DAY)
-}
-
-// Extracts the UTC day key of a date.
-function ToUtcDayKey(date: Date): string {
-  return date.toISOString().slice(0, 10)
 }
 
 // Builds the initial range covering every snapshot day.
@@ -138,8 +134,8 @@ function usePositionOverview(
 
     getPositionPeriodReturnsAction({
       positionId: data.positionId,
-      from: ToUtcDayKey(FROM),
-      to: ToUtcDayKey(TO),
+      from: ToDayKey(FROM),
+      to: ToDayKey(TO),
     }).then((RESULT) => {
       if (REQUEST !== REQUEST_ID.current || !RESULT.success)
         return
@@ -151,7 +147,7 @@ function usePositionOverview(
   }, [data.positionId, DATE_RANGE, RETURNS_CACHE])
 
   const isPerformanceDay = useCallback(
-    (date: Date) => AVAILABLE_KEYS.has(ToUtcDayKey(date)),
+    (date: Date) => AVAILABLE_KEYS.has(ToDayKey(date)),
     [AVAILABLE_KEYS]
   )
 
@@ -210,7 +206,7 @@ function BuildRangeKey(
   from: Date,
   to: Date
 ): string {
-  return `${positionId}:${ToUtcDayKey(from)}:${ToUtcDayKey(to)}`
+  return `${positionId}:${ToDayKey(from)}:${ToDayKey(to)}`
 }
 
 // Reads the returns of the window from the cache, falling

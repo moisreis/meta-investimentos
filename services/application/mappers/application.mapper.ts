@@ -11,6 +11,14 @@ import type { CreateApplicationDTO } from "../dto/create-application.dto"
 import type { ApplicationResponseDTO } from "../dto/application-response.dto"
 import type { ReverseApplicationDTO } from "../dto/reverse-application.dto"
 
+function parseDateAsUtc(dateStr: string): Date {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return new Date(dateStr)
+  }
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d))
+}
+
 /**
  * @summary
  * Maps a create `Application` DTO into entity props.
@@ -39,7 +47,7 @@ export function toCreateApplicationProps(
 ): ApplicationProps {
   return {
     positionId: EntityId.create(dto.positionId),
-    date: new Date(dto.date),
+    date: parseDateAsUtc(dto.date),
     amount: PositiveMoney.create(dto.amount),
     quotas: QuotaQuantity.create(dto.quotas),
   }

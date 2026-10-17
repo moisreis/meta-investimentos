@@ -1,5 +1,6 @@
 import type { DateRange } from "react-day-picker"
 
+import { ToDayKey } from "@/lib/date/day-key"
 import type {
   EntityChartModel,
   EntityChartSeries,
@@ -87,10 +88,10 @@ export function BuildCheckingEvolutionChart(
   dateRange: DateRange | undefined
 ): EntityChartModel | null {
   const FROM = dateRange?.from
-    ? dateRange.from.toISOString().slice(0, 10)
+    ? ToDayKey(dateRange.from)
     : undefined
   const TO = dateRange?.to
-    ? dateRange.to.toISOString().slice(0, 10)
+    ? ToDayKey(dateRange.to)
     : undefined
 
   const BY_DAY = new Map<string, number>()

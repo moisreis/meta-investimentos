@@ -5,7 +5,7 @@ import type { ColumnHelper } from "@tanstack/react-table"
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import { FormatDate } from "@/presentation/presenters/date.presenter"
+import { FormatUtcDate } from "@/presentation/presenters/date.presenter"
 import { FormatEntityLookup } from "@/presentation/presenters/lookup.presenter"
 import { FormatSignedPercentage } from "@/presentation/presenters/percentage.presenter"
 import type { BenchmarkHistoryRow } from "@/presentation/types/benchmark-history-row.types"
@@ -58,7 +58,7 @@ export function CreateBenchmarkHistoryTableColumns(
       minSize: 130,
       maxSize: 130,
       meta: { pinned: "start" },
-      cell: (info) => FormatDate(info.getValue()),
+      cell: (info) => FormatUtcDate(info.getValue()),
     }),
 
     columnHelper.accessor(

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 
-import { FromDayKey, ToDayKey } from "@/lib/date/day-key"
+import { FromStoredDayValue, ToDayKey } from "@/lib/date/day-key"
 
 import { EntityDateInput } from "./entity-date-input"
 
@@ -109,8 +109,10 @@ function EntityQuotaDateInput({
 
   // Day key of the current value. Derived through the shared
   // day-key contract so it names the same day the calendar
-  // shows, whatever shape the raw value arrived in.
-  const SELECTED = FromDayKey(value)
+  // shows, whatever shape the raw value arrived in. Stored
+  // rows carry the column's UTC midnight ISO string, so the
+  // stored-day decoder (not `FromDayKey`) has to read it.
+  const SELECTED = FromStoredDayValue(value)
   const SELECTED_KEY = SELECTED ? ToDayKey(SELECTED) : ""
 
   useEffect(() => {

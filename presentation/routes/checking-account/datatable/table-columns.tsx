@@ -7,7 +7,7 @@ import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
-import { FormatDate } from "@/presentation/presenters/date.presenter"
+import { FormatUtcDate } from "@/presentation/presenters/date.presenter"
 import { FormatBankAccountLookup } from "@/presentation/presenters/lookup.presenter"
 import { CHECKING_ACCOUNT_DATATABLE } from "@/presentation/routes/checking-account/settings/labels.settings"
 import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
@@ -73,7 +73,7 @@ export function CreateCheckingAccountTableColumns(
       header: CHECKING_ACCOUNT_DATATABLE.COLUMN_DATE,
       size: 130,
       meta: { fluid: true },
-      cell: (info) => FormatDate(info.getValue()),
+      cell: (info) => FormatUtcDate(info.getValue()),
     }),
 
     columnHelper.accessor("value", {

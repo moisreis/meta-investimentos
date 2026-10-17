@@ -11,6 +11,14 @@ import type { CreateWithdrawalDTO } from "../dto/create-withdrawal.dto"
 import type { WithdrawalResponseDTO } from "../dto/withdrawal-response.dto"
 import type { ReverseWithdrawalDTO } from "../dto/reverse-withdrawal.dto"
 
+function parseDateAsUtc(dateStr: string): Date {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return new Date(dateStr)
+  }
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d))
+}
+
 /**
  * @summary
  * Maps a create `Withdrawal` DTO into entity props.
@@ -39,7 +47,7 @@ export function toCreateWithdrawalProps(
 ): WithdrawalProps {
   return {
     positionId: EntityId.create(dto.positionId),
-    date: new Date(dto.date),
+    date: parseDateAsUtc(dto.date),
     amount: PositiveMoney.create(dto.amount),
     quotas: QuotaQuantity.create(dto.quotas),
   }

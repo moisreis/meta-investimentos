@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
-import { FormatDate } from "@/presentation/presenters/date.presenter"
+import { FormatUtcDate } from "@/presentation/presenters/date.presenter"
 import { ResolveBankAccountLabel } from "@/presentation/routes/checking-account/helpers/build-checking-account-name-lookups.helper"
 import type { CheckingAccountRow } from "@/presentation/types/checking-account-row.types"
 
@@ -51,7 +51,7 @@ function useCheckingAccountDatatableFilters(
       )
       const HAYSTACK = [
         ACCOUNT_LABEL,
-        FormatDate(entry.date),
+        FormatUtcDate(entry.date),
         FormatCurrency(entry.value),
       ]
         .join(" ")

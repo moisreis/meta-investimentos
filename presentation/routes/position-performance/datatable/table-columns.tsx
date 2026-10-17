@@ -8,7 +8,7 @@ import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
-import { FormatDate } from "@/presentation/presenters/date.presenter"
+import { FormatUtcDate } from "@/presentation/presenters/date.presenter"
 import { FormatPercentage } from "@/presentation/presenters/percentage.presenter"
 import { FormatQuotaQuantity } from "@/presentation/presenters/quota-quantity.presenter"
 import type { PositionPerformanceRow } from "@/presentation/types/position-performance-row.types"
@@ -80,7 +80,7 @@ export function CreatePositionPerformanceTableColumns(
       header: POSITION_PERFORMANCE_DATATABLE.COLUMN_DATE,
       size: 130,
       meta: { fluid: true },
-      cell: (info) => FormatDate(info.getValue()),
+      cell: (info) => FormatUtcDate(info.getValue()),
     }),
 
     columnHelper.accessor("patrimony", {

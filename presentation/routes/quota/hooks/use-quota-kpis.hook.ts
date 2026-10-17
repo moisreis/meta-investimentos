@@ -5,7 +5,7 @@ import { useCallback } from "react"
 import type { EntityKpi } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { useEntityKpis } from "@/presentation/parts/hooks/use-entity-kpis.hook"
 import { FormatCount } from "@/presentation/presenters/count.presenter"
-import { FormatDate } from "@/presentation/presenters/date.presenter"
+import { FormatUtcDate } from "@/presentation/presenters/date.presenter"
 import type { QuotaRow } from "@/presentation/types/quota-row.types"
 
 import { QUOTA_KPI } from "../settings/labels.settings"
@@ -55,7 +55,7 @@ export function BuildQuotaKpis(
     {
       key: "lastDate",
       title: QUOTA_KPI.LAST_DATE_TITLE,
-      value: FormatDate(LAST_DATE || null),
+      value: FormatUtcDate(LAST_DATE || null),
       comparison: QUOTA_KPI.LAST_DATE_COMPARISON,
     },
   ]

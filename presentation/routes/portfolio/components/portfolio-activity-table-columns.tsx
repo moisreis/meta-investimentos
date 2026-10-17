@@ -12,7 +12,7 @@ import { EntityLookupCell } from "@/presentation/parts/datatable/columns/entity-
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
-import { FormatDate } from "@/presentation/presenters/date.presenter"
+import { FormatUtcDate } from "@/presentation/presenters/date.presenter"
 import { FormatQuotaQuantity } from "@/presentation/presenters/quota-quantity.presenter"
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
 import type { PortfolioActivityRowActionsModel } from "../hooks/use-portfolio-activity-row-actions.hook"
@@ -81,7 +81,7 @@ export function CreatePortfolioActivityColumns(
       header: PORTFOLIO_ACTIVITY.COLUMN_DATE,
       size: 130,
       meta: { fluid: true },
-      cell: (info) => FormatDate(info.getValue()),
+      cell: (info) => FormatUtcDate(info.getValue()),
     }),
 
     columnHelper.accessor("fundName", {

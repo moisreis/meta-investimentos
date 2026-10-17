@@ -80,4 +80,65 @@ function FromDayKey(value: string): Date | undefined {
   return Number.isNaN(DATE.getTime()) ? undefined : DATE
 }
 
-export { FromDayKey, ToDayKey }
+/**
+ * @summary
+ * Reads a stored calendar-day value back into the local date
+ * the picker should show.
+ *
+ * @remarks
+ * The `date` columns of the app are calendar days serialized
+ * at UTC midnight, and the response DTOs surface them as ISO
+ * strings such as `2026-07-01T00:00:00.000Z`. Reading such a
+ * string as an instant would shift it into the previous day
+ * west of Greenwich, exactly the shift `FromDayKey` keeps for
+ * real instants. This function names the day the stored value
+ * carries instead: a `yyyy-MM-dd` key builds the same local
+ * midnight date `FromDayKey` builds, and any other parseable
+ * value is reduced to the day of its **UTC** calendar
+ * components, matching how the `date` columns are compared.
+ *
+ * @explanation
+ * Use when a form opens over an existing record and the date
+ * picker has to prefill the day the record was stored on,
+ * whatever transport shape the row arrived in. As an inverse
+ * of `ToDayKey` for stored values, it keeps the calendar, the
+ * trigger label and the quota availability gating on the same
+ * day the column stores.
+ *
+ * @param value - The raw day key or stored ISO value.
+ *
+ * @returns The local date of the stored day, or `undefined`
+ * when the value is empty or unparseable.
+ *
+ * @example
+ * const DATE = FromStoredDayValue("2026-07-01T00:00:00.000Z");
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-10
+ */
+function FromStoredDayValue(value: string): Date | undefined {
+  if (!value) return undefined
+
+  const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/
+  const MATCH = value.match(DATE_ONLY)
+
+  if (MATCH) {
+    return new Date(
+      Number(MATCH[1]),
+      Number(MATCH[2]) - 1,
+      Number(MATCH[3])
+    )
+  }
+
+  const DATE = new Date(value)
+  if (Number.isNaN(DATE.getTime())) return undefined
+
+  return new Date(
+    DATE.getUTCFullYear(),
+    DATE.getUTCMonth(),
+    DATE.getUTCDate()
+  )
+}
+
+export { FromDayKey, FromStoredDayValue, ToDayKey }

@@ -1,6 +1,6 @@
 "use client"
 
-import { FormatDate } from "@/presentation/presenters/date.presenter"
+import { FormatUtcDate } from "@/presentation/presenters/date.presenter"
 import { EntityConfirmDeleteDialog } from "@/presentation/parts/dialogs/entity-confirm-delete"
 import { EntityDeleteToast } from "@/presentation/parts/toasts/entity-delete-toast"
 import { ResolveBankAccountLabel } from "@/presentation/routes/checking-account/helpers/build-checking-account-name-lookups.helper"
@@ -60,7 +60,7 @@ function CheckingAccountConfirmDeleteDialog({
                   names,
                   dialog.deleteTarget.bankAccountId
                 ),
-                FormatDate(dialog.deleteTarget.date)
+                FormatUtcDate(dialog.deleteTarget.date)
               )
             : ""
         }

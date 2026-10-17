@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest"
-import { FromDayKey, ToDayKey } from "@/lib/date/day-key"
+import {
+  FromDayKey,
+  FromStoredDayValue,
+  ToDayKey,
+} from "@/lib/date/day-key"
 
 describe("lib/date/day-key", () => {
   describe("ToDayKey", () => {
@@ -105,6 +109,49 @@ describe("lib/date/day-key", () => {
       expect(parsed?.getFullYear()).toBe(original.getFullYear())
       expect(parsed?.getMonth()).toBe(original.getMonth())
       expect(parsed?.getDate()).toBe(original.getDate())
+    })
+  })
+
+  describe("FromStoredDayValue", () => {
+    it("should parse yyyy-MM-dd into the same local date FromDayKey builds", () => {
+      const key = FromStoredDayValue("2026-07-01")
+      const plain = FromDayKey("2026-07-01")
+
+      expect(key?.getFullYear()).toBe(2026)
+      expect(key?.getMonth()).toBe(6)
+      expect(key?.getDate()).toBe(1)
+      expect(key?.getTime()).toBe(plain?.getTime())
+    })
+
+    it("should read a UTC midnight ISO value as the day it stores", () => {
+      // A stored `date` column serializes at UTC midnight.
+      // The picked day must be the stored day, not the local
+      // day the instant falls on when the offset is negative.
+      const result = FromStoredDayValue(
+        "2026-07-01T00:00:00.000Z"
+      )
+
+      expect(result?.getFullYear()).toBe(2026)
+      expect(result?.getMonth()).toBe(6)
+      expect(result?.getDate()).toBe(1)
+    })
+
+    it("should return undefined for empty or unparseable values", () => {
+      expect(FromStoredDayValue("")).toBeUndefined()
+      expect(FromStoredDayValue("   ")).toBeUndefined()
+      expect(
+        FromStoredDayValue("not-a-date")
+      ).toBeUndefined()
+    })
+
+    it("should handle leap day stored as UTC midnight", () => {
+      const result = FromStoredDayValue(
+        "2024-02-29T00:00:00.000Z"
+      )
+
+      expect(result?.getFullYear()).toBe(2024)
+      expect(result?.getMonth()).toBe(1)
+      expect(result?.getDate()).toBe(29)
     })
   })
 })

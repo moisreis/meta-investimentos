@@ -1,6 +1,7 @@
 import type { DateRange } from "react-day-picker"
 
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
+import { ToDayKey } from "@/lib/date/day-key"
 
 /**
  * @summary
@@ -43,12 +44,8 @@ export function FilterPositionActivity(
   rows: readonly PortfolioActivityRow[],
   range: DateRange | undefined
 ): PortfolioActivityRow[] {
-  const FROM = range?.from
-    ? range.from.toISOString().slice(0, 10)
-    : undefined
-  const TO = range?.to
-    ? range.to.toISOString().slice(0, 10)
-    : undefined
+  const FROM = range?.from ? ToDayKey(range.from) : undefined
+  const TO = range?.to ? ToDayKey(range.to) : undefined
 
   if (!FROM || !TO) return [...rows]
 

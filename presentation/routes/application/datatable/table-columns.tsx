@@ -14,7 +14,7 @@ import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-m
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatCnpj } from "@/presentation/presenters/cnpj.presenter"
 import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
-import { FormatDate } from "@/presentation/presenters/date.presenter"
+import { FormatUtcDate } from "@/presentation/presenters/date.presenter"
 import { FormatQuotaQuantity } from "@/presentation/presenters/quota-quantity.presenter"
 import type { ApplicationRow } from "@/presentation/types/application-row.types"
 
@@ -100,7 +100,7 @@ export function CreateApplicationTableColumns(
       header: APPLICATION_DATATABLE.COLUMN_DATE,
       size: 130,
       meta: { fluid: true },
-      cell: (info) => FormatDate(info.getValue()),
+      cell: (info) => FormatUtcDate(info.getValue()),
     }),
 
     columnHelper.accessor("amount", {

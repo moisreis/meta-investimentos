@@ -101,9 +101,12 @@ export class AddWithdrawalUseCase {
   ): Promise<string> {
     const FUND_ID = await this.resolveFundId(input.positionId)
 
+    const [y, m, d] = input.date.split('-').map(Number)
+    const withdrawalDate = new Date(Date.UTC(y, m - 1, d))
+
     const QUOTA = await this.quotaRepository.findByFundIdAndDate(
       FUND_ID,
-      new Date(input.date)
+      withdrawalDate
     )
 
     if (!QUOTA) {
