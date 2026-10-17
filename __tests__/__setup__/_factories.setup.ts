@@ -378,6 +378,7 @@ export function buildFund(
     performanceFee?: SignedPercentage | null
     bankId?: EntityId
     benchmarkId?: EntityId | null
+    normId?: EntityId | null
     categoryId?: EntityId | null
     createdAt?: Date
     updatedAt?: Date
@@ -401,6 +402,10 @@ export function buildFund(
         overrides.benchmarkId === undefined
           ? buildEntityId("benchmark-1")
           : overrides.benchmarkId,
+      normId:
+        overrides.normId === undefined
+          ? buildEntityId("norm-1")
+          : overrides.normId,
       categoryId:
         overrides.categoryId === undefined
           ? buildEntityId("category-1")

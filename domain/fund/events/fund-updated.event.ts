@@ -7,6 +7,7 @@ export interface FundUpdatedProps {
   administrationFee?: SignedPercentage | null | undefined
   performanceFee?: SignedPercentage | null | undefined
   benchmarkId?: EntityId | null | undefined
+  normId?: EntityId | null | undefined
   categoryId?: EntityId | null | undefined
   occurredAt?: Date
 }
@@ -17,6 +18,7 @@ type RequiredProps = {
   administrationFee: SignedPercentage | null | undefined
   performanceFee: SignedPercentage | null | undefined
   benchmarkId: EntityId | null | undefined
+  normId: EntityId | null | undefined
   categoryId: EntityId | null | undefined
   occurredAt: Date
 }
@@ -70,6 +72,11 @@ export class FundUpdated {
   // Returns the new benchmark, if changed.
   get benchmarkId(): EntityId | null | undefined {
     return this.props.benchmarkId
+  }
+
+  // Returns the new norm, if changed.
+  get normId(): EntityId | null | undefined {
+    return this.props.normId
   }
 
   // Returns the new category, if changed.
@@ -137,6 +144,7 @@ export class FundUpdated {
       administrationFee: props.administrationFee,
       performanceFee: props.performanceFee,
       benchmarkId: props.benchmarkId,
+      normId: props.normId,
       categoryId: props.categoryId,
       occurredAt: props.occurredAt ?? NOW,
     }

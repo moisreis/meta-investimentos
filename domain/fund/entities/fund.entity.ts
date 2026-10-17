@@ -12,6 +12,7 @@ export interface FundProps {
   performanceFee?: SignedPercentage | null
   bankId: EntityId
   benchmarkId?: EntityId | null
+  normId?: EntityId | null
   categoryId?: EntityId | null
   createdAt?: Date
   updatedAt?: Date
@@ -184,6 +185,26 @@ export class Fund {
 
   /**
    * @summary
+   * Returns the norm ID of the fund.
+   *
+   * @remarks
+   * Nullable EntityId.
+   *
+   * @explanation
+   * Regulatory norm that constrains the fund allocation.
+   *
+   * @returns EntityId or null.
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-10-14
+   */
+  get normId(): EntityId | null {
+    return this.props.normId
+  }
+
+  /**
+   * @summary
    * Returns the category ID of the fund.
    *
    * @remarks
@@ -325,6 +346,7 @@ export class Fund {
       administrationFee: props.administrationFee ?? null,
       performanceFee: props.performanceFee ?? null,
       benchmarkId: props.benchmarkId ?? null,
+      normId: props.normId ?? null,
       categoryId: props.categoryId ?? null,
       createdAt: props.createdAt ?? NOW,
       updatedAt: props.updatedAt ?? NOW,
@@ -371,6 +393,7 @@ export class Fund {
       administrationFee?: SignedPercentage | null
       performanceFee?: SignedPercentage | null
       benchmarkId?: EntityId | null
+      normId?: EntityId | null
       categoryId?: EntityId | null
     },
     now?: Date
@@ -400,6 +423,10 @@ export class Fund {
           options.benchmarkId === undefined
             ? this.props.benchmarkId
             : options.benchmarkId,
+        normId:
+          options.normId === undefined
+            ? this.props.normId
+            : options.normId,
         categoryId:
           options.categoryId === undefined
             ? this.props.categoryId

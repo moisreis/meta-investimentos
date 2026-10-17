@@ -29,11 +29,13 @@ export async function LoadFundPageProps(): Promise<FundListProps> {
     const OPTIONS = {
       banks: LOADED.banks,
       benchmarks: LOADED.benchmarks,
+      norms: LOADED.norms,
       categories: LOADED.categories,
     }
     const NAMES = BuildFundNameLookups(
       LOADED.banks,
       LOADED.benchmarks,
+      LOADED.norms,
       LOADED.categories
     )
 
@@ -55,7 +57,12 @@ export async function LoadFundPageProps(): Promise<FundListProps> {
   return {
     data: null,
     options: null,
-    names: { banks: {}, benchmarks: {}, categories: {} },
+    names: {
+      banks: {},
+      benchmarks: {},
+      norms: {},
+      categories: {},
+    },
     summaries: null,
   }
 }

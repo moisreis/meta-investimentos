@@ -66,6 +66,8 @@ export interface FundOverviewData {
   bankName: string | null
   // Benchmark name, null when unset or unresolved.
   benchmarkName: string | null
+  // Norm name, null when unset or unresolved.
+  normName: string | null
   // Category name, null when unset or unresolved.
   categoryName: string | null
   // Positions of the session user holding the fund.
@@ -81,6 +83,7 @@ export const EMPTY_FUND_OVERVIEW: FundOverviewData = {
   performanceFee: null,
   bankName: null,
   benchmarkName: null,
+  normName: null,
   categoryName: null,
   positions: [],
 }

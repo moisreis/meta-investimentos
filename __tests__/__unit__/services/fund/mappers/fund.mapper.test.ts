@@ -319,6 +319,7 @@ describe("services/fund/mappers/fund.mapper", () => {
         performanceFee: buildSignedPercentage("20.00"),
         bankId: buildEntityId("bank-1"),
         benchmarkId: buildEntityId("benchmark-1"),
+        normId: buildEntityId("norm-1"),
         categoryId: buildEntityId("category-1"),
         createdAt: new Date("2026-03-01T00:00:00.000Z"),
         updatedAt: new Date("2026-03-02T00:00:00.000Z"),
@@ -335,6 +336,7 @@ describe("services/fund/mappers/fund.mapper", () => {
         performanceFee: "20",
         bankId: "bank-1",
         benchmarkId: "benchmark-1",
+        normId: "norm-1",
         categoryId: "category-1",
         createdAt: "2026-03-01T00:00:00.000Z",
         updatedAt: "2026-03-02T00:00:00.000Z",
@@ -347,6 +349,7 @@ describe("services/fund/mappers/fund.mapper", () => {
         administrationFee: null,
         performanceFee: null,
         benchmarkId: null,
+        normId: null,
         categoryId: null,
         createdAt: new Date("2026-04-01T00:00:00.000Z"),
         updatedAt: new Date("2026-04-02T00:00:00.000Z"),
@@ -358,6 +361,7 @@ describe("services/fund/mappers/fund.mapper", () => {
       expect(response.administrationFee).toBeNull()
       expect(response.performanceFee).toBeNull()
       expect(response.benchmarkId).toBeNull()
+      expect(response.normId).toBeNull()
       expect(response.categoryId).toBeNull()
     })
   })

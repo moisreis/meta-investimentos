@@ -57,6 +57,7 @@ function useFundDatatable(
   names: FundNameLookups = {
     banks: {},
     benchmarks: {},
+    norms: {},
     categories: {},
   }
 ) {
@@ -81,6 +82,11 @@ function useFundDatatable(
     [names]
   )
 
+  const normNameFor = useCallback(
+    (normId: string) => names.norms[normId] ?? null,
+    [names]
+  )
+
   const categoryNameFor = useCallback(
     (categoryId: string) => names.categories[categoryId] ?? null,
     [names]
@@ -95,6 +101,7 @@ function useFundDatatable(
         summaryFor,
         bankNameFor,
         benchmarkNameFor,
+        normNameFor,
         categoryNameFor,
       }),
     [
@@ -104,6 +111,7 @@ function useFundDatatable(
       summaryFor,
       bankNameFor,
       benchmarkNameFor,
+      normNameFor,
       categoryNameFor,
     ]
   )

@@ -690,6 +690,7 @@ export function createFakeFundRepository(): IFund {
       performanceFee: fund.performanceFee,
       bankId: fund.bankId,
       benchmarkId: fund.benchmarkId,
+      normId: fund.normId,
       categoryId: fund.categoryId,
       createdAt: fund.createdAt,
       updatedAt: fund.updatedAt,
@@ -726,6 +727,9 @@ export function createFakeFundRepository(): IFund {
         BASE,
         (fund) => fund.benchmarkId === benchmarkId
       )
+    },
+    async findAllByNormId(normId) {
+      return filter(BASE, (fund) => fund.normId === normId)
     },
     async findAllByCategoryId(categoryId) {
       return filter(

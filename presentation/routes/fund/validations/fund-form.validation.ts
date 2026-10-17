@@ -28,6 +28,7 @@ const FUND_FORM_SCHEMA = z.object({
   performanceFee: OPTIONAL_FEE_SCHEMA,
   bankId: z.string().trim().min(1, "Selecione o banco."),
   benchmarkId: z.string().trim(),
+  normId: z.string().trim(),
   categoryId: z.string().trim(),
 })
 
@@ -37,6 +38,7 @@ const FUND_EDIT_FORM_SCHEMA = z.object({
   administrationFee: OPTIONAL_FEE_SCHEMA,
   performanceFee: OPTIONAL_FEE_SCHEMA,
   benchmarkId: z.string().trim(),
+  normId: z.string().trim(),
   categoryId: z.string().trim(),
 })
 

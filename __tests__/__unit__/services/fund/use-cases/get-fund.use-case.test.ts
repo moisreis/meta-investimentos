@@ -46,6 +46,7 @@ describe("services/fund/use-cases/get-fund.use-case", () => {
           performanceFee: buildSignedPercentage("20.00"),
           bankId: buildEntityId("bank-7"),
           benchmarkId: buildEntityId("benchmark-7"),
+          normId: buildEntityId("norm-7"),
           categoryId: buildEntityId("category-7"),
           createdAt: new Date("2026-03-01T00:00:00.000Z"),
           updatedAt: new Date("2026-03-02T00:00:00.000Z"),
@@ -65,6 +66,7 @@ describe("services/fund/use-cases/get-fund.use-case", () => {
         performanceFee: "20",
         bankId: "bank-7",
         benchmarkId: "benchmark-7",
+        normId: "norm-7",
         categoryId: "category-7",
         createdAt: "2026-03-01T00:00:00.000Z",
         updatedAt: "2026-03-02T00:00:00.000Z",
@@ -79,6 +81,7 @@ describe("services/fund/use-cases/get-fund.use-case", () => {
           administrationFee: null,
           performanceFee: null,
           benchmarkId: null,
+          normId: null,
           categoryId: null,
         })
       )
@@ -91,6 +94,7 @@ describe("services/fund/use-cases/get-fund.use-case", () => {
       expect(response.administrationFee).toBeNull()
       expect(response.performanceFee).toBeNull()
       expect(response.benchmarkId).toBeNull()
+      expect(response.normId).toBeNull()
       expect(response.categoryId).toBeNull()
     })
 

@@ -36,6 +36,7 @@ export function ToFundRow(dto: FundResponseDTO): FundRow {
     performanceFee: dto.performanceFee,
     bankId: dto.bankId,
     benchmarkId: dto.benchmarkId,
+    normId: dto.normId,
     categoryId: dto.categoryId,
   }
 }

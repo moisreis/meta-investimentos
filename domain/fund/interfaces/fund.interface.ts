@@ -185,6 +185,31 @@ export interface IFund {
 
   /**
    * @summary
+   * Retrieves all funds with the provided norm.
+   *
+   * @remarks
+   * Returns an empty array when no funds match.
+   *
+   * @explanation
+   * Use this method to list funds bound to a given
+   * norm. Returns an empty array for no matches.
+   *
+   * @param normId - The id of the norm.
+   *
+   * @returns The matching entries.
+   *
+   * @example
+   * const FUNDS = await FUND_REPO
+   *   .findAllByNormId(NORM_ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-10-14
+   */
+  findAllByNormId(normId: EntityId): Promise<Fund[]>
+
+  /**
+   * @summary
    * Retrieves all funds in the provided category.
    *
    * @remarks

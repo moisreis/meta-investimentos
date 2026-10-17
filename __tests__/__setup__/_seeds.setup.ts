@@ -210,7 +210,7 @@ export async function seedBenchmark(
 }
 
 /**
- * Persists a **Fund** together with its bank, benchmark and category.
+ * Persists a **Fund** together with its bank, benchmark, norm and category.
  *
  * @param db - Drizzle client.
  * @param overrides - Optional entity overrides.
@@ -222,6 +222,7 @@ export async function seedFund(
 ): Promise<Persisted<Fund>> {
   const BANK = await seedBank(db)
   const BENCHMARK = await seedBenchmark(db)
+  const NORM = await seedNorm(db)
   const CATEGORY = await seedCategory(db)
 
   return asPersisted(
@@ -230,6 +231,7 @@ export async function seedFund(
         cnpj: buildUniqueCnpj(nextSuffix().padStart(12, "0")),
         bankId: BANK.id,
         benchmarkId: BENCHMARK.id,
+        normId: NORM.id,
         categoryId: CATEGORY.id,
         ...overrides,
       })

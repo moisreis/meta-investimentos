@@ -70,6 +70,8 @@ function EditFundForm({
     updateName,
     benchmarkId,
     updateBenchmarkId,
+    normId,
+    updateNormId,
     categoryId,
     updateCategoryId,
     administrationFee,
@@ -125,6 +127,29 @@ function EditFundForm({
             disabled={pending}
             aria-invalid={
               fieldErrors.benchmarkId ? "true" : undefined
+            }
+          />
+        </SharedFormField>
+        <SharedFormField
+          label={FUND_FORM.FIELD_NORM}
+          error={fieldErrors.normId}
+          htmlFor="normId"
+        >
+          <FundRegistryCombobox
+            id="normId"
+            name="normId"
+            value={normId}
+            onValueChange={updateNormId}
+            placeholder={FUND_FORM.PLACEHOLDER_NORM}
+            items={options.norms.map((norm) => ({
+              id: norm.id,
+              name: norm.name,
+              description: norm.articleNumber,
+            }))}
+            clearable
+            disabled={pending}
+            aria-invalid={
+              fieldErrors.normId ? "true" : undefined
             }
           />
         </SharedFormField>

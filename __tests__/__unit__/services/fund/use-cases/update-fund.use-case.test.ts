@@ -68,6 +68,7 @@ describe("services/fund/use-cases/update-fund.use-case", () => {
           administrationFee: buildSignedPercentage("1.50"),
           performanceFee: buildSignedPercentage("20.00"),
           benchmarkId: buildEntityId("benchmark-1"),
+          normId: buildEntityId("norm-1"),
           categoryId: buildEntityId("category-1"),
         })
       )
@@ -80,6 +81,7 @@ describe("services/fund/use-cases/update-fund.use-case", () => {
       expect(response.administrationFee).toBe("1.5")
       expect(response.performanceFee).toBe("20")
       expect(response.benchmarkId).toBe("benchmark-1")
+      expect(response.normId).toBe("norm-1")
       expect(response.categoryId).toBe("category-1")
     })
 
@@ -91,6 +93,7 @@ describe("services/fund/use-cases/update-fund.use-case", () => {
           administrationFee: buildSignedPercentage("1.50"),
           performanceFee: buildSignedPercentage("20.00"),
           benchmarkId: buildEntityId("benchmark-1"),
+          normId: buildEntityId("norm-1"),
           categoryId: buildEntityId("category-1"),
         })
       )
@@ -101,12 +104,14 @@ describe("services/fund/use-cases/update-fund.use-case", () => {
         administrationFee: null,
         performanceFee: null,
         benchmarkId: null,
+        normId: null,
         categoryId: null,
       })
 
       expect(response.administrationFee).toBeNull()
       expect(response.performanceFee).toBeNull()
       expect(response.benchmarkId).toBeNull()
+      expect(response.normId).toBeNull()
       expect(response.categoryId).toBeNull()
     })
 
@@ -121,12 +126,14 @@ describe("services/fund/use-cases/update-fund.use-case", () => {
         administrationFee: "3.50",
         performanceFee: "20.25",
         benchmarkId: "  benchmark-9  ",
+        normId: "  norm-9  ",
         categoryId: " category-8 ",
       })
 
       expect(response.administrationFee).toBe("3.5")
       expect(response.performanceFee).toBe("20.25")
       expect(response.benchmarkId).toBe("benchmark-9")
+      expect(response.normId).toBe("norm-9")
       expect(response.categoryId).toBe("category-8")
     })
 

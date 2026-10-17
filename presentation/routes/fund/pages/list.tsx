@@ -28,6 +28,7 @@ import type {
 const EMPTY_OPTIONS: FundSelectOptions = {
   banks: [],
   benchmarks: [],
+  norms: [],
   categories: [],
 }
 

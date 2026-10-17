@@ -25,6 +25,7 @@ describe("Fund", () => {
       expect(fund.administrationFee).toBeNull()
       expect(fund.performanceFee).toBeNull()
       expect(fund.benchmarkId).toBeNull()
+      expect(fund.normId).toBeNull()
       expect(fund.categoryId).toBeNull()
       expect(fund.id).toBeUndefined()
       expect(fund.createdAt).toBeInstanceOf(Date)
@@ -68,6 +69,7 @@ describe("Fund", () => {
         administrationFee: SignedPercentage.create("1.5"),
         performanceFee: SignedPercentage.create("20.0"),
         benchmarkId: EntityId.create("benchmark-1"),
+        normId: EntityId.create("norm-1"),
         categoryId: EntityId.create("category-1"),
       })
 
@@ -78,6 +80,7 @@ describe("Fund", () => {
       expect(fund.performanceFee).not.toBeNull()
       expect(fund.performanceFee!.value.toFixed(2)).toBe("20.00")
       expect(fund.benchmarkId).not.toBeNull()
+      expect(fund.normId).not.toBeNull()
       expect(fund.categoryId).not.toBeNull()
     })
 
@@ -185,6 +188,24 @@ describe("Fund", () => {
       const updated = fund.update({ benchmarkId: null })
 
       expect(updated.benchmarkId).toBeNull()
+    })
+
+    it("should return new Fund with updated normId", () => {
+      const fund = buildFund()
+      const updated = fund.update({
+        normId: EntityId.create("norm-new"),
+      })
+
+      expect(updated.normId).toBe(EntityId.create("norm-new"))
+    })
+
+    it("should return new Fund with cleared normId (null)", () => {
+      const fund = buildFund({
+        normId: EntityId.create("norm-1"),
+      })
+      const updated = fund.update({ normId: null })
+
+      expect(updated.normId).toBeNull()
     })
 
     it("should return new Fund with updated categoryId", () => {

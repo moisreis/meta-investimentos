@@ -10,6 +10,7 @@ export interface UpdateFundInput {
   administrationFee?: string | null
   performanceFee?: string | null
   benchmarkId?: string | null
+  normId?: string | null
   categoryId?: string | null
 }
 
@@ -95,6 +96,12 @@ export class UpdateFundUseCase {
           : input.benchmarkId === null
             ? null
             : EntityId.create(input.benchmarkId),
+      normId:
+        input.normId === undefined
+          ? undefined
+          : input.normId === null
+            ? null
+            : EntityId.create(input.normId),
       categoryId:
         input.categoryId === undefined
           ? undefined

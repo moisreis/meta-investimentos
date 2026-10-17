@@ -1,6 +1,7 @@
 import type { BankRow } from "@/presentation/types/bank-row.types"
 import type { BenchmarkRow } from "@/presentation/types/benchmark-row.types"
 import type { CategoryRow } from "@/presentation/types/category-row.types"
+import type { NormRow } from "@/presentation/types/norm-row.types"
 
 import type { FundNameLookups } from "../types/fund-list.types"
 
@@ -8,6 +9,7 @@ import type { FundNameLookups } from "../types/fund-list.types"
 export const EMPTY_FUND_NAME_LOOKUPS: FundNameLookups = {
   banks: {},
   benchmarks: {},
+  norms: {},
   categories: {},
 }
 
@@ -17,7 +19,7 @@ export const EMPTY_FUND_NAME_LOOKUPS: FundNameLookups = {
  *
  * @remarks
  * Maps each registry id to its display name so the
- * datatable can resolve the bank, benchmark, and
+ * datatable can resolve the bank, benchmark, norm, and
  * category columns without joining tables.
  *
  * @explanation
@@ -26,13 +28,14 @@ export const EMPTY_FUND_NAME_LOOKUPS: FundNameLookups = {
  *
  * @param banks - The registered banks.
  * @param benchmarks - The registered benchmarks.
+ * @param norms - The registered norms.
  * @param categories - The registered categories.
  *
  * @returns The name lookups.
  *
  * @example
  * const NAMES = BuildFundNameLookups(
- *   BANKS, BENCHMARKS, CATEGORIES);
+ *   BANKS, BENCHMARKS, NORMS, CATEGORIES);
  *
  * @author Moisés Reis
  *
@@ -41,6 +44,7 @@ export const EMPTY_FUND_NAME_LOOKUPS: FundNameLookups = {
 export function BuildFundNameLookups(
   banks: BankRow[],
   benchmarks: BenchmarkRow[],
+  norms: NormRow[],
   categories: CategoryRow[]
 ): FundNameLookups {
   return {
@@ -52,6 +56,9 @@ export function BuildFundNameLookups(
         benchmark.id,
         benchmark.name,
       ])
+    ),
+    norms: Object.fromEntries(
+      norms.map((norm) => [norm.id, norm.name])
     ),
     categories: Object.fromEntries(
       categories.map((category) => [category.id, category.name])

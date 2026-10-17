@@ -27,7 +27,7 @@ export type DbClient = PgAsyncDatabase<PgQueryResultHKT>
  * @remarks
  * Maps `fund` rows to `Fund` entities and back. Lookups
  * rely on the primary key, the **CNPJ** unique constraint,
- * and the indexes on bank, benchmark, and category.
+ * and the indexes on bank, benchmark, norm, and category.
  *
  * @explanation
  * Use this repository for all fund data access in the
@@ -280,6 +280,38 @@ export class FundRepository implements IFund {
       .select()
       .from(fund)
       .where(eq(fund.benchmarkId, benchmarkId))
+
+    return ROWS.map((row) => ToDomain(row))
+  }
+
+  /**
+   * @summary
+   * Retrieves all funds bound to the provided norm id.
+   *
+   * @remarks
+   * Returns an empty array when no rows match.
+   *
+   * @explanation
+   * Use this method to load all funds bound to a given
+   * norm.
+   *
+   * @param normId - The id of the norm.
+   *
+   * @returns The matching entities.
+   *
+   * @example
+   * const FUNDS = await FUND_REPO
+   *   .findAllByNormId(NORM_ID);
+   *
+   * @author Moisés Reis
+   *
+   * @date 2026-10-14
+   */
+  async findAllByNormId(normId: EntityId): Promise<Fund[]> {
+    const ROWS = await this.db
+      .select()
+      .from(fund)
+      .where(eq(fund.normId, normId))
 
     return ROWS.map((row) => ToDomain(row))
   }

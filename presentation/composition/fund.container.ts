@@ -3,6 +3,7 @@ import { BankRepository } from "@/infrastructure/bank/repositories/bank.reposito
 import { BenchmarkRepository } from "@/infrastructure/benchmark/repositories/benchmark.repository"
 import { CategoryRepository } from "@/infrastructure/category/repositories/category.repository"
 import { FundRepository } from "@/infrastructure/fund/repositories/fund.repository"
+import { NormRepository } from "@/infrastructure/norm/repositories/norm.repository"
 import { PositionRepository } from "@/infrastructure/position/repositories/position.repository"
 import { ListBanksUseCase } from "@/services/bank/use-cases/list-banks.use-case"
 import { ListBenchmarksUseCase } from "@/services/benchmark/use-cases/list-benchmarks.use-case"
@@ -14,6 +15,7 @@ import { GetFundUseCase } from "@/services/fund/use-cases/get-fund.use-case"
 import { ListFundRowSummariesUseCase } from "@/services/fund/use-cases/list-fund-row-summaries.use-case"
 import { ListFundsUseCase } from "@/services/fund/use-cases/list-funds.use-case"
 import { UpdateFundUseCase } from "@/services/fund/use-cases/update-fund.use-case"
+import { ListNormsUseCase } from "@/services/norm/use-cases/list-norms.use-case"
 
 // The fund use cases, already wired to the repository.
 interface FundUseCases {
@@ -24,6 +26,7 @@ interface FundUseCases {
   listBanks: ListBanksUseCase
   listBenchmarks: ListBenchmarksUseCase
   listCategories: ListCategoriesUseCase
+  listNorms: ListNormsUseCase
   listRowSummaries: ListFundRowSummariesUseCase
   remove: DeleteFundUseCase
   update: UpdateFundUseCase
@@ -40,10 +43,10 @@ interface FundUseCases {
  * layer never reaches into the infrastructure layer and the
  * wiring lives in a single spot.
  *
- * The bank, benchmark, and category listers are wired
- * here too, because the fund route needs the registries
- * linked by the fund rows to resolve its name columns and
- * its form selects.
+ * The bank, benchmark, norm, and category listers are
+ * wired here too, because the fund route needs the
+ * registries linked by the fund rows to resolve its name
+ * columns and its form selects.
  *
  * @explanation
  * Use this container from any server module that needs a
@@ -63,6 +66,7 @@ function FundContainer(): FundUseCases {
   const BANK_REPOSITORY = new BankRepository(db)
   const BENCHMARK_REPOSITORY = new BenchmarkRepository(db)
   const CATEGORY_REPOSITORY = new CategoryRepository(db)
+  const NORM_REPOSITORY = new NormRepository(db)
   const POSITION_REPOSITORY = new PositionRepository(db)
 
   return {
@@ -77,6 +81,7 @@ function FundContainer(): FundUseCases {
     listCategories: new ListCategoriesUseCase(
       CATEGORY_REPOSITORY
     ),
+    listNorms: new ListNormsUseCase(NORM_REPOSITORY),
     listRowSummaries: new ListFundRowSummariesUseCase(
       POSITION_REPOSITORY
     ),

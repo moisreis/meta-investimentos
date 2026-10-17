@@ -51,6 +51,7 @@ function useFundAddForm() {
       performanceFee: "",
       bankId: "",
       benchmarkId: "",
+      normId: "",
       categoryId: "",
     },
     submit: (values) =>
@@ -67,6 +68,7 @@ function useFundAddForm() {
         benchmarkId: values.benchmarkId
           ? values.benchmarkId
           : null,
+        normId: values.normId ? values.normId : null,
         categoryId: values.categoryId ? values.categoryId : null,
       }),
   })
@@ -88,6 +90,9 @@ function useFundAddForm() {
     benchmarkId: VALUES.benchmarkId,
     updateBenchmarkId: (value: string) =>
       updateField("benchmarkId", value),
+    normId: VALUES.normId,
+    updateNormId: (value: string) =>
+      updateField("normId", value),
     categoryId: VALUES.categoryId,
     updateCategoryId: (value: string) =>
       updateField("categoryId", value),

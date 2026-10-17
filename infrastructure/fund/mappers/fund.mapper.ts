@@ -45,6 +45,9 @@ export function ToDomain(row: typeof fund.$inferSelect): Fund {
       benchmarkId: row.benchmarkId
         ? EntityId.create(row.benchmarkId)
         : null,
+      normId: row.normId
+        ? EntityId.create(row.normId)
+        : null,
       categoryId: row.categoryId
         ? EntityId.create(row.categoryId)
         : null,
@@ -91,6 +94,7 @@ export function ToInsert(
       entity.performanceFee?.value.toString() ?? null,
     bankId: entity.bankId,
     benchmarkId: entity.benchmarkId,
+    normId: entity.normId,
     categoryId: entity.categoryId,
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt,
@@ -132,6 +136,7 @@ export function ToUpdate(
       entity.performanceFee?.value.toString() ?? null,
     bankId: entity.bankId,
     benchmarkId: entity.benchmarkId,
+    normId: entity.normId,
     categoryId: entity.categoryId,
   }
 }

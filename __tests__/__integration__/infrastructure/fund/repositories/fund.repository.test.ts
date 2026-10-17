@@ -28,6 +28,7 @@ import {
   seedBenchmark,
   seedCategory,
   seedFund,
+  seedNorm,
 } from "__tests__/__setup__/_seeds.setup"
 
 const MISSING_ID = EntityId.create(
@@ -207,6 +208,25 @@ describe("infrastructure/fund/repositories/fund.repository", () => {
     })
   })
 
+  describe("findAllByNormId", () => {
+    it("should return empty array when the norm has no funds", async () => {
+      const norm = await seedNorm(db)
+
+      const result = await repo.findAllByNormId(norm.id)
+
+      expect(result).toEqual([])
+    })
+
+    it("should return funds linked to the norm", async () => {
+      const norm = await seedNorm(db)
+      await seedFund(db, { normId: norm.id, name: "A" })
+
+      const result = await repo.findAllByNormId(norm.id)
+
+      expect(result.map((f) => f.name)).toEqual(["A"])
+    })
+  })
+
   describe("findAllByCategoryId", () => {
     it("should return empty array when the category has no funds", async () => {
       const category = await seedCategory(db)
@@ -215,7 +235,6 @@ describe("infrastructure/fund/repositories/fund.repository", () => {
 
       expect(result).toEqual([])
     })
-
     it("should return funds linked to the category", async () => {
       const category = await seedCategory(db)
       await seedFund(db, { categoryId: category.id, name: "A" })
@@ -280,6 +299,7 @@ describe("infrastructure/fund/repositories/fund.repository", () => {
         buildFund({
           bankId: bank.id,
           benchmarkId: null,
+          normId: null,
           categoryId: null,
           cnpj: buildUniqueCnpj("123456789012"),
           name: "Novo Fundo",
@@ -296,6 +316,7 @@ describe("infrastructure/fund/repositories/fund.repository", () => {
 
       expect(rows.length).toBe(1)
       expect(rows[0].benchmarkId).toBeNull()
+      expect(rows[0].normId).toBeNull()
     })
 
     it("should update existing fund", async () => {

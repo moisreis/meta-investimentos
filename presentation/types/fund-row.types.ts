@@ -30,6 +30,8 @@ export interface FundRow {
   bankId: string
   // Null when no benchmark is linked.
   benchmarkId: string | null
+  // Null when no norm is linked.
+  normId: string | null
   // Null when no category is linked.
   categoryId: string | null
 }

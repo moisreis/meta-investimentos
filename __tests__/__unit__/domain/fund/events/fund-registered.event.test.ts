@@ -40,6 +40,7 @@ describe("domain/fund/events/fund-registered.event", () => {
         expect(event.cnpj.value).toBe("11222333000181")
         expect(event.name).toBe("Fundo Multi Mercado")
         expect(event.bankId).toBe(bankId)
+        expect(event.normId).toBeNull()
         expect(event.occurredAt).toEqual(occurredAt)
       })
 
@@ -75,6 +76,7 @@ describe("domain/fund/events/fund-registered.event", () => {
 
       it("should expose every optional relation when provided", () => {
         const benchmarkId = buildEntityId("benchmark-1")
+        const normId = buildEntityId("norm-1")
         const categoryId = buildEntityId("category-1")
 
         const event = FundRegistered.create({
@@ -85,6 +87,7 @@ describe("domain/fund/events/fund-registered.event", () => {
           administrationFee: buildSignedPercentage("1.00"),
           performanceFee: buildSignedPercentage("20.00"),
           benchmarkId,
+          normId,
           categoryId,
         })
 
@@ -95,6 +98,7 @@ describe("domain/fund/events/fund-registered.event", () => {
           "20.00"
         )
         expect(event.benchmarkId).toBe(benchmarkId)
+        expect(event.normId).toBe(normId)
         expect(event.categoryId).toBe(categoryId)
       })
 
@@ -109,6 +113,7 @@ describe("domain/fund/events/fund-registered.event", () => {
         expect(event.administrationFee).toBeNull()
         expect(event.performanceFee).toBeNull()
         expect(event.benchmarkId).toBeNull()
+        expect(event.normId).toBeNull()
         expect(event.categoryId).toBeNull()
       })
 
@@ -121,12 +126,14 @@ describe("domain/fund/events/fund-registered.event", () => {
           administrationFee: null,
           performanceFee: null,
           benchmarkId: null,
+          normId: null,
           categoryId: null,
         })
 
         expect(event.administrationFee).toBeNull()
         expect(event.performanceFee).toBeNull()
         expect(event.benchmarkId).toBeNull()
+        expect(event.normId).toBeNull()
         expect(event.categoryId).toBeNull()
       })
 

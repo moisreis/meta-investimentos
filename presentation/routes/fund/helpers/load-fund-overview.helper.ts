@@ -57,6 +57,7 @@ export async function LoadFundOverview(
       listBanks: LIST_BANKS,
       listBenchmarks: LIST_BENCHMARKS,
       listCategories: LIST_CATEGORIES,
+      listNorms: LIST_NORMS,
     } = FundContainer()
 
     const PORTFOLIOS = await LIST_PORTFOLIOS.execute({
@@ -83,6 +84,19 @@ export async function LoadFundOverview(
       ? CATEGORIES.find((entry) => entry.id === FUND.categoryId)
       : undefined
 
+    // Norms are scoped to a category, so the loader asks the
+    // use case once per category and flattens the groups.
+    const NORMS = (
+      await Promise.all(
+        CATEGORIES.map((category) =>
+          LIST_NORMS.execute({ categoryId: category.id })
+        )
+      )
+    ).flat()
+    const NORM = FUND.normId
+      ? NORMS.find((entry) => entry.id === FUND.normId)
+      : undefined
+
     const POSITION_ROWS: FundLinkedPositionRow[] =
       POSITIONS.filter(
         (position) => position.fundId === FUND.id
@@ -105,6 +119,7 @@ export async function LoadFundOverview(
       performanceFee: FUND.performanceFee,
       bankName: BANK?.name ?? null,
       benchmarkName: BENCHMARK?.name ?? null,
+      normName: NORM?.name ?? null,
       categoryName: CATEGORY?.name ?? null,
       positions: POSITION_ROWS,
     }

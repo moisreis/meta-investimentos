@@ -13,6 +13,7 @@ export interface FundRegisteredProps {
   administrationFee?: SignedPercentage | null
   performanceFee?: SignedPercentage | null
   benchmarkId?: EntityId | null
+  normId?: EntityId | null
   categoryId?: EntityId | null
   occurredAt?: Date
 }
@@ -78,6 +79,11 @@ export class FundRegistered {
   // Returns the identifier of the benchmark, if linked.
   get benchmarkId(): EntityId | null {
     return this.props.benchmarkId
+  }
+
+  // Returns the identifier of the norm, if linked.
+  get normId(): EntityId | null {
+    return this.props.normId
   }
 
   // Returns the identifier of the category, if linked.
@@ -170,6 +176,7 @@ export class FundRegistered {
       administrationFee: props.administrationFee ?? null,
       performanceFee: props.performanceFee ?? null,
       benchmarkId: props.benchmarkId ?? null,
+      normId: props.normId ?? null,
       categoryId: props.categoryId ?? null,
       occurredAt: props.occurredAt ?? NOW,
     }

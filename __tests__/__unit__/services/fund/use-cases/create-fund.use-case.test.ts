@@ -42,6 +42,7 @@ describe("services/fund/use-cases/create-fund.use-case", () => {
         performanceFee: "20.00",
         bankId: "bank-1",
         benchmarkId: "benchmark-1",
+        normId: "norm-1",
         categoryId: "category-1",
       })
 
@@ -52,6 +53,7 @@ describe("services/fund/use-cases/create-fund.use-case", () => {
       expect(response.administrationFee).toBe("1.5")
       expect(response.performanceFee).toBe("20")
       expect(response.benchmarkId).toBe("benchmark-1")
+      expect(response.normId).toBe("norm-1")
       expect(response.categoryId).toBe("category-1")
     })
 
@@ -82,6 +84,7 @@ describe("services/fund/use-cases/create-fund.use-case", () => {
       expect(response.administrationFee).toBeNull()
       expect(response.performanceFee).toBeNull()
       expect(response.benchmarkId).toBeNull()
+      expect(response.normId).toBeNull()
       expect(response.categoryId).toBeNull()
     })
 

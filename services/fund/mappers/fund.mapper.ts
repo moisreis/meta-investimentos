@@ -49,6 +49,7 @@ export function toCreateFundProps(
     benchmarkId: dto.benchmarkId
       ? EntityId.create(dto.benchmarkId)
       : null,
+    normId: dto.normId ? EntityId.create(dto.normId) : null,
     categoryId: dto.categoryId
       ? EntityId.create(dto.categoryId)
       : null,
@@ -90,6 +91,7 @@ export function toResponseDTO(entity: Fund): FundResponseDTO {
       : null,
     bankId: entity.bankId,
     benchmarkId: entity.benchmarkId,
+    normId: entity.normId,
     categoryId: entity.categoryId,
     createdAt: entity.createdAt.toISOString(),
     updatedAt: entity.updatedAt.toISOString(),

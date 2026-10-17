@@ -1,6 +1,7 @@
 import type { BankRow } from "@/presentation/types/bank-row.types"
 import type { BenchmarkRow } from "@/presentation/types/benchmark-row.types"
 import type { CategoryRow } from "@/presentation/types/category-row.types"
+import type { NormRow } from "@/presentation/types/norm-row.types"
 
 /**
  * @summary
@@ -13,6 +14,7 @@ import type { CategoryRow } from "@/presentation/types/category-row.types"
 export interface FundSelectOptions {
   banks: BankRow[]
   benchmarks: BenchmarkRow[]
+  norms: NormRow[]
   categories: CategoryRow[]
 }
 
@@ -59,5 +61,6 @@ export interface FundRowSummary {
 export interface FundNameLookups {
   banks: Record<string, string>
   benchmarks: Record<string, string>
+  norms: Record<string, string>
   categories: Record<string, string>
 }

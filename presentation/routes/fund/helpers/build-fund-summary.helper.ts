@@ -56,6 +56,12 @@ export function BuildFundSummary(
         tone: "neutral",
       },
       {
+        key: "norm",
+        label: FUND_DETAIL.ENTRY_NORM,
+        value: FormatText(data.normName),
+        tone: "neutral",
+      },
+      {
         key: "category",
         label: FUND_DETAIL.ENTRY_CATEGORY,
         value: FormatText(data.categoryName),

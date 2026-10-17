@@ -32,6 +32,7 @@ describe("domain/fund/events/fund-updated.event", () => {
         expect(event.administrationFee).toBeUndefined()
         expect(event.performanceFee).toBeUndefined()
         expect(event.benchmarkId).toBeUndefined()
+        expect(event.normId).toBeUndefined()
         expect(event.categoryId).toBeUndefined()
         expect(event.occurredAt).toEqual(occurredAt)
       })
@@ -58,6 +59,7 @@ describe("domain/fund/events/fund-updated.event", () => {
 
       it("should create a FundUpdated with every optional field changed", () => {
         const benchmarkId = buildEntityId("benchmark-1")
+        const normId = buildEntityId("norm-1")
         const categoryId = buildEntityId("category-1")
 
         const event = FundUpdated.create({
@@ -66,6 +68,7 @@ describe("domain/fund/events/fund-updated.event", () => {
           administrationFee: buildSignedPercentage("1.50"),
           performanceFee: buildSignedPercentage("15.00"),
           benchmarkId,
+          normId,
           categoryId,
         })
 
@@ -77,6 +80,7 @@ describe("domain/fund/events/fund-updated.event", () => {
           "15.00"
         )
         expect(event.benchmarkId).toBe(benchmarkId)
+        expect(event.normId).toBe(normId)
         expect(event.categoryId).toBe(categoryId)
       })
 
@@ -86,12 +90,14 @@ describe("domain/fund/events/fund-updated.event", () => {
           administrationFee: null,
           performanceFee: null,
           benchmarkId: null,
+          normId: null,
           categoryId: null,
         })
 
         expect(event.administrationFee).toBeNull()
         expect(event.performanceFee).toBeNull()
         expect(event.benchmarkId).toBeNull()
+        expect(event.normId).toBeNull()
         expect(event.categoryId).toBeNull()
       })
 

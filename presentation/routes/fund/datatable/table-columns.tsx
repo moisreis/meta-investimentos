@@ -22,6 +22,7 @@ export interface FundTableColumnOptions {
   summaryFor: (fundId: string) => FundRowSummary | null
   bankNameFor: (bankId: string) => string | null
   benchmarkNameFor: (benchmarkId: string) => string | null
+  normNameFor: (normId: string) => string | null
   categoryNameFor: (categoryId: string) => string | null
 }
 
@@ -104,6 +105,18 @@ export function CreateFundTableColumns(
       {
         id: "benchmarkId",
         header: FUND_DATATABLE.COLUMN_BENCHMARK,
+        size: 130,
+        meta: { fluid: true },
+        cell: (info) => FormatText(info.getValue()),
+      }
+    ),
+
+    columnHelper.accessor(
+      (row) =>
+        row.normId ? options.normNameFor(row.normId) : null,
+      {
+        id: "normId",
+        header: FUND_DATATABLE.COLUMN_NORM,
         size: 130,
         meta: { fluid: true },
         cell: (info) => FormatText(info.getValue()),

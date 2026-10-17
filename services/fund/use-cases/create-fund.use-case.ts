@@ -13,6 +13,7 @@ export interface CreateFundInput {
   performanceFee?: string | null
   bankId: string
   benchmarkId?: string | null
+  normId?: string | null
   categoryId?: string | null
 }
 

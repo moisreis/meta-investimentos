@@ -53,6 +53,7 @@ function useFundEditForm(fund: FundRow) {
       administrationFee: fund.administrationFee ?? "",
       performanceFee: fund.performanceFee ?? "",
       benchmarkId: fund.benchmarkId ?? "",
+      normId: fund.normId ?? "",
       categoryId: fund.categoryId ?? "",
     },
     submit: (values) =>
@@ -68,6 +69,7 @@ function useFundEditForm(fund: FundRow) {
         benchmarkId: values.benchmarkId
           ? values.benchmarkId
           : null,
+        normId: values.normId ? values.normId : null,
         categoryId: values.categoryId ? values.categoryId : null,
       }),
   })
@@ -84,6 +86,9 @@ function useFundEditForm(fund: FundRow) {
     benchmarkId: VALUES.benchmarkId,
     updateBenchmarkId: (value: string) =>
       updateField("benchmarkId", value),
+    normId: VALUES.normId,
+    updateNormId: (value: string) =>
+      updateField("normId", value),
     categoryId: VALUES.categoryId,
     updateCategoryId: (value: string) =>
       updateField("categoryId", value),

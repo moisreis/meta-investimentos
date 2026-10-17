@@ -29,5 +29,6 @@ export interface CreateFundDTO {
   performanceFee?: string | null
   bankId: string
   benchmarkId?: string | null
+  normId?: string | null
   categoryId?: string | null
 }

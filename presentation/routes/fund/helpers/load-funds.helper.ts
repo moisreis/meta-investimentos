@@ -4,16 +4,19 @@ import { ToFundRows } from "@/presentation/mappers/fund-row.mapper"
 import { ToBankRows } from "@/presentation/mappers/bank-row.mapper"
 import { ToBenchmarkRows } from "@/presentation/mappers/benchmark-row.mapper"
 import { ToCategoryRows } from "@/presentation/mappers/category-row.mapper"
+import { ToNormRows } from "@/presentation/mappers/norm-row.mapper"
 import type { FundRow } from "@/presentation/types/fund-row.types"
 import type { BankRow } from "@/presentation/types/bank-row.types"
 import type { BenchmarkRow } from "@/presentation/types/benchmark-row.types"
 import type { CategoryRow } from "@/presentation/types/category-row.types"
+import type { NormRow } from "@/presentation/types/norm-row.types"
 
 // Data resolved by the fund list loader.
 export interface LoadedFundList {
   funds: FundRow[]
   banks: BankRow[]
   benchmarks: BenchmarkRow[]
+  norms: NormRow[]
   categories: CategoryRow[]
 }
 
@@ -24,9 +27,10 @@ export interface LoadedFundList {
  *
  * @remarks
  * Derives the acting user from the session and lists the
- * funds plus the banks, benchmarks, and categories used by
- * the list and the form selects, all through the fund
- * container. Returns null when there is no active session.
+ * funds plus the banks, benchmarks, norms, and categories
+ * used by the list and the form selects, all through the
+ * fund container. Returns null when there is no active
+ * session.
  *
  * @explanation
  * Use this helper from the page loader so the session
@@ -52,6 +56,7 @@ export async function LoadFunds(): Promise<LoadedFundList | null> {
     list: LIST_FUNDS,
     listBanks: LIST_BANKS,
     listBenchmarks: LIST_BENCHMARKS,
+    listNorms: LIST_NORMS,
     listCategories: LIST_CATEGORIES,
   } = FundContainer()
 
@@ -60,10 +65,22 @@ export async function LoadFunds(): Promise<LoadedFundList | null> {
   const BENCHMARKS = await LIST_BENCHMARKS.execute({})
   const CATEGORIES = await LIST_CATEGORIES.execute({})
 
+  // Norms are scoped to a category, so the loader asks the
+  // use case once per category and flattens the groups into
+  // one global index, the same way the norm list does.
+  const NORMS = (
+    await Promise.all(
+      CATEGORIES.map((category) =>
+        LIST_NORMS.execute({ categoryId: category.id })
+      )
+    )
+  ).flat()
+
   return {
     funds: ToFundRows(FUNDS),
     banks: ToBankRows(BANKS),
     benchmarks: ToBenchmarkRows(BENCHMARKS),
+    norms: ToNormRows(NORMS),
     categories: ToCategoryRows(CATEGORIES),
   }
 }

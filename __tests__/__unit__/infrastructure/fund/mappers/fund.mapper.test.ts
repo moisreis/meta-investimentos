@@ -14,6 +14,7 @@ import { buildFund } from "__tests__/__setup__/_factories.setup"
 const ID = "00000000-0000-0000-0000-000000000023"
 const BANK_ID = "00000000-0000-0000-0000-000000000001"
 const BENCHMARK_ID = "00000000-0000-0000-0000-000000000010"
+const NORM_ID = "00000000-0000-0000-0000-000000000011"
 const CATEGORY_ID = "00000000-0000-0000-0000-000000000021"
 
 describe("infrastructure/fund/mappers/fund.mapper", () => {
@@ -27,6 +28,7 @@ describe("infrastructure/fund/mappers/fund.mapper", () => {
         performanceFee: "2.000000",
         bankId: BANK_ID,
         benchmarkId: BENCHMARK_ID,
+        normId: NORM_ID,
         categoryId: CATEGORY_ID,
         createdAt: new Date("2026-01-01T00:00:00.000Z"),
         updatedAt: new Date("2026-01-15T12:00:00.000Z"),
@@ -45,6 +47,7 @@ describe("infrastructure/fund/mappers/fund.mapper", () => {
       expect(fund.benchmarkId).toBe(
         EntityId.create(BENCHMARK_ID)
       )
+      expect(fund.normId).toBe(EntityId.create(NORM_ID))
       expect(fund.categoryId).toBe(EntityId.create(CATEGORY_ID))
       expect(fund.createdAt).toEqual(row.createdAt)
       expect(fund.updatedAt).toEqual(row.updatedAt)
@@ -59,6 +62,7 @@ describe("infrastructure/fund/mappers/fund.mapper", () => {
         performanceFee: null,
         bankId: BANK_ID,
         benchmarkId: null,
+        normId: null,
         categoryId: null,
         createdAt: new Date("2026-01-01T00:00:00.000Z"),
         updatedAt: new Date("2026-01-01T00:00:00.000Z"),
@@ -69,6 +73,7 @@ describe("infrastructure/fund/mappers/fund.mapper", () => {
       expect(fund.administrationFee).toBeNull()
       expect(fund.performanceFee).toBeNull()
       expect(fund.benchmarkId).toBeNull()
+      expect(fund.normId).toBeNull()
       expect(fund.categoryId).toBeNull()
     })
   })
@@ -90,6 +95,7 @@ describe("infrastructure/fund/mappers/fund.mapper", () => {
       )
       expect(insert.bankId).toBe("bank-1")
       expect(insert.benchmarkId).toBe("benchmark-1")
+      expect(insert.normId).toBe("norm-1")
       expect(insert.categoryId).toBe("category-1")
       expect(insert.createdAt).toEqual(fund.createdAt)
       expect(insert.updatedAt).toEqual(fund.updatedAt)
@@ -100,6 +106,7 @@ describe("infrastructure/fund/mappers/fund.mapper", () => {
         administrationFee: null,
         performanceFee: null,
         benchmarkId: null,
+        normId: null,
         categoryId: null,
       })
 
@@ -108,6 +115,7 @@ describe("infrastructure/fund/mappers/fund.mapper", () => {
       expect(insert.administrationFee).toBeNull()
       expect(insert.performanceFee).toBeNull()
       expect(insert.benchmarkId).toBeNull()
+      expect(insert.normId).toBeNull()
       expect(insert.categoryId).toBeNull()
     })
   })

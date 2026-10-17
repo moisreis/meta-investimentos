@@ -9,6 +9,7 @@ import {
 import { bank } from "@db-schemas/bank.schema"
 import { benchmark } from "@db-schemas/benchmark.schema"
 import { category } from "@db-schemas/category.schema"
+import { norm } from "@db-schemas/norm.schema"
 
 // Stores the investment funds available on the platform.
 // Carries the **CNPJ**, the fees, and the benchmark links.
@@ -32,6 +33,7 @@ export const fund = pgSchema("fund").table(
     benchmarkId: uuid("benchmark_id").references(
       () => benchmark.id
     ),
+    normId: uuid("norm_id").references(() => norm.id),
     categoryId: uuid("category_id").references(
       () => category.id
     ),
@@ -48,6 +50,9 @@ export const fund = pgSchema("fund").table(
 
     // Speeds up lookups of funds by their benchmark.
     index("fund_benchmark_id_idx").on(table.benchmarkId),
+
+    // Speeds up lookups of funds by their norm.
+    index("fund_norm_id_idx").on(table.normId),
 
     // Speeds up lookups of funds by their category.
     index("fund_category_id_idx").on(table.categoryId),
