@@ -1,5 +1,3 @@
-import Decimal from "decimal.js"
-
 import type { PortfolioHolding } from "@/presentation/types/portfolio-holding.types"
 import type { PeriodWindow } from "@/lib/performance/period-window.calculator"
 import { BuildYearMonthKeys } from "@/lib/date/month-key"
@@ -12,17 +10,25 @@ import {
   type MonthlyPerformanceSnapshot,
 } from "@/domain/portfolio/calculators/monthly-performance.calculator"
 import { calculatePortfolioCategoryAllocation } from "@/domain/portfolio/calculators/category-allocation.calculator"
+import { calculateAccumulatedTarget } from "@/domain/portfolio/calculators/accumulated-target.calculator"
+import { calculateAmountSum } from "@/domain/portfolio/calculators/amount-sum.calculator"
+import { calculateHoldingAggregation } from "@/domain/portfolio/calculators/holding-aggregation.calculator"
+import { calculatePerformanceShare } from "@/domain/portfolio/calculators/performance-share.calculator"
 import {
   calculateDistribution,
   type DistributionRow,
 } from "@/domain/portfolio/calculators/distribution.calculator"
+import { calculatePortfolioCashFlowNet } from "@/domain/portfolio/calculators/cash-flow-net.calculator"
+import { calculateCheckingAccountAllocation } from "@/domain/checking-account/calculators/checking-account-allocation.calculator"
 import { calculateNormCompliance } from "@/domain/norm/calculators/norm-compliance.calculator"
+import { calculateCashFlowNet } from "@/domain/position/calculators/cash-flow-net.calculator"
 import type { CategoryResponseDTO } from "@/services/category/dto/category-response.dto"
 import type { FundResponseDTO } from "@/services/fund/dto/fund-response.dto"
 import type { NormResponseDTO } from "@/services/norm/dto/norm-response.dto"
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 import type { PositionPerformanceResponseDTO } from "@/services/position-performance/dto/position-performance-response.dto"
+import { PositiveMoney } from "@/value-objects"
 
 import {
   STATEMENT_REPORT_COMPARISON_ACRONYMS,
@@ -171,6 +177,15 @@ export function BuildStatementReportData(
       NORM_BY_CATEGORY_ID.set(NORM.categoryId, NORM)
     }
   }
+  // The index distribution reads the short acronym of the
+  // benchmark, so the name of the registry never crowds the
+  // donut legend.
+  const BENCHMARK_ACRONYM_BY_ID = new Map(
+    source.benchmarks.map((benchmark) => [
+      benchmark.id,
+      benchmark.acronym,
+    ])
+  )
 
   // The reference year is the year of the requested month.
   const YEAR = Number(source.month.slice(0, 4))
@@ -220,7 +235,25 @@ export function BuildStatementReportData(
   const ELAPSED_MONTHS = MONTH_KEYS.slice(0, REFERENCE_INDEX + 1)
 
   const YEARLY_RETURN = source.window.end?.returnYearly ?? null
-  const TARGET_RATE = source.window.end?.cumulativeTarget ?? null
+
+  // The stored cumulative target is only written for a
+  // portfolio whose every elapsed month carries an IPCA
+  // reading, so it is null on the thin Neon history. The
+  // report compounds the target from whatever IPCA readings
+  // the elapsed window holds, mirroring the Rails generator,
+  // and only falls back to the stored figure when the window
+  // holds no reading at all.
+  const IPCA_SERIES = INDEX_SERIES.get("ipca")
+
+  const TARGET_RATE =
+    calculateAccumulatedTarget({
+      annualInterestRate: source.portfolio.annualInterestRate,
+      inflationRates: ELAPSED_MONTHS.map(
+        (month) => IPCA_SERIES?.get(month) ?? null
+      ),
+    }) ??
+    source.window.end?.cumulativeTarget ??
+    null
 
   return {
     portfolio: source.portfolio,
@@ -243,12 +276,16 @@ export function BuildStatementReportData(
         REFERENCE?.returnMonthly ?? source.monthReturn,
       yearlyReturn: YEARLY_RETURN,
       monthlyGains: REFERENCE?.earnings ?? "0.00",
-      accumulatedGains: AccumulateEarnings(
-        MONTHLY,
-        REFERENCE_INDEX
-      ),
+      accumulatedGains: calculateAmountSum({
+        values: MONTHLY.slice(0, REFERENCE_INDEX + 1).map(
+          (row) => row.earnings
+        ),
+      }),
       totalPatrimony: source.window.end?.patrimony ?? null,
-      targetShare: ShareOf(YEARLY_RETURN, TARGET_RATE),
+      targetShare: calculatePerformanceShare({
+        value: YEARLY_RETURN,
+        reference: TARGET_RATE,
+      }),
       targetRate: TARGET_RATE,
     },
     performance: MONTHLY.map<StatementReportPerformancePoint>(
@@ -280,13 +317,13 @@ export function BuildStatementReportData(
         label: MONTH_LABELS[index],
         applications: row.applications,
         withdrawals: row.withdrawals,
-        net: new Decimal(row.applications)
-          .minus(row.withdrawals)
-          .toFixed(2),
+        net: calculatePortfolioCashFlowNet({
+          applications: PositiveMoney.create(row.applications),
+          withdrawals: PositiveMoney.create(row.withdrawals),
+        }).value.toFixed(2),
       })
     ),
     checkingAccounts: BuildCheckingAccounts(source),
-    checkingAccountsTotal: BuildCheckingAccountsTotal(source),
     fundAssets: BuildFundAssets(
       source,
       FUND_BY_ID,
@@ -304,7 +341,10 @@ export function BuildStatementReportData(
     indexDistribution: ToDistribution(
       calculateDistribution(
         source.holdings.map((holding) => ({
-          label: holding.benchmarkName ?? BuildUntrackedLabel(),
+          label: BuildIndexDistributionLabel(
+            holding,
+            BENCHMARK_ACRONYM_BY_ID
+          ),
           value: holding.investedValue,
         }))
       )
@@ -401,9 +441,15 @@ function ToPositionRow(
  * The month figures of one position, already resolved.
  */
 interface PositionMonthFigures {
+  // Sum of the applications of the reference month.
+  applications: string
+  // Sum of the withdrawals of the reference month.
+  withdrawals: string
   // Sum of the earnings of the reference month.
   earnings: string
-  // Net movement of the position in the reference month.
+  // Net movement of the position in the reference month,
+  // applications less withdrawals through the shared cash
+  // flow calculator.
   movement: string
   // Latest snapshot of the reference month.
   latest: PositionPerformanceResponseDTO
@@ -427,15 +473,30 @@ function BuildPositionMonthFigures(
     }
 
     const CURRENT = RESULT.get(SNAPSHOT.positionId)
-    const EARNINGS = new Decimal(CURRENT?.earnings ?? "0").plus(
-      SNAPSHOT.earnings
-    )
-    const MOVEMENT = new Decimal(CURRENT?.movement ?? "0").plus(
-      SNAPSHOT.cashFlowNet
-    )
+    const EARNINGS = calculateAmountSum({
+      values: [CURRENT?.earnings ?? "0", SNAPSHOT.earnings],
+    })
+    const APPLICATIONS = calculateAmountSum({
+      values: [
+        CURRENT?.applications ?? "0",
+        SNAPSHOT.applicationTotal,
+      ],
+    })
+    const WITHDRAWALS = calculateAmountSum({
+      values: [
+        CURRENT?.withdrawals ?? "0",
+        SNAPSHOT.redemptionTotal,
+      ],
+    })
+    const MOVEMENT = calculateCashFlowNet({
+      applications: PositiveMoney.create(APPLICATIONS),
+      withdrawals: PositiveMoney.create(WITHDRAWALS),
+    }).value
 
     RESULT.set(SNAPSHOT.positionId, {
-      earnings: EARNINGS.toFixed(2),
+      applications: APPLICATIONS,
+      withdrawals: WITHDRAWALS,
+      earnings: EARNINGS,
       movement: MOVEMENT.toFixed(2),
       latest:
         CURRENT === undefined ||
@@ -494,7 +555,10 @@ function BuildAccumulatedIndexes(
     {
       name: "Carteira",
       rate: yearlyReturn,
-      shareOfTarget: ShareOf(yearlyReturn, targetRate),
+      shareOfTarget: calculatePerformanceShare({
+        value: yearlyReturn,
+        reference: targetRate,
+      }),
     },
     {
       name: "Meta",
@@ -523,7 +587,10 @@ function BuildAccumulatedIndexes(
     ROWS.push({
       name: NAME,
       rate: RATE,
-      shareOfTarget: ShareOf(RATE, targetRate),
+      shareOfTarget: calculatePerformanceShare({
+        value: RATE,
+        reference: targetRate,
+      }),
     })
   }
 
@@ -550,17 +617,38 @@ function BuildIndexComparison(
       months.map((month) => MAP.get(month) ?? null)
     )
 
-    // An index with no elapsed reading is left out of the
-    // comparison chart instead of rendering a blank bar.
-    if (RATE === null) continue
-
+    // Every comparison index keeps its row even when the
+    // elapsed window holds no reading, so the chart always
+    // lists the same indexes and only the figure is missing.
     ROWS.push({
       name: ACRONYM,
-      share: ShareOf(yearlyReturn, RATE),
+      share: calculatePerformanceShare({
+        value: yearlyReturn,
+        reference: RATE,
+      }),
     })
   }
 
   return ROWS
+}
+
+/**
+ * Resolves the first-seen position of every label, so the
+ * categorical color of a group stays stable no matter the
+ * order the aggregation sorts the rows into.
+ */
+function BuildLabelOrder(
+  entries: { label: string }[]
+): Map<string, number> {
+  const ORDER = new Map<string, number>()
+
+  for (const ENTRY of entries) {
+    if (!ORDER.has(ENTRY.label)) {
+      ORDER.set(ENTRY.label, ORDER.size)
+    }
+  }
+
+  return ORDER
 }
 
 /**
@@ -571,46 +659,22 @@ function BuildIndexFigures(
   source: StatementReportSource,
   positionMonth: Map<string, PositionMonthFigures>
 ): StatementReportIndexFigureRow[] {
-  const GROUPS = new Map<
-    string,
-    { patrimony: Decimal; earnings: Decimal }
-  >()
+  const ENTRIES = source.holdings.map((holding) => ({
+    label: holding.benchmarkName ?? BuildUntrackedLabel(),
+    patrimony: holding.investedValue,
+    earnings:
+      positionMonth.get(holding.positionId)?.earnings ?? "0",
+  }))
 
-  for (const HOLDING of source.holdings) {
-    const NAME = HOLDING.benchmarkName ?? BuildUntrackedLabel()
-    const GROUP = GROUPS.get(NAME) ?? {
-      patrimony: new Decimal(0),
-      earnings: new Decimal(0),
-    }
-    const EARNINGS = positionMonth.get(HOLDING.positionId)
+  const ORDER = BuildLabelOrder(ENTRIES)
 
-    GROUP.patrimony = GROUP.patrimony.plus(HOLDING.investedValue)
-    GROUP.earnings = GROUP.earnings.plus(
-      EARNINGS?.earnings ?? "0"
-    )
-    GROUPS.set(NAME, GROUP)
-  }
-
-  const TOTAL = [...GROUPS.values()].reduce(
-    (sum, group) => sum.plus(group.patrimony),
-    new Decimal(0)
-  )
-
-  return [...GROUPS.entries()]
-    .map(([NAME, GROUP], index) => ({
-      name: NAME,
-      patrimony: GROUP.patrimony.toFixed(2),
-      earnings: GROUP.earnings.toFixed(2),
-      weight: TOTAL.isZero()
-        ? "0.00"
-        : GROUP.patrimony.dividedBy(TOTAL).times(100).toFixed(2),
-      color: SeriesColor(index),
-    }))
-    .sort((left, right) =>
-      new Decimal(right.patrimony).cmp(
-        new Decimal(left.patrimony)
-      )
-    )
+  return calculateHoldingAggregation(ENTRIES).map((row) => ({
+    name: row.label,
+    patrimony: row.patrimony,
+    earnings: row.earnings,
+    weight: row.weight,
+    color: SeriesColor(ORDER.get(row.label) ?? 0),
+  }))
 }
 
 /**
@@ -624,52 +688,32 @@ function BuildAssetTypes(
   categories: Map<string, CategoryResponseDTO>,
   positionMonth: Map<string, PositionMonthFigures>
 ): StatementReportAssetTypeRow[] {
-  const GROUPS = new Map<
-    string,
-    { patrimony: Decimal; earnings: Decimal }
-  >()
-
-  for (const HOLDING of source.holdings) {
+  const ENTRIES = source.holdings.map((holding) => {
     const CATEGORY_ID =
-      funds.get(HOLDING.fundId)?.categoryId ?? null
+      funds.get(holding.fundId)?.categoryId ?? null
     const NAME =
       CATEGORY_ID === null
         ? BuildUncategorizedLabel()
         : (categories.get(CATEGORY_ID)?.name ??
           BuildUncategorizedLabel())
-    const GROUP = GROUPS.get(NAME) ?? {
-      patrimony: new Decimal(0),
-      earnings: new Decimal(0),
+
+    return {
+      label: NAME,
+      patrimony: holding.investedValue,
+      earnings:
+        positionMonth.get(holding.positionId)?.earnings ?? "0",
     }
-    const EARNINGS = positionMonth.get(HOLDING.positionId)
+  })
 
-    GROUP.patrimony = GROUP.patrimony.plus(HOLDING.investedValue)
-    GROUP.earnings = GROUP.earnings.plus(
-      EARNINGS?.earnings ?? "0"
-    )
-    GROUPS.set(NAME, GROUP)
-  }
+  const ORDER = BuildLabelOrder(ENTRIES)
 
-  const TOTAL = [...GROUPS.values()].reduce(
-    (sum, group) => sum.plus(group.patrimony),
-    new Decimal(0)
-  )
-
-  return [...GROUPS.entries()]
-    .map(([NAME, GROUP], index) => ({
-      name: NAME,
-      patrimony: GROUP.patrimony.toFixed(2),
-      earnings: GROUP.earnings.toFixed(2),
-      weight: TOTAL.isZero()
-        ? "0.00"
-        : GROUP.patrimony.dividedBy(TOTAL).times(100).toFixed(2),
-      color: SeriesColor(index),
-    }))
-    .sort((left, right) =>
-      new Decimal(right.patrimony).cmp(
-        new Decimal(left.patrimony)
-      )
-    )
+  return calculateHoldingAggregation(ENTRIES).map((row) => ({
+    name: row.label,
+    patrimony: row.patrimony,
+    earnings: row.earnings,
+    weight: row.weight,
+    color: SeriesColor(ORDER.get(row.label) ?? 0),
+  }))
 }
 
 /**
@@ -707,37 +751,13 @@ function BuildCompliance(
 function BuildCheckingAccounts(
   source: StatementReportSource
 ): StatementReportCheckingAccountRow[] {
-  const TOTAL = new Decimal(BuildCheckingAccountsTotal(source))
-
-  return source.checkingAccounts
-    .map((account) => ({
+  return calculateCheckingAccountAllocation(
+    source.checkingAccounts.map((account) => ({
       institution: account.institution,
       accountNumber: account.accountNumber,
-      balance: new Decimal(account.balance).toFixed(2),
-      weight: TOTAL.isZero()
-        ? "0.00"
-        : new Decimal(account.balance)
-            .dividedBy(TOTAL)
-            .times(100)
-            .toFixed(2),
+      balance: account.balance,
     }))
-    .sort((left, right) =>
-      new Decimal(right.balance).cmp(new Decimal(left.balance))
-    )
-}
-
-/**
- * Sums the checking account balances of the reference month.
- */
-function BuildCheckingAccountsTotal(
-  source: StatementReportSource
-): string {
-  return source.checkingAccounts
-    .reduce(
-      (sum, account) => sum.plus(account.balance),
-      new Decimal(0)
-    )
-    .toFixed(2)
+  )
 }
 
 /**
@@ -768,10 +788,7 @@ function BuildFundAssets(
     ROWS.push({
       cnpj: FUND.cnpj,
       name: FUND.name,
-      framing:
-        NORM === undefined
-          ? null
-          : `${NORM.name} - ${NORM.articleNumber}`,
+      framing: NORM === undefined ? null : NORM.articleNumber,
       administrationFee: FUND.administrationFee,
       // The category name is kept for the subtitle of the row.
       categoryName:
@@ -816,37 +833,6 @@ function ToMonthlySnapshot(
     applicationTotal: snapshot.applicationTotal,
     redemptionTotal: snapshot.redemptionTotal,
   }
-}
-
-/**
- * Sums the earnings of the months from January to the
- * reference month.
- */
-function AccumulateEarnings(
-  rows: { earnings: string }[],
-  referenceIndex: number
-): string {
-  if (referenceIndex < 0) return "0.00"
-
-  return rows
-    .slice(0, referenceIndex + 1)
-    .reduce((sum, row) => sum.plus(row.earnings), new Decimal(0))
-    .toFixed(2)
-}
-
-/**
- * Resolves the share of a value over a reference, in percent,
- * or `null` when either side is missing or the reference is
- * zero.
- */
-function ShareOf(
-  value: string | null,
-  reference: string | null
-): string | null {
-  if (value === null || reference === null) return null
-  const BASE = new Decimal(reference)
-  if (BASE.isZero()) return null
-  return new Decimal(value).dividedBy(BASE).times(100).toFixed(2)
 }
 
 /**
@@ -895,6 +881,23 @@ function SeriesColor(index: number): string {
   return STATEMENT_REPORT_SERIES_COLORS[
     index % STATEMENT_REPORT_SERIES_COLORS.length
   ]
+}
+
+/**
+ * Resolves the label of a holding in the index distribution:
+ * the acronym of the benchmark it tracks, or the untracked
+ * label when it tracks none or the registry lost it.
+ */
+function BuildIndexDistributionLabel(
+  holding: PortfolioHolding,
+  acronymById: Map<string, string>
+): string {
+  if (holding.benchmarkId === null) return BuildUntrackedLabel()
+  return (
+    acronymById.get(holding.benchmarkId) ??
+    holding.benchmarkName ??
+    BuildUntrackedLabel()
+  )
 }
 
 // Labels used when a registry value is missing.

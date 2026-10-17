@@ -1,33 +1,32 @@
 import { Text, View } from "@react-pdf/renderer"
 import type { ReactElement } from "react"
 
-import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatUnsignedPercentage } from "@/presentation/presenters/percentage.presenter"
 import type { StatementReportDistributionRow } from "@/services/statement/report/statement-report.types"
 
 import {
-  StatementReportDonut,
-  StatementReportHorizontalBars,
-} from "./shared-statement-report-charts"
+  STATEMENT_REPORT_CHART_CATEGORY_STYLE,
+  STATEMENT_REPORT_CHART_VALUE_STYLE,
+} from "./shared-statement-report-chart-labels.constants"
+import { StatementReportDonut } from "./shared-statement-report-charts"
+import { STATEMENT_REPORT_SECTION_TITLE_STYLE } from "./shared-statement-report-section-title.constants"
 import { STATEMENT_REPORT_COPY } from "./shared-statement-report.settings"
 import { tw } from "./shared-statement-report-styles.constants"
 
 /**
  * @summary
- * Renders the distribution charts of the report.
+ * Renders the share of the portfolio per index and institution.
  *
  * @remarks
- * Puts the share of the portfolio per fund as a horizontal
- * bar list, because fund names are long, and the share per
- * reference index and per financial institution as donuts,
- * where the number of groups is small. Every legend carries
- * the share and the money of the group.
+ * Puts the share per reference index and per financial
+ * institution as donuts, where the number of groups is small.
+ * Every legend carries the share of the group.
  *
  * @explanation
- * Use this component to render the distribution sections of
- * the statement document.
+ * Use this component to render the `Distribuição por Índice
+ * de Referência` and `Distribuição por Instituição` sections
+ * of the statement document.
  *
- * @param funds - The share of the portfolio per fund.
  * @param indexes - The share of the portfolio per index.
  * @param institutions - The share per institution.
  *
@@ -35,49 +34,25 @@ import { tw } from "./shared-statement-report-styles.constants"
  *
  * @date 2026-10-06
  */
-export function DistributionsSection(props: {
-  funds: StatementReportDistributionRow[]
+export function DistributionDonutsSection(props: {
   indexes: StatementReportDistributionRow[]
   institutions: StatementReportDistributionRow[]
 }): ReactElement {
-  const {
-    funds: FUNDS,
-    indexes: INDEXES,
-    institutions: INSTITUTIONS,
-  } = props
+  const { indexes: INDEXES, institutions: INSTITUTIONS } = props
 
   return (
-    <View style={tw("mt-8 flex-col gap-6")}>
-      <View>
-        <Text style={tw("text-base font-bold")}>
-          {STATEMENT_REPORT_COPY.distributionFundTitle}
-        </Text>
-        <View style={tw("mt-2")}>
-          <StatementReportHorizontalBars
-            rows={FUNDS.map((row) => ({
-              label: row.name,
-              value: ToNumber(row.value),
-              color: row.color,
-              display: `${FormatUnsignedPercentage(
-                row.weight
-              )} · ${FormatCurrency(row.value)}`,
-            }))}
-          />
-        </View>
-      </View>
-
-      <View style={tw("flex-row gap-6")}>
-        <DistributionDonutBlock
-          title={STATEMENT_REPORT_COPY.distributionIndexTitle}
-          rows={INDEXES}
-        />
-        <DistributionDonutBlock
-          title={
-            STATEMENT_REPORT_COPY.distributionInstitutionTitle
-          }
-          rows={INSTITUTIONS}
-        />
-      </View>
+    <View style={tw("mt-8 flex-col gap-8")}>
+      <DistributionDonutBlock
+        title={STATEMENT_REPORT_COPY.distributionIndexTitle}
+        rows={INDEXES}
+      />
+      <View style={tw("border-t border-border")} />
+      <DistributionDonutBlock
+        title={
+          STATEMENT_REPORT_COPY.distributionInstitutionTitle
+        }
+        rows={INSTITUTIONS}
+      />
     </View>
   )
 }
@@ -90,8 +65,10 @@ function DistributionDonutBlock(props: {
   rows: StatementReportDistributionRow[]
 }): ReactElement {
   return (
-    <View style={tw("flex-1")}>
-      <Text style={tw("text-sm font-bold")}>{props.title}</Text>
+    <View>
+      <Text style={STATEMENT_REPORT_SECTION_TITLE_STYLE}>
+        {props.title}
+      </Text>
       <View style={tw("flex-row items-center gap-4 mt-2")}>
         <StatementReportDonut
           slices={props.rows.map((row) => ({
@@ -100,6 +77,9 @@ function DistributionDonutBlock(props: {
             color: row.color,
           }))}
           size={130}
+          centerLabel={FormatUnsignedPercentage(
+            SumWeights(props.rows)
+          )}
         />
         <View style={tw("flex-1 flex-col gap-1")}>
           {props.rows.map((row, index) => (
@@ -115,10 +95,15 @@ function DistributionDonutBlock(props: {
                   backgroundColor: row.color,
                 }}
               />
-              <Text style={tw("flex-1 text-xs text-subdued")}>
+              <Text
+                style={[
+                  STATEMENT_REPORT_CHART_CATEGORY_STYLE,
+                  { flexGrow: 1 },
+                ]}
+              >
                 {row.name}
               </Text>
-              <Text style={tw("text-xs")}>
+              <Text style={STATEMENT_REPORT_CHART_VALUE_STYLE}>
                 {FormatUnsignedPercentage(row.weight)}
               </Text>
             </View>
@@ -127,6 +112,19 @@ function DistributionDonutBlock(props: {
       </View>
     </View>
   )
+}
+
+/**
+ * Sums the share of every row, so the center of the donut
+ * reads the total the slices represent.
+ */
+function SumWeights(
+  rows: readonly StatementReportDistributionRow[]
+): number {
+  return rows.reduce((sum, row) => {
+    const PARSED = Number.parseFloat(row.weight)
+    return Number.isFinite(PARSED) ? sum + PARSED : sum
+  }, 0)
 }
 
 /**

@@ -8,6 +8,7 @@ import {
 import type { StatementReportAccumulatedIndexRow } from "@/services/statement/report/statement-report.types"
 
 import { StatementReportHorizontalBars } from "./shared-statement-report-charts"
+import { STATEMENT_REPORT_SECTION_TITLE_STYLE } from "./shared-statement-report-section-title.constants"
 import {
   STATEMENT_REPORT_COPY,
   STATEMENT_REPORT_PALETTE,
@@ -53,7 +54,7 @@ export function AccumulatedIndexesSection(props: {
 
   return (
     <View style={tw("mt-8")}>
-      <Text style={tw("text-base font-bold")}>
+      <Text style={STATEMENT_REPORT_SECTION_TITLE_STYLE}>
         {STATEMENT_REPORT_COPY.accumulatedIndexesTitle}
       </Text>
       <View style={tw("mt-2")}>

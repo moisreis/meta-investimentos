@@ -1,10 +1,11 @@
 import { Text, View } from "@react-pdf/renderer"
 import type { ReactElement } from "react"
 
-import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
+import { FormatCnpj } from "@/presentation/presenters/cnpj.presenter"
 import { FormatUnsignedPercentage } from "@/presentation/presenters/percentage.presenter"
 import type { StatementReportFundAssetRow } from "@/services/statement/report/statement-report.types"
 
+import { STATEMENT_REPORT_SECTION_TITLE_STYLE } from "./shared-statement-report-section-title.constants"
 import { STATEMENT_REPORT_COPY } from "./shared-statement-report.settings"
 import { tw } from "./shared-statement-report-styles.constants"
 import {
@@ -19,8 +20,8 @@ const FUND_COLUMNS: StatementReportColumn<StatementReportFundAssetRow>[] =
       label: STATEMENT_REPORT_COPY.cnpjColumn,
       flexBasis: "20%",
       render: (row) => (
-        <Text style={tw("text-xs text-subdued")}>
-          {row.cnpj}
+        <Text style={tw("text-xs text-foreground")}>
+          {FormatCnpj(row.cnpj)}
         </Text>
       ),
     },
@@ -68,15 +69,13 @@ const FUND_COLUMNS: StatementReportColumn<StatementReportFundAssetRow>[] =
  * @remarks
  * Lists every fund the portfolio holds with its CNPJ, the
  * category and the Resolution framing of its norm article,
- * and the administration fee. Closes with the total invested
- * assets of the reference month.
+ * and the administration fee.
  *
  * @explanation
  * Use this component to render the `Fundos e Ativos` section
  * of the statement document.
  *
  * @param rows - The fund rows to render.
- * @param totalAssets - The total invested assets of the month.
  *
  * @author Moisés Reis
  *
@@ -84,13 +83,12 @@ const FUND_COLUMNS: StatementReportColumn<StatementReportFundAssetRow>[] =
  */
 export function FundsSection(props: {
   rows: StatementReportFundAssetRow[]
-  totalAssets: string | null
 }): ReactElement {
-  const { rows: ROWS, totalAssets: TOTAL } = props
+  const { rows: ROWS } = props
 
   return (
     <View style={tw("mt-8")}>
-      <Text style={tw("text-base font-bold")}>
+      <Text style={STATEMENT_REPORT_SECTION_TITLE_STYLE}>
         {STATEMENT_REPORT_COPY.fundsTitle}
       </Text>
       {ROWS.length === 0 ? (
@@ -98,24 +96,10 @@ export function FundsSection(props: {
           {STATEMENT_REPORT_COPY.positionsEmpty}
         </Text>
       ) : (
-        <>
-          <StatementReportTable
-            columns={FUND_COLUMNS}
-            rows={ROWS}
-          />
-          <View
-            style={tw(
-              "flex-row justify-end border-t border-border px-2 py-1 mt-1"
-            )}
-          >
-            <Text style={tw("text-xs font-bold")}>
-              {STATEMENT_REPORT_COPY.totalAssetsLabel}
-            </Text>
-            <Text style={tw("ml-4 text-xs font-bold")}>
-              {FormatCurrency(TOTAL)}
-            </Text>
-          </View>
-        </>
+        <StatementReportTable
+          columns={FUND_COLUMNS}
+          rows={ROWS}
+        />
       )}
     </View>
   )

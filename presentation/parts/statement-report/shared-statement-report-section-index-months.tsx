@@ -4,6 +4,7 @@ import type { ReactElement } from "react"
 import { FormatSignedPercentage } from "@/presentation/presenters/percentage.presenter"
 import type { StatementReportIndexMonthRow } from "@/services/statement/report/statement-report.types"
 
+import { STATEMENT_REPORT_SECTION_TITLE_STYLE } from "./shared-statement-report-section-title.constants"
 import { STATEMENT_REPORT_COPY } from "./shared-statement-report.settings"
 import { tw } from "./shared-statement-report-styles.constants"
 import {
@@ -29,6 +30,10 @@ const INDEX_MONTH_COLUMNS: StatementReportColumn<StatementReportIndexMonthRow>[]
       STATEMENT_REPORT_COPY.metaLabel,
       (row) => row.target
     ),
+    RateColumn("IPCA", (row) => row.ipca),
+    RateColumn("CDI", (row) => row.cdi),
+    RateColumn("IMA-GERAL", (row) => row.imaGeral),
+    RateColumn("Ibovespa", (row) => row.ibovespa),
     RateColumn("IRF-M", (row) => row.irfM),
     RateColumn("IRF-M1", (row) => row.irfM1),
     RateColumn("IMA-B", (row) => row.imaB),
@@ -59,27 +64,14 @@ const INDEX_MONTH_COLUMNS: StatementReportColumn<StatementReportIndexMonthRow>[]
 export function IndexMonthsSection(props: {
   rows: StatementReportIndexMonthRow[]
 }): ReactElement {
-  const FIRST_HALF = props.rows.slice(0, 9)
-  const SECOND_HALF = props.rows.slice(9)
-
   return (
     <View style={tw("mt-8")}>
-      <Text style={tw("text-base font-bold")}>
+      <Text style={STATEMENT_REPORT_SECTION_TITLE_STYLE}>
         {STATEMENT_REPORT_COPY.indexMonthsTitle}
       </Text>
-      <Text style={tw("text-xs text-subdued")}>
-        Janeiro a setembro
-      </Text>
       <StatementReportTable
         columns={INDEX_MONTH_COLUMNS}
-        rows={FIRST_HALF}
-      />
-      <Text style={tw("mt-6 text-xs text-subdued")}>
-        Outubro a dezembro
-      </Text>
-      <StatementReportTable
-        columns={INDEX_MONTH_COLUMNS}
-        rows={SECOND_HALF}
+        rows={props.rows}
       />
     </View>
   )

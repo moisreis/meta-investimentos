@@ -4,6 +4,9 @@ import { readFileSync } from "node:fs"
 
 import type { StatementReportData } from "@/services/statement/report/statement-report.types"
 
+import { FormatMonthYear } from "@/presentation/presenters/date.presenter"
+
+import { STATEMENT_REPORT_FONT_FAMILY } from "./shared-statement-report-fonts.constants"
 import { STATEMENT_REPORT_COPY } from "./shared-statement-report.settings"
 import { tw } from "./shared-statement-report-styles.constants"
 
@@ -83,7 +86,10 @@ export function StatementReportCoverSection(props: {
                 tw(
                   "text-left capitalize tracking-widest font-medium"
                 ),
-                { fontSize: 32 },
+                {
+                  fontFamily: STATEMENT_REPORT_FONT_FAMILY,
+                  fontSize: 32,
+                },
               ]}
             >
               Análise da Carteira
@@ -140,7 +146,7 @@ export function StatementReportCoverSection(props: {
                 { fontSize: 16 },
               ]}
             >
-              Agosto, 2026
+              {FormatMonthYear(DATA.periodEnd)}
             </Text>
           </View>
           {/* Prepared for */}

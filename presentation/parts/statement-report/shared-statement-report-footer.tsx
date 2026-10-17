@@ -5,6 +5,7 @@ import type { StatementReportData } from "@/services/statement/report/statement-
 
 import { STATEMENT_REPORT_COPY } from "./shared-statement-report.settings"
 import { tw } from "./shared-statement-report-styles.constants"
+import { BRAND } from "@/presentation/constants/brand.constants"
 
 /**
  * @summary
@@ -47,7 +48,8 @@ export function FormatPageLabel(
 export function RunningFooter(props: {
   data: StatementReportData
 }): ReactElement {
-  const { data: DATA } = props
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data: _DATA } = props
 
   return (
     <View
@@ -57,7 +59,7 @@ export function RunningFooter(props: {
       )}
     >
       <Text style={tw("text-xs text-subdued")}>
-        {`${DATA.portfolio.name}`}
+        {BRAND.LEGAL_NAME}, {BRAND.CODE}
       </Text>
       <Text
         style={tw("text-xs text-subdued")}

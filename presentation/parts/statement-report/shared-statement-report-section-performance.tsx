@@ -1,6 +1,8 @@
-import { Text, View } from "@react-pdf/renderer"
+import { View } from "@react-pdf/renderer"
 import type { ReactElement } from "react"
 
+import { FormatSignedCurrency } from "@/presentation/presenters/currency.presenter"
+import { FormatSignedPercentage } from "@/presentation/presenters/percentage.presenter"
 import type { StatementReportData } from "@/services/statement/report/statement-report.types"
 
 import {
@@ -100,95 +102,44 @@ export function PerformanceSection(props: {
     },
   ]
 
+  const EARNINGS_LEGEND: StatementReportBarSeries[] = [
+    {
+      name: "Aumentar",
+      color: STATEMENT_REPORT_PALETTE.brandBlue,
+    },
+    {
+      name: "Diminuir",
+      color: STATEMENT_REPORT_PALETTE.negative,
+    },
+    {
+      name: STATEMENT_REPORT_COPY.totalLabel,
+      color: STATEMENT_REPORT_PALETTE.primary,
+    },
+  ]
+
   return (
     <View style={tw("flex-col gap-6")}>
-      <View>
-        <Text style={tw("text-sm font-bold text-foreground")}>
-          {STATEMENT_REPORT_COPY.performanceTitle}
-        </Text>
-        <Text style={tw("text-xs text-subdued")}>
-          {STATEMENT_REPORT_COPY.performanceSubtitle}
-        </Text>
-        <View style={tw("flex-row gap-3 mt-2 mb-1")}>
-          {PORTFOLIO_SERIES.map((series) => (
-            <View
-              key={series.name}
-              style={tw("flex-row items-center gap-1")}
-            >
-              <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: 2,
-                  backgroundColor: series.color,
-                }}
-              />
-              <Text style={tw("text-xs text-subdued")}>
-                {series.name}
-              </Text>
-            </View>
-          ))}
-        </View>
-        <StatementReportBarChart
-          groups={PERFORMANCE}
-          series={PORTFOLIO_SERIES}
-          width={740}
-          height={170}
-        />
-      </View>
-
-      <View>
-        <Text style={tw("text-sm font-bold text-foreground")}>
-          {STATEMENT_REPORT_COPY.earningsTitle}
-        </Text>
-        <Text style={tw("text-xs text-subdued")}>
-          {STATEMENT_REPORT_COPY.earningsSubtitle}
-        </Text>
-        <View style={tw("flex-row gap-3 mt-2 mb-1")}>
-          <LegendItem
-            color={STATEMENT_REPORT_PALETTE.brandBlue}
-            label="Aumentar"
-          />
-          <LegendItem
-            color={STATEMENT_REPORT_PALETTE.negative}
-            label="Diminuir"
-          />
-          <LegendItem
-            color={STATEMENT_REPORT_PALETTE.primary}
-            label={STATEMENT_REPORT_COPY.totalLabel}
-          />
-        </View>
-        <StatementReportBarChart
-          groups={EARNINGS}
-          series={EARNINGS_SERIES}
-          width={740}
-          height={150}
-        />
-      </View>
-    </View>
-  )
-}
-
-/**
- * Renders a single legend swatch of a chart.
- */
-function LegendItem(props: {
-  color: string
-  label: string
-}): ReactElement {
-  return (
-    <View style={tw("flex-row items-center gap-1")}>
-      <View
-        style={{
-          width: 8,
-          height: 8,
-          borderRadius: 2,
-          backgroundColor: props.color,
-        }}
+      <StatementReportBarChart
+        title={STATEMENT_REPORT_COPY.performanceTitle}
+        groups={PERFORMANCE}
+        series={PORTFOLIO_SERIES}
+        legend={PORTFOLIO_SERIES}
+        formatValue={FormatSignedPercentage}
+        width={740}
+        height={170}
       />
-      <Text style={tw("text-xs text-subdued")}>
-        {props.label}
-      </Text>
+
+      <View style={tw("border-t border-border")} />
+
+      <StatementReportBarChart
+        title={STATEMENT_REPORT_COPY.earningsTitle}
+        groups={EARNINGS}
+        series={EARNINGS_SERIES}
+        legend={EARNINGS_LEGEND}
+        formatValue={FormatSignedCurrency}
+        width={740}
+        height={150}
+      />
     </View>
   )
 }

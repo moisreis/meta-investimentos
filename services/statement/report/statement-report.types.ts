@@ -124,8 +124,6 @@ export interface StatementReportData {
   movementMonths: StatementReportMovementPoint[]
   // The checking account balances of the reference month.
   checkingAccounts: StatementReportCheckingAccountRow[]
-  // Total balance of the checking accounts.
-  checkingAccountsTotal: string
   // The reference data of the funds the portfolio holds.
   fundAssets: StatementReportFundAssetRow[]
   // The share of the portfolio per fund, largest first.
@@ -325,8 +323,8 @@ export interface StatementReportCheckingAccountRow {
 export interface StatementReportFundAssetRow {
   cnpj: string
   name: string
-  // Resolution framing of the fund, derived from the norm
-  // of its category, or `null`.
+  // Resolution article number of the norm of the fund
+  // category, or `null`.
   framing: string | null
   administrationFee: string | null
   // Category of the fund, shown as the row subtitle.

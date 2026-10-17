@@ -15,6 +15,8 @@ import {
   StatementReportGauge,
   StatementReportHorizontalBars,
 } from "./shared-statement-report-charts"
+import { STATEMENT_REPORT_SECTION_TITLE_STYLE } from "./shared-statement-report-section-title.constants"
+import { STATEMENT_REPORT_PAGE_TITLE_STYLE } from "./shared-statement-report-page-title.constants"
 import {
   STATEMENT_REPORT_COPY,
   STATEMENT_REPORT_PALETTE,
@@ -37,6 +39,12 @@ const CARET_UP_PATH =
 // the same reasons as `CARET_UP_PATH`.
 const CARET_DOWN_PATH =
   "M18 9c.852 0 1.297 .986 .783 1.623l-.076 .084l-6 6a1 1 0 0 1 -1.32 .083l-.094 -.083l-6 -6l-.083 -.094l-.054 -.077l-.054 -.096l-.017 -.036l-.027 -.067l-.032 -.108l-.01 -.053l-.01 -.06l-.004 -.057v-.118l.005 -.058l.009 -.06l.01 -.052l.032 -.108l.027 -.067l.07 -.132l.065 -.09l.073 -.081l.094 -.083l.077 -.054l.096 -.054l.036 -.017l.067 -.027l.108 -.032l.053 -.01l.06 -.01l.057 -.004l12.059 -.002z"
+
+// The dashboard gauge column. The dial keeps a slim column so
+// the comparison chart takes the rest of the page width and
+// reads longer than half of it.
+const GAUGE_WIDTH = 250
+const GAUGE_HEIGHT = 150
 
 /**
  * Picks the arrow direction of a signed figure. A missing or
@@ -186,16 +194,11 @@ export function DashboardSection(props: {
   )
 
   return (
-    <View style={tw("flex-col gap-16")}>
+    <View style={tw("flex-col h-full gap-32")}>
       <View style={tw("flex-col gap-4")}>
         <View style={tw("flex-col")}>
-          <Text
-            style={tw(
-              "text-base font-bold text-foreground text-2xl"
-            )}
-          >
-            Uma visão geral dos principais indicadores da sua
-            carteira.
+          <Text style={STATEMENT_REPORT_PAGE_TITLE_STYLE}>
+            Uma visão geral dos principais indicadores.
           </Text>
         </View>
         <View
@@ -229,33 +232,30 @@ export function DashboardSection(props: {
           />
         </View>
       </View>
+      <View style={tw("border-t border-border")} />
       <View
-        style={tw("flex-row justify-between items-start gap-8")}
+        style={tw("flex-row justify-between items-start gap-24")}
       >
         <View
-          style={tw(
-            "flex-col justify-start items-start gap-2 w-1/2"
-          )}
+          style={[
+            tw("flex-col justify-start items-start gap-4"),
+          ]}
         >
-          <Text
-            style={tw(
-              "text-sm font-bold text-foreground italic"
-            )}
-          >
+          <Text style={STATEMENT_REPORT_SECTION_TITLE_STYLE}>
             {STATEMENT_REPORT_COPY.gaugeTitle}
           </Text>
-          <StatementReportGauge value={GAUGE_VALUE} />
+          <StatementReportGauge
+            value={GAUGE_VALUE}
+            width={GAUGE_WIDTH}
+            height={GAUGE_HEIGHT}
+          />
         </View>
         <View
           style={tw(
-            "flex-col justify-start items-start gap-2 flex-1 w-1/2"
+            "flex-col justify-start items-start gap-6 flex-1"
           )}
         >
-          <Text
-            style={tw(
-              "text-sm font-bold text-foreground italic"
-            )}
-          >
+          <Text style={STATEMENT_REPORT_SECTION_TITLE_STYLE}>
             {STATEMENT_REPORT_COPY.indexComparisonTitle}
           </Text>
           <StatementReportHorizontalBars rows={COMPARISON} />

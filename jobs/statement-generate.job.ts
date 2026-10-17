@@ -83,23 +83,27 @@ export async function runStatementPdfGenerate(
   const { listWeights: LIST_WEIGHTS } = PositionContainer()
   const { list: LIST_FUNDS } = FundContainer()
   const { list: LIST_BANKS } = BankContainer()
+  const { list: LIST_BENCHMARKS } = BenchmarkContainer()
 
-  const [WEIGHTS, FUNDS, BANKS] = await Promise.all([
-    LIST_WEIGHTS.execute({ portfolioIds: [input.portfolioId] }),
+  // The benchmark registry names the index of each fund, so
+  // the holdings only carry the index id and the name is
+  // resolved by the shared holding mapper before the report
+  // builder reads it. The remaining registries (categories,
+  // norms) are loaded below and joined by the report mapper.
+  const [WEIGHTS, FUNDS, BANKS, BENCHMARKS] = await Promise.all([
+    LIST_WEIGHTS.execute({
+      portfolioIds: [input.portfolioId],
+    }),
     LIST_FUNDS.execute({}),
     LIST_BANKS.execute({}),
+    LIST_BENCHMARKS.execute({}),
   ])
 
-  // The statement describes money and custodians, so the
-  // holding rows only carry the index id of each fund; the
-  // registries that name the extra report rows (categories,
-  // norms, benchmarks) are loaded below and joined by the
-  // report mapper.
   const HOLDINGS = BuildPortfolioHoldings(
     WEIGHTS,
     FUNDS,
     BANKS,
-    []
+    BENCHMARKS
   )
   const POSITION_IDS = HOLDINGS.map(
     (holding) => holding.positionId
@@ -107,7 +111,6 @@ export async function runStatementPdfGenerate(
 
   const { list: LIST_CATEGORIES } = CategoryContainer()
   const { list: LIST_NORMS } = NormContainer()
-  const { list: LIST_BENCHMARKS } = BenchmarkContainer()
   const { list: LIST_BENCHMARK_HISTORY } =
     BenchmarkHistoryContainer()
   const { listPerformances: LIST_POSITION_PERFORMANCES } =
@@ -126,14 +129,13 @@ export async function runStatementPdfGenerate(
     ),
   ]
 
-  const [CATEGORIES, NORMS, BENCHMARKS] = await Promise.all([
+  const [CATEGORIES, NORMS] = await Promise.all([
     LIST_CATEGORIES.execute({}),
     Promise.all(
       CATEGORY_IDS.map((categoryId) =>
         LIST_NORMS.execute({ categoryId })
       )
     ).then((byCategory) => byCategory.flat()),
-    LIST_BENCHMARKS.execute({}),
   ])
   const POSITION_PERFORMANCES = (
     await Promise.all(

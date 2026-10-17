@@ -10,7 +10,21 @@ import {
 import type { ReactElement } from "react"
 import { Text, View } from "@react-pdf/renderer"
 
-import { STATEMENT_REPORT_PALETTE } from "./shared-statement-report.settings"
+import {
+  FormatSignedPercentage,
+  FormatUnsignedPercentage,
+} from "@/presentation/presenters/percentage.presenter"
+
+import {
+  STATEMENT_REPORT_CHART_CATEGORY_STYLE,
+  STATEMENT_REPORT_CHART_LEGEND_STYLE,
+  STATEMENT_REPORT_CHART_VALUE_STYLE,
+} from "./shared-statement-report-chart-labels.constants"
+import { STATEMENT_REPORT_SECTION_TITLE_STYLE } from "./shared-statement-report-section-title.constants"
+import {
+  STATEMENT_REPORT_COPY,
+  STATEMENT_REPORT_PALETTE,
+} from "./shared-statement-report.settings"
 import { tw } from "./shared-statement-report-styles.constants"
 
 // One named series of a bar chart.
@@ -52,14 +66,18 @@ export interface StatementReportBarRow {
  * values.
  *
  * @remarks
- * The baseline sits on the zero line, so a negative return
- * draws below the axis. Bars stay inside the plot width and
- * the category labels render under the plot, outside the
- * SVG, so they never overlap the bars.
+ * The header puts the title on the left and the series
+ * indicator on the right. The baseline sits on the zero
+ * line, so a negative return draws below the axis. Each bar
+ * carries its value on top, rotated to read upward so it
+ * never crowds the bar next to it. A 1pt neutral-900 axis
+ * line sits right above the category labels, which render
+ * under the plot, outside the SVG. The bars are squared
+ * off.
  *
  * @explanation
- * Use this chart for the monthly performance, the monthly
- * earnings and the per-index figures of the report.
+ * Use this chart for the monthly performance and the
+ * monthly earnings of the report.
  *
  * @author Moisés Reis
  *
@@ -68,6 +86,9 @@ export interface StatementReportBarRow {
 export function StatementReportBarChart(props: {
   groups: StatementReportBarGroup[]
   series: StatementReportBarSeries[]
+  legend?: StatementReportBarSeries[]
+  title?: string
+  formatValue?: (value: number) => string
   width?: number
   height?: number
 }): ReactElement {
@@ -75,11 +96,11 @@ export function StatementReportBarChart(props: {
   const HEIGHT = props.height ?? 170
   const PAD_LEFT = 26
   const PAD_RIGHT = 6
-  const PAD_TOP = 8
   const PAD_BOTTOM = 6
 
-  const PLOT_W = WIDTH - PAD_LEFT - PAD_RIGHT
-  const PLOT_H = HEIGHT - PAD_TOP - PAD_BOTTOM
+  const FORMAT_VALUE =
+    props.formatValue ??
+    ((value: number) => FormatSignedPercentage(value))
 
   const VALUES = props.groups.flatMap((group) =>
     group.values.filter(
@@ -89,6 +110,25 @@ export function StatementReportBarChart(props: {
   const MAX = Math.max(0, ...VALUES, 1)
   const MIN = Math.min(0, ...VALUES)
   const RANGE = MAX - MIN === 0 ? 1 : MAX - MIN
+
+  // The value labels read bottom to top above each bar, so the
+  // plot reserves the longest label as headroom.
+  const LONGEST_LABEL = Math.max(
+    1,
+    ...VALUES.filter((value) => value !== 0).map(
+      (value) => FORMAT_VALUE(value).length
+    )
+  )
+  const PAD_TOP = Math.min(
+    HEIGHT - 40,
+    LONGEST_LABEL *
+      STATEMENT_REPORT_CHART_VALUE_STYLE.fontSize *
+      0.55 +
+      8
+  )
+
+  const PLOT_W = WIDTH - PAD_LEFT - PAD_RIGHT
+  const PLOT_H = HEIGHT - PAD_TOP - PAD_BOTTOM
 
   const ToY = (value: number): number =>
     PAD_TOP + PLOT_H * ((MAX - value) / RANGE)
@@ -107,6 +147,32 @@ export function StatementReportBarChart(props: {
 
   return (
     <View>
+      <View
+        style={tw("flex-row items-center justify-between mb-2")}
+      >
+        <Text style={STATEMENT_REPORT_SECTION_TITLE_STYLE}>
+          {props.title}
+        </Text>
+        <View style={tw("flex-row items-center gap-3")}>
+          {(props.legend ?? props.series).map((item) => (
+            <View
+              key={item.name}
+              style={tw("flex-row items-center gap-1")}
+            >
+              <View
+                style={{
+                  width: 8,
+                  height: 8,
+                  backgroundColor: item.color,
+                }}
+              />
+              <Text style={STATEMENT_REPORT_CHART_LEGEND_STYLE}>
+                {item.name}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
       <Svg width={WIDTH} height={HEIGHT}>
         {/* Zero baseline. */}
         <Line
@@ -115,6 +181,15 @@ export function StatementReportBarChart(props: {
           x2={WIDTH - PAD_RIGHT}
           y2={ZERO_Y}
           stroke={STATEMENT_REPORT_PALETTE.border}
+          strokeWidth={1}
+        />
+        {/* Axis line, right above the category labels. */}
+        <Line
+          x1={PAD_LEFT}
+          y1={HEIGHT - PAD_BOTTOM}
+          x2={WIDTH - PAD_RIGHT}
+          y2={HEIGHT - PAD_BOTTOM}
+          stroke={STATEMENT_REPORT_PALETTE.neutral900}
           strokeWidth={1}
         />
         {props.groups.map((group, groupIndex) => {
@@ -129,20 +204,40 @@ export function StatementReportBarChart(props: {
               Math.abs(ToY(value) - ZERO_Y),
               0.5
             )
+            const LABEL_X =
+              X +
+              BAR_W / 2 +
+              STATEMENT_REPORT_CHART_VALUE_STYLE.fontSize * 0.35
+            const LABEL_Y = Y - 2
 
             return (
-              <Rect
-                key={`${groupIndex}-${seriesIndex}`}
-                x={X}
-                y={Y}
-                width={BAR_W}
-                height={H}
-                fill={
-                  group.colors?.[seriesIndex] ??
-                  props.series[seriesIndex]?.color
-                }
-                rx={1}
-              />
+              <G key={`${groupIndex}-${seriesIndex}`}>
+                <Rect
+                  x={X}
+                  y={Y}
+                  width={BAR_W}
+                  height={H}
+                  fill={
+                    group.colors?.[seriesIndex] ??
+                    props.series[seriesIndex]?.color
+                  }
+                />
+                {value !== 0 && (
+                  <SvgText
+                    x={LABEL_X}
+                    y={LABEL_Y}
+                    transform={`rotate(-90 ${LABEL_X} ${LABEL_Y})`}
+                    style={{
+                      fontSize:
+                        STATEMENT_REPORT_CHART_VALUE_STYLE.fontSize,
+                      fill: STATEMENT_REPORT_CHART_VALUE_STYLE.color,
+                    }}
+                    textAnchor="start"
+                  >
+                    {FORMAT_VALUE(value)}
+                  </SvgText>
+                )}
+              </G>
             )
           })
         })}
@@ -159,11 +254,10 @@ export function StatementReportBarChart(props: {
           <Text
             key={`${group.label}-${index}`}
             style={[
-              tw("text-subdued"),
+              STATEMENT_REPORT_CHART_LEGEND_STYLE,
               {
                 width: GROUP_W,
                 textAlign: "center",
-                fontSize: 6,
               },
             ]}
           >
@@ -177,20 +271,28 @@ export function StatementReportBarChart(props: {
 
 /**
  * @summary
- * Draws a semicircular gauge for a 0–200% scale.
+ * Draws a semicircular speedometer for a 0–200% scale.
  *
  * @remarks
- * The value fills the arc against the full scale and the
- * remainder stays on the surface tone. A value without a
- * reading leaves the arc empty.
+ * The dial is a filled ring that runs from the left end to
+ * the right end over the top, so the reading reads like a
+ * needle sweeping the scale. The value fills the ring
+ * against the full scale and the remainder stays on the
+ * track tone. A divider caps the 100% mark at the top,
+ * splitting the below-target half from the above-target
+ * half. A value without a reading leaves the ring empty and
+ * prints a dash. The value sits in the middle of the dial
+ * and the two scale ends print their own bound.
  *
  * @explanation
  * Use this gauge for the return against the target of the
- * report dashboard.
+ * report dashboard. The ring geometry adapts to the size
+ * props, so a caller can grow the dial without touching the
+ * scale.
  *
  * @author Moisés Reis
  *
- * @date 2026-10-06
+ * @date 2026-10-09
  */
 export function StatementReportGauge(props: {
   value: number | null
@@ -199,12 +301,15 @@ export function StatementReportGauge(props: {
   height?: number
 }): ReactElement {
   const MAX = props.max ?? 200
-  const WIDTH = props.width ?? 220
-  const HEIGHT = props.height ?? 128
-  const R = 84
+  const WIDTH = props.width ?? 340
+  const HEIGHT = props.height ?? 196
+  // The ring is a thin band around the dial, so the reading
+  // fills the middle instead of being swallowed by the band.
+  const RING_THICKNESS = 20
   const CX = WIDTH / 2
-  const CY = HEIGHT - 14
-  const THICKNESS = 14
+  const CY = HEIGHT - 24
+  const R_OUTER = Math.min(WIDTH / 2 - 14, CY - 14)
+  const R_INNER = Math.max(R_OUTER - RING_THICKNESS, 0)
 
   const VALUE = Math.max(0, Math.min(props.value ?? 0, MAX))
   const RATIO = MAX === 0 ? 0 : VALUE / MAX
@@ -220,59 +325,65 @@ export function StatementReportGauge(props: {
       ? STATEMENT_REPORT_PALETTE.brandYellow
       : STATEMENT_REPORT_PALETTE.brandBlue
 
-  const BACKGROUND = DescribeArc(CX, CY, R, 180, 0)
+  const TRACK = DescribeDonutSlice(
+    CX,
+    CY,
+    R_OUTER,
+    R_INNER,
+    180,
+    0
+  )
   const FOREGROUND =
-    props.value === null
+    props.value === null || RATIO <= 0.005
       ? null
-      : DescribeArc(CX, CY, R, START, END)
+      : DescribeDonutSlice(CX, CY, R_OUTER, R_INNER, START, END)
 
   return (
     <Svg width={WIDTH} height={HEIGHT}>
-      <Path
-        d={BACKGROUND}
-        stroke={STATEMENT_REPORT_PALETTE.surface}
-        strokeWidth={THICKNESS}
-        fill="none"
-      />
+      <Path d={TRACK} fill={STATEMENT_REPORT_PALETTE.border} />
       {FOREGROUND !== null && (
-        <Path
-          d={FOREGROUND}
-          stroke={TONE}
-          strokeWidth={THICKNESS}
-          fill="none"
-        />
+        <Path d={FOREGROUND} fill={TONE} />
       )}
+      {/* White divider at the 100% mark, the top of the dial. */}
+      <Line
+        x1={CX}
+        y1={CY - R_OUTER}
+        x2={CX}
+        y2={CY - R_INNER}
+        stroke={STATEMENT_REPORT_PALETTE.background}
+        strokeWidth={2}
+      />
       <SvgText
         x={CX}
-        y={CY - 26}
-        style={{ fontSize: 20, fill: TONE }}
+        y={CY - 20}
+        style={{ fontSize: 24, fill: TONE }}
         textAnchor="middle"
       >
         {props.value === null
-          ? "-"
-          : `${props.value.toFixed(2)}%`}
+          ? STATEMENT_REPORT_COPY.unavailable
+          : FormatUnsignedPercentage(props.value)}
       </SvgText>
       <SvgText
-        x={CX - R}
-        y={CY + 12}
+        x={CX - R_OUTER}
+        y={CY + 18}
         style={{
-          fontSize: 7,
-          fill: STATEMENT_REPORT_PALETTE.subdued,
+          fontSize: STATEMENT_REPORT_CHART_VALUE_STYLE.fontSize,
+          fill: STATEMENT_REPORT_CHART_VALUE_STYLE.color,
         }}
-        textAnchor="middle"
+        textAnchor="start"
       >
-        0%
+        {FormatUnsignedPercentage(0)}
       </SvgText>
       <SvgText
-        x={CX + R}
-        y={CY + 12}
+        x={CX + R_OUTER}
+        y={CY + 18}
         style={{
-          fontSize: 7,
-          fill: STATEMENT_REPORT_PALETTE.subdued,
+          fontSize: STATEMENT_REPORT_CHART_VALUE_STYLE.fontSize,
+          fill: STATEMENT_REPORT_CHART_VALUE_STYLE.color,
         }}
-        textAnchor="middle"
+        textAnchor="end"
       >
-        {MAX}%
+        {FormatUnsignedPercentage(MAX)}
       </SvgText>
     </Svg>
   )
@@ -284,7 +395,9 @@ export function StatementReportGauge(props: {
  *
  * @remarks
  * A slice without a positive value stays out of the ring, so
- * an empty distribution renders as a plain surface ring.
+ * an empty distribution renders as a plain surface ring. An
+ * optional `centerLabel` prints inside the hole, usually the
+ * total share the slices represent.
  *
  * @explanation
  * Use this donut for the distribution by index and by
@@ -297,6 +410,7 @@ export function StatementReportGauge(props: {
 export function StatementReportDonut(props: {
   slices: StatementReportDonutSlice[]
   size?: number
+  centerLabel?: string
 }): ReactElement {
   const SIZE = props.size ?? 150
   const CX = SIZE / 2
@@ -321,6 +435,25 @@ export function StatementReportDonut(props: {
       const START = angle
       const END = angle + SWEEP
       angle = END
+
+      // A slice that fills the whole ring starts and ends on
+      // the same point, so its arc has nothing to draw. Draw
+      // the band as a full circle instead of a disappearing
+      // ring segment.
+      if (SWEEP >= 359.999) {
+        PATHS.push(
+          <Circle
+            key={`${slice.label}-${index}`}
+            cx={CX}
+            cy={CY}
+            r={(R_OUTER + R_INNER) / 2}
+            stroke={slice.color}
+            strokeWidth={R_OUTER - R_INNER}
+            fill="none"
+          />
+        )
+        return
+      }
 
       PATHS.push(
         <Path
@@ -356,6 +489,20 @@ export function StatementReportDonut(props: {
   return (
     <Svg width={SIZE} height={SIZE}>
       <G>{PATHS}</G>
+      {props.centerLabel !== undefined && (
+        <SvgText
+          x={CX}
+          y={CY + SIZE * 0.03}
+          style={{
+            fontSize: 11,
+            fontWeight: 400,
+            fill: STATEMENT_REPORT_PALETTE.foreground,
+          }}
+          textAnchor="middle"
+        >
+          {props.centerLabel}
+        </SvgText>
+      )}
     </Svg>
   )
 }
@@ -386,27 +533,31 @@ export function StatementReportHorizontalBars(props: {
   )
 
   return (
-    <View style={tw("flex-col gap-2")}>
+    <View style={tw("flex-col gap-3")}>
       {props.rows.map((row, index) => (
         <View key={`${row.label}-${index}`}>
           <View style={tw("flex-row justify-between mb-1")}>
-            <Text style={tw("text-xs text-foreground")}>
+            <Text style={STATEMENT_REPORT_CHART_CATEGORY_STYLE}>
               {row.label}
             </Text>
-            <Text style={tw("text-xs text-subdued")}>
+            <Text style={STATEMENT_REPORT_CHART_VALUE_STYLE}>
               {row.display}
             </Text>
           </View>
           <View
             style={[
-              tw("bg-surface rounded"),
-              { height: 10, width: "100%" },
+              tw("bg-track"),
+              {
+                height: 9,
+                width: "300px",
+                borderRadius: 0,
+              },
             ]}
           >
             <View
               style={{
-                height: 10,
-                borderRadius: 4,
+                height: 9,
+                borderRadius: 0,
                 backgroundColor: row.color,
                 width: `${Math.max(
                   (Math.abs(row.value) / MAX) * 100,
@@ -423,41 +574,18 @@ export function StatementReportHorizontalBars(props: {
 
 /**
  * @summary
- * Describes a circular arc as an SVG path.
- *
- * @remarks
- * The angles are measured in degrees from the positive x
- * axis, counterclockwise, with the screen y axis pointing
- * down. A semicircle runs from 180 to 0.
- *
- * @explanation
- * Used by the gauge. Prefer the chart components above in
- * the document.
- */
-function DescribeArc(
-  cx: number,
-  cy: number,
-  radius: number,
-  startAngle: number,
-  endAngle: number
-): string {
-  const START = PolarToCartesian(cx, cy, radius, startAngle)
-  const END = PolarToCartesian(cx, cy, radius, endAngle)
-  const LARGE_ARC = Math.abs(endAngle - startAngle) > 180 ? 1 : 0
-
-  return `M ${START.x} ${START.y} A ${radius} ${radius} 0 ${LARGE_ARC} 1 ${END.x} ${END.y}`
-}
-
-/**
- * @summary
- * Describes a donut slice as an SVG path.
+ * Describes a ring segment as an SVG path.
  *
  * @remarks
  * Draws the outer arc, the inner arc back and closes the
- * shape, so the slice is a ring segment.
+ * shape, so the segment is a piece of a ring. The angles are
+ * measured in degrees from the positive x axis,
+ * counterclockwise, with the screen y axis pointing down. A
+ * semicircle runs from 180 to 0.
  *
  * @explanation
- * Used by the donut chart.
+ * Used by the donut chart and by the gauge. Prefer the chart
+ * components above in the document.
  */
 function DescribeDonutSlice(
   cx: number,
@@ -472,12 +600,20 @@ function DescribeDonutSlice(
   const INNER_START = PolarToCartesian(cx, cy, inner, startAngle)
   const INNER_END = PolarToCartesian(cx, cy, inner, endAngle)
   const LARGE_ARC = endAngle - startAngle > 180 ? 1 : 0
+  // A segment that opens towards a larger angle sweeps
+  // counterclockwise on screen, which is an SVG sweep of `0`
+  // because the screen y axis points down. A segment that
+  // closes towards a smaller angle, like the gauge dial,
+  // sweeps the other way. The inner arc walks the ring back,
+  // so it always sweeps opposite to the outer arc.
+  const OUTER_SWEEP = endAngle >= startAngle ? 0 : 1
+  const INNER_SWEEP = 1 - OUTER_SWEEP
 
   return [
     `M ${OUTER_START.x} ${OUTER_START.y}`,
-    `A ${outer} ${outer} 0 ${LARGE_ARC} 1 ${OUTER_END.x} ${OUTER_END.y}`,
+    `A ${outer} ${outer} 0 ${LARGE_ARC} ${OUTER_SWEEP} ${OUTER_END.x} ${OUTER_END.y}`,
     `L ${INNER_END.x} ${INNER_END.y}`,
-    `A ${inner} ${inner} 0 ${LARGE_ARC} 0 ${INNER_START.x} ${INNER_START.y}`,
+    `A ${inner} ${inner} 0 ${LARGE_ARC} ${INNER_SWEEP} ${INNER_START.x} ${INNER_START.y}`,
     "Z",
   ].join(" ")
 }

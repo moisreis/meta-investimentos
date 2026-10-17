@@ -8,204 +8,128 @@ import {
 import {
   FormatPercentage,
   FormatSignedPercentage,
-  FormatUnsignedPercentage,
 } from "@/presentation/presenters/percentage.presenter"
 import type { StatementReportPositionRow } from "@/services/statement/report/statement-report.types"
 
+import { STATEMENT_REPORT_SECTION_TITLE_STYLE } from "./shared-statement-report-section-title.constants"
 import { STATEMENT_REPORT_COPY } from "./shared-statement-report.settings"
 import { tw } from "./shared-statement-report-styles.constants"
-import {
-  ResultTone,
-  ReturnTone,
-  STATEMENT_REPORT_TONE,
-} from "./shared-statement-report-tones.constants"
 import {
   StatementReportTable,
   type StatementReportColumn,
 } from "./shared-statement-report-table"
 
 /**
+ * Parses a nullable report figure into a number the totals
+ * can sum, reading a position without a snapshot as no
+ * movement at all.
+ */
+function ToNumber(value: string | null): number {
+  return Number.parseFloat(value ?? "0")
+}
+
+/**
+ * Sums one nullable figure across every position row.
+ */
+function SumRows(
+  rows: readonly StatementReportPositionRow[],
+  figure: (row: StatementReportPositionRow) => string | null
+): number {
+  return rows.reduce(
+    (sum, row) => sum + ToNumber(figure(row)),
+    0
+  )
+}
+
+/**
  * The columns of the positions table.
  *
- * `% Fundo` is the share of the fund's total net assets the
- * position holds, the compliance ceiling of the report. It
- * stays a dash while the fund registry carries no net asset
- * figure, so the column never claims a share it cannot
- * resolve.
+ * The earnings, movement and return figures print their own
+ * sign, so the direction reads from the text and never from a
+ * colour. The month and year returns cannot be summed, so
+ * they stay blank on the closing total row.
  */
 const POSITION_COLUMNS: StatementReportColumn<StatementReportPositionRow>[] =
   [
     {
       label: STATEMENT_REPORT_COPY.fundColumn,
-      flexBasis: "12%",
+      flexBasis: "40%",
       render: (row) => (
         <Text style={tw("text-xs")}>{row.fundName}</Text>
       ),
-    },
-    {
-      label: STATEMENT_REPORT_COPY.categoryColumn,
-      flexBasis: "9%",
-      render: (row) => (
-        <Text style={tw("text-xs")}>
-          {row.categoryName ??
-            STATEMENT_REPORT_COPY.withoutCategoryLabel}
-        </Text>
-      ),
-    },
-    {
-      label: STATEMENT_REPORT_COPY.articleColumn,
-      flexBasis: "5%",
-      render: (row) => (
-        <Text style={tw("text-xs")}>
-          {row.articleNumber ??
-            STATEMENT_REPORT_COPY.unavailable}
-        </Text>
-      ),
-    },
-    {
-      label: STATEMENT_REPORT_COPY.bankColumn,
-      flexBasis: "9%",
-      render: (row) => (
-        <Text style={tw("text-xs text-subdued")}>
-          {`${row.bankName} (${row.bankCode})`}
-        </Text>
-      ),
-    },
-    {
-      label: STATEMENT_REPORT_COPY.weightColumn,
-      flexBasis: "6%",
-      align: "right",
-      render: (row) => (
-        <Text style={tw("text-xs text-right")}>
-          {FormatPercentage(row.weight)}
-        </Text>
-      ),
-    },
-    {
-      label: STATEMENT_REPORT_COPY.investedColumn,
-      flexBasis: "10%",
-      align: "right",
-      render: (row) => (
-        <Text style={tw("text-xs text-right")}>
-          {FormatCurrency(row.investedValue)}
-        </Text>
-      ),
-    },
-    {
-      label: STATEMENT_REPORT_COPY.earningsColumn,
-      flexBasis: "8%",
-      align: "right",
-      render: (row) => (
-        <Text
-          style={tw(
-            `text-xs text-right ${
-              row.earnings === null
-                ? STATEMENT_REPORT_TONE.neutral
-                : STATEMENT_REPORT_TONE[ResultTone(row.earnings)]
-            }`
-          )}
-        >
-          {row.earnings === null
-            ? STATEMENT_REPORT_COPY.unavailable
-            : FormatCurrency(row.earnings)}
-        </Text>
-      ),
-    },
-    {
-      label: STATEMENT_REPORT_COPY.movementColumn,
-      flexBasis: "8%",
-      align: "right",
-      render: (row) => (
-        <Text
-          style={tw(
-            `text-xs text-right ${
-              row.movement === null
-                ? STATEMENT_REPORT_TONE.neutral
-                : STATEMENT_REPORT_TONE[ResultTone(row.movement)]
-            }`
-          )}
-        >
-          {row.movement === null
-            ? STATEMENT_REPORT_COPY.unavailable
-            : FormatSignedCurrency(row.movement)}
-        </Text>
-      ),
-    },
-    {
-      label: STATEMENT_REPORT_COPY.finalValueColumn,
-      flexBasis: "10%",
-      align: "right",
-      render: (row) => (
-        <Text style={tw("text-xs text-right")}>
-          {FormatCurrency(row.finalValue)}
-        </Text>
-      ),
+      total: () => STATEMENT_REPORT_COPY.totalLabelShort,
     },
     {
       label: STATEMENT_REPORT_COPY.monthReturnColumn,
-      flexBasis: "6%",
+      flexBasis: "9%",
       align: "right",
       render: (row) => (
-        <Text
-          style={tw(
-            `text-xs text-right ${
-              row.returnMonthly === null
-                ? STATEMENT_REPORT_TONE.neutral
-                : ReturnTone(row.returnMonthly)
-            }`
-          )}
-        >
+        <Text style={tw("text-xs text-right")}>
           {FormatSignedPercentage(row.returnMonthly)}
         </Text>
       ),
     },
     {
       label: STATEMENT_REPORT_COPY.yearReturnColumn,
-      flexBasis: "6%",
+      flexBasis: "9%",
       align: "right",
       render: (row) => (
-        <Text
-          style={tw(
-            `text-xs text-right ${
-              row.returnYearly === null
-                ? STATEMENT_REPORT_TONE.neutral
-                : ReturnTone(row.returnYearly)
-            }`
-          )}
-        >
+        <Text style={tw("text-xs text-right")}>
           {FormatSignedPercentage(row.returnYearly)}
         </Text>
       ),
     },
     {
-      label: STATEMENT_REPORT_COPY.last12mReturnColumn,
-      flexBasis: "5%",
-      align: "right",
-      render: (row) => (
-        <Text
-          style={tw(
-            `text-xs text-right ${
-              row.returnLast12m === null
-                ? STATEMENT_REPORT_TONE.neutral
-                : ReturnTone(row.returnLast12m)
-            }`
-          )}
-        >
-          {FormatSignedPercentage(row.returnLast12m)}
-        </Text>
-      ),
-    },
-    {
-      label: STATEMENT_REPORT_COPY.fundShareColumn,
-      flexBasis: "6%",
+      label: STATEMENT_REPORT_COPY.earningsColumn,
+      flexBasis: "14%",
       align: "right",
       render: (row) => (
         <Text style={tw("text-xs text-right")}>
-          {row.fundShare === null
-            ? STATEMENT_REPORT_COPY.unavailable
-            : FormatUnsignedPercentage(row.fundShare)}
+          {FormatSignedCurrency(row.earnings)}
         </Text>
       ),
+      total: (rows) =>
+        FormatSignedCurrency(
+          SumRows(rows, (row) => row.earnings)
+        ),
+    },
+    {
+      label: STATEMENT_REPORT_COPY.movementColumn,
+      flexBasis: "14%",
+      align: "right",
+      render: (row) => (
+        <Text style={tw("text-xs text-right")}>
+          {FormatSignedCurrency(row.movement)}
+        </Text>
+      ),
+      total: (rows) =>
+        FormatSignedCurrency(
+          SumRows(rows, (row) => row.movement)
+        ),
+    },
+    {
+      label: STATEMENT_REPORT_COPY.finalValueColumn,
+      flexBasis: "16%",
+      align: "right",
+      render: (row) => (
+        <Text style={tw("text-xs text-right")}>
+          {FormatCurrency(row.finalValue)}
+        </Text>
+      ),
+      total: (rows) =>
+        FormatCurrency(SumRows(rows, (row) => row.finalValue)),
+    },
+    {
+      label: STATEMENT_REPORT_COPY.positionWeightColumn,
+      flexBasis: "8%",
+      align: "right",
+      render: (row) => (
+        <Text style={tw("text-xs text-right")}>
+          {FormatPercentage(row.weight)}
+        </Text>
+      ),
+      total: (rows) =>
+        FormatPercentage(SumRows(rows, (row) => row.weight)),
     },
   ]
 
@@ -214,16 +138,17 @@ const POSITION_COLUMNS: StatementReportColumn<StatementReportPositionRow>[] =
  * Renders the investment portfolio table of the statement.
  *
  * @remarks
- * Lists the holdings with the fund, the category and the
- * norm article the fund is enquadred under, the custodian
- * bank, the money invested and the closing value, and the
- * month, year and trailing return of the position next to
- * the share of the fund it holds. The movement column stays
- * signed, so a redemption reads negative.
+ * Lists the holdings with the fund, the month and year return
+ * percentages, the earnings and the net movement of the
+ * position in the reference month, the closing value and the
+ * share of the portfolio it holds. The table closes with a
+ * bold total row that sums the money columns and the weight,
+ * leaving the returns blank. Every signed figure carries its
+ * own `+` or `-`, so the direction never depends on colour.
  *
  * @explanation
- * Use this component to render the `Carteira de
- * Investimentos` section of the statement document.
+ * Use this component to render the `Carteira de investimentos`
+ * section of the statement document.
  *
  * @param rows - The position rows to render.
  *
@@ -238,11 +163,8 @@ export function PositionsSection(props: {
 
   return (
     <View style={tw("mt-8")}>
-      <Text style={tw("text-base font-bold")}>
+      <Text style={STATEMENT_REPORT_SECTION_TITLE_STYLE}>
         {STATEMENT_REPORT_COPY.positionsTitle}
-      </Text>
-      <Text style={tw("text-xs text-subdued")}>
-        {STATEMENT_REPORT_COPY.positionsSubtitle}
       </Text>
       {ROWS.length === 0 ? (
         <Text style={tw("mt-2 text-xs text-subdued")}>

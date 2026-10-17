@@ -5,6 +5,7 @@ import { FormatCurrency } from "@/presentation/presenters/currency.presenter"
 import { FormatUnsignedPercentage } from "@/presentation/presenters/percentage.presenter"
 import type { StatementReportIndexFigureRow } from "@/services/statement/report/statement-report.types"
 
+import { STATEMENT_REPORT_SECTION_TITLE_STYLE } from "./shared-statement-report-section-title.constants"
 import { STATEMENT_REPORT_COPY } from "./shared-statement-report.settings"
 import { tw } from "./shared-statement-report-styles.constants"
 import {
@@ -102,7 +103,7 @@ export function IndexFiguresSection(props: {
 }): ReactElement {
   return (
     <View style={tw("mt-8")}>
-      <Text style={tw("text-base font-bold")}>
+      <Text style={STATEMENT_REPORT_SECTION_TITLE_STYLE}>
         {STATEMENT_REPORT_COPY.indexFiguresTitle}
       </Text>
       <StatementReportTable
@@ -137,7 +138,7 @@ export function AssetTypesSection(props: {
 }): ReactElement {
   return (
     <View style={tw("mt-8")}>
-      <Text style={tw("text-base font-bold")}>
+      <Text style={STATEMENT_REPORT_SECTION_TITLE_STYLE}>
         {STATEMENT_REPORT_COPY.assetTypesTitle}
       </Text>
       <StatementReportTable

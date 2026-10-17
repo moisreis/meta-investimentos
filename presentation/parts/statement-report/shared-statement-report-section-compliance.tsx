@@ -4,6 +4,7 @@ import type { ReactElement } from "react"
 import { FormatUnsignedPercentage } from "@/presentation/presenters/percentage.presenter"
 import type { StatementReportComplianceRow } from "@/services/statement/report/statement-report.types"
 
+import { STATEMENT_REPORT_SECTION_TITLE_STYLE } from "./shared-statement-report-section-title.constants"
 import { STATEMENT_REPORT_COPY } from "./shared-statement-report.settings"
 import { tw } from "./shared-statement-report-styles.constants"
 import {
@@ -107,7 +108,7 @@ export function ComplianceSection(props: {
 }): ReactElement {
   return (
     <View style={tw("mt-8")}>
-      <Text style={tw("text-base font-bold")}>
+      <Text style={STATEMENT_REPORT_SECTION_TITLE_STYLE}>
         {STATEMENT_REPORT_COPY.complianceTitle}
       </Text>
       {props.rows.length === 0 ? (

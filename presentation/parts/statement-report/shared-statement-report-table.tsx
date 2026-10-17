@@ -12,6 +12,11 @@ export interface StatementReportColumn<T> {
   align?: "left" | "right"
   // How the column renders a data row.
   render: (row: T) => ReactElement
+  // How the column reads on the closing total row, when the
+  // table renders one. Columns that omit it stay blank on
+  // that row, so a return that cannot be summed never shows
+  // a figure.
+  total?: (rows: readonly T[]) => string
 }
 
 interface StatementReportTableProps<T> {
@@ -24,12 +29,16 @@ interface StatementReportTableProps<T> {
  * Renders the plain datatable of the statement PDF.
  *
  * @remarks
- * One fixed header row on a surface background and one
- * bordered row per record. Columns render their own cells
- * through a callback, so multi-line cells and right-aligned
- * figures stay on the section that owns them. The header
- * row is fixed, which keeps the column labels visible when
- * a table breaks across pages.
+ * One fixed header row on a neutral-100 background, edged by
+ * a 1pt border above and below only, and one row per record
+ * with the same top and bottom edge and no background.
+ * Columns render their own cells through a callback, so
+ * multi-line cells and right-aligned figures stay on the
+ * section that owns them. When any column defines a `total`,
+ * the table closes with one bold row that repeats the
+ * columns: summable columns print their figure and the rest
+ * stay blank. The header row is fixed, which keeps the
+ * column labels visible when a table breaks across pages.
  *
  * @explanation
  * Use this primitive for every flat table of the statement
@@ -47,17 +56,24 @@ export function StatementReportTable<T>(
 ): ReactElement {
   const { columns: COLUMNS, rows: ROWS } = props
 
+  const SHOWS_TOTALS = COLUMNS.some(
+    (column) => column.total !== undefined
+  )
+
   return (
     <View style={tw("mt-3")}>
-      <View fixed style={tw("flex-row bg-surface px-2 py-1")}>
+      <View
+        fixed
+        style={tw(
+          "flex-row border-t border-b border-border bg-neutral-100 px-2 py-1"
+        )}
+      >
         {COLUMNS.map((column, index) => (
           <Text
             key={index}
             style={[
               tw(
-                `text-xs font-bold text-subdued${
-                  column.align === "right" ? " text-right" : ""
-                }`
+                `text-xs text-foreground font-normal${column.align === "right" ? " text-right" : ""}`
               ),
               { flexBasis: column.flexBasis },
             ]}
@@ -69,7 +85,9 @@ export function StatementReportTable<T>(
       {ROWS.map((row, index) => (
         <View
           key={index}
-          style={tw("flex-row border-b border-border px-2 py-1")}
+          style={tw(
+            "flex-row border-t border-b border-border px-2 py-1"
+          )}
         >
           {COLUMNS.map((column, columnIndex) => (
             <View
@@ -81,6 +99,27 @@ export function StatementReportTable<T>(
           ))}
         </View>
       ))}
+      {SHOWS_TOTALS && (
+        <View
+          style={tw(
+            "flex-row border-t border-b border-border px-2 py-1"
+          )}
+        >
+          {COLUMNS.map((column, index) => (
+            <Text
+              key={index}
+              style={[
+                tw(
+                  `text-xs font-bold${column.align === "right" ? " text-right" : ""}`
+                ),
+                { flexBasis: column.flexBasis },
+              ]}
+            >
+              {column.total?.(ROWS) ?? ""}
+            </Text>
+          ))}
+        </View>
+      )}
     </View>
   )
 }

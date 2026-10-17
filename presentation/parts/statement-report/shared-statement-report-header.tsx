@@ -33,17 +33,20 @@ export function RunningHeader(props: {
     <View
       fixed
       style={tw(
-        "absolute left-8 right-8 top-6 flex-row justify-between items-center border-b border-neutral-100 pb-2"
+        "absolute left-8 right-8 top-6 flex-row justify-between items-center"
       )}
     >
-      <View style={tw("flex-row justify-center items-center")}>
-        <Text style={tw("text-xs text-subdued")}>
+      <View style={tw("flex-col justify-center items-start")}>
+        <Text style={tw("text-xs text-subdued font-bold")}>
           {`${DATA.portfolio.name}`}
+        </Text>
+        <Text style={tw("text-xs text-subdued")}>
+          {`${FormatMonthYear(DATA.periodEnd)}`}
         </Text>
       </View>
       <View style={tw("flex-row justify-center items-center")}>
         <Text style={tw("text-xs text-subdued")}>
-          {FormatMonthYear(DATA.periodEnd)}
+          {DATA.portfolio.id}
         </Text>
       </View>
     </View>
