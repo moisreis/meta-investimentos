@@ -1,11 +1,15 @@
 import Decimal from "decimal.js"
 
 import { ToMonthKey } from "@/lib/date/month-key"
+import { SeriesGrowthFactors } from "@/lib/performance/period-window.calculator"
+import { calculatePortfolioReturn } from "@/domain/portfolio/calculators/return.calculator"
 
 export interface MonthlyPerformanceSnapshot {
   // Snapshot day, as an ISO 8601 string.
   date: string
-  // Return of the day, in percent, as a decimal string.
+  // Return of the day, in percent, as a decimal string. Kept
+  // for the display fallback of a single-day month, never
+  // chained, because its two-decimal rounding would compound.
   returnDaily: string
   // Trailing return of the month, used as a fallback when
   // the month holds a single snapshot.
@@ -17,6 +21,10 @@ export interface MonthlyPerformanceSnapshot {
   earnings: string
   // Closing value of the day, as a decimal string.
   patrimony: string
+  // Net cash flow of the day, as a decimal string. Rebuilds
+  // the exact daily growth factor together with `patrimony`
+  // and `earnings`, so the month chains without rounding.
+  cashFlowNet: string
   // Money applied on the day, as a decimal string.
   applicationTotal: string
   // Money redeemed on the day, as a decimal string.
@@ -42,7 +50,8 @@ export interface MonthlyPerformanceRow {
   withdrawals: string
 }
 
-// Parses a decimal string to a finite amount, defaulting to zero.
+// Parses a decimal string to a finite amount, defaulting to
+// zero, so a malformed field never poisons the month sums.
 function ToAmount(value: string | null | undefined): string {
   if (value === null || value === undefined) return "0"
   return Number.isFinite(Number.parseFloat(value)) ? value : "0"
@@ -120,21 +129,28 @@ export function calculateMonthlyPerformance(
 
     const LAST = GROUP[GROUP.length - 1]
 
-    const FACTOR = GROUP.reduce(
-      (factor, snapshot) =>
-        factor.times(
-          new Decimal(1).plus(
-            new Decimal(
-              ToAmount(snapshot.returnDaily)
-            ).dividedBy(100)
-          )
-        ),
-      new Decimal(1)
-    )
-
+    // The month return is chained from the exact daily growth
+    // factors rebuilt from the balances, never from the
+    // two-decimal `returnDaily`, whose rounding would compound
+    // over the days and drift the month away from the
+    // statement. A single-snapshot month falls back to the
+    // stored month return, which the performance calculation
+    // already resolved.
     const RETURN =
       GROUP.length >= 2
-        ? FACTOR.minus(1).times(100).toFixed(2)
+        ? calculatePortfolioReturn({
+            dailyGrowthFactors: SeriesGrowthFactors(
+              GROUP.map((snapshot) => ({
+                date: snapshot.date,
+                patrimony: snapshot.patrimony,
+                earnings: snapshot.earnings,
+                cashFlowNet: snapshot.cashFlowNet,
+                returnDaily: snapshot.returnDaily,
+                returnMonthly: snapshot.returnMonthly,
+                returnYearly: null,
+              }))
+            ),
+          }).value.toFixed(2)
         : LAST.returnMonthly
 
     const EARNINGS = GROUP.reduce(

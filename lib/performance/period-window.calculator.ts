@@ -291,13 +291,78 @@ export function SumSeriesCashFlows<
 
 /**
  * @summary
+ * Derives the exact daily growth factors of a horizon.
+ *
+ * @remarks
+ * Rebuilds each day's growth factor from the money the
+ * snapshot recorded, never from the pre-rounded
+ * `returnDaily`. The factor of a day is the closing balance
+ * net of its cash flow over the balance that opened it. The
+ * opening balance of the first snapshot is recovered from
+ * its own earnings (`patrimony - cashFlowNet - earnings`),
+ * which is the exact identity the daily earnings were built
+ * with, so a window can chain honestly even when the
+ * snapshot before it was not loaded.
+ *
+ * Chaining the stored two-decimal `returnDaily` compounds
+ * the rounding of every day, which drifts the period return
+ * away from the statement by several basis points over a
+ * month. Rebuilding from the balances keeps the compounded
+ * return exact to the cent.
+ *
+ * @typeParam T - Snapshot type of the resolved horizon.
+ *
+ * @explanation
+ * Use this calculator whenever a horizon must be compounded.
+ * The formula itself stays in the domain return calculator
+ * each route chains through, so no delivery layer ever
+ * reimplements the chaining.
+ *
+ * @param series - The snapshots of the horizon, ascending.
+ *
+ * @returns The daily growth factors, in order.
+ *
+ * @example
+ * const FACTORS = SeriesGrowthFactors(WINDOW.yearSeries);
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-19
+ */
+export function SeriesGrowthFactors<T extends PerformanceSnapshot>(
+  series: readonly T[]
+): { value: GrowthFactor }[] {
+  const FACTORS: { value: GrowthFactor }[] = []
+  let previous: number | null = null
+
+  for (const snapshot of series) {
+    const PATRIMONY = ToAmount(snapshot.patrimony)
+    const CASH_FLOW = ToAmount(snapshot.cashFlowNet)
+    const EARNINGS = ToAmount(snapshot.earnings)
+    const OPENING = previous ?? PATRIMONY - CASH_FLOW - EARNINGS
+
+    if (OPENING > 0) {
+      const FACTOR_VALUE = (PATRIMONY - CASH_FLOW) / OPENING
+      if (Number.isFinite(FACTOR_VALUE) && FACTOR_VALUE >= 0) {
+        FACTORS.push({ value: GrowthFactor.create(FACTOR_VALUE) })
+      }
+    }
+
+    previous = PATRIMONY
+  }
+
+  return FACTORS
+}
+
+/**
+ * @summary
  * Chains a horizon of daily returns into a period return.
  *
  * @remarks
- * Builds the growth factor of every daily return of the
+ * Rebuilds the exact growth factor of every day of the
  * series and hands them to the domain return calculator
  * passed in. A horizon holding fewer than two usable daily
- * returns falls back to the trailing return stored on the
+ * factors falls back to the trailing return stored on the
  * closing snapshot, and a horizon with no trailing return to
  * fall back to resolves to `null`.
  *
@@ -337,15 +402,7 @@ export function ChainPeriodReturn<T extends PerformanceSnapshot>(
     dailyGrowthFactors: { value: GrowthFactor }[]
   }) => SignedPercentage
 ): string | null {
-  const FACTORS: { value: GrowthFactor }[] = []
-
-  for (const snapshot of series) {
-    const FACTOR_VALUE = 1 + ToAmount(snapshot.returnDaily) / 100
-    if (!Number.isFinite(FACTOR_VALUE) || FACTOR_VALUE < 0) {
-      continue
-    }
-    FACTORS.push({ value: GrowthFactor.create(FACTOR_VALUE) })
-  }
+  const FACTORS = SeriesGrowthFactors(series)
 
   if (FACTORS.length >= 2) {
     return chain({

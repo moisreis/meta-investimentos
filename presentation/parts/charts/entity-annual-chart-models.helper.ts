@@ -7,7 +7,11 @@ import {
   FormatCurrency,
 } from "@/presentation/presenters/currency.presenter"
 import { FormatSignedPercentage } from "@/presentation/presenters/percentage.presenter"
-import type { PerformanceSnapshot } from "@/lib/performance/period-window.calculator"
+import {
+  ChainPeriodReturn,
+  type PerformanceSnapshot,
+} from "@/lib/performance/period-window.calculator"
+import { calculatePortfolioReturn } from "@/domain/portfolio/calculators/return.calculator"
 
 // Copy keys of the annual section of a detail screen. The
 // constants of a route satisfy this interface, so the builder
@@ -249,11 +253,15 @@ function BuildMonthlyPatrimonyChart(
  * screen.
  *
  * @remarks
- * Plots the accumulated month return carried by the closing
- * snapshot of each calendar month of the year, signed by
- * direction, so the reader sees which months carried the
- * year. A month with no closing return keeps a gap, because
- * the horizon needs at least two snapshots to chain.
+ * Plots the chained month return of each calendar month of
+ * the year, signed by direction, so the reader sees which
+ * months carried the year. The month return is rebuilt from
+ * the exact daily growth factors of the balances, never from
+ * the stored two-decimal monthly figures, so a plotted month
+ * matches the summary and the statement report to the cent. A
+ * single-snapshot month falls back to its stored month return
+ * and a month with no snapshot keeps a gap, because the
+ * horizon needs at least two snapshots to chain.
  *
  * @param byMonth - The snapshots of the year, grouped and
  *   ordered by calendar month.
@@ -277,14 +285,24 @@ function BuildMonthlyReturnChart(
     kind: "bar",
     series: BuildReturnSeries(labels),
     points: Array.from({ length: MONTH_COUNT }, (_, month) => {
-      const CLOSING = ReadClosingSnapshot(byMonth, month)
+      const SNAPSHOTS = byMonth.get(month)
+      const CLOSING =
+        SNAPSHOTS && SNAPSHOTS.length > 0
+          ? SNAPSHOTS[SNAPSHOTS.length - 1]
+          : null
+      const CHAINED =
+        SNAPSHOTS && SNAPSHOTS.length >= 2
+          ? ChainPeriodReturn(
+              SNAPSHOTS,
+              CLOSING?.returnMonthly ?? null,
+              calculatePortfolioReturn
+            )
+          : (CLOSING?.returnMonthly ?? null)
 
       return {
         label: FormatMonthLabel(year, month),
         values: {
-          returnMonthly: CLOSING
-            ? ToNullableAmount(CLOSING.returnMonthly)
-            : null,
+          returnMonthly: ToNullableAmount(CHAINED),
         },
       }
     }),

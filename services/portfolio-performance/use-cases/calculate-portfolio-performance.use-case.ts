@@ -32,9 +32,9 @@ import type { MonthlyInflationEntry } from "@domain/benchmark/calculators/monthl
 import { INFLATION_BENCHMARK_ACRONYM } from "@/constants/benchmark/inflation-benchmark.constants"
 import { CalculatePositionPerformanceUseCase } from "@/services/position-performance/use-cases/calculate-position-performance.use-case"
 import { resolvePositionOpening } from "@/services/position-performance/helpers/resolve-position-opening.helper"
+import { SeriesGrowthFactors } from "@/lib/performance/period-window.calculator"
 import {
   EntityId,
-  GrowthFactor,
   PositiveMoney,
   QuotaQuantity,
   SignedMoney,
@@ -637,14 +637,21 @@ export class CalculatePortfolioPerformanceUseCase {
       return null
     }
 
-    const FACTORS: { value: GrowthFactor }[] = IN_WINDOW.map(
-      (performance) => ({
-        value: GrowthFactor.create(
-          new Decimal(1).plus(
-            performance.returnDaily.value.dividedBy(100)
-          )
-        ),
-      })
+    // The growth factors are rebuilt from the balances the
+    // snapshots recorded instead of chaining the two-decimal
+    // `returnDaily`, whose rounding would otherwise compound
+    // over the horizon and drift the trailing return away
+    // from the statement.
+    const FACTORS = SeriesGrowthFactors(
+      IN_WINDOW.map((performance) => ({
+        date: performance.date.toISOString(),
+        patrimony: performance.patrimony.value.toString(),
+        earnings: performance.earnings.value.toString(),
+        cashFlowNet: performance.cashFlowNet.value.toString(),
+        returnDaily: performance.returnDaily.value.toString(),
+        returnMonthly: null,
+        returnYearly: null,
+      }))
     )
 
     return calculatePortfolioReturn({

@@ -10,11 +10,47 @@ import {
   buildEntityId,
   buildPortfolio,
   buildPortfolioPerformance,
+  buildPositiveMoney,
+  buildSignedMoney,
   buildSignedPercentage,
 } from "__tests__/__setup__/_factories.setup"
 
 const FROM = new Date("2026-01-01T00:00:00.000Z")
 const TO = new Date("2026-01-31T00:00:00.000Z")
+
+// Builds a consistent chain of snapshots: each day's patrimony is
+// the previous balance plus the earnings its return produces, so
+// the growth factor rebuilt from the balances equals the daily
+// return exactly.
+function buildChain(
+  entries: { date: string; returnPercent: number }[]
+): ReturnType<typeof buildPortfolioPerformance>[] {
+  const SNAPSHOTS: ReturnType<
+    typeof buildPortfolioPerformance
+  >[] = []
+  let balance = 1_000_000
+
+  for (const ENTRY of entries) {
+    const EARNINGS = balance * (ENTRY.returnPercent / 100)
+    const PATRIMONY = balance + EARNINGS
+
+    SNAPSHOTS.push(
+      buildPortfolioPerformance({
+        date: new Date(`${ENTRY.date}T00:00:00.000Z`),
+        patrimony: buildPositiveMoney(PATRIMONY.toFixed(2)),
+        cashFlowNet: buildSignedMoney("0.00"),
+        earnings: buildSignedMoney(EARNINGS.toFixed(2)),
+        returnDaily: buildSignedPercentage(
+          ENTRY.returnPercent.toFixed(2)
+        ),
+      })
+    )
+
+    balance = Number(PATRIMONY.toFixed(2))
+  }
+
+  return SNAPSHOTS
+}
 
 describe("services/portfolio-performance/use-cases/resolve-portfolio-period-returns.use-case", () => {
   let portfolioRepository: ReturnType<
@@ -38,30 +74,14 @@ describe("services/portfolio-performance/use-cases/resolve-portfolio-period-retu
           userId: buildEntityId("user-1"),
         })
       )
-      await portfolioPerformanceRepository.save(
-        buildPortfolioPerformance({
-          date: new Date("2026-01-05T00:00:00.000Z"),
-          returnDaily: buildSignedPercentage("1"),
-        })
-      )
-      await portfolioPerformanceRepository.save(
-        buildPortfolioPerformance({
-          date: new Date("2026-01-10T00:00:00.000Z"),
-          returnDaily: buildSignedPercentage("2"),
-        })
-      )
-      await portfolioPerformanceRepository.save(
-        buildPortfolioPerformance({
-          date: new Date("2026-01-20T00:00:00.000Z"),
-          returnDaily: buildSignedPercentage("3"),
-        })
-      )
-      await portfolioPerformanceRepository.save(
-        buildPortfolioPerformance({
-          date: new Date("2026-01-25T00:00:00.000Z"),
-          returnDaily: buildSignedPercentage("4"),
-        })
-      )
+      for (const SNAPSHOT of buildChain([
+        { date: "2026-01-05", returnPercent: 1 },
+        { date: "2026-01-10", returnPercent: 2 },
+        { date: "2026-01-20", returnPercent: 3 },
+        { date: "2026-01-25", returnPercent: 4 },
+      ])) {
+        await portfolioPerformanceRepository.save(SNAPSHOT)
+      }
       const useCase = new ResolvePortfolioPeriodReturnsUseCase(
         portfolioRepository,
         portfolioPerformanceRepository
@@ -86,24 +106,13 @@ describe("services/portfolio-performance/use-cases/resolve-portfolio-period-retu
           userId: buildEntityId("user-1"),
         })
       )
-      await portfolioPerformanceRepository.save(
-        buildPortfolioPerformance({
-          date: new Date("2026-01-21T00:00:00.000Z"),
-          returnDaily: buildSignedPercentage("1"),
-        })
-      )
-      await portfolioPerformanceRepository.save(
-        buildPortfolioPerformance({
-          date: new Date("2026-02-02T00:00:00.000Z"),
-          returnDaily: buildSignedPercentage("2"),
-        })
-      )
-      await portfolioPerformanceRepository.save(
-        buildPortfolioPerformance({
-          date: new Date("2026-02-05T00:00:00.000Z"),
-          returnDaily: buildSignedPercentage("3"),
-        })
-      )
+      for (const SNAPSHOT of buildChain([
+        { date: "2026-01-21", returnPercent: 1 },
+        { date: "2026-02-02", returnPercent: 2 },
+        { date: "2026-02-05", returnPercent: 3 },
+      ])) {
+        await portfolioPerformanceRepository.save(SNAPSHOT)
+      }
       const useCase = new ResolvePortfolioPeriodReturnsUseCase(
         portfolioRepository,
         portfolioPerformanceRepository
@@ -189,24 +198,13 @@ describe("services/portfolio-performance/use-cases/resolve-portfolio-period-retu
           userId: buildEntityId("user-1"),
         })
       )
-      await portfolioPerformanceRepository.save(
-        buildPortfolioPerformance({
-          date: new Date("2025-12-31T00:00:00.000Z"),
-          returnDaily: buildSignedPercentage("50"),
-        })
-      )
-      await portfolioPerformanceRepository.save(
-        buildPortfolioPerformance({
-          date: new Date("2026-01-12T00:00:00.000Z"),
-          returnDaily: buildSignedPercentage("1"),
-        })
-      )
-      await portfolioPerformanceRepository.save(
-        buildPortfolioPerformance({
-          date: new Date("2026-01-15T00:00:00.000Z"),
-          returnDaily: buildSignedPercentage("2"),
-        })
-      )
+      for (const SNAPSHOT of buildChain([
+        { date: "2025-12-31", returnPercent: 50 },
+        { date: "2026-01-12", returnPercent: 1 },
+        { date: "2026-01-15", returnPercent: 2 },
+      ])) {
+        await portfolioPerformanceRepository.save(SNAPSHOT)
+      }
       const useCase = new ResolvePortfolioPeriodReturnsUseCase(
         portfolioRepository,
         portfolioPerformanceRepository

@@ -187,6 +187,5 @@ export const STATEMENT_REPORT_COPY = {
   indexMonthsTitle: "Índices por mês",
   accumulatedIndexesTitle: "Índices acumulados",
   accumulatedRateColumn: "Acumulado",
-  shareOfTargetColumn: "% da meta",
   portfolioLabel: "Carteira",
 }

@@ -13,6 +13,8 @@ import {
   buildPortfolio,
   buildPosition,
   buildPositionPerformance,
+  buildPositiveMoney,
+  buildSignedMoney,
   buildSignedPercentage,
 } from "__tests__/__setup__/_factories.setup"
 
@@ -23,6 +25,42 @@ const OTHER_USER_ID = "00000000-0000-0000-0000-0000000000c2"
 
 const FROM = new Date("2026-01-01T00:00:00.000Z")
 const TO = new Date("2026-01-31T00:00:00.000Z")
+
+// Builds a consistent chain of snapshots: each day's patrimony is
+// the previous balance plus the earnings its return produces, so
+// the growth factor rebuilt from the balances equals the daily
+// return exactly.
+function buildChain(
+  entries: { date: string; returnPercent: number }[],
+  positionId?: ReturnType<typeof buildEntityId>
+): ReturnType<typeof buildPositionPerformance>[] {
+  const SNAPSHOTS: ReturnType<
+    typeof buildPositionPerformance
+  >[] = []
+  let balance = 1_000_000
+
+  for (const ENTRY of entries) {
+    const EARNINGS = balance * (ENTRY.returnPercent / 100)
+    const PATRIMONY = balance + EARNINGS
+
+    SNAPSHOTS.push(
+      buildPositionPerformance({
+        positionId,
+        date: new Date(`${ENTRY.date}T00:00:00.000Z`),
+        patrimony: buildPositiveMoney(PATRIMONY.toFixed(2)),
+        cashFlowNet: buildSignedMoney("0.00"),
+        earnings: buildSignedMoney(EARNINGS.toFixed(2)),
+        returnDaily: buildSignedPercentage(
+          ENTRY.returnPercent.toFixed(2)
+        ),
+      })
+    )
+
+    balance = Number(PATRIMONY.toFixed(2))
+  }
+
+  return SNAPSHOTS
+}
 
 describe("services/position-performance/use-cases/resolve-position-period-returns.use-case", () => {
   let positionRepository: ReturnType<
@@ -57,20 +95,15 @@ describe("services/position-performance/use-cases/resolve-position-period-return
           userId: buildEntityId(USER_ID),
         })
       )
-      await positionPerformanceRepository.save(
-        buildPositionPerformance({
-          positionId: buildEntityId(POSITION_ID),
-          date: new Date("2026-01-05T00:00:00.000Z"),
-          returnDaily: buildSignedPercentage("1"),
-        })
-      )
-      await positionPerformanceRepository.save(
-        buildPositionPerformance({
-          positionId: buildEntityId(POSITION_ID),
-          date: new Date("2026-01-10T00:00:00.000Z"),
-          returnDaily: buildSignedPercentage("1"),
-        })
-      )
+      for (const SNAPSHOT of buildChain(
+        [
+          { date: "2026-01-05", returnPercent: 1 },
+          { date: "2026-01-10", returnPercent: 1 },
+        ],
+        buildEntityId(POSITION_ID)
+      )) {
+        await positionPerformanceRepository.save(SNAPSHOT)
+      }
       const useCase = new ResolvePositionPeriodReturnsUseCase(
         positionRepository,
         portfolioRepository,

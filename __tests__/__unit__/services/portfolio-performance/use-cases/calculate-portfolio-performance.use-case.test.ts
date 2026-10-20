@@ -39,6 +39,7 @@ import {
   buildQuota,
   buildQuotaPrice,
   buildQuotaQuantity,
+  buildSignedMoney,
   buildSignedPercentage,
   buildUniqueCnpj,
   buildWithdrawal,
@@ -679,6 +680,9 @@ describe("services/portfolio-performance/use-cases/calculate-portfolio-performan
         buildPortfolioPerformance({
           portfolioId: buildEntityId("portfolio-1"),
           date: new Date("2025-12-20T00:00:00.000Z"),
+          patrimony: buildPositiveMoney("101000.00"),
+          earnings: buildSignedMoney("1000.00"),
+          cashFlowNet: buildSignedMoney("0.00"),
           returnDaily: buildSignedPercentage("1"),
         })
       )
@@ -686,6 +690,9 @@ describe("services/portfolio-performance/use-cases/calculate-portfolio-performan
         buildPortfolioPerformance({
           portfolioId: buildEntityId("portfolio-1"),
           date: new Date("2026-01-05T00:00:00.000Z"),
+          patrimony: buildPositiveMoney("103020.00"),
+          earnings: buildSignedMoney("2020.00"),
+          cashFlowNet: buildSignedMoney("0.00"),
           returnDaily: buildSignedPercentage("2"),
         })
       )
@@ -693,7 +700,9 @@ describe("services/portfolio-performance/use-cases/calculate-portfolio-performan
         buildPortfolioPerformance({
           portfolioId: buildEntityId("portfolio-1"),
           date: PREVIOUS_DATE,
-          patrimony: buildPositiveMoney("800.00"),
+          patrimony: buildPositiveMoney("103020.00"),
+          earnings: buildSignedMoney("0.00"),
+          cashFlowNet: buildSignedMoney("0.00"),
           returnDaily: buildSignedPercentage("0"),
         })
       )

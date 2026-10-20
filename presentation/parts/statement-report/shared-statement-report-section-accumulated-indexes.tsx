@@ -48,7 +48,11 @@ export function AccumulatedIndexesSection(props: {
       display:
         row.rate === null
           ? STATEMENT_REPORT_COPY.unavailable
-          : FormatShareCaption(row.rate, row.shareOfTarget),
+          : FormatShareCaption(
+              row.rate,
+              row.share,
+              row.shareLabel
+            ),
     }
   })
 
@@ -65,19 +69,21 @@ export function AccumulatedIndexesSection(props: {
 }
 
 /**
- * Renders the rate of a row followed by its share of the
- * target when the target resolves, so a row without a target
- * reads cleanly instead of printing a blank share.
+ * Renders the rate of a row followed by its share, with the
+ * suffix the row is read against, so a target row and an
+ * index row each print their own wording and a row without a
+ * share reads cleanly instead of printing a blank caption.
  */
 function FormatShareCaption(
   rate: string,
-  shareOfTarget: string | null
+  share: string | null,
+  shareLabel: string
 ): string {
   const CAPTION = FormatSignedPercentage(rate)
-  if (shareOfTarget === null) return CAPTION
+  if (share === null) return CAPTION
   return `${CAPTION} · ${FormatUnsignedPercentage(
-    shareOfTarget
-  )} ${STATEMENT_REPORT_COPY.shareOfTargetColumn}`
+    share
+  )}% ${shareLabel}`
 }
 
 /**

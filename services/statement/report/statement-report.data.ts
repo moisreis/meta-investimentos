@@ -11,6 +11,7 @@ import {
 } from "@/domain/portfolio/calculators/monthly-performance.calculator"
 import { calculatePortfolioCategoryAllocation } from "@/domain/portfolio/calculators/category-allocation.calculator"
 import { calculateAccumulatedTarget } from "@/domain/portfolio/calculators/accumulated-target.calculator"
+import { calculatePortfolioTarget } from "@/domain/portfolio/calculators/target.calculator"
 import { calculateAmountSum } from "@/domain/portfolio/calculators/amount-sum.calculator"
 import { calculateHoldingAggregation } from "@/domain/portfolio/calculators/holding-aggregation.calculator"
 import { calculatePerformanceShare } from "@/domain/portfolio/calculators/performance-share.calculator"
@@ -28,7 +29,8 @@ import type { NormResponseDTO } from "@/services/norm/dto/norm-response.dto"
 import type { PortfolioPerformanceResponseDTO } from "@/services/portfolio-performance/dto/portfolio-performance-response.dto"
 import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 import type { PositionPerformanceResponseDTO } from "@/services/position-performance/dto/position-performance-response.dto"
-import { PositiveMoney } from "@/value-objects"
+import { PositiveMoney, SignedPercentage } from "@/value-objects"
+import { ValidationError } from "@/errors"
 
 import {
   STATEMENT_REPORT_COMPARISON_ACRONYMS,
@@ -245,6 +247,32 @@ export function BuildStatementReportData(
   // holds no reading at all.
   const IPCA_SERIES = INDEX_SERIES.get("ipca")
 
+  // The reference-month return is the chained return the
+  // shared period calculators already resolved for the same
+  // window the detail screen reads, so the report and the
+  // screen can never disagree. The monthly series only backs
+  // it up when the window carries no resolved figure.
+  const MONTH_RETURN =
+    source.monthReturn ?? REFERENCE?.returnMonthly ?? null
+
+  // The month target is `(1 + IPCA) × (1 + juros) − 1` for the
+  // reference month, the same compound the daily performance
+  // calculation writes on each snapshot. A report of a month
+  // whose IPCA reading is missing cannot state a target, so it
+  // fails loudly instead of printing a fabricated one.
+  const MONTH_IPCA = IPCA_SERIES?.get(source.month) ?? null
+  if (MONTH_IPCA === null) {
+    throw new ValidationError(
+      `\`IPCA\` reading missing for ${source.month}.`
+    )
+  }
+  const MONTH_TARGET = calculatePortfolioTarget({
+    annualInterestRate: SignedPercentage.create(
+      source.portfolio.annualInterestRate
+    ),
+    inflationRate: SignedPercentage.create(MONTH_IPCA),
+  }).value.toFixed(2)
+
   const TARGET_RATE =
     calculateAccumulatedTarget({
       annualInterestRate: source.portfolio.annualInterestRate,
@@ -272,8 +300,7 @@ export function BuildStatementReportData(
     },
     positions: POSITIONS,
     kpis: {
-      monthlyReturn:
-        REFERENCE?.returnMonthly ?? source.monthReturn,
+      monthlyReturn: MONTH_RETURN,
       yearlyReturn: YEARLY_RETURN,
       monthlyGains: REFERENCE?.earnings ?? "0.00",
       accumulatedGains: calculateAmountSum({
@@ -283,9 +310,10 @@ export function BuildStatementReportData(
       }),
       totalPatrimony: source.window.end?.patrimony ?? null,
       targetShare: calculatePerformanceShare({
-        value: YEARLY_RETURN,
-        reference: TARGET_RATE,
+        value: MONTH_RETURN,
+        reference: MONTH_TARGET,
       }),
+      monthTarget: MONTH_TARGET,
       targetRate: TARGET_RATE,
     },
     performance: MONTHLY.map<StatementReportPerformancePoint>(
@@ -385,13 +413,16 @@ export function BuildStatementReportData(
     ),
     accumulatedIndexes: BuildAccumulatedIndexes(
       ELAPSED_MONTHS,
+      source.month,
       INDEX_SERIES,
       YEARLY_RETURN,
-      TARGET_RATE
+      TARGET_RATE,
+      MONTH_RETURN,
+      MONTH_TARGET
     ),
     indexComparison: BuildIndexComparison(
-      YEARLY_RETURN,
-      ELAPSED_MONTHS,
+      MONTH_RETURN,
+      source.month,
       INDEX_SERIES
     ),
   }
@@ -544,26 +575,39 @@ function BuildIndexSeries(
  * Builds the accumulated index rows: the portfolio and the
  * target first, then the tracked indexes with a registered
  * reading.
+ *
+ * @remarks
+ * The bar of a tracked index carries its accumulated rate of
+ * the elapsed window, so the year reads at a glance. The
+ * share printed beside every row is the reference-month
+ * comparison `monthReturn / benchmarkMonth × 100`, which is
+ * the figure the section is meant to communicate: how much
+ * of the index the portfolio captured in the month.
  */
 function BuildAccumulatedIndexes(
   months: readonly string[],
+  referenceMonth: string,
   series: Map<string, Map<string, string | null>>,
   yearlyReturn: string | null,
-  targetRate: string | null
+  targetRate: string | null,
+  monthReturn: string | null,
+  monthTarget: string | null
 ): StatementReportAccumulatedIndexRow[] {
   const ROWS: StatementReportAccumulatedIndexRow[] = [
     {
       name: "Carteira",
       rate: yearlyReturn,
-      shareOfTarget: calculatePerformanceShare({
-        value: yearlyReturn,
-        reference: targetRate,
+      share: calculatePerformanceShare({
+        value: monthReturn,
+        reference: monthTarget,
       }),
+      shareLabel: "da meta",
     },
     {
       name: "Meta",
       rate: targetRate,
-      shareOfTarget: targetRate === null ? null : "100.00",
+      share: targetRate === null ? null : "100.00",
+      shareLabel: "da meta",
     },
   ]
 
@@ -587,10 +631,11 @@ function BuildAccumulatedIndexes(
     ROWS.push({
       name: NAME,
       rate: RATE,
-      shareOfTarget: calculatePerformanceShare({
-        value: RATE,
-        reference: targetRate,
+      share: calculatePerformanceShare({
+        value: monthReturn,
+        reference: MAP.get(referenceMonth) ?? null,
       }),
+      shareLabel: "do índice",
     })
   }
 
@@ -598,12 +643,19 @@ function BuildAccumulatedIndexes(
 }
 
 /**
- * Builds the dashboard comparison rows: the portfolio year
- * return as a share of each comparison index.
+ * Builds the dashboard comparison rows: the portfolio month
+ * return as a share of each comparison index's month rate.
+ *
+ * @remarks
+ * The figure is `monthReturn / benchmarkMonth × 100`, so the
+ * row states how much of the index the portfolio captured in
+ * the reference month. Every comparison index keeps its row
+ * even when the month holds no reading, so the chart always
+ * lists the same indexes and only the figure is missing.
  */
 function BuildIndexComparison(
-  yearlyReturn: string | null,
-  months: readonly string[],
+  monthReturn: string | null,
+  referenceMonth: string,
   series: Map<string, Map<string, string | null>>
 ): StatementReportIndexComparisonRow[] {
   const ROWS: StatementReportIndexComparisonRow[] = []
@@ -613,18 +665,11 @@ function BuildIndexComparison(
     const MAP = series.get(KEY)
     if (MAP === undefined) continue
 
-    const RATE = accumulateBenchmarkRates(
-      months.map((month) => MAP.get(month) ?? null)
-    )
-
-    // Every comparison index keeps its row even when the
-    // elapsed window holds no reading, so the chart always
-    // lists the same indexes and only the figure is missing.
     ROWS.push({
       name: ACRONYM,
       share: calculatePerformanceShare({
-        value: yearlyReturn,
-        reference: RATE,
+        value: monthReturn,
+        reference: MAP.get(referenceMonth) ?? null,
       }),
     })
   }
@@ -830,6 +875,7 @@ function ToMonthlySnapshot(
     target: snapshot.target,
     earnings: snapshot.earnings,
     patrimony: snapshot.patrimony,
+    cashFlowNet: snapshot.cashFlowNet,
     applicationTotal: snapshot.applicationTotal,
     redemptionTotal: snapshot.redemptionTotal,
   }

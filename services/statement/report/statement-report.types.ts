@@ -162,8 +162,11 @@ export interface StatementReportKpis {
   accumulatedGains: string
   // Closing patrimony of the reference month, or `null`.
   totalPatrimony: string | null
-  // Portfolio return as a share of the target, in percent.
+  // Portfolio month return as a share of the month target,
+  // in percent, or `null`.
   targetShare: string | null
+  // Target of the reference month, in percent, or `null`.
+  monthTarget: string | null
   // Accumulated target of the reference year, in percent.
   targetRate: string | null
 }
@@ -300,9 +303,12 @@ export interface StatementReportAccumulatedIndexRow {
   name: string
   // Accumulated rate of the index in the year, or `null`.
   rate: string | null
-  // The rate as a share of the accumulated target, in
-  // percent, or `null`.
-  shareOfTarget: string | null
+  // The reference-month comparison `monthReturn /
+  // benchmarkMonth × 100`, or `null`.
+  share: string | null
+  // The caption suffix the share is read against, so a target
+  // row and an index row never print the same wording.
+  shareLabel: string
 }
 
 /**
