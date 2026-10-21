@@ -137,6 +137,13 @@ export const WITHDRAWAL_DATATABLE = {
   REVERSE_SUCCESS_DESCRIPTION:
     "O resgate foi marcado como estornado.",
   REVERSE_ERROR_TITLE: "Não foi possível reverter o resgate",
+
+  // Bulk delete result toast copy.
+  BULK_DELETE_SUCCESS_TITLE: "Resgates excluídos!",
+  BULK_DELETE_SUCCESS_DESCRIPTION:
+    "Os resgates foram excluídos com sucesso.",
+  BULK_DELETE_ERROR_TITLE:
+    "Não foi possível excluir os resgates",
 } as const
 
 // Copy used to describe the row before a single reverse.

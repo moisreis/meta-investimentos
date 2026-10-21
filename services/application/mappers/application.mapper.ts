@@ -15,7 +15,7 @@ function parseDateAsUtc(dateStr: string): Date {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
     return new Date(dateStr)
   }
-  const [y, m, d] = dateStr.split('-').map(Number)
+  const [y, m, d] = dateStr.split("-").map(Number)
   return new Date(Date.UTC(y, m - 1, d))
 }
 

@@ -20,6 +20,19 @@ type DeletePositionValues = z.infer<
   typeof DELETE_POSITION_SCHEMA
 >
 
+// The payload accepted by the bulk delete positions action.
+const BULK_DELETE_POSITIONS_SCHEMA = z.object({
+  positionIds: z
+    .array(ID_SCHEMA)
+    .min(1, "Selecione ao menos uma posição.")
+    .max(500, "Selecione menos de 500 posições."),
+})
+
+// Values of the bulk delete positions action payload.
+type BulkDeletePositionsValues = z.infer<
+  typeof BULK_DELETE_POSITIONS_SCHEMA
+>
+
 // The payload accepted by the get position period returns
 // action. The boundaries are inclusive UTC day keys.
 const GET_POSITION_PERIOD_RETURNS_SCHEMA = z.object({
@@ -34,8 +47,10 @@ type GetPositionPeriodReturnsValues = z.infer<
 >
 
 export {
+  BULK_DELETE_POSITIONS_SCHEMA,
   DELETE_POSITION_SCHEMA,
   GET_POSITION_PERIOD_RETURNS_SCHEMA,
+  type BulkDeletePositionsValues,
   type DeletePositionValues,
   type GetPositionPeriodReturnsValues,
 }

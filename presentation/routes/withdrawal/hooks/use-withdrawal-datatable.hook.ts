@@ -15,6 +15,7 @@ import type { WithdrawalRow } from "@/presentation/types/withdrawal-row.types"
 import { CreateWithdrawalTableColumns } from "../datatable/table-columns"
 import { EMPTY_WITHDRAWAL_LOOKUPS } from "../helpers/build-withdrawal-lookups.helper"
 import type { WithdrawalLookups } from "../types/withdrawal-list.types"
+import { useWithdrawalBulkDelete } from "./use-withdrawal-bulk-delete.hook"
 import { useWithdrawalRowActions } from "./use-withdrawal-row-actions.hook"
 import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { useSharedCommandOpen } from "@/presentation/parts/hooks/use-shared-command-open.hook"
@@ -51,6 +52,7 @@ function useWithdrawalDatatable(
 ) {
   const rowActions = useWithdrawalRowActions()
   const addDialog = useEntityAddDialog()
+  const bulkDelete = useWithdrawalBulkDelete()
 
   // The shell reaches this dialog without naming it: Ctrl+R and
   // the palette row both land on `?command=add-withdrawal`, and
@@ -84,7 +86,7 @@ function useWithdrawalDatatable(
     },
   })
 
-  return { table: TABLE, rowActions, addDialog }
+  return { table: TABLE, rowActions, addDialog, bulkDelete }
 }
 
 export { useWithdrawalDatatable }

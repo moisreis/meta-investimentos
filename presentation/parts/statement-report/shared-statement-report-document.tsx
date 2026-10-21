@@ -18,10 +18,7 @@ import { DashboardSection } from "./shared-statement-report-section-dashboard"
 import { DistributionDonutsSection } from "./shared-statement-report-section-distribution-donuts"
 import { DistributionFundsSection } from "./shared-statement-report-section-distribution-funds"
 import { FundsSection } from "./shared-statement-report-section-funds"
-import {
-  AssetTypesSection,
-  IndexFiguresSection,
-} from "./shared-statement-report-section-index-figures"
+
 import {
   CategoryBarsSection,
   IndexBarsSection,

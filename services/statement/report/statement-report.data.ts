@@ -1,16 +1,21 @@
 import type { PortfolioHolding } from "@/presentation/types/portfolio-holding.types"
-import type { PeriodWindow } from "@/lib/performance/period-window.calculator"
+import {
+  ChainPeriodReturn,
+  type PeriodWindow,
+} from "@/lib/performance/period-window.calculator"
 import { BuildYearMonthKeys } from "@/lib/date/month-key"
+import { NormalizeAcronym } from "@/lib/benchmark/normalize-acronym"
 import {
   accumulateBenchmarkRates,
   calculateBenchmarkMonthlyRates,
 } from "@/domain/benchmark/calculators/benchmark-monthly-series.calculator"
+import { calculateAccumulatedMeta } from "@/domain/benchmark/calculators/accumulated-meta.calculator"
 import {
   calculateMonthlyPerformance,
   type MonthlyPerformanceSnapshot,
 } from "@/domain/portfolio/calculators/monthly-performance.calculator"
 import { calculatePortfolioCategoryAllocation } from "@/domain/portfolio/calculators/category-allocation.calculator"
-import { calculateAccumulatedTarget } from "@/domain/portfolio/calculators/accumulated-target.calculator"
+import { calculatePortfolioReturn } from "@/domain/portfolio/calculators/return.calculator"
 import { calculatePortfolioTarget } from "@/domain/portfolio/calculators/target.calculator"
 import { calculateAmountSum } from "@/domain/portfolio/calculators/amount-sum.calculator"
 import { calculateHoldingAggregation } from "@/domain/portfolio/calculators/holding-aggregation.calculator"
@@ -160,7 +165,7 @@ export interface StatementReportSource {
  *
  * @author Moisés Reis
  *
- * @date 2026-10-06
+ * @date 2026-10-20
  */
 export function BuildStatementReportData(
   source: StatementReportSource
@@ -236,16 +241,25 @@ export function BuildStatementReportData(
   // August report never read the same window.
   const ELAPSED_MONTHS = MONTH_KEYS.slice(0, REFERENCE_INDEX + 1)
 
-  const YEARLY_RETURN = source.window.end?.returnYearly ?? null
-
-  // The stored cumulative target is only written for a
-  // portfolio whose every elapsed month carries an IPCA
-  // reading, so it is null on the thin Neon history. The
-  // report compounds the target from whatever IPCA readings
-  // the elapsed window holds, mirroring the Rails generator,
-  // and only falls back to the stored figure when the window
-  // holds no reading at all.
   const IPCA_SERIES = INDEX_SERIES.get("ipca")
+
+  // The report computes the meta of every month from the
+  // annual rate and the IPCA series, never from the target
+  // stored on the snapshots: the registry writes the meta the
+  // portfolio was registered with when the calculation ran,
+  // which reads stale once the registration changes. A month
+  // whose IPCA reading is missing states no meta, so the
+  // chart and the table print a dash instead of a fabricated
+  // figure.
+  const MONTH_TARGETS = new Map(
+    ELAPSED_MONTHS.map((month) => [
+      month,
+      BuildMonthTarget(
+        source.portfolio.annualInterestRate,
+        IPCA_SERIES?.get(month) ?? null
+      ),
+    ])
+  )
 
   // The reference-month return is the chained return the
   // shared period calculators already resolved for the same
@@ -255,26 +269,52 @@ export function BuildStatementReportData(
   const MONTH_RETURN =
     source.monthReturn ?? REFERENCE?.returnMonthly ?? null
 
-  // The month target is `(1 + IPCA) × (1 + juros) − 1` for the
-  // reference month, the same compound the daily performance
-  // calculation writes on each snapshot. A report of a month
-  // whose IPCA reading is missing cannot state a target, so it
-  // fails loudly instead of printing a fabricated one.
+  // The month target is the monthly portfolio rate plus the
+  // month IPCA reading, the same additive rule the daily
+  // performance calculation writes on each snapshot. A report
+  // of a month whose IPCA reading is missing cannot state a
+  // target, so it fails loudly instead of printing a
+  // fabricated one.
   const MONTH_IPCA = IPCA_SERIES?.get(source.month) ?? null
   if (MONTH_IPCA === null) {
     throw new ValidationError(
       `\`IPCA\` reading missing for ${source.month}.`
     )
   }
-  const MONTH_TARGET = calculatePortfolioTarget({
-    annualInterestRate: SignedPercentage.create(
-      source.portfolio.annualInterestRate
-    ),
-    inflationRate: SignedPercentage.create(MONTH_IPCA),
-  }).value.toFixed(2)
+  const MONTH_TARGET =
+    MONTH_TARGETS.get(source.month) ??
+    BuildMonthTarget(
+      source.portfolio.annualInterestRate,
+      MONTH_IPCA
+    )
 
+  // The year return is chained from the daily growth factors
+  // of every snapshot the reference year holds, so the KPI
+  // and the accumulated section state the calendar year the
+  // document prints, never the trailing twelve months the
+  // registry stores on the closing snapshot.
+  const ACCUMULATED_RETURN = ChainPeriodReturn(
+    source.performances
+      .filter(
+        (snapshot) =>
+          snapshot.date >= `${YEAR}-01-01` &&
+          snapshot.date <= source.periodEnd
+      )
+      .sort((left, right) =>
+        left.date.localeCompare(right.date)
+      ),
+    source.window.end?.returnYearly ?? null,
+    calculatePortfolioReturn
+  )
+
+  // The accumulated meta is the compound of the monthly metas
+  // the elapsed window holds, resolved by the benchmark
+  // calculator from the annual rate and the IPCA series. Only
+  // a window that holds no reading at all falls back to the
+  // stored cumulative target, which the registry writes as
+  // the meta the portfolio was registered with.
   const TARGET_RATE =
-    calculateAccumulatedTarget({
+    calculateAccumulatedMeta({
       annualInterestRate: source.portfolio.annualInterestRate,
       inflationRates: ELAPSED_MONTHS.map(
         (month) => IPCA_SERIES?.get(month) ?? null
@@ -301,7 +341,7 @@ export function BuildStatementReportData(
     positions: POSITIONS,
     kpis: {
       monthlyReturn: MONTH_RETURN,
-      yearlyReturn: YEARLY_RETURN,
+      yearlyReturn: ACCUMULATED_RETURN,
       monthlyGains: REFERENCE?.earnings ?? "0.00",
       accumulatedGains: calculateAmountSum({
         values: MONTHLY.slice(0, REFERENCE_INDEX + 1).map(
@@ -309,9 +349,12 @@ export function BuildStatementReportData(
         ),
       }),
       totalPatrimony: source.window.end?.patrimony ?? null,
+      // The gauge reads the year against the year meta, so a
+      // portfolio above its month but below its year never
+      // states the wrong figure.
       targetShare: calculatePerformanceShare({
-        value: MONTH_RETURN,
-        reference: MONTH_TARGET,
+        value: ACCUMULATED_RETURN,
+        reference: TARGET_RATE,
       }),
       monthTarget: MONTH_TARGET,
       targetRate: TARGET_RATE,
@@ -321,7 +364,7 @@ export function BuildStatementReportData(
         month: row.month,
         label: MONTH_LABELS[index],
         portfolio: row.returnMonthly,
-        target: row.target,
+        target: MONTH_TARGETS.get(row.month) ?? null,
       })
     ),
     monthlyEarnings: MONTHLY.map<StatementReportEarningsPoint>(
@@ -398,7 +441,7 @@ export function BuildStatementReportData(
         month,
         label: MONTH_LABELS[index],
         portfolio: MONTHLY[index].returnMonthly,
-        target: MONTHLY[index].target,
+        target: MONTH_TARGETS.get(month) ?? null,
         ipca: INDEX_SERIES.get("ipca")?.get(month) ?? null,
         cdi: INDEX_SERIES.get("cdi")?.get(month) ?? null,
         imaGeral:
@@ -413,17 +456,14 @@ export function BuildStatementReportData(
     ),
     accumulatedIndexes: BuildAccumulatedIndexes(
       ELAPSED_MONTHS,
-      source.month,
       INDEX_SERIES,
-      YEARLY_RETURN,
-      TARGET_RATE,
-      MONTH_RETURN,
-      MONTH_TARGET
+      ACCUMULATED_RETURN,
+      TARGET_RATE
     ),
     indexComparison: BuildIndexComparison(
-      MONTH_RETURN,
-      source.month,
-      INDEX_SERIES
+      ELAPSED_MONTHS,
+      INDEX_SERIES,
+      TARGET_RATE
     ),
   }
 }
@@ -573,40 +613,38 @@ function BuildIndexSeries(
 
 /**
  * Builds the accumulated index rows: the portfolio and the
- * target first, then the tracked indexes with a registered
+ * meta first, then the tracked indexes with a registered
  * reading.
  *
  * @remarks
- * The bar of a tracked index carries its accumulated rate of
- * the elapsed window, so the year reads at a glance. The
- * share printed beside every row is the reference-month
- * comparison `monthReturn / benchmarkMonth × 100`, which is
- * the figure the section is meant to communicate: how much
- * of the index the portfolio captured in the month.
+ * Every rate of the section is the accumulated figure of the
+ * elapsed window, so the year reads at a glance. The share
+ * printed beside the portfolio row is the year return as a
+ * share of the year meta, and the share printed beside every
+ * tracked index is the year meta as a share of the index, so
+ * a row always states how much of what it was measured
+ * against the portfolio captured.
  */
 function BuildAccumulatedIndexes(
   months: readonly string[],
-  referenceMonth: string,
   series: Map<string, Map<string, string | null>>,
-  yearlyReturn: string | null,
-  targetRate: string | null,
-  monthReturn: string | null,
-  monthTarget: string | null
+  accumulatedReturn: string | null,
+  accumulatedMeta: string | null
 ): StatementReportAccumulatedIndexRow[] {
   const ROWS: StatementReportAccumulatedIndexRow[] = [
     {
       name: "Carteira",
-      rate: yearlyReturn,
+      rate: accumulatedReturn,
       share: calculatePerformanceShare({
-        value: monthReturn,
-        reference: monthTarget,
+        value: accumulatedReturn,
+        reference: accumulatedMeta,
       }),
       shareLabel: "da meta",
     },
     {
       name: "Meta",
-      rate: targetRate,
-      share: targetRate === null ? null : "100.00",
+      rate: accumulatedMeta,
+      share: accumulatedMeta === null ? null : "100.00",
       shareLabel: "da meta",
     },
   ]
@@ -632,8 +670,8 @@ function BuildAccumulatedIndexes(
       name: NAME,
       rate: RATE,
       share: calculatePerformanceShare({
-        value: monthReturn,
-        reference: MAP.get(referenceMonth) ?? null,
+        value: accumulatedMeta,
+        reference: RATE,
       }),
       shareLabel: "do índice",
     })
@@ -643,20 +681,21 @@ function BuildAccumulatedIndexes(
 }
 
 /**
- * Builds the dashboard comparison rows: the portfolio month
- * return as a share of each comparison index's month rate.
+ * Builds the dashboard comparison rows: the year meta as a
+ * share of each comparison index's accumulated rate.
  *
  * @remarks
- * The figure is `monthReturn / benchmarkMonth × 100`, so the
- * row states how much of the index the portfolio captured in
- * the reference month. Every comparison index keeps its row
- * even when the month holds no reading, so the chart always
- * lists the same indexes and only the figure is missing.
+ * The figure is `accumulatedMeta / accumulatedIndex × 100`,
+ * so the row states how much of the index the meta the
+ * portfolio compounds against captured over the year. Every
+ * comparison index keeps its row even when the elapsed window
+ * holds no reading, so the chart always lists the same
+ * indexes and only the figure is missing.
  */
 function BuildIndexComparison(
-  monthReturn: string | null,
-  referenceMonth: string,
-  series: Map<string, Map<string, string | null>>
+  months: readonly string[],
+  series: Map<string, Map<string, string | null>>,
+  accumulatedMeta: string | null
 ): StatementReportIndexComparisonRow[] {
   const ROWS: StatementReportIndexComparisonRow[] = []
 
@@ -668,13 +707,34 @@ function BuildIndexComparison(
     ROWS.push({
       name: ACRONYM,
       share: calculatePerformanceShare({
-        value: monthReturn,
-        reference: MAP.get(referenceMonth) ?? null,
+        value: accumulatedMeta,
+        reference: accumulateBenchmarkRates(
+          months.map((month) => MAP.get(month) ?? null)
+        ),
       }),
     })
   }
 
   return ROWS
+}
+
+/**
+ * Resolves the monthly meta of one month from the annual rate
+ * and the month IPCA reading, or `null` when the month holds
+ * no reading.
+ */
+function BuildMonthTarget(
+  annualInterestRate: string,
+  inflationRate: string | null
+): string | null {
+  if (inflationRate === null) return null
+
+  return calculatePortfolioTarget({
+    annualInterestRate: SignedPercentage.create(
+      annualInterestRate
+    ),
+    inflationRate: SignedPercentage.create(inflationRate),
+  }).value.toFixed(2)
 }
 
 /**
@@ -879,17 +939,6 @@ function ToMonthlySnapshot(
     applicationTotal: snapshot.applicationTotal,
     redemptionTotal: snapshot.redemptionTotal,
   }
-}
-
-/**
- * Normalizes a benchmark acronym for comparison, dropping
- * spaces, dashes and underscores.
- */
-function NormalizeAcronym(value: string): string {
-  return value
-    .trim()
-    .toUpperCase()
-    .replace(/[\s_-]/g, "")
 }
 
 /**

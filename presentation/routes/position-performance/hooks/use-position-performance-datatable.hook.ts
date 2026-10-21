@@ -15,6 +15,7 @@ import type { PositionPerformanceRow } from "@/presentation/types/position-perfo
 import { CreatePositionPerformanceTableColumns } from "../datatable/table-columns"
 import { EMPTY_POSITION_PERFORMANCE_LOOKUPS } from "../helpers/build-position-performance-lookups.helper"
 import type { PositionPerformanceLookups } from "../types/position-performance-list.types"
+import { usePositionPerformanceBulkDelete } from "./use-position-performance-bulk-delete.hook"
 import { usePositionPerformanceRowActions } from "./use-position-performance-row-actions.hook"
 
 // Column helper bound to the entity table features.
@@ -52,6 +53,7 @@ function usePositionPerformanceDatatable(
   lookups: PositionPerformanceLookups = EMPTY_POSITION_PERFORMANCE_LOOKUPS
 ) {
   const rowActions = usePositionPerformanceRowActions()
+  const bulkDelete = usePositionPerformanceBulkDelete()
 
   const rowFor = useCallback(
     (performanceId: string) =>
@@ -81,7 +83,7 @@ function usePositionPerformanceDatatable(
     },
   })
 
-  return { table: TABLE, rowActions }
+  return { table: TABLE, rowActions, bulkDelete }
 }
 
 export { usePositionPerformanceDatatable }

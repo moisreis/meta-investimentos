@@ -18,7 +18,8 @@ const attachmentVariants = cva(
       },
       orientation: {
         horizontal: "min-w-40 items-center",
-        vertical: "w-24 flex-col has-data-[slot=attachment-content]:w-30",
+        vertical:
+          "w-24 flex-col has-data-[slot=attachment-content]:w-30",
       },
     },
   }
@@ -32,7 +33,8 @@ function Attachment({
   ...props
 }: React.ComponentProps<"div"> &
   VariantProps<typeof attachmentVariants> & {
-    state?: "idle" | "uploading" | "processing" | "error" | "done"
+    state?:
+      "idle" | "uploading" | "processing" | "error" | "done"
   }) {
   return (
     <div
@@ -40,7 +42,10 @@ function Attachment({
       data-state={state}
       data-size={size}
       data-orientation={orientation}
-      className={cn(attachmentVariants({ size, orientation }), className)}
+      className={cn(
+        attachmentVariants({ size, orientation }),
+        className
+      )}
       {...props}
     />
   )
@@ -66,12 +71,16 @@ function AttachmentMedia({
   className,
   variant = "icon",
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof attachmentMediaVariants>) {
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof attachmentMediaVariants>) {
   return (
     <div
       data-slot="attachment-media"
       data-variant={variant}
-      className={cn(attachmentMediaVariants({ variant }), className)}
+      className={cn(
+        attachmentMediaVariants({ variant }),
+        className
+      )}
       {...props}
     />
   )
@@ -170,7 +179,10 @@ function AttachmentTrigger({
     props: mergeProps<"button">(
       {
         type: render ? type : (type ?? "button"),
-        className: cn("absolute inset-0 z-10 outline-none", className),
+        className: cn(
+          "absolute inset-0 z-10 outline-none",
+          className
+        ),
       },
       props
     ),
@@ -181,7 +193,10 @@ function AttachmentTrigger({
   })
 }
 
-function AttachmentGroup({ className, ...props }: React.ComponentProps<"div">) {
+function AttachmentGroup({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="attachment-group"

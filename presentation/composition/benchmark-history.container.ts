@@ -1,6 +1,7 @@
 import { db } from "@/clients/database.client"
 import { BenchmarkRepository } from "@/infrastructure/benchmark/repositories/benchmark.repository"
 import { BenchmarkHistoryRepository } from "@/infrastructure/benchmark-history/repositories/benchmark-history.repository"
+import { BulkDeleteBenchmarkHistoryUseCase } from "@/services/benchmark-history/use-cases/bulk-delete-benchmark-history.use-case"
 import { DeleteBenchmarkHistoryUseCase } from "@/services/benchmark-history/use-cases/delete-benchmark-history.use-case"
 import { GetBenchmarkHistoryUseCase } from "@/services/benchmark-history/use-cases/get-benchmark-history.use-case"
 import { ListBenchmarkHistoryUseCase } from "@/services/benchmark-history/use-cases/list-benchmark-history.use-case"
@@ -9,6 +10,7 @@ import { UpdateBenchmarkHistoryUseCase } from "@/services/benchmark-history/use-
 
 // The benchmark history use cases, already wired to the repositories.
 interface BenchmarkHistoryUseCases {
+  bulkDelete: BulkDeleteBenchmarkHistoryUseCase
   get: GetBenchmarkHistoryUseCase
   list: ListBenchmarkHistoryUseCase
   record: RecordBenchmarkHistoryUseCase
@@ -45,6 +47,9 @@ function BenchmarkHistoryContainer(): BenchmarkHistoryUseCases {
   const HISTORY_REPOSITORY = new BenchmarkHistoryRepository(db)
 
   return {
+    bulkDelete: new BulkDeleteBenchmarkHistoryUseCase(
+      HISTORY_REPOSITORY
+    ),
     get: new GetBenchmarkHistoryUseCase(HISTORY_REPOSITORY),
     list: new ListBenchmarkHistoryUseCase(HISTORY_REPOSITORY),
     record: new RecordBenchmarkHistoryUseCase(

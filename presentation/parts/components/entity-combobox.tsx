@@ -83,6 +83,30 @@ export interface EntityComboboxProps {
 
 /**
  * @summary
+ * Normalizes a value for the combobox search.
+ *
+ * @remarks
+ * Lowercases the value and drops everything that is not a
+ * letter or a digit, so a typed CNPJ matches whether the
+ * user includes the mask or not: `12.345.678/0001-99` and
+ * `12345678000199` normalize to the same haystack. Spaces
+ * are dropped for the same reason, which only merges
+ * adjacent words and never hides a substring.
+ *
+ * @param value - The text to normalize.
+ *
+ * @returns The normalized text.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-20
+ */
+function NormalizeSearch(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, "")
+}
+
+/**
+ * @summary
  * Renders the searchable picker every route form uses to
  * choose one of many.
  *
@@ -172,10 +196,11 @@ function EntityCombobox({
         item.id === selected.id
       }
       filter={(item, query) => {
-        const NORMALIZED = query.trim().toLowerCase()
+        const NORMALIZED = NormalizeSearch(query)
         if (!NORMALIZED) return true
-        const HAYSTACK =
-          `${item.name} ${item.description ?? ""}`.toLowerCase()
+        const HAYSTACK = NormalizeSearch(
+          `${item.name} ${item.description ?? ""}`
+        )
         return HAYSTACK.includes(NORMALIZED)
       }}
       autoHighlight

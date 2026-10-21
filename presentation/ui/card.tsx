@@ -19,7 +19,10 @@ function Card({
   )
 }
 
-function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
+function CardHeader({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-header"
@@ -32,27 +35,42 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+function CardTitle({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
-      className={cn("font-heading text-sm font-medium", className)}
+      className={cn(
+        "font-heading text-sm font-medium",
+        className
+      )}
       {...props}
     />
   )
 }
 
-function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
+function CardDescription({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-      className={cn("text-xs/relaxed text-muted-foreground", className)}
+      className={cn(
+        "text-xs/relaxed text-muted-foreground",
+        className
+      )}
       {...props}
     />
   )
 }
 
-function CardAction({ className, ...props }: React.ComponentProps<"div">) {
+function CardAction({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-action"
@@ -65,7 +83,10 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-function CardContent({ className, ...props }: React.ComponentProps<"div">) {
+function CardContent({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-content"
@@ -75,7 +96,10 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
+function CardFooter({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-footer"

@@ -8,6 +8,7 @@ import { ListFundsUseCase } from "@/services/fund/use-cases/list-funds.use-case"
 import { ListPortfoliosUseCase } from "@/services/portfolio/use-cases/list-portfolios.use-case"
 import { ListAllPositionsUseCase } from "@/services/position/use-cases/list-all-positions.use-case"
 import { AddWithdrawalUseCase } from "@/services/withdrawal/use-cases/add-withdrawal.use-case"
+import { BulkDeleteWithdrawalsUseCase } from "@/services/withdrawal/use-cases/bulk-delete-withdrawals.use-case"
 import { CreateWithdrawalUseCase } from "@/services/withdrawal/use-cases/create-withdrawal.use-case"
 import { DeleteWithdrawalUseCase } from "@/services/withdrawal/use-cases/delete-withdrawal.use-case"
 import { ListAllWithdrawalsUseCase } from "@/services/withdrawal/use-cases/list-all-withdrawals.use-case"
@@ -17,6 +18,7 @@ import { ReverseWithdrawalUseCase } from "@/services/withdrawal/use-cases/revers
 // repositories.
 interface WithdrawalUseCases {
   add: AddWithdrawalUseCase
+  bulkDelete: BulkDeleteWithdrawalsUseCase
   delete: DeleteWithdrawalUseCase
   reverse: ReverseWithdrawalUseCase
   listAllPositions: ListAllPositionsUseCase
@@ -69,6 +71,9 @@ function WithdrawalContainer(): WithdrawalUseCases {
         WITHDRAWAL_REPOSITORY,
         POSITION_REPOSITORY
       )
+    ),
+    bulkDelete: new BulkDeleteWithdrawalsUseCase(
+      WITHDRAWAL_REPOSITORY
     ),
     delete: new DeleteWithdrawalUseCase(WITHDRAWAL_REPOSITORY),
     reverse: new ReverseWithdrawalUseCase(WITHDRAWAL_REPOSITORY),

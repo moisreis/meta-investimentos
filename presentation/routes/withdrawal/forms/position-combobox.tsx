@@ -23,8 +23,9 @@ interface PositionComboboxProps {
  * @remarks
  * A controlled searchable combobox backed by Base UI.
  * The selected position is synced to the form as a
- * string id. Each option carries the share held by the
- * position under the fund name.
+ * string id. Each option carries the masked CNPJ of the
+ * fund and the share held by the position under the fund
+ * name, and the search matches both.
  *
  * @explanation
  * Use for the position field of the add withdrawal form.

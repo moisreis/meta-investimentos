@@ -34,11 +34,13 @@ function useStatementGenerateDialog() {
   const [OPEN, setOpen] = useState(false)
   const [STATUS, setStatus] = useState<EntityFormStatus>("idle")
   const [ERROR, setError] = useState<string | null>(null)
+  const [RESULT, setResult] = useState<unknown | null>(null)
   const [FORM_KEY, setFormKey] = useState(0)
 
   const HandleOpen = useCallback(() => {
     setStatus("idle")
     setError(null)
+    setResult(null)
     // Bumping the key remounts the form, so it returns to its
     // initial values — including the preselected portfolio.
     setFormKey((key) => key + 1)
@@ -51,15 +53,24 @@ function useStatementGenerateDialog() {
     if (!open) {
       setStatus("idle")
       setError(null)
+      setResult(null)
     }
   }, [])
 
   const HandleStatusChange = useCallback(
-    (status: EntityFormStatus, error: string | null) => {
+    (
+      status: EntityFormStatus,
+      error: string | null,
+      result?: unknown
+    ) => {
       setStatus(status)
       setError(error)
+      setResult(result ?? null)
 
       if (status === "success") {
+        // Close through the raw setter so the reset path of
+        // `UpdateOpen` does not clear the status and the
+        // result the success toast reads.
         setOpen(false)
         setFormKey((key) => key + 1)
         ROUTER.refresh()
@@ -74,6 +85,7 @@ function useStatementGenerateDialog() {
     handleOpen: HandleOpen,
     status: STATUS,
     errorMessage: ERROR,
+    result: RESULT,
     formKey: FORM_KEY,
     handleStatusChange: HandleStatusChange,
   }

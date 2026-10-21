@@ -58,10 +58,11 @@ function PositionPerformanceList({
 
   const filters =
     usePositionPerformanceDatatableFilters(PERFORMANCES)
-  const { table, rowActions } = usePositionPerformanceDatatable(
-    filters.filteredPerformances,
-    lookups
-  )
+  const { table, rowActions, bulkDelete } =
+    usePositionPerformanceDatatable(
+      filters.filteredPerformances,
+      lookups
+    )
   const kpis = usePositionPerformanceKpis({
     performances: PERFORMANCES,
   })
@@ -100,7 +101,7 @@ function PositionPerformanceList({
         <PositionPerformanceDatatableTable
           pending={PENDING}
           table={table}
-          onBulkDelete={rowActions.handleConfirmDelete}
+          onBulkDelete={bulkDelete.handleBulkDelete}
         />
       ) : (
         <EntityEmptyTable

@@ -1,6 +1,6 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import { defineConfig, globalIgnores } from "eslint/config"
+import nextVitals from "eslint-config-next/core-web-vitals"
+import nextTs from "eslint-config-next/typescript"
 
 // Stores the **ESLint** rules for the project.
 const eslintConfig = defineConfig([
@@ -12,7 +12,7 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
-]);
+])
 
 /**
  * @summary
@@ -31,4 +31,4 @@ const eslintConfig = defineConfig([
  *
  * @date 2026-09-13
  */
-export default eslintConfig;
+export default eslintConfig

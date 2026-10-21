@@ -1,17 +1,48 @@
 "use client"
 
-import { useState } from "react"
-import { ptBR } from "date-fns/locale"
-import { IconCalendar } from "@tabler/icons-react"
+import * as React from "react"
 
-import { Button } from "@/presentation/ui/button"
-import { Calendar } from "@/presentation/ui/calendar"
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/presentation/ui/popover"
-import { FormatMonth } from "@/presentation/presenters/date.presenter"
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/presentation/ui/combobox"
+
+/**
+ * One month of the month picker.
+ */
+interface MonthOption {
+  // Zero-based month index, kept so the key can be rebuilt
+  // without parsing the label back.
+  index: number
+
+  // Month name rendered to the user.
+  label: string
+}
+
+// Month names from January to December, in reading order.
+const MONTH_OPTIONS: readonly MonthOption[] = [
+  { index: 0, label: "Janeiro" },
+  { index: 1, label: "Fevereiro" },
+  { index: 2, label: "Março" },
+  { index: 3, label: "Abril" },
+  { index: 4, label: "Maio" },
+  { index: 5, label: "Junho" },
+  { index: 6, label: "Julho" },
+  { index: 7, label: "Agosto" },
+  { index: 8, label: "Setembro" },
+  { index: 9, label: "Outubro" },
+  { index: 10, label: "Novembro" },
+  { index: 11, label: "Dezembro" },
+]
+
+// Number of years offered before and after the current year,
+// so the picker reaches a few periods of history and one year
+// ahead without becoming an endless list.
+const YEAR_RANGE = 6
 
 /**
  * Props for the month picker.
@@ -41,48 +72,38 @@ export interface EntityMonthInputProps {
   // Marks the field as invalid.
   "aria-invalid"?: boolean | "true" | "false"
 
-  // Accessible label of the day grid.
+  // Accessible label of the picker.
   gridLabel: string
+
+  // First year offered by the year picker. Defaults to a few
+  // years before the current one.
+  yearFrom?: number
+
+  // Last year offered by the year picker. Defaults to the
+  // current year plus one.
+  yearTo?: number
 }
 
-// Parses a `yyyy-MM` month into the local date of its first
-// day.
-function ParseMonthValue(value: string): Date | undefined {
-  if (!value) return undefined
-
+// Splits a `yyyy-MM` key into its parts, or null when the key
+// does not match the month contract.
+function ParseMonthValue(
+  value: string
+): { year: number; month: number } | null {
   const MATCH = value.match(/^(\d{4})-(\d{2})$/)
-  if (!MATCH) return undefined
+  if (!MATCH) return null
 
   const YEAR = Number(MATCH[1])
   const MONTH = Number(MATCH[2]) - 1
 
-  if (MONTH < 0 || MONTH > 11) return undefined
+  if (MONTH < 0 || MONTH > 11) return null
 
-  return new Date(YEAR, MONTH, 1)
+  return { year: YEAR, month: MONTH }
 }
 
-/**
- * @summary
- * Reduces a picked day to the `yyyy-MM` key of its month.
- *
- * @remarks
- * The value is a whole month, so the day the user clicks
- * carries no meaning of its own: only the month it belongs to
- * is kept. Reading the local calendar fields avoids the
- * time-zone shift an `toISOString` slice would introduce.
- *
- * @param date - The day picked in the calendar.
- *
- * @returns The `yyyy-MM` key of the picked day.
- *
- * @author Moisés Reis
- *
- * @date 2026-09-28
- */
-function ToMonthKey(date: Date): string {
-  const YEAR = date.getFullYear()
-  const MONTH = String(date.getMonth() + 1).padStart(2, "0")
-  return `${YEAR}-${MONTH}`
+// Builds the `yyyy-MM` key from a year and a zero-based month.
+function ToMonthKey(year: number, month: number): string {
+  const MONTH = String(month + 1).padStart(2, "0")
+  return `${year}-${MONTH}`
 }
 
 /**
@@ -90,22 +111,18 @@ function ToMonthKey(date: Date): string {
  * Renders a picker whose value is a whole month.
  *
  * @remarks
- * Composes the shared popover and calendar primitives. The
- * calendar is a plain day grid: the month and year caption
- * is a label navigated with the previous and next buttons,
- * never a pair of dropdowns, so the user picks a day the
- * same way they do on the application and withdrawal forms.
+ * Composes two searchable comboboxes side by side: one for
+ * the month, from Janeiro to Dezembro, and one for the year.
+ * The pair replaces the day grid of the calendar variants, so
+ * choosing a reporting period no longer asks for a day that
+ * the value then discards.
  *
- * The day is a means of choosing the period, not a value of
- * its own. Picking any day reports the `yyyy-MM` key of the
- * month that day belongs to, and the trigger shows that month,
- * so the label always matches the period that was chosen. The
- * first day of the month carries the selected state for the
- * same reason.
- *
- * The string contract stays `yyyy-MM`, so a form schema, a
+ * The value contract stays `yyyy-MM`, so a form schema, a
  * generate action and a period helper that read a month key
- * are untouched by picking this control.
+ * are untouched by picking this control. A partial selection,
+ * a month without a year or the reverse, is reported as an
+ * empty string so a required schema keeps rejecting it until
+ * both halves are chosen.
  *
  * @explanation
  * Use for a field whose value is a reporting period rather
@@ -122,7 +139,9 @@ function ToMonthKey(date: Date): string {
  * @param props.required - Marks the field as required.
  * @param props.disabled - Blocks the interaction.
  * @param props.aria-invalid - Marks the field as invalid.
- * @param props.gridLabel - Accessible label of the grid.
+ * @param props.gridLabel - Accessible label of the picker.
+ * @param props.yearFrom - First year offered.
+ * @param props.yearTo - Last year offered.
  *
  * @returns The month picker.
  *
@@ -150,55 +169,128 @@ function EntityMonthInput({
   disabled = false,
   "aria-invalid": ariaInvalid,
   gridLabel,
+  yearFrom,
+  yearTo,
 }: EntityMonthInputProps) {
-  const [OPEN, setOpen] = useState(false)
+  const CURRENT_YEAR = new Date().getFullYear()
+  const FROM = yearFrom ?? CURRENT_YEAR - YEAR_RANGE
+  const TO = yearTo ?? CURRENT_YEAR + 1
 
   const SELECTED = ParseMonthValue(value)
-  const TRIGGER_LABEL = SELECTED
-    ? FormatMonth(SELECTED)
-    : placeholder
+
+  const YEAR_OPTIONS = React.useMemo(() => {
+    const OPTIONS: { id: string; name: string }[] = []
+    for (let year = TO; year >= FROM; year -= 1) {
+      OPTIONS.push({ id: String(year), name: String(year) })
+    }
+    return OPTIONS
+  }, [FROM, TO])
+
+  const MONTH_ITEMS = React.useMemo(
+    () =>
+      MONTH_OPTIONS.map((option) => ({
+        id: String(option.index),
+        name: option.label,
+      })),
+    []
+  )
+
+  const SELECTED_MONTH = SELECTED
+    ? (MONTH_ITEMS[SELECTED.month] ?? null)
+    : null
+  const SELECTED_YEAR = SELECTED
+    ? (YEAR_OPTIONS.find(
+        (option) => option.id === String(SELECTED.year)
+      ) ?? null)
+    : null
+
+  function EmitMonth(monthIndex: number, year: number) {
+    onValueChange?.(ToMonthKey(year, monthIndex))
+  }
 
   return (
-    <Popover open={OPEN} onOpenChange={setOpen}>
-      <PopoverTrigger
-        render={
-          <Button
-            id={id}
-            name={name}
-            type="button"
-            variant="outline"
-            data-placeholder={SELECTED ? undefined : true}
-            className="w-full justify-start gap-2 font-normal data-[placeholder=true]:text-muted-foreground"
-            disabled={disabled}
-            aria-invalid={ariaInvalid}
-            aria-required={required}
-          >
-            <IconCalendar
-              className="text-muted-foreground"
-              aria-hidden="true"
-            />
-            <span className="truncate">{TRIGGER_LABEL}</span>
-          </Button>
+    <div className="flex gap-2">
+      <Combobox
+        items={MONTH_ITEMS}
+        value={SELECTED_MONTH}
+        onValueChange={(next) => {
+          if (!next) return
+          EmitMonth(Number(next.id), SELECTED?.year ?? FROM)
+        }}
+        itemToStringLabel={(item) => item.name}
+        itemToStringValue={(item) => item.id}
+        isItemEqualToValue={(item, selected) =>
+          item.id === selected.id
         }
-      />
-      <PopoverContent align="start" className="w-auto p-1">
-        <Calendar
-          mode="single"
-          locale={ptBR}
-          defaultMonth={SELECTED}
-          selected={SELECTED}
-          numberOfMonths={1}
-          showOutsideDays={false}
-          onSelect={(next) => {
-            if (!next) return
-            onValueChange?.(ToMonthKey(next))
-            setOpen(false)
-          }}
-          autoFocus
+        filter={(item, query) => {
+          const NORMALIZED = query.trim().toLowerCase()
+          if (!NORMALIZED) return true
+          return item.name.toLowerCase().includes(NORMALIZED)
+        }}
+        autoHighlight
+      >
+        <ComboboxInput
+          id={id}
+          name={name}
+          placeholder={placeholder}
+          required={required}
+          disabled={disabled}
+          aria-invalid={ariaInvalid}
           aria-label={gridLabel}
+          className="flex-1"
         />
-      </PopoverContent>
-    </Popover>
+        <ComboboxContent>
+          <ComboboxEmpty>Nenhum mês encontrado.</ComboboxEmpty>
+          <ComboboxList>
+            {(item) => (
+              <ComboboxItem key={item.id} value={item}>
+                {item.name}
+              </ComboboxItem>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
+
+      <Combobox
+        items={YEAR_OPTIONS}
+        value={SELECTED_YEAR}
+        onValueChange={(next) => {
+          if (!next) return
+          EmitMonth(SELECTED?.month ?? 0, Number(next.id))
+        }}
+        itemToStringLabel={(item) => item.name}
+        itemToStringValue={(item) => item.id}
+        isItemEqualToValue={(item, selected) =>
+          item.id === selected.id
+        }
+        filter={(item, query) => {
+          const NORMALIZED = query.trim()
+          if (!NORMALIZED) return true
+          return item.name.includes(NORMALIZED)
+        }}
+        autoHighlight
+      >
+        <ComboboxInput
+          name={`${name}Year`}
+          placeholder="Ano"
+          required={required}
+          disabled={disabled}
+          aria-invalid={ariaInvalid}
+          aria-label="Ano de referência"
+          className="w-24"
+        />
+        <ComboboxContent>
+          <ComboboxEmpty>Nenhum ano encontrado.</ComboboxEmpty>
+          <ComboboxList>
+            {(item) => (
+              <ComboboxItem key={item.id} value={item}>
+                {item.name}
+              </ComboboxItem>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
+    </div>
   )
 }
 

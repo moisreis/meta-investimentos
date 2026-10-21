@@ -16,9 +16,10 @@ export interface PositionAddOption {
   portfolioId: string
   // Fund id for quota date validation.
   fundId: string
-  // Share the position holds of its portfolio, rendered
-  // under the fund name. Empty when the position holds
-  // nothing of the portfolio.
+  // Qualifier rendered under the fund name: the masked CNPJ
+  // of the fund and the share the position holds of its
+  // portfolio, joined by a separator. Either part is absent
+  // when unknown.
   description: string
 }
 

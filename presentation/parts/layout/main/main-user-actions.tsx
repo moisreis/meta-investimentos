@@ -1,3 +1,5 @@
+"use client"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +13,7 @@ import {
 import { Badge } from "@/presentation/ui/badge"
 
 import { SharedUserAvatar } from "@/presentation/parts/components/shared-user-avatar"
+import { useMainSignOut } from "@/presentation/parts/hooks/use-main-sign-out.hook"
 import type { UserIdentity } from "@/presentation/types/user-identity.types"
 
 import { IconSelector } from "@tabler/icons-react"
@@ -25,6 +28,35 @@ interface MainUserActionsProps {
 
 /**
  * @summary
+ * Renders an account menu entry that is not shipped yet.
+ *
+ * @remarks
+ * Disabled and tagged with the `Em breve` badge, so every
+ * placeholder entry of the menu reads the same way instead
+ * of restating the badge per item.
+ *
+ * @param props - Props of the placeholder entry.
+ * @param props.children - The entry label.
+ *
+ * @returns The disabled placeholder entry.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-20
+ */
+function ComingSoonItem({ children }: { children: string }) {
+  return (
+    <DropdownMenuItem disabled>
+      {children}{" "}
+      <Badge variant="outline" className="rounded-full">
+        Em breve
+      </Badge>
+    </DropdownMenuItem>
+  )
+}
+
+/**
+ * @summary
  * Renders the account menu of the sidebar header.
  *
  * @remarks
@@ -34,6 +66,10 @@ interface MainUserActionsProps {
  * identity block is dropped and the menu keeps the chevron
  * alone, which is a quieter shape than a row of placeholder
  * initials pretending to be a person.
+ *
+ * Every entry past the label is still unshipped, so they are
+ * disabled and tagged `Em breve`; only signing out is wired,
+ * which sends the browser to the sign-in route.
  *
  * @param props - Props of the account menu.
  * @param props.user - The signed-in user, or `null`.
@@ -45,6 +81,8 @@ interface MainUserActionsProps {
  * @date 2026-10-05
  */
 function MainUserActions({ user }: MainUserActionsProps) {
+  const { signOut, pending } = useMainSignOut()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -67,17 +105,16 @@ function MainUserActions({ user }: MainUserActionsProps) {
       <DropdownMenuContent>
         <DropdownMenuGroup>
           <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
-          <DropdownMenuItem>Perfil</DropdownMenuItem>
-          <DropdownMenuItem>Configurações</DropdownMenuItem>
+          <ComingSoonItem>Perfil</ComingSoonItem>
+          <ComingSoonItem>Configurações</ComingSoonItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>
-          Acessos{" "}
-          <Badge variant="outline" className="rounded-full">
-            Em breve
-          </Badge>
-        </DropdownMenuItem>
-        <DropdownMenuItem variant="destructive">
+        <ComingSoonItem>Acessos</ComingSoonItem>
+        <DropdownMenuItem
+          variant="destructive"
+          disabled={pending}
+          onClick={() => void signOut()}
+        >
           Sair
         </DropdownMenuItem>
       </DropdownMenuContent>

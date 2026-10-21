@@ -69,6 +69,7 @@ function usePortfolioEditForm(
     error: ERROR,
     pending: PENDING,
     status: STATUS,
+    result: RESULT,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
   } = useEntityForm({
@@ -129,6 +130,7 @@ function usePortfolioEditForm(
     error: ERROR,
     pending: PENDING,
     status: STATUS,
+    result: RESULT,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
   }

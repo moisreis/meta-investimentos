@@ -78,10 +78,27 @@ type DeletePositionPerformanceValues = z.infer<
   typeof DELETE_POSITION_PERFORMANCE_SCHEMA
 >
 
+// The payload accepted by the bulk delete position
+// performances action.
+const BULK_DELETE_POSITION_PERFORMANCES_SCHEMA = z.object({
+  performanceIds: z
+    .array(ID_SCHEMA)
+    .min(1, "Selecione ao menos uma performance.")
+    .max(500, "Selecione menos de 500 performances."),
+})
+
+// Values of the bulk delete position performances action
+// payload.
+type BulkDeletePositionPerformancesValues = z.infer<
+  typeof BULK_DELETE_POSITION_PERFORMANCES_SCHEMA
+>
+
 export {
+  BULK_DELETE_POSITION_PERFORMANCES_SCHEMA,
   DELETE_POSITION_PERFORMANCE_SCHEMA,
   GET_POSITION_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA,
   START_POSITION_PERFORMANCE_CALCULATION_SCHEMA,
+  type BulkDeletePositionPerformancesValues,
   type DeletePositionPerformanceValues,
   type GetPositionPerformanceCalculationProgressValues,
   type StartPositionPerformanceCalculationValues,

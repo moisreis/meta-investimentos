@@ -45,6 +45,7 @@ function useStatementGenerateForm(defaultPortfolioId = "") {
     error: ERROR,
     pending: PENDING,
     status: STATUS,
+    result: RESULT,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
   } = useEntityForm({
@@ -65,6 +66,7 @@ function useStatementGenerateForm(defaultPortfolioId = "") {
     error: ERROR,
     pending: PENDING,
     status: STATUS,
+    result: RESULT,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
   }

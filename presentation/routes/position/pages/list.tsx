@@ -61,7 +61,7 @@ function PositionList({
 
   // Build the datatable from the filtered positions and the
   // lookup data.
-  const { table, rowActions } = usePositionDatatable(
+  const { table, rowActions, bulkDelete } = usePositionDatatable(
     FILTERS.filteredPositions,
     lookups
   )
@@ -104,7 +104,7 @@ function PositionList({
         <PositionDatatableTable
           pending={PENDING}
           table={table}
-          onBulkDelete={rowActions.handleConfirmDelete}
+          onBulkDelete={bulkDelete.handleBulkDelete}
         />
       ) : (
         <EntityEmptyTable

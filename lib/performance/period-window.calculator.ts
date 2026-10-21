@@ -329,9 +329,9 @@ export function SumSeriesCashFlows<
  *
  * @date 2026-10-19
  */
-export function SeriesGrowthFactors<T extends PerformanceSnapshot>(
-  series: readonly T[]
-): { value: GrowthFactor }[] {
+export function SeriesGrowthFactors<
+  T extends PerformanceSnapshot,
+>(series: readonly T[]): { value: GrowthFactor }[] {
   const FACTORS: { value: GrowthFactor }[] = []
   let previous: number | null = null
 
@@ -344,7 +344,9 @@ export function SeriesGrowthFactors<T extends PerformanceSnapshot>(
     if (OPENING > 0) {
       const FACTOR_VALUE = (PATRIMONY - CASH_FLOW) / OPENING
       if (Number.isFinite(FACTOR_VALUE) && FACTOR_VALUE >= 0) {
-        FACTORS.push({ value: GrowthFactor.create(FACTOR_VALUE) })
+        FACTORS.push({
+          value: GrowthFactor.create(FACTOR_VALUE),
+        })
       }
     }
 

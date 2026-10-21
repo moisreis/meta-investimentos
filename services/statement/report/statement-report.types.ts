@@ -97,7 +97,7 @@ export interface StatementReportCover {
  *
  * @author Moisés Reis
  *
- * @date 2026-09-30
+ * @date 2026-10-20
  */
 export interface StatementReportData {
   portfolio: PortfolioResponseDTO
@@ -142,8 +142,8 @@ export interface StatementReportData {
   indexMonths: StatementReportIndexMonthRow[]
   // The accumulated year figures per index.
   accumulatedIndexes: StatementReportAccumulatedIndexRow[]
-  // The reference month rate of the portfolio against each
-  // comparison index, as a share of the index.
+  // The year meta against each comparison index, as a share
+  // of the index accumulated rate.
   indexComparison: StatementReportIndexComparisonRow[]
 }
 
@@ -154,7 +154,8 @@ export interface StatementReportData {
 export interface StatementReportKpis {
   // Chained return of the reference month.
   monthlyReturn: string | null
-  // Chained return of the reference year.
+  // Chained return of the calendar year, up to the
+  // reference month.
   yearlyReturn: string | null
   // Market gain of the reference month, as a signed amount.
   monthlyGains: string
@@ -162,12 +163,13 @@ export interface StatementReportKpis {
   accumulatedGains: string
   // Closing patrimony of the reference month, or `null`.
   totalPatrimony: string | null
-  // Portfolio month return as a share of the month target,
-  // in percent, or `null`.
+  // Year return as a share of the year meta, in percent,
+  // or `null`.
   targetShare: string | null
-  // Target of the reference month, in percent, or `null`.
+  // Meta of the reference month, in percent, or `null`.
   monthTarget: string | null
-  // Accumulated target of the reference year, in percent.
+  // Meta accumulated over the elapsed months of the year,
+  // in percent, or `null`.
   targetRate: string | null
 }
 
@@ -180,7 +182,8 @@ export interface StatementReportPerformancePoint {
   label: string
   // Return of the portfolio in the month, or `null`.
   portfolio: string | null
-  // Target of the portfolio in the month, or `null`.
+  // Meta of the month, or `null` when the month holds no
+  // **IPCA** reading.
   target: string | null
 }
 
@@ -276,7 +279,8 @@ export interface StatementReportComplianceRow {
  * @remarks
  * The portfolio column carries the chained return of the
  * portfolio in the month; the target column carries the
- * monthly target; the index columns carry the monthly
+ * meta computed from the annual rate and the month
+ * **IPCA** reading; the index columns carry the monthly
  * reading of each registered benchmark. A missing figure
  * stays `null` so the table renders a dash.
  */
@@ -301,12 +305,14 @@ export interface StatementReportIndexMonthRow {
  */
 export interface StatementReportAccumulatedIndexRow {
   name: string
-  // Accumulated rate of the index in the year, or `null`.
+  // Accumulated rate of the row in the year, or `null`.
   rate: string | null
-  // The reference-month comparison `monthReturn /
-  // benchmarkMonth × 100`, or `null`.
+  // The share the row is read against: the year return as
+  // a share of the year meta on the portfolio row, and the
+  // year meta as a share of the accumulated index on a
+  // tracked index row. `null` when either side is missing.
   share: string | null
-  // The caption suffix the share is read against, so a target
+  // The caption suffix the share is read against, so a meta
   // row and an index row never print the same wording.
   shareLabel: string
 }
@@ -343,7 +349,7 @@ export interface StatementReportFundAssetRow {
  */
 export interface StatementReportIndexComparisonRow {
   name: string
-  // Portfolio accumulated rate as a share of the index
-  // accumulated rate, in percent, or `null`.
+  // Year meta as a share of the index accumulated rate,
+  // in percent, or `null`.
   share: string | null
 }

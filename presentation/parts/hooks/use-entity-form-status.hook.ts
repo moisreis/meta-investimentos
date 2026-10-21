@@ -7,9 +7,12 @@ import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-for
 interface UseEntityFormStatusOptions {
   status: EntityFormStatus
   error: string | null
+  /** Payload of the last successful submit, when the form hook exposed one. */
+  result?: unknown
   onStatusChange?: (
     status: EntityFormStatus,
-    error: string | null
+    error: string | null,
+    result?: unknown
   ) => void
 }
 
@@ -33,11 +36,15 @@ interface UseEntityFormStatusOptions {
  * Use inside a form component that accepts an
  * `onStatusChange` prop. Call it once with the status and
  * error the form hook returned, and pass through the same
- * `onStatusChange` the parent supplied.
+ * `onStatusChange` the parent supplied. Pass the form hook
+ * `result` too when the parent builds a toast action from
+ * the created or updated entity.
  *
  * @param options - The form status and error to report.
  * @param options.status - Status reported by the form hook.
  * @param options.error - Message reported by the form hook.
+ * @param options.result - Success payload reported by the
+ *   form hook.
  * @param options.onStatusChange - The parent's callback.
  *
  * @author Moisés Reis
@@ -47,11 +54,12 @@ interface UseEntityFormStatusOptions {
 function useEntityFormStatus({
   status,
   error,
+  result,
   onStatusChange,
 }: UseEntityFormStatusOptions) {
   React.useEffect(() => {
-    onStatusChange?.(status, error)
-  }, [status, error, onStatusChange])
+    onStatusChange?.(status, error, result)
+  }, [status, error, result, onStatusChange])
 
   return { status, error }
 }

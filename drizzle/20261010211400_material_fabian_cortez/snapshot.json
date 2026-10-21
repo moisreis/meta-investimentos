@@ -2,15 +2,10 @@
   "version": "8",
   "dialect": "postgres",
   "id": "29cae73e-6ddc-432e-88b7-edccc35cc4ae",
-  "prevIds": [
-    "7429a886-a164-4e8e-b7ed-46ff159b37c2"
-  ],
+  "prevIds": ["7429a886-a164-4e8e-b7ed-46ff159b37c2"],
   "ddl": [
     {
-      "values": [
-        "USER",
-        "MANAGER"
-      ],
+      "values": ["USER", "MANAGER"],
       "name": "user_role",
       "entityType": "enums",
       "schema": "user"
@@ -3714,14 +3709,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "user",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "account_user_id_user_id_fkey",
@@ -3731,14 +3722,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "position_id"
-      ],
+      "columns": ["position_id"],
       "schemaTo": "portfolio",
       "tableTo": "position",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "application_position_id_position_id_fkey",
@@ -3748,14 +3735,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "reversed_by_user_id"
-      ],
+      "columns": ["reversed_by_user_id"],
       "schemaTo": "user",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "application_reversed_by_user_id_user_id_fkey",
@@ -3765,14 +3748,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "user",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "audit_log_user_id_user_id_fkey",
@@ -3782,14 +3761,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "portfolio_id"
-      ],
+      "columns": ["portfolio_id"],
       "schemaTo": "portfolio",
       "tableTo": "portfolio",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "bank_account_portfolio_id_portfolio_id_fkey",
@@ -3799,14 +3774,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "bank_id"
-      ],
+      "columns": ["bank_id"],
       "schemaTo": "bank",
       "tableTo": "bank",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "bank_account_bank_id_bank_id_fkey",
@@ -3816,14 +3787,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "benchmark_id"
-      ],
+      "columns": ["benchmark_id"],
       "schemaTo": "benchmark",
       "tableTo": "benchmark",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "benchmark_history_benchmark_id_benchmark_id_fkey",
@@ -3833,14 +3800,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "bank_account_id"
-      ],
+      "columns": ["bank_account_id"],
       "schemaTo": "bank",
       "tableTo": "bank_account",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "checking_account_bank_account_id_bank_account_id_fkey",
@@ -3850,14 +3813,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "bank_id"
-      ],
+      "columns": ["bank_id"],
       "schemaTo": "bank",
       "tableTo": "bank",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "fund_bank_id_bank_id_fkey",
@@ -3867,14 +3826,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "benchmark_id"
-      ],
+      "columns": ["benchmark_id"],
       "schemaTo": "benchmark",
       "tableTo": "benchmark",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "fund_benchmark_id_benchmark_id_fkey",
@@ -3884,14 +3839,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "category_id"
-      ],
+      "columns": ["category_id"],
       "schemaTo": "fund",
       "tableTo": "category",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "fund_category_id_category_id_fkey",
@@ -3901,14 +3852,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "category_id"
-      ],
+      "columns": ["category_id"],
       "schemaTo": "fund",
       "tableTo": "category",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "norm_category_id_category_id_fkey",
@@ -3918,14 +3865,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "norm_id"
-      ],
+      "columns": ["norm_id"],
       "schemaTo": "portfolio",
       "tableTo": "norm",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "norms_portfolios_norm_id_norm_id_fkey",
@@ -3935,14 +3878,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "portfolio_id"
-      ],
+      "columns": ["portfolio_id"],
       "schemaTo": "portfolio",
       "tableTo": "portfolio",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "norms_portfolios_portfolio_id_portfolio_id_fkey",
@@ -3952,14 +3891,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "user",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "portfolio_user_id_user_id_fkey",
@@ -3969,14 +3904,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "portfolio_id"
-      ],
+      "columns": ["portfolio_id"],
       "schemaTo": "portfolio",
       "tableTo": "portfolio",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "portfolio_performance_portfolio_id_portfolio_id_fkey",
@@ -3986,14 +3917,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "portfolio_id"
-      ],
+      "columns": ["portfolio_id"],
       "schemaTo": "portfolio",
       "tableTo": "portfolio",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "position_portfolio_id_portfolio_id_fkey",
@@ -4003,14 +3930,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "fund_id"
-      ],
+      "columns": ["fund_id"],
       "schemaTo": "fund",
       "tableTo": "fund",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "position_fund_id_fund_id_fkey",
@@ -4020,14 +3943,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "position_id"
-      ],
+      "columns": ["position_id"],
       "schemaTo": "portfolio",
       "tableTo": "position",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "position_performance_position_id_position_id_fkey",
@@ -4037,14 +3956,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "fund_id"
-      ],
+      "columns": ["fund_id"],
       "schemaTo": "fund",
       "tableTo": "fund",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "quota_fund_id_fund_id_fkey",
@@ -4054,14 +3969,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "user",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "session_user_id_user_id_fkey",
@@ -4071,14 +3982,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "portfolio_id"
-      ],
+      "columns": ["portfolio_id"],
       "schemaTo": "portfolio",
       "tableTo": "portfolio",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "statement_portfolio_id_portfolio_id_fkey",
@@ -4088,14 +3995,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "generated_by_user_id"
-      ],
+      "columns": ["generated_by_user_id"],
       "schemaTo": "user",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "statement_generated_by_user_id_user_id_fkey",
@@ -4105,14 +4008,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "application_id"
-      ],
+      "columns": ["application_id"],
       "schemaTo": "portfolio",
       "tableTo": "application",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "transaction_allocation_application_id_application_id_fkey",
@@ -4122,14 +4021,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "withdraw_id"
-      ],
+      "columns": ["withdraw_id"],
       "schemaTo": "portfolio",
       "tableTo": "withdrawal",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "transaction_allocation_withdraw_id_withdrawal_id_fkey",
@@ -4139,14 +4034,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "position_id"
-      ],
+      "columns": ["position_id"],
       "schemaTo": "portfolio",
       "tableTo": "position",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "withdrawal_position_id_position_id_fkey",
@@ -4156,14 +4047,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "reversed_by_user_id"
-      ],
+      "columns": ["reversed_by_user_id"],
       "schemaTo": "user",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "withdrawal_reversed_by_user_id_user_id_fkey",
@@ -4172,10 +4059,7 @@
       "table": "withdrawal"
     },
     {
-      "columns": [
-        "norm_id",
-        "portfolio_id"
-      ],
+      "columns": ["norm_id", "portfolio_id"],
       "nameExplicit": false,
       "name": "norms_portfolios_pkey",
       "entityType": "pks",
@@ -4183,9 +4067,7 @@
       "table": "norms_portfolios"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "account_pkey",
       "schema": "user",
@@ -4193,9 +4075,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "application_pkey",
       "schema": "portfolio",
@@ -4203,9 +4083,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "audit_log_pkey",
       "schema": "audit",
@@ -4213,9 +4091,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "bank_pkey",
       "schema": "bank",
@@ -4223,9 +4099,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "bank_account_pkey",
       "schema": "bank",
@@ -4233,9 +4107,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "benchmark_pkey",
       "schema": "benchmark",
@@ -4243,9 +4115,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "benchmark_history_pkey",
       "schema": "benchmark",
@@ -4253,9 +4123,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "category_pkey",
       "schema": "fund",
@@ -4263,9 +4131,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "checking_account_pkey",
       "schema": "bank",
@@ -4273,9 +4139,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "fund_pkey",
       "schema": "fund",
@@ -4283,9 +4147,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "norm_pkey",
       "schema": "portfolio",
@@ -4293,9 +4155,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "portfolio_pkey",
       "schema": "portfolio",
@@ -4303,9 +4163,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "portfolio_performance_pkey",
       "schema": "performance",
@@ -4313,9 +4171,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "position_pkey",
       "schema": "portfolio",
@@ -4323,9 +4179,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "position_performance_pkey",
       "schema": "performance",
@@ -4333,9 +4187,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "quota_pkey",
       "schema": "fund",
@@ -4343,9 +4195,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "session_pkey",
       "schema": "user",
@@ -4353,9 +4203,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "statement_pkey",
       "schema": "report",
@@ -4363,9 +4211,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "transaction_allocation_pkey",
       "schema": "portfolio",
@@ -4373,9 +4219,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "user_pkey",
       "schema": "user",
@@ -4383,9 +4227,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "verification_pkey",
       "schema": "user",
@@ -4393,9 +4235,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "withdrawal_pkey",
       "schema": "portfolio",
@@ -4404,9 +4244,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "code"
-      ],
+      "columns": ["code"],
       "nullsNotDistinct": false,
       "name": "bank_code_key",
       "schema": "bank",
@@ -4415,9 +4253,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "name"
-      ],
+      "columns": ["name"],
       "nullsNotDistinct": false,
       "name": "category_name_key",
       "schema": "fund",
@@ -4426,9 +4262,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "cnpj"
-      ],
+      "columns": ["cnpj"],
       "nullsNotDistinct": false,
       "name": "fund_cnpj_key",
       "schema": "fund",
@@ -4437,9 +4271,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "token"
-      ],
+      "columns": ["token"],
       "nullsNotDistinct": false,
       "name": "session_token_key",
       "schema": "user",
@@ -4448,9 +4280,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "cpf"
-      ],
+      "columns": ["cpf"],
       "nullsNotDistinct": false,
       "name": "user_cpf_key",
       "schema": "user",
@@ -4459,9 +4289,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "email"
-      ],
+      "columns": ["email"],
       "nullsNotDistinct": false,
       "name": "user_email_key",
       "schema": "user",

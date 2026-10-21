@@ -1,5 +1,8 @@
 "use client"
 
+import * as React from "react"
+import { useRouter } from "next/navigation"
+
 import { EntityEditDialog } from "@/presentation/parts/dialogs/entity-edit"
 import { EntityEditToast } from "@/presentation/parts/toasts/entity-edit-toast"
 import type { EntityEditDialogModel } from "@/presentation/parts/hooks/use-entity-edit-dialog.hook"
@@ -10,6 +13,7 @@ import {
   PORTFOLIO_FORM,
 } from "@/presentation/routes/portfolio/settings/labels.settings"
 import type { NormOptionRegistry } from "@/presentation/types/norms-portfolio.types"
+import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
 /**
  * Props for the portfolio edit dialog.
@@ -27,7 +31,8 @@ export interface PortfolioEditDialogProps {
  * Composes the shared edit dialog with the edit form
  * seeded from the target row. The result toast fires on
  * success or error; on success the dialog closes and the
- * server data refreshes.
+ * server data refreshes. The success toast carries a view
+ * action that opens the page of the edited portfolio.
  *
  * The bounds already stored for the target row are seeded
  * into the form from the same registry that supplies the
@@ -51,7 +56,25 @@ function PortfolioEditDialog({
   dialog,
   norms,
 }: PortfolioEditDialogProps) {
+  const ROUTER = useRouter()
+
   const TARGET_ID = dialog.target?.id
+
+  const UPDATED_ID = (
+    dialog.result as PortfolioResponseDTO | null
+  )?.id
+
+  const SUCCESS_ACTION = React.useMemo(
+    () =>
+      UPDATED_ID
+        ? {
+            label: PORTFOLIO_FORM.VIEW_ACTION,
+            onClick: () =>
+              ROUTER.push(`/portfolio/${UPDATED_ID}`),
+          }
+        : null,
+    [UPDATED_ID, ROUTER]
+  )
 
   return (
     <>
@@ -79,6 +102,7 @@ function PortfolioEditDialog({
           PORTFOLIO_FORM.UPDATE_SUCCESS_DESCRIPTION
         }
         errorTitle={PORTFOLIO_FORM.ERROR_TITLE}
+        successAction={SUCCESS_ACTION}
       />
     </>
   )

@@ -139,9 +139,7 @@ describe("lib/date/day-key", () => {
     it("should return undefined for empty or unparseable values", () => {
       expect(FromStoredDayValue("")).toBeUndefined()
       expect(FromStoredDayValue("   ")).toBeUndefined()
-      expect(
-        FromStoredDayValue("not-a-date")
-      ).toBeUndefined()
+      expect(FromStoredDayValue("not-a-date")).toBeUndefined()
     })
 
     it("should handle leap day stored as UTC midnight", () => {

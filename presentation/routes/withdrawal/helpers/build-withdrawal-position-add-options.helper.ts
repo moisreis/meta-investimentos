@@ -2,6 +2,7 @@ import type { PositionAddOption } from "../types/withdrawal-add.types"
 
 import Decimal from "decimal.js"
 
+import { FormatCnpjOptional } from "@/presentation/presenters/cnpj.presenter"
 import { FormatPercentage } from "@/presentation/presenters/percentage.presenter"
 import type { FundRow } from "@/presentation/types/fund-row.types"
 import type { PositionRow } from "@/presentation/types/position-row.types"
@@ -56,11 +57,38 @@ function FormatWeight(weight: string): string {
 
 /**
  * @summary
+ * Joins the qualifiers shown under the position name.
+ *
+ * @remarks
+ * The CNPJ comes first, masked exactly like the fund picker
+ * of the add application form, so the two pickers read the
+ * same way and the search matches the CNPJ the user already
+ * knows. The share follows it, so a position still states
+ * what it is worth inside the portfolio. Either part is
+ * dropped when absent, and the separator only joins the two.
+ *
+ * @param cnpj - The masked CNPJ of the fund, if any.
+ * @param weight - The share of the portfolio, if any.
+ *
+ * @returns The combined subtitle, possibly empty.
+ *
+ * @author Moisés Reis
+ *
+ * @date 2026-10-20
+ */
+function JoinQualifiers(cnpj: string, weight: string): string {
+  return [cnpj, weight].filter(Boolean).join(" · ")
+}
+
+/**
+ * @summary
  * Derives the position options from the loaded positions,
  * resolving the fund name through the fund lookup and
- * ordering the result by label. The share under the name
- * comes from the weight of the position, which the service
- * layer derived from the money invested in it.
+ * ordering the result by label. The subtitle under the name
+ * carries the masked CNPJ of the fund and the share of the
+ * position, so the picker shows both the fund identity the
+ * application picker shows and the weight the service layer
+ * derived from the money invested in it.
  *
  * @param input - The positions, funds and weights to
  * project.
@@ -74,8 +102,8 @@ function FormatWeight(weight: string): string {
 export function BuildPositionAddOptions(
   input: BuildPositionAddOptionsInput
 ): PositionAddOption[] {
-  const FUND_NAMES = new Map(
-    input.funds.map((fund) => [fund.id, fund.name])
+  const FUND_BY_ID = new Map(
+    input.funds.map((fund) => [fund.id, fund])
   )
   const WEIGHTS = new Map(
     input.weights.map((weight) => [
@@ -85,12 +113,20 @@ export function BuildPositionAddOptions(
   )
 
   return input.positions
-    .map((position) => ({
-      id: position.id,
-      name: FUND_NAMES.get(position.fundId) ?? "Fundo",
-      portfolioId: position.portfolioId,
-      fundId: position.fundId,
-      description: FormatWeight(WEIGHTS.get(position.id) ?? "0"),
-    }))
+    .map((position) => {
+      const FUND = FUND_BY_ID.get(position.fundId)
+      const CNPJ = FormatCnpjOptional(FUND?.cnpj) ?? ""
+      const WEIGHT = FormatWeight(
+        WEIGHTS.get(position.id) ?? "0"
+      )
+
+      return {
+        id: position.id,
+        name: FUND?.name ?? "Fundo",
+        portfolioId: position.portfolioId,
+        fundId: position.fundId,
+        description: JoinQualifiers(CNPJ, WEIGHT),
+      }
+    })
     .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"))
 }

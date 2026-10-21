@@ -126,8 +126,8 @@ function SharedDatatableSection<TData extends RowData>({
       {toolbar}
 
       {hasRows ? (
-        <div className="p-0 border border-border">
-        <EntityDatatable table={table} />
+        <div className="border border-border p-0">
+          <EntityDatatable table={table} />
         </div>
       ) : (
         <EntityEmptyTable

@@ -1,14 +1,19 @@
 "use client"
 
+import * as React from "react"
+
 import { EntityAddDialog } from "@/presentation/parts/dialogs/entity-add"
+import { EntityAlertDialog } from "@/presentation/parts/dialogs/entity-alert"
 import { EntityAddToast } from "@/presentation/parts/toasts/entity-add-toast"
 import { GenerateStatementForm } from "@/presentation/routes/statement/forms/generate-report"
 import { useStatementGenerateDialog } from "@/presentation/routes/statement/hooks/use-statement-generate-dialog.hook"
+import { useStatementOpenReport } from "@/presentation/routes/statement/hooks/use-statement-open-report.hook"
 import {
   STATEMENT_DIALOG,
   STATEMENT_FORM,
 } from "@/presentation/routes/statement/settings/labels.settings"
 import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
+import type { StatementResponseDTO } from "@/services/statement/dto/statement-response.dto"
 
 /**
  * Props for the statement generate-report dialog.
@@ -31,6 +36,8 @@ export interface StatementGenerateReportDialogProps {
  * Composes the shared add dialog with the generate form and
  * the result toast. On success the dialog closes and the
  * page refreshes so the new statement appears in the table.
+ * The success toast carries a download action that opens the
+ * generated PDF, built from the statement the form reported.
  *
  * @param props - Props of the generate-report dialog.
  * @param props.dialog - The generate dialog flow state.
@@ -49,6 +56,24 @@ function StatementGenerateReportDialog({
   portfolios,
   defaultPortfolioId,
 }: StatementGenerateReportDialogProps) {
+  const FILE_URL = (dialog.result as StatementResponseDTO | null)
+    ?.fileUrl
+
+  const openReport = useStatementOpenReport()
+
+  const OPEN_REPORT = openReport.openReport
+
+  const SUCCESS_ACTION = React.useMemo(
+    () =>
+      FILE_URL
+        ? {
+            label: STATEMENT_FORM.GENERATE_SUCCESS_ACTION,
+            onClick: () => void OPEN_REPORT(FILE_URL),
+          }
+        : null,
+    [FILE_URL, OPEN_REPORT]
+  )
+
   return (
     <>
       <EntityAddDialog
@@ -73,6 +98,15 @@ function StatementGenerateReportDialog({
           STATEMENT_FORM.GENERATE_SUCCESS_DESCRIPTION
         }
         errorTitle={STATEMENT_FORM.ERROR_TITLE}
+        successAction={SUCCESS_ACTION}
+      />
+
+      <EntityAlertDialog
+        open={openReport.alertOpen}
+        onOpenChange={openReport.setAlertOpen}
+        title={STATEMENT_FORM.OPEN_ERROR_TITLE}
+        description={openReport.alertDescription}
+        closeLabel={STATEMENT_FORM.OPEN_ERROR_CLOSE}
       />
     </>
   )

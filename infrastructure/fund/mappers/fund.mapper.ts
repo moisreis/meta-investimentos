@@ -45,9 +45,7 @@ export function ToDomain(row: typeof fund.$inferSelect): Fund {
       benchmarkId: row.benchmarkId
         ? EntityId.create(row.benchmarkId)
         : null,
-      normId: row.normId
-        ? EntityId.create(row.normId)
-        : null,
+      normId: row.normId ? EntityId.create(row.normId) : null,
       categoryId: row.categoryId
         ? EntityId.create(row.categoryId)
         : null,

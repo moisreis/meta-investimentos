@@ -60,10 +60,25 @@ type DeleteBenchmarkHistoryValues = z.infer<
   typeof DELETE_BENCHMARK_HISTORY_SCHEMA
 >
 
+// The payload accepted by the bulk delete rates action.
+const BULK_DELETE_BENCHMARK_HISTORY_SCHEMA = z.object({
+  benchmarkHistoryIds: z
+    .array(ID_SCHEMA)
+    .min(1, "Selecione ao menos uma taxa.")
+    .max(500, "Selecione menos de 500 taxas."),
+})
+
+// Values of the bulk delete rates action payload.
+type BulkDeleteBenchmarkHistoryValues = z.infer<
+  typeof BULK_DELETE_BENCHMARK_HISTORY_SCHEMA
+>
+
 export {
+  BULK_DELETE_BENCHMARK_HISTORY_SCHEMA,
   CREATE_BENCHMARK_HISTORY_SCHEMA,
   DELETE_BENCHMARK_HISTORY_SCHEMA,
   UPDATE_BENCHMARK_HISTORY_SCHEMA,
+  type BulkDeleteBenchmarkHistoryValues,
   type CreateBenchmarkHistoryValues,
   type DeleteBenchmarkHistoryValues,
   type UpdateBenchmarkHistoryValues,

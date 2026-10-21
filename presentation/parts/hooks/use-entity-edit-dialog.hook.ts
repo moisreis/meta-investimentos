@@ -17,10 +17,13 @@ export interface EntityEditDialogModel<TData> {
   setOpen: (open: boolean) => void
   status: EntityFormStatus
   errorMessage: string | null
+  /** Payload of the last successful update, when the form reported one. */
+  result: unknown | null
   handleOpen: (row: TData) => void
   handleStatusChange: (
     status: EntityFormStatus,
-    error: string | null
+    error: string | null,
+    result?: unknown
   ) => void
 }
 
@@ -63,6 +66,9 @@ function useEntityEditDialog<
   const [STATUS, setStatus] =
     React.useState<EntityFormStatus>("idle")
   const [ERROR, setError] = React.useState<string | null>(null)
+  const [RESULT, setResult] = React.useState<unknown | null>(
+    null
+  )
   const OPEN_REF = React.useRef(false)
 
   const HandleOpen = React.useCallback((row: TData) => {
@@ -70,6 +76,7 @@ function useEntityEditDialog<
     setTarget(row)
     setStatus("idle")
     setError(null)
+    setResult(null)
   }, [])
 
   const UpdateOpen = React.useCallback((open: boolean) => {
@@ -79,13 +86,19 @@ function useEntityEditDialog<
       setTarget(null)
       setStatus("idle")
       setError(null)
+      setResult(null)
     }
   }, [])
 
   const HandleStatusChange = React.useCallback(
-    (status: EntityFormStatus, error: string | null) => {
+    (
+      status: EntityFormStatus,
+      error: string | null,
+      result?: unknown
+    ) => {
       setStatus(status)
       setError(error)
+      setResult(result ?? null)
 
       if (status === "success" && OPEN_REF.current) {
         OPEN_REF.current = false
@@ -103,6 +116,7 @@ function useEntityEditDialog<
     handleOpen: HandleOpen,
     status: STATUS,
     errorMessage: ERROR,
+    result: RESULT,
     handleStatusChange: HandleStatusChange,
   }
 }

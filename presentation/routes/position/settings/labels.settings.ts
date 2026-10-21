@@ -49,6 +49,13 @@ export const POSITION_DATATABLE = {
   DELETE_SUCCESS_DESCRIPTION:
     "A posição foi excluída com sucesso.",
   DELETE_ERROR_TITLE: "Não foi possível excluir a posição",
+
+  // Bulk delete result toast copy.
+  BULK_DELETE_SUCCESS_TITLE: "Posições excluídas!",
+  BULK_DELETE_SUCCESS_DESCRIPTION:
+    "As posições foram excluídas com sucesso.",
+  BULK_DELETE_ERROR_TITLE:
+    "Não foi possível excluir as posições",
 } as const
 
 // KPI copy for the position list screen.

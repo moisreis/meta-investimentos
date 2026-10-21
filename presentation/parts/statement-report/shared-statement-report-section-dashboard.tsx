@@ -126,10 +126,10 @@ function KpiCard(props: {
  * Renders the executive dashboard of the report.
  *
  * @remarks
- * Puts the five KPI cards on one row, the return against
- * the target gauge beside the comparison against the
- * indexes, and the month return chart of the year under
- * them.
+ * Puts the five KPI cards on one row, the year return
+ * against the year meta gauge beside the comparison of the
+ * meta against the indexes, and the month return chart of
+ * the year under them.
  *
  * @explanation
  * Use this component as the second page of the statement
@@ -139,7 +139,7 @@ function KpiCard(props: {
  *
  * @author Moisés Reis
  *
- * @date 2026-10-06
+ * @date 2026-10-20
  */
 export function DashboardSection(props: {
   data: StatementReportData

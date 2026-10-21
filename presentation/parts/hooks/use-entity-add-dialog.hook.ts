@@ -14,11 +14,14 @@ export interface EntityAddDialogModel {
   anotherOpen: boolean
   status: EntityFormStatus
   errorMessage: string | null
+  /** Payload of the last successful create, when the form reported one. */
+  result: unknown | null
   formKey: number
   handleOpen: () => void
   handleStatusChange: (
     status: EntityFormStatus,
-    error: string | null
+    error: string | null,
+    result?: unknown
   ) => void
   handleAddAnother: () => void
   handleBackToTable: () => void
@@ -59,6 +62,9 @@ function useEntityAddDialog(): EntityAddDialogModel {
   const [STATUS, setStatus] =
     React.useState<EntityFormStatus>("idle")
   const [ERROR, setError] = React.useState<string | null>(null)
+  const [RESULT, setResult] = React.useState<unknown | null>(
+    null
+  )
   const [FORM_KEY, setFormKey] = React.useState(0)
   const OPEN_REF = React.useRef(false)
 
@@ -67,6 +73,7 @@ function useEntityAddDialog(): EntityAddDialogModel {
     setAnotherOpen(false)
     setStatus("idle")
     setError(null)
+    setResult(null)
     setOpen(true)
   }, [])
 
@@ -78,15 +85,25 @@ function useEntityAddDialog(): EntityAddDialogModel {
       setAnotherOpen(false)
       setStatus("idle")
       setError(null)
+      setResult(null)
     }
   }, [])
 
   const HandleStatusChange = React.useCallback(
-    (status: EntityFormStatus, error: string | null) => {
+    (
+      status: EntityFormStatus,
+      error: string | null,
+      result?: unknown
+    ) => {
       setStatus(status)
       setError(error)
+      setResult(result ?? null)
 
       if (status === "success" && OPEN_REF.current) {
+        // Close through the raw setter so the reset path of
+        // `UpdateOpen` does not clear the status and the
+        // result the success toast reads.
+        OPEN_REF.current = false
         setOpen(false)
         setAnotherOpen(true)
       }
@@ -98,6 +115,7 @@ function useEntityAddDialog(): EntityAddDialogModel {
     setAnotherOpen(false)
     setStatus("idle")
     setError(null)
+    setResult(null)
     setFormKey((key) => key + 1)
     setOpen(true)
   }, [])
@@ -107,6 +125,7 @@ function useEntityAddDialog(): EntityAddDialogModel {
     setAnotherOpen(false)
     setStatus("idle")
     setError(null)
+    setResult(null)
     ROUTER.refresh()
   }, [ROUTER])
 
@@ -117,6 +136,7 @@ function useEntityAddDialog(): EntityAddDialogModel {
     anotherOpen: ANOTHER_OPEN,
     status: STATUS,
     errorMessage: ERROR,
+    result: RESULT,
     formKey: FORM_KEY,
     handleStatusChange: HandleStatusChange,
     handleAddAnother: HandleAddAnother,

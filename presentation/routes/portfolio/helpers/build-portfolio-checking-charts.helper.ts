@@ -90,9 +90,7 @@ export function BuildCheckingEvolutionChart(
   const FROM = dateRange?.from
     ? ToDayKey(dateRange.from)
     : undefined
-  const TO = dateRange?.to
-    ? ToDayKey(dateRange.to)
-    : undefined
+  const TO = dateRange?.to ? ToDayKey(dateRange.to) : undefined
 
   const BY_DAY = new Map<string, number>()
 

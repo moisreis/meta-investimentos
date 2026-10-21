@@ -1,5 +1,8 @@
 "use client"
 
+import * as React from "react"
+import { useRouter } from "next/navigation"
+
 import { EntityAddDialog } from "@/presentation/parts/dialogs/entity-add"
 import { EntityAddToast } from "@/presentation/parts/toasts/entity-add-toast"
 import type { EntityAddDialogModel } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
@@ -9,6 +12,7 @@ import {
   PORTFOLIO_FORM,
 } from "@/presentation/routes/portfolio/settings/labels.settings"
 import type { NormOptionRegistry } from "@/presentation/types/norms-portfolio.types"
+import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-response.dto"
 
 import { PortfolioAddAnotherDialog } from "./add-another"
 
@@ -29,7 +33,8 @@ export interface PortfolioAddDialogProps {
  * the add-another prompt. On success the add-another
  * prompt opens so the user can return to the table or
  * add another portfolio. The result toast fires on both
- * outcomes.
+ * outcomes and carries a view action that opens the page
+ * of the created portfolio.
  *
  * @param props - Props of the portfolio add dialog.
  * @param props.dialog - The add dialog flow state.
@@ -45,6 +50,24 @@ function PortfolioAddDialog({
   dialog,
   norms,
 }: PortfolioAddDialogProps) {
+  const ROUTER = useRouter()
+
+  const CREATED_ID = (
+    dialog.result as PortfolioResponseDTO | null
+  )?.id
+
+  const SUCCESS_ACTION = React.useMemo(
+    () =>
+      CREATED_ID
+        ? {
+            label: PORTFOLIO_FORM.VIEW_ACTION,
+            onClick: () =>
+              ROUTER.push(`/portfolio/${CREATED_ID}`),
+          }
+        : null,
+    [CREATED_ID, ROUTER]
+  )
+
   return (
     <>
       <EntityAddDialog
@@ -75,6 +98,7 @@ function PortfolioAddDialog({
           PORTFOLIO_FORM.CREATE_SUCCESS_DESCRIPTION
         }
         errorTitle={PORTFOLIO_FORM.ERROR_TITLE}
+        successAction={SUCCESS_ACTION}
       />
     </>
   )

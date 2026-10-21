@@ -38,6 +38,7 @@ interface AuthResponse {
 export interface AuthOperations {
   signIn: (values: AuthSignInValues) => Promise<AuthResponse>
   signUp: (values: AuthSignUpValues) => Promise<AuthResponse>
+  signOut: () => Promise<AuthResponse>
 }
 
 /**
@@ -73,6 +74,7 @@ function AuthContainer(): AuthOperations {
       authClient.signUp.email(
         values as Parameters<typeof authClient.signUp.email>[0]
       ),
+    signOut: () => authClient.signOut(),
   }
 }
 

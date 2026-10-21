@@ -78,10 +78,27 @@ type DeletePortfolioPerformanceValues = z.infer<
   typeof DELETE_PORTFOLIO_PERFORMANCE_SCHEMA
 >
 
+// The payload accepted by the bulk delete portfolio
+// performances action.
+const BULK_DELETE_PORTFOLIO_PERFORMANCES_SCHEMA = z.object({
+  performanceIds: z
+    .array(ID_SCHEMA)
+    .min(1, "Selecione ao menos uma performance.")
+    .max(500, "Selecione menos de 500 performances."),
+})
+
+// Values of the bulk delete portfolio performances action
+// payload.
+type BulkDeletePortfolioPerformancesValues = z.infer<
+  typeof BULK_DELETE_PORTFOLIO_PERFORMANCES_SCHEMA
+>
+
 export {
+  BULK_DELETE_PORTFOLIO_PERFORMANCES_SCHEMA,
   DELETE_PORTFOLIO_PERFORMANCE_SCHEMA,
   GET_PORTFOLIO_PERFORMANCE_CALCULATION_PROGRESS_SCHEMA,
   START_PORTFOLIO_PERFORMANCE_CALCULATION_SCHEMA,
+  type BulkDeletePortfolioPerformancesValues,
   type DeletePortfolioPerformanceValues,
   type GetPortfolioPerformanceCalculationProgressValues,
   type StartPortfolioPerformanceCalculationValues,

@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { useEntityFormToast } from "@/presentation/parts/hooks/use-entity-form-toast.hook"
+import type { EntityToastAction } from "@/presentation/parts/hooks/use-entity-form-toast.hook"
 import type { EntityFormStatus } from "@/presentation/parts/hooks/use-entity-form.hook"
 
 /**
@@ -14,6 +15,8 @@ export interface EntityEditToastProps {
   successTitle: string
   successDescription: string
   errorTitle: string
+  /** Action button attached to the success toast, when the outcome offers a next step. */
+  successAction?: EntityToastAction | null
 }
 
 // Human-readable fallback shown when the fields fail validation.
@@ -33,7 +36,10 @@ const VALIDATION_ERROR =
  * Render next to the entity edit dialog wiring the form
  * submit status. On error, the message falls back to a
  * validation hint. The component renders no visible
- * output.
+ * output. A `successAction` attaches an action button to
+ * the success toast, such as opening the edited entity
+ * page. Memoize it in the caller so the toast fires once
+ * per submit.
  *
  * @param props - Props of the entity edit toast.
  * @param props.status - Current entity form status.
@@ -41,6 +47,7 @@ const VALIDATION_ERROR =
  * @param props.successTitle - Success toast title.
  * @param props.successDescription - Success toast description.
  * @param props.errorTitle - Error toast title.
+ * @param props.successAction - Success toast action button.
  *
  * @returns Toast trigger, no output.
  *
@@ -60,11 +67,13 @@ function EntityEditToast({
   successTitle,
   successDescription,
   errorTitle,
+  successAction,
 }: EntityEditToastProps) {
   const { showSuccess, showError } = useEntityFormToast({
     successTitle,
     successDescription,
     errorTitle,
+    successAction,
   })
 
   React.useEffect(() => {
@@ -82,6 +91,7 @@ function EntityEditToast({
     successTitle,
     successDescription,
     errorTitle,
+    successAction,
     showSuccess,
     showError,
   ])

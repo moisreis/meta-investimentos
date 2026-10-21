@@ -72,7 +72,9 @@ function ToFirstFieldErrors(
  *
  * @param options - Schema, initial values and submit fn.
  *
- * @returns Field values, an updater, and submit state/handlers.
+ * @returns Field values, an updater, submit state/handlers
+ *   and the payload of the last successful submit, which
+ *   routes with a follow-up toast action read to build it.
  *
  * @example
  * const { values, updateField, fieldErrors, status,
@@ -101,6 +103,9 @@ function useEntityForm<
   const [PENDING, setPending] = React.useState(false)
   const [STATUS, setStatus] =
     React.useState<EntityFormStatus>("idle")
+  const [RESULT, setResult] = React.useState<unknown | null>(
+    null
+  )
   const [FIELD_ERRORS, setFieldErrors] = React.useState<
     Partial<Record<keyof TValues, string>>
   >({})
@@ -195,6 +200,7 @@ function useEntityForm<
   ) {
     event.preventDefault()
     setError(null)
+    setResult(null)
     setStatus("attempting")
     setPending(true)
 
@@ -224,6 +230,7 @@ function useEntityForm<
 
       if (RESULT.success) {
         NOTIFY(RESULT.audit)
+        setResult(RESULT.data)
         setStatus("success")
         return
       }
@@ -252,6 +259,7 @@ function useEntityForm<
     error: ERROR,
     pending: PENDING,
     status: STATUS,
+    result: RESULT,
     fieldErrors: FIELD_ERRORS,
     handleSubmit: HandleSubmit,
   }

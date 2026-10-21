@@ -3,7 +3,6 @@ import {
   Geist,
   Geist_Mono,
   Roboto_Slab,
-  Inter,
   Manrope,
   Schibsted_Grotesk,
 } from "next/font/google"

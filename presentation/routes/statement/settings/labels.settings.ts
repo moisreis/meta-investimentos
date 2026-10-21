@@ -20,8 +20,15 @@ export const STATEMENT_FORM = {
   GENERATE_SUCCESS_DESCRIPTION:
     "O relatório foi gerado com sucesso.",
 
+  // Action button on the generate success toast.
+  GENERATE_SUCCESS_ACTION: "Baixar PDF",
+
   // Error toast title for the generate form.
   ERROR_TITLE: "Não foi possível gerar o relatório",
+
+  // Notice dialog shown when a report cannot be rendered.
+  OPEN_ERROR_TITLE: "Relatório indisponível",
+  OPEN_ERROR_CLOSE: "Fechar",
 } as const
 
 // Dialog copy for the statement generate flow.
@@ -36,11 +43,11 @@ export const STATEMENT_DIALOG = {
   FIELD_PORTFOLIO_PLACEHOLDER: "Selecione uma carteira",
 
   // Month field copy.
-  FIELD_MONTH: "Data de referência",
-  FIELD_MONTH_PLACEHOLDER: "Selecione a data",
+  FIELD_MONTH: "Mês de referência",
+  FIELD_MONTH_PLACEHOLDER: "Selecione o mês",
 
-  // Accessible label of the reference date calendar grid.
-  FIELD_MONTH_GRID_LABEL: "Calendário da data de referência",
+  // Accessible label of the reference month picker.
+  FIELD_MONTH_GRID_LABEL: "Seletor do mês de referência",
 } as const
 
 // Datatable copy for the statement list screen.

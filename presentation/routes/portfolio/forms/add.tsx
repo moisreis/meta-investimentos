@@ -24,7 +24,8 @@ import type { NormOption } from "@/presentation/types/norms-portfolio.types"
 export interface AddPortfolioFormProps {
   onStatusChange?: (
     status: EntityFormStatus,
-    error: string | null
+    error: string | null,
+    result?: unknown
   ) => void
   normOptions: NormOption[]
 }
@@ -87,11 +88,12 @@ function AddPortfolioForm({
     error,
     pending,
     status,
+    result,
     fieldErrors,
     handleSubmit,
   } = usePortfolioAddForm()
 
-  useEntityFormStatus({ status, error, onStatusChange })
+  useEntityFormStatus({ status, error, result, onStatusChange })
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>

@@ -64,10 +64,11 @@ function PortfolioPerformanceList({
 
   const filters =
     usePortfolioPerformanceDatatableFilters(PERFORMANCES)
-  const { table, rowActions } = usePortfolioPerformanceDatatable(
-    filters.filteredPerformances,
-    lookups
-  )
+  const { table, rowActions, bulkDelete } =
+    usePortfolioPerformanceDatatable(
+      filters.filteredPerformances,
+      lookups
+    )
   const kpis = usePortfolioPerformanceKpis({
     performances: PERFORMANCES,
   })
@@ -114,7 +115,7 @@ function PortfolioPerformanceList({
         <PortfolioPerformanceDatatableTable
           pending={PENDING}
           table={table}
-          onBulkDelete={rowActions.handleConfirmDelete}
+          onBulkDelete={bulkDelete.handleBulkDelete}
         />
       ) : (
         <EntityEmptyTable

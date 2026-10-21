@@ -35,6 +35,12 @@ export const BENCHMARK_HISTORY_DATATABLE = {
   DELETE_SUCCESS_TITLE: "Taxa excluída!",
   DELETE_SUCCESS_DESCRIPTION: "A taxa foi excluída com sucesso.",
   DELETE_ERROR_TITLE: "Não foi possível excluir a taxa",
+
+  // Bulk delete result toast copy.
+  BULK_DELETE_SUCCESS_TITLE: "Taxas excluídas!",
+  BULK_DELETE_SUCCESS_DESCRIPTION:
+    "As taxas foram excluídas com sucesso.",
+  BULK_DELETE_ERROR_TITLE: "Não foi possível excluir as taxas",
 } as const
 
 // Column id to header label used by the edit-columns menu.
@@ -96,7 +102,7 @@ export const BENCHMARK_HISTORY_FORM = {
   PLACEHOLDER_MONTH: "Selecione o mês",
 
   // Reference month accessible grid label.
-  MONTH_GRID_LABEL: "Calendário de meses de referência",
+  MONTH_GRID_LABEL: "Seletor do mês de referência",
 
   // Rate field label.
   LABEL_RATE: "Taxa",

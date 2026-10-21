@@ -15,6 +15,7 @@ import type { ApplicationRow } from "@/presentation/types/application-row.types"
 import { CreateApplicationTableColumns } from "../datatable/table-columns"
 import { EMPTY_APPLICATION_LOOKUPS } from "../helpers/build-application-lookups.helper"
 import type { ApplicationLookups } from "../types/application-list.types"
+import { useApplicationBulkDelete } from "./use-application-bulk-delete.hook"
 import { useApplicationRowActions } from "./use-application-row-actions.hook"
 import { useEntityAddDialog } from "@/presentation/parts/hooks/use-entity-add-dialog.hook"
 import { useSharedCommandOpen } from "@/presentation/parts/hooks/use-shared-command-open.hook"
@@ -51,6 +52,7 @@ function useApplicationDatatable(
 ) {
   const rowActions = useApplicationRowActions()
   const addDialog = useEntityAddDialog()
+  const bulkDelete = useApplicationBulkDelete()
 
   // The shell reaches this dialog without naming it: Ctrl+A and
   // the palette row both land on `?command=add-application`, and
@@ -85,7 +87,7 @@ function useApplicationDatatable(
     },
   })
 
-  return { table: TABLE, rowActions, addDialog }
+  return { table: TABLE, rowActions, addDialog, bulkDelete }
 }
 
 export { useApplicationDatatable }

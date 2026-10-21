@@ -11,6 +11,7 @@ import { PositionRepository } from "@/infrastructure/position/repositories/posit
 import { PositionPerformanceRepository } from "@/infrastructure/position-performance/repositories/position-performance.repository"
 import { QuotaRepository } from "@/infrastructure/quota/repositories/quota.repository"
 import { WithdrawalRepository } from "@/infrastructure/withdrawal/repositories/withdrawal.repository"
+import { BulkDeletePortfolioPerformancesUseCase } from "@/services/portfolio-performance/use-cases/bulk-delete-portfolio-performances.use-case"
 import { CalculatePortfolioPerformanceUseCase } from "@/services/portfolio-performance/use-cases/calculate-portfolio-performance.use-case"
 import { DeletePortfolioPerformanceUseCase } from "@/services/portfolio-performance/use-cases/delete-portfolio-performance.use-case"
 import { ListAllPortfolioPerformancesUseCase } from "@/services/portfolio-performance/use-cases/list-all-portfolio-performances.use-case"
@@ -20,6 +21,7 @@ import { CalculatePositionPerformanceUseCase } from "@/services/position-perform
 // The portfolio performance use cases, already wired to
 // the repositories.
 interface PortfolioPerformanceUseCases {
+  bulkDelete: BulkDeletePortfolioPerformancesUseCase
   calculate: CalculatePortfolioPerformanceUseCase
   delete: DeletePortfolioPerformanceUseCase
   list: ListPortfoliosUseCase
@@ -82,6 +84,9 @@ function PortfolioPerformanceContainer(): PortfolioPerformanceUseCases {
     )
 
   return {
+    bulkDelete: new BulkDeletePortfolioPerformancesUseCase(
+      PORTFOLIO_PERFORMANCE_REPOSITORY
+    ),
     calculate: new CalculatePortfolioPerformanceUseCase(
       PORTFOLIO_REPOSITORY,
       POSITION_REPOSITORY,

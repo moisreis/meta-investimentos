@@ -3,6 +3,7 @@
 import type { ColumnHelper } from "@tanstack/react-table"
 
 import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-menus/entity-table-row-menu-dropdown"
+import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import { FormatUtcDate } from "@/presentation/presenters/date.presenter"
@@ -51,6 +52,8 @@ export function CreateBenchmarkHistoryTableColumns(
   options: BenchmarkHistoryTableColumnOptions
 ): EntityColumnDef<BenchmarkHistoryRow>[] {
   return [
+    CreateEntitySelectColumn(columnHelper),
+
     columnHelper.accessor("date", {
       header: BENCHMARK_HISTORY_DATATABLE.COLUMN_DATE,
       enableHiding: false,

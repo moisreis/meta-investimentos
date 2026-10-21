@@ -63,7 +63,7 @@ function ApplicationList({
     APPLICATIONS,
     lookups
   )
-  const { table, rowActions, addDialog } =
+  const { table, rowActions, addDialog, bulkDelete } =
     useApplicationDatatable(
       filters.filteredApplications,
       lookups
@@ -106,6 +106,7 @@ function ApplicationList({
         <ApplicationDatatableTable
           table={table}
           pending={PENDING}
+          onBulkDelete={bulkDelete.handleBulkDelete}
         />
       ) : (
         <EntityEmptyTable

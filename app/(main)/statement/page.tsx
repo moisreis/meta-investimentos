@@ -4,7 +4,7 @@ import { LoadStatementPageProps } from "@/presentation/routes/statement/helpers/
 import { StatementList } from "@/presentation/routes/statement/pages/list"
 
 export const metadata: Metadata = {
-  title: "Relat",
+  title: "Relatórios",
 }
 
 /**

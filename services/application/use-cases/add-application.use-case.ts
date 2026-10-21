@@ -153,7 +153,7 @@ export class AddApplicationUseCase {
   private async resolveQuotas(
     input: AddApplicationInput
   ): Promise<string> {
-    const [y, m, d] = input.date.split('-').map(Number)
+    const [y, m, d] = input.date.split("-").map(Number)
     const appDate = new Date(Date.UTC(y, m - 1, d))
 
     const QUOTA = await this.quotaRepository.findByFundIdAndDate(

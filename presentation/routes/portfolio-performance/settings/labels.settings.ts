@@ -50,6 +50,13 @@ export const PORTFOLIO_PERFORMANCE_DATATABLE = {
   DELETE_SUCCESS_DESCRIPTION:
     "A performance foi excluída com sucesso.",
   DELETE_ERROR_TITLE: "Não foi possível excluir a performance",
+
+  // Bulk delete result toast copy.
+  BULK_DELETE_SUCCESS_TITLE: "Performances excluídas!",
+  BULK_DELETE_SUCCESS_DESCRIPTION:
+    "As performances foram excluídas com sucesso.",
+  BULK_DELETE_ERROR_TITLE:
+    "Não foi possível excluir as performances",
 } as const
 
 // Calculation flow copy.

@@ -14,6 +14,7 @@ import { useEntityEditDialog } from "@/presentation/parts/hooks/use-entity-edit-
 import type { BenchmarkHistoryRow } from "@/presentation/types/benchmark-history-row.types"
 
 import { CreateBenchmarkHistoryTableColumns } from "../datatable/table-columns"
+import { useBenchmarkHistoryBulkDelete } from "./use-benchmark-history-bulk-delete.hook"
 import { useBenchmarkHistoryRowActions } from "./use-benchmark-history-row-actions.hook"
 
 // Column helper bound to the entity table features.
@@ -49,6 +50,7 @@ function useBenchmarkHistoryDatatable(
   const addDialog = useEntityAddDialog()
   const editDialog = useEntityEditDialog<BenchmarkHistoryRow>()
   const rowActions = useBenchmarkHistoryRowActions()
+  const bulkDelete = useBenchmarkHistoryBulkDelete()
 
   const COLUMNS = useMemo(
     () =>
@@ -78,6 +80,7 @@ function useBenchmarkHistoryDatatable(
     rowActions,
     addDialog,
     editDialog,
+    bulkDelete,
   }
 }
 

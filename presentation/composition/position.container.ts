@@ -7,6 +7,7 @@ import { PositionRepository } from "@/infrastructure/position/repositories/posit
 import { WithdrawalRepository } from "@/infrastructure/withdrawal/repositories/withdrawal.repository"
 import { ListFundsUseCase } from "@/services/fund/use-cases/list-funds.use-case"
 import { ListPortfoliosUseCase } from "@/services/portfolio/use-cases/list-portfolios.use-case"
+import { BulkDeletePositionsUseCase } from "@/services/position/use-cases/bulk-delete-positions.use-case"
 import { DeletePositionUseCase } from "@/services/position/use-cases/delete-position.use-case"
 import { GetPositionUseCase } from "@/services/position/use-cases/get-position.use-case"
 import { ListAllPositionsUseCase } from "@/services/position/use-cases/list-all-positions.use-case"
@@ -16,6 +17,7 @@ import { ResolvePositionPeriodReturnsUseCase } from "@/services/position-perform
 
 // The position use cases, already wired to the repository.
 interface PositionUseCases {
+  bulkDelete: BulkDeletePositionsUseCase
   get: GetPositionUseCase
   list: ListPortfoliosUseCase
   listAll: ListAllPositionsUseCase
@@ -64,6 +66,9 @@ function PositionContainer(): PositionUseCases {
     new PositionPerformanceRepository(db)
 
   return {
+    bulkDelete: new BulkDeletePositionsUseCase(
+      POSITION_REPOSITORY
+    ),
     get: new GetPositionUseCase(POSITION_REPOSITORY),
     list: new ListPortfoliosUseCase(PORTFOLIO_REPOSITORY),
     listAll: new ListAllPositionsUseCase(POSITION_REPOSITORY),

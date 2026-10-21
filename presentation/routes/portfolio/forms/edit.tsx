@@ -27,7 +27,8 @@ export interface EditPortfolioFormProps {
   portfolio: PortfolioRow
   onStatusChange?: (
     status: EntityFormStatus,
-    error: string | null
+    error: string | null,
+    result?: unknown
   ) => void
   normRegistry: NormOptionRegistry | null
 }
@@ -96,11 +97,12 @@ function EditPortfolioForm({
     error,
     pending,
     status,
+    result,
     fieldErrors,
     handleSubmit,
   } = usePortfolioEditForm(portfolio, normRegistry)
 
-  useEntityFormStatus({ status, error, onStatusChange })
+  useEntityFormStatus({ status, error, result, onStatusChange })
 
   return (
     <SharedFormWrapper onSubmit={handleSubmit}>

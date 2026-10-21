@@ -51,8 +51,13 @@ function BenchmarkHistoryList({
   const HAS_HISTORY = HISTORY.length > 0
 
   const filters = useBenchmarkHistoryDatatableFilters(HISTORY)
-  const { table, addDialog, editDialog, rowActions } =
-    useBenchmarkHistoryDatatable(filters.filteredHistory)
+  const {
+    table,
+    addDialog,
+    editDialog,
+    rowActions,
+    bulkDelete,
+  } = useBenchmarkHistoryDatatable(filters.filteredHistory)
   const kpis = useBenchmarkHistoryKpis(HISTORY)
 
   return (
@@ -86,6 +91,7 @@ function BenchmarkHistoryList({
         <BenchmarkHistoryDatatableTable
           pending={PENDING}
           table={table}
+          onBulkDelete={bulkDelete.handleBulkDelete}
         />
       ) : (
         <EntityEmptyTable

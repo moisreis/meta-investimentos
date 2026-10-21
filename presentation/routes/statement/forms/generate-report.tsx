@@ -30,7 +30,8 @@ export interface GenerateStatementFormProps {
   defaultPortfolioId?: string
   onStatusChange?: (
     status: EntityFormStatus,
-    error: string | null
+    error: string | null,
+    result?: unknown
   ) => void
 }
 
@@ -75,11 +76,12 @@ function GenerateStatementForm({
     error,
     pending,
     status,
+    result,
     fieldErrors,
     handleSubmit,
   } = useStatementGenerateForm(defaultPortfolioId)
 
-  useEntityFormStatus({ status, error, onStatusChange })
+  useEntityFormStatus({ status, error, result, onStatusChange })
 
   const { items, handlePortfolioIdChange } =
     useStatementPortfolioOptions({

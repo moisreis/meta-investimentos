@@ -14,10 +14,11 @@ describe("domain/portfolio/calculators/target.calculator", () => {
         inflationRate,
       })
 
-      // ( (1 + 0.443)^(1/12) ) * (1 + 0.0045) - 1
-      // 1.443^(1/12) ≈ 1.031032, * 1.0045 ≈ 1.0356717, -1 = 0.0356717 = 3.56717%
-      // Rounded to 2dp = 3.57
-      expect(result.value.toFixed(2)).toBe("3.57")
+      // ( (1 + 0.443)^(1/12) ) + 0.0045
+      // 1.443^(1/12) ≈ 1.031032, - 1 = 0.031032
+      // + 0.0045 = 0.035532 = 3.5532%
+      // Rounded to 2dp = 3.55
+      expect(result.value.toFixed(2)).toBe("3.55")
     })
 
     it("should calculate monthly target with zero inflation", () => {
@@ -42,7 +43,7 @@ describe("domain/portfolio/calculators/target.calculator", () => {
         inflationRate,
       })
 
-      // 1 * (1.005) - 1 = 0.5%
+      // 0 + 0.0050 = 0.5%
       expect(result.value.toFixed(2)).toBe("0.50")
     })
 
@@ -56,8 +57,8 @@ describe("domain/portfolio/calculators/target.calculator", () => {
         inflationRate,
       })
 
-      // ((1 - 0.12)^(1/12)) = (0.88^(1/12)) ~ 0.989404, *1.003 = ~0.992372, -1 = -0.7628%
-      // Rounded to 2dp = -0.76
+      // ((1 - 0.12)^(1/12)) = (0.88^(1/12)) ~ 0.989404, -1 = -1.0595%
+      // + 0.0030 = -0.7595% -> rounded to 2dp = -0.76
       expect(result.value.toFixed(2)).toBe("-0.76")
     })
 
@@ -70,7 +71,8 @@ describe("domain/portfolio/calculators/target.calculator", () => {
         inflationRate,
       })
 
-      // (1.06^(1/12))~1.0048675, *1.001=1.005872, -1=0.5872% -> rounded to 2dp = 0.59
+      // (1.06^(1/12)) - 1 ~ 0.48675%, + 0.10 = 0.58675%
+      // Rounded to 2dp = 0.59
       expect(result.value.toFixed(2)).toBe("0.59")
     })
 
@@ -98,8 +100,8 @@ describe("domain/portfolio/calculators/target.calculator", () => {
       })
 
       // MONTHLY_PORTFOLIO_BASE = 0, 0^(anything positive) is 0 - toPower(1/12) of 0 is 0
-      // (0) * (1.02) - 1 = -1.00 = -100%
-      expect(result.value.toFixed(2)).toBe("-100.00")
+      // 0 - 1 = -1.00, + 0.0200 = -0.98 = -98%
+      expect(result.value.toFixed(2)).toBe("-98.00")
     })
 
     it("should throw ValidationError for invalid SignedPercentage", () => {

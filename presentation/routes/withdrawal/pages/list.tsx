@@ -63,7 +63,7 @@ function WithdrawalList({
     WITHDRAWALS,
     lookups
   )
-  const { table, rowActions, addDialog } =
+  const { table, rowActions, addDialog, bulkDelete } =
     useWithdrawalDatatable(filters.filteredWithdrawals, lookups)
   const kpis = useWithdrawalKpis({ withdrawals: WITHDRAWALS })
 
@@ -103,6 +103,7 @@ function WithdrawalList({
         <WithdrawalDatatableTable
           table={table}
           pending={PENDING}
+          onBulkDelete={bulkDelete.handleBulkDelete}
         />
       ) : (
         <EntityEmptyTable

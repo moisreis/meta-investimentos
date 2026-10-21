@@ -4,6 +4,7 @@ import { IconFileText } from "@tabler/icons-react"
 
 import { EntityDatatableKpiCard } from "@/presentation/parts/components/entity-datatable-kpi-card"
 import { EntityDatatableKpiGroup } from "@/presentation/parts/components/entity-datatable-kpi-group"
+import { EntityAlertDialog } from "@/presentation/parts/dialogs/entity-alert"
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
 import type { PortfolioRow } from "@/presentation/types/portfolio-row.types"
 import type { StatementRow } from "@/presentation/types/statement-row.types"
@@ -16,7 +17,10 @@ import { StatementGenerateReportDialog } from "../dialogs/generate-report"
 import { useStatementDatatableFilters } from "../hooks/use-statement-datatable-filters.hook"
 import { useStatementDatatable } from "../hooks/use-statement-datatable.hook"
 import { useStatementKpis } from "../hooks/use-statement-kpis.hook"
-import { STATEMENT_EMPTY } from "../settings/labels.settings"
+import {
+  STATEMENT_EMPTY,
+  STATEMENT_FORM,
+} from "../settings/labels.settings"
 import type { StatementRowSummary } from "../types/statement-list.types"
 
 export interface StatementListProps {
@@ -117,6 +121,13 @@ function StatementList({
       <StatementConfirmDeleteDialog
         dialog={rowActions}
         summaries={summaries}
+      />
+      <EntityAlertDialog
+        open={rowActions.alertOpen}
+        onOpenChange={rowActions.setAlertOpen}
+        title={STATEMENT_FORM.OPEN_ERROR_TITLE}
+        description={rowActions.alertDescription}
+        closeLabel={STATEMENT_FORM.OPEN_ERROR_CLOSE}
       />
     </>
   )

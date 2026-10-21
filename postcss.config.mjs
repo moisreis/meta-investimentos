@@ -3,7 +3,7 @@ const config = {
   plugins: {
     "@tailwindcss/postcss": {},
   },
-};
+}
 
 /**
  * @summary
@@ -22,4 +22,4 @@ const config = {
  *
  * @date 2026-09-13
  */
-export default config;
+export default config

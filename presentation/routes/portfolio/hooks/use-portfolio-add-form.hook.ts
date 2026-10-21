@@ -43,6 +43,7 @@ function usePortfolioAddForm() {
     error: ERROR,
     pending: PENDING,
     status: STATUS,
+    result: RESULT,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
   } = useEntityForm({
@@ -96,6 +97,7 @@ function usePortfolioAddForm() {
     error: ERROR,
     pending: PENDING,
     status: STATUS,
+    result: RESULT,
     fieldErrors: FIELD_ERRORS,
     handleSubmit,
   }

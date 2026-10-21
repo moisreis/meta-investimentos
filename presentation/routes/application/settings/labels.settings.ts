@@ -144,6 +144,13 @@ export const APPLICATION_DATATABLE = {
   REVERSE_SUCCESS_DESCRIPTION:
     "A aplicação foi marcada como estornada.",
   REVERSE_ERROR_TITLE: "Não foi possível reverter a aplicação",
+
+  // Bulk delete result toast copy.
+  BULK_DELETE_SUCCESS_TITLE: "Aplicações excluídas!",
+  BULK_DELETE_SUCCESS_DESCRIPTION:
+    "As aplicações foram excluídas com sucesso.",
+  BULK_DELETE_ERROR_TITLE:
+    "Não foi possível excluir as aplicações",
 } as const
 
 // Copy used to describe the row before a single reverse.

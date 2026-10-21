@@ -4,6 +4,8 @@ import { useEntityRowActions } from "@/presentation/parts/hooks/use-entity-row-a
 import { deleteStatementAction } from "@/presentation/routes/statement/actions/delete-statement.action"
 import type { StatementRow } from "@/presentation/types/statement-row.types"
 
+import { useStatementOpenReport } from "./use-statement-open-report.hook"
+
 /**
  * @summary
  * Binds the statement row actions to the shared
@@ -11,23 +13,29 @@ import type { StatementRow } from "@/presentation/types/statement-row.types"
  *
  * @remarks
  * Maps the row id to the route delete server action
- * and wires the detail screen navigation of the
- * row. The shared hook owns the confirm dialog
- * state and the delete result toast status.
+ * and wires the open action of the row. Opening is
+ * checked first so a report whose month holds no IPCA
+ * reading states why in-app instead of opening a blank
+ * tab, and the check also owns the notice dialog state
+ * the list page renders.
  *
- * @returns The row actions and delete dialog state.
+ * @returns The row actions, the delete dialog state
+ *   and the open-report notice state.
  *
  * @author Moisés Reis
  *
  * @date 2026-09-26
  */
 function useStatementRowActions() {
-  return useEntityRowActions<StatementRow>({
+  const openReport = useStatementOpenReport()
+
+  const ROW_ACTIONS = useEntityRowActions<StatementRow>({
     runDelete: (id) =>
       deleteStatementAction({ statementId: id }),
-    onView: (row) =>
-      window.open(row.fileUrl, "_blank", "noopener"),
+    onView: (row) => void openReport.openReport(row.fileUrl),
   })
+
+  return { ...ROW_ACTIONS, ...openReport }
 }
 
 export { useStatementRowActions }

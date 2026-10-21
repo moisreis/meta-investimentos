@@ -20,11 +20,14 @@ import { tw } from "./shared-statement-report-styles.constants"
  * Renders the accumulated index comparison of the year.
  *
  * @remarks
- * Shows the accumulated rate of the portfolio, the target
- * and the reference indexes as horizontal bars, each read
- * against the accumulated target so the share is explicit.
- * The portfolio keeps the brand green and the target the
- * brand blue, so the two anchor rows never change tone.
+ * Shows the accumulated rate of the portfolio, the meta
+ * and the reference indexes as horizontal bars. The
+ * portfolio row reads its share of the meta, and every
+ * tracked index row reads the share of the meta the index
+ * captured, so a bar always states what it was measured
+ * against. The portfolio keeps the brand green and the
+ * meta the brand blue, so the two anchor rows never change
+ * tone.
  *
  * @explanation
  * Use this component to render the `Índices Acumulados`
@@ -34,7 +37,7 @@ import { tw } from "./shared-statement-report-styles.constants"
  *
  * @author Moisés Reis
  *
- * @date 2026-10-06
+ * @date 2026-10-20
  */
 export function AccumulatedIndexesSection(props: {
   rows: StatementReportAccumulatedIndexRow[]
@@ -83,7 +86,7 @@ function FormatShareCaption(
   if (share === null) return CAPTION
   return `${CAPTION} · ${FormatUnsignedPercentage(
     share
-  )}% ${shareLabel}`
+  )} ${shareLabel}`
 }
 
 /**

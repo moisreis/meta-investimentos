@@ -14,6 +14,7 @@ import type { PositionRow } from "@/presentation/types/position-row.types"
 import { CreatePositionTableColumns } from "../datatable/table-columns"
 import { EMPTY_POSITION_LOOKUPS } from "../helpers/build-position-lookups.helper"
 import type { PositionLookups } from "../types/position-list.types"
+import { usePositionBulkDelete } from "./use-position-bulk-delete.hook"
 import { usePositionRowActions } from "./use-position-row-actions.hook"
 
 // Column helper bound to the entity table features.
@@ -47,6 +48,7 @@ function usePositionDatatable(
   lookups: PositionLookups = EMPTY_POSITION_LOOKUPS
 ) {
   const rowActions = usePositionRowActions()
+  const bulkDelete = usePositionBulkDelete()
 
   const rowFor = useCallback(
     (positionId: string) => lookups.rows[positionId] ?? null,
@@ -76,7 +78,7 @@ function usePositionDatatable(
     },
   })
 
-  return { table: TABLE, rowActions }
+  return { table: TABLE, rowActions, bulkDelete }
 }
 
 export { usePositionDatatable }

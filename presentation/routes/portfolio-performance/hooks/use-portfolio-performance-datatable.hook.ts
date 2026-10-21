@@ -15,6 +15,7 @@ import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-per
 import { CreatePortfolioPerformanceTableColumns } from "../datatable/table-columns"
 import { EMPTY_PORTFOLIO_PERFORMANCE_LOOKUPS } from "../helpers/build-portfolio-performance-lookups.helper"
 import type { PortfolioPerformanceLookups } from "../types/portfolio-performance-list.types"
+import { usePortfolioPerformanceBulkDelete } from "./use-portfolio-performance-bulk-delete.hook"
 import { usePortfolioPerformanceRowActions } from "./use-portfolio-performance-row-actions.hook"
 
 // Column helper bound to the entity table features.
@@ -52,6 +53,7 @@ function usePortfolioPerformanceDatatable(
   lookups: PortfolioPerformanceLookups = EMPTY_PORTFOLIO_PERFORMANCE_LOOKUPS
 ) {
   const rowActions = usePortfolioPerformanceRowActions()
+  const bulkDelete = usePortfolioPerformanceBulkDelete()
 
   const rowFor = useCallback(
     (performanceId: string) =>
@@ -81,7 +83,7 @@ function usePortfolioPerformanceDatatable(
     },
   })
 
-  return { table: TABLE, rowActions }
+  return { table: TABLE, rowActions, bulkDelete }
 }
 
 export { usePortfolioPerformanceDatatable }

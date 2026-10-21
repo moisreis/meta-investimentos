@@ -35,6 +35,9 @@ export const PORTFOLIO_FORM = {
   // Success toast description after updating a portfolio.
   UPDATE_SUCCESS_DESCRIPTION: "As informações foram salvas.",
 
+  // Action button on the create/update success toasts.
+  VIEW_ACTION: "Ver carteira",
+
   // Error toast title for the portfolio forms.
   ERROR_TITLE: "Não foi possível salvar a carteira",
   // Field label: the acronym.
