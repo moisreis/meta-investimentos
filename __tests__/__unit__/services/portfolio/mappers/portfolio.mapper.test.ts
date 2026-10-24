@@ -21,9 +21,6 @@ describe("services/portfolio/mappers/portfolio.mapper", () => {
         name: "Master Portfolio",
         userId: "user-7",
         annualInterestRate: "10.5",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12",
       })
 
       expect(props.acronym).toBe("MASTER")
@@ -36,9 +33,6 @@ describe("services/portfolio/mappers/portfolio.mapper", () => {
         name: "Master Portfolio",
         userId: "user-7",
         annualInterestRate: "10.5",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12",
       })
 
       expect(props.userId).toBe("user-7")
@@ -50,57 +44,10 @@ describe("services/portfolio/mappers/portfolio.mapper", () => {
         name: "Master Portfolio",
         userId: "user-7",
         annualInterestRate: "10.5",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12",
       })
 
       expect(props.annualInterestRate.value.toString()).toBe(
         "10.5"
-      )
-    })
-
-    it("should parse the minimum allocation into a SignedPercentage when mapping a create DTO", () => {
-      const props = toCreatePortfolioProps({
-        acronym: "MASTER",
-        name: "Master Portfolio",
-        userId: "user-7",
-        annualInterestRate: "10.5",
-        minAllocation: "3.75",
-        maxAllocation: "20",
-        targetAllocation: "12",
-      })
-
-      expect(props.minAllocation.value.toString()).toBe("3.75")
-    })
-
-    it("should parse the maximum allocation into a SignedPercentage when mapping a create DTO", () => {
-      const props = toCreatePortfolioProps({
-        acronym: "MASTER",
-        name: "Master Portfolio",
-        userId: "user-7",
-        annualInterestRate: "10.5",
-        minAllocation: "5",
-        maxAllocation: "42",
-        targetAllocation: "12",
-      })
-
-      expect(props.maxAllocation.value.toString()).toBe("42")
-    })
-
-    it("should parse the target allocation into a SignedPercentage when mapping a create DTO", () => {
-      const props = toCreatePortfolioProps({
-        acronym: "MASTER",
-        name: "Master Portfolio",
-        userId: "user-7",
-        annualInterestRate: "10.5",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12.5",
-      })
-
-      expect(props.targetAllocation.value.toString()).toBe(
-        "12.5"
       )
     })
 
@@ -110,9 +57,6 @@ describe("services/portfolio/mappers/portfolio.mapper", () => {
         name: "Master Portfolio",
         userId: "user-7",
         annualInterestRate: "10.5",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12",
       })
 
       expect(() => Portfolio.create(props)).not.toThrow()
@@ -158,36 +102,6 @@ describe("services/portfolio/mappers/portfolio.mapper", () => {
       const response = toResponseDTO(portfolio)
 
       expect(response.annualInterestRate).toBe("10.5")
-    })
-
-    it("should expose the minimum allocation as a decimal string when serializing a portfolio", () => {
-      const portfolio = buildPortfolio({
-        minAllocation: buildSignedPercentage("3.75"),
-      })
-
-      const response = toResponseDTO(portfolio)
-
-      expect(response.minAllocation).toBe("3.75")
-    })
-
-    it("should expose the maximum allocation as a decimal string when serializing a portfolio", () => {
-      const portfolio = buildPortfolio({
-        maxAllocation: buildSignedPercentage("42"),
-      })
-
-      const response = toResponseDTO(portfolio)
-
-      expect(response.maxAllocation).toBe("42")
-    })
-
-    it("should expose the target allocation as a decimal string when serializing a portfolio", () => {
-      const portfolio = buildPortfolio({
-        targetAllocation: buildSignedPercentage("12.5"),
-      })
-
-      const response = toResponseDTO(portfolio)
-
-      expect(response.targetAllocation).toBe("12.5")
     })
 
     it("should expose the timestamps as ISO 8601 strings when serializing a portfolio", () => {

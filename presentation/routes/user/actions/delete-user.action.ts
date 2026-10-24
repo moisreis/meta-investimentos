@@ -1,6 +1,7 @@
 "use server"
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { RequireRole } from "@/lib/authz/require-role"
 import { UserContainer } from "@/presentation/composition/user.container"
 import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
@@ -47,6 +48,13 @@ export async function deleteUserAction(
     return ActionFailure("Faça login para continuar.")
   }
 
+  const { get: GET_USER } = UserContainer()
+  const ACTOR = await GET_USER.execute({ userId: USER.id })
+  const ROLE_CHECK = RequireRole(ACTOR.role, ["MANAGER"])
+  if (!ROLE_CHECK.success) {
+    return ROLE_CHECK
+  }
+
   const PARSED = DELETE_USER_SCHEMA.safeParse(input)
 
   if (!PARSED.success) {
@@ -54,7 +62,30 @@ export async function deleteUserAction(
   }
 
   try {
-    const { remove: REMOVE_USER } = UserContainer()
+    const {
+      get: GET_TARGET,
+      remove: REMOVE_USER,
+      list: LIST_USERS,
+    } = UserContainer()
+    const TARGET = await GET_TARGET.execute({
+      userId: PARSED.data.userId,
+    })
+    if (TARGET.id === ACTOR.id) {
+      return ActionFailure(
+        "Não é possível excluir a própria conta."
+      )
+    }
+    if (TARGET.role === "MANAGER") {
+      const USERS = await LIST_USERS.execute({})
+      const MANAGER_COUNT = USERS.filter(
+        (user) => user.role === "MANAGER"
+      ).length
+      if (MANAGER_COUNT <= 1) {
+        return ActionFailure(
+          "Não é possível excluir o último administrador."
+        )
+      }
+    }
 
     await REMOVE_USER.execute(PARSED.data)
 

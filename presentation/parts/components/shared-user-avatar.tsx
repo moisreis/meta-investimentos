@@ -30,6 +30,9 @@ export interface SharedUserAvatarProps {
  * @remarks
  * Shows the avatar image when available; otherwise initials.
  * Forces a fixed size-5 (20px) avatar with inline dimensions.
+ * The name is set in quiet ink at the small size, because a
+ * name is a byline and never the subject of the screen that
+ * carries it.
  *
  * @explanation
  * Use this component to identify users in lists, headers,
@@ -74,7 +77,7 @@ export function SharedUserAvatar({
           <AvatarFallback>{INITIALS || "?"}</AvatarFallback>
         )}
       </Avatar>
-      <span className="text-sm font-normal">
+      <span className="text-sm font-normal text-muted-foreground">
         {FULL_NAME || "-"}
       </span>
     </div>

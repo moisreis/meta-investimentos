@@ -154,6 +154,7 @@ export const POSITION_ACTIVITY = {
 
   // Column headers.
   COLUMN_TYPE: "Tipo",
+  COLUMN_STATUS: "Situação",
   COLUMN_DATE: "Data",
   COLUMN_FUND: "Fundo",
   COLUMN_AMOUNT: "Valor",
@@ -163,12 +164,37 @@ export const POSITION_ACTIVITY = {
   TYPE_APPLICATION: "Aplicação",
   TYPE_WITHDRAWAL: "Resgate",
 
+  // Status badges.
+  STATUS_ACTIVE_LABEL: "Ativo",
+  STATUS_REVERSED_LABEL: "Estornado",
+
+  // Row actions menu.
+  ROW_ACTIONS_LABEL: "Ações",
+  ROW_REVERSE_LABEL: "Reverter",
+
+  // Reverse dialog.
+  REVERSE_TITLE: "Reverter movimentação",
+  REVERSE_CONFIRM_LABEL: "Reverter",
+  REVERSE_CANCEL_LABEL: "Cancelar",
+  REVERSE_SUCCESS_TITLE: "Movimentação revertida!",
+  REVERSE_SUCCESS_DESCRIPTION:
+    "A movimentação foi marcada como estornada.",
+  REVERSE_ERROR_TITLE:
+    "Não foi possível reverter a movimentação",
+
   // Empty state of the section.
   EMPTY_TITLE: "Nenhuma movimentação no período",
   EMPTY_DESCRIPTION:
     "As aplicações e os resgates da posição aparecem aqui " +
     "assim que houver um lançamento no período selecionado.",
 } as const
+
+// Copy used to describe the row before a single reverse.
+export function FormatReversePositionActivityDescription(
+  movementLabel: string
+): string {
+  return `Deseja reverter a movimentação de ${movementLabel}? O lançamento será marcado como estornado.`
+}
 
 // Section copy of the position detail charts. Each chart
 // carries its own description inside its card, so a section

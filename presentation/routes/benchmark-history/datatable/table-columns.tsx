@@ -6,8 +6,8 @@ import { EntityTableRowMenuDropdown } from "@/presentation/parts/datatable/row-m
 import { CreateEntitySelectColumn } from "@/presentation/parts/datatable/pinned-columns/entity-table-selectable-column"
 import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
-import { FormatUtcDate } from "@/presentation/presenters/date.presenter"
 import { FormatEntityLookup } from "@/presentation/presenters/lookup.presenter"
+import { FormatMonthYear } from "@/presentation/presenters/month-year.presenter"
 import { FormatSignedPercentage } from "@/presentation/presenters/percentage.presenter"
 import type { BenchmarkHistoryRow } from "@/presentation/types/benchmark-history-row.types"
 
@@ -61,7 +61,7 @@ export function CreateBenchmarkHistoryTableColumns(
       minSize: 130,
       maxSize: 130,
       meta: { pinned: "start" },
-      cell: (info) => FormatUtcDate(info.getValue()),
+      cell: (info) => FormatMonthYear(info.getValue()),
     }),
 
     columnHelper.accessor(

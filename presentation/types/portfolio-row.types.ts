@@ -27,7 +27,4 @@ export interface PortfolioRow {
   // Owner user id for cross-user lists.
   userId: string
   annualInterestRate: string
-  minAllocation: string
-  maxAllocation: string
-  targetAllocation: string
 }

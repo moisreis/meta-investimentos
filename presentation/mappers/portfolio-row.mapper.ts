@@ -6,10 +6,10 @@ import type { PortfolioResponseDTO } from "@/services/portfolio/dto/portfolio-re
  * Projects a portfolio read model onto the portfolio row.
  *
  * @remarks
- * Keeps the 7 fields the screens render
- * and drops 3 that stay in the
+ * Keeps the 5 fields the screens render
+ * and drops the 2 that stay in the
  * service layer:
- * `userId`, `createdAt`, `updatedAt`.
+ * `createdAt`, `updatedAt`.
  *
  * @explanation
  * Use this mapper in the route loaders, the only place
@@ -36,9 +36,6 @@ export function ToPortfolioRow(
     name: dto.name,
     userId: dto.userId,
     annualInterestRate: dto.annualInterestRate,
-    minAllocation: dto.minAllocation,
-    maxAllocation: dto.maxAllocation,
-    targetAllocation: dto.targetAllocation,
   }
 }
 
@@ -47,10 +44,10 @@ export function ToPortfolioRow(
  * Projects the portfolio read models onto the portfolio rows.
  *
  * @remarks
- * Keeps the 7 fields the screens render
- * and drops 3 that stay in the
+ * Keeps the 5 fields the screens render
+ * and drops the 2 that stay in the
  * service layer:
- * `userId`, `createdAt`, `updatedAt`.
+ * `createdAt`, `updatedAt`.
  *
  * @explanation
  * Use this mapper in the route loaders, the only place

@@ -39,9 +39,6 @@ import { CREATE_PORTFOLIO_SCHEMA } from "../validations/portfolio-actions.valida
  *   acronym: "RF",
  *   name: "Renda Fixa",
  *   annualInterestRate: "10.5",
- *   minAllocation: "5",
- *   maxAllocation: "20",
- *   targetAllocation: "12",
  *   norms: [
  *     {
  *       normId: "norm-1",

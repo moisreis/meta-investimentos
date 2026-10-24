@@ -13,9 +13,6 @@ describe("Portfolio", () => {
         name: "Fundo de Investimento em Ações",
         userId: EntityId.create("user-1"),
         annualInterestRate: SignedPercentage.create("10.5"),
-        minAllocation: SignedPercentage.create("5"),
-        maxAllocation: SignedPercentage.create("20"),
-        targetAllocation: SignedPercentage.create("12"),
       })
 
       expect(portfolio.acronym).toBe("FIA")
@@ -25,15 +22,6 @@ describe("Portfolio", () => {
       expect(portfolio.userId).toBe(EntityId.create("user-1"))
       expect(portfolio.annualInterestRate.value.toFixed(2)).toBe(
         "10.50"
-      )
-      expect(portfolio.minAllocation.value.toFixed(2)).toBe(
-        "5.00"
-      )
-      expect(portfolio.maxAllocation.value.toFixed(2)).toBe(
-        "20.00"
-      )
-      expect(portfolio.targetAllocation.value.toFixed(2)).toBe(
-        "12.00"
       )
       expect(portfolio.version).toBe(0)
       expect(portfolio.id).toBeUndefined()
@@ -49,9 +37,6 @@ describe("Portfolio", () => {
           name: "Fundo de Investimento em Ações",
           userId: EntityId.create("user-1"),
           annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
         },
         id
       )
@@ -67,9 +52,6 @@ describe("Portfolio", () => {
         name: "Fundo de Investimento em Ações",
         userId: EntityId.create("user-1"),
         annualInterestRate: SignedPercentage.create("10.5"),
-        minAllocation: SignedPercentage.create("5"),
-        maxAllocation: SignedPercentage.create("20"),
-        targetAllocation: SignedPercentage.create("12"),
         createdAt,
         updatedAt,
       })
@@ -85,9 +67,6 @@ describe("Portfolio", () => {
           name: "Teste",
           userId: EntityId.create("user-1"),
           annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
         })
       ).toThrow(ValidationError)
     })
@@ -99,9 +78,6 @@ describe("Portfolio", () => {
           name: "",
           userId: EntityId.create("user-1"),
           annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
         })
       ).toThrow(ValidationError)
     })
@@ -113,9 +89,6 @@ describe("Portfolio", () => {
           name: "Teste",
           userId: EntityId.create(""),
           annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
         })
       ).toThrow(ValidationError)
     })
@@ -126,48 +99,6 @@ describe("Portfolio", () => {
           acronym: "FIA",
           name: "Teste",
           userId: EntityId.create("user-1"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
-        } as Parameters<typeof Portfolio.create>[0])
-      ).toThrow(ValidationError)
-    })
-
-    it("should throw ValidationError when minAllocation is missing", () => {
-      expect(() =>
-        Portfolio.create({
-          acronym: "FIA",
-          name: "Teste",
-          userId: EntityId.create("user-1"),
-          annualInterestRate: SignedPercentage.create("10.5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
-        } as Parameters<typeof Portfolio.create>[0])
-      ).toThrow(ValidationError)
-    })
-
-    it("should throw ValidationError when maxAllocation is missing", () => {
-      expect(() =>
-        Portfolio.create({
-          acronym: "FIA",
-          name: "Teste",
-          userId: EntityId.create("user-1"),
-          annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          targetAllocation: SignedPercentage.create("12"),
-        } as Parameters<typeof Portfolio.create>[0])
-      ).toThrow(ValidationError)
-    })
-
-    it("should throw ValidationError when targetAllocation is missing", () => {
-      expect(() =>
-        Portfolio.create({
-          acronym: "FIA",
-          name: "Teste",
-          userId: EntityId.create("user-1"),
-          annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
         } as Parameters<typeof Portfolio.create>[0])
       ).toThrow(ValidationError)
     })
@@ -179,88 +110,7 @@ describe("Portfolio", () => {
           name: "Teste",
           userId: EntityId.create("user-1"),
           annualInterestRate: SignedPercentage.create("-5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
         })
-      ).toThrow(ValidationError)
-    })
-
-    it("should throw ValidationError when min > target", () => {
-      expect(() =>
-        Portfolio.create({
-          acronym: "FIA",
-          name: "Teste",
-          userId: EntityId.create("user-1"),
-          annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("15"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("10"),
-        })
-      ).toThrow(ValidationError)
-    })
-
-    it("should throw ValidationError when target > max", () => {
-      expect(() =>
-        Portfolio.create({
-          acronym: "FIA",
-          name: "Teste",
-          userId: EntityId.create("user-1"),
-          annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("10"),
-          targetAllocation: SignedPercentage.create("15"),
-        })
-      ).toThrow(ValidationError)
-    })
-  })
-
-  describe("updateAllocation", () => {
-    it("should return new Portfolio with updated allocation", () => {
-      const portfolio = buildPortfolio()
-      const now = new Date("2026-06-15T10:00:00.000Z")
-
-      const updated = portfolio.updateAllocation(
-        SignedPercentage.create("3"),
-        SignedPercentage.create("10"),
-        SignedPercentage.create("25"),
-        now
-      )
-
-      expect(updated.minAllocation.value.toFixed(2)).toBe("3.00")
-      expect(updated.targetAllocation.value.toFixed(2)).toBe(
-        "10.00"
-      )
-      expect(updated.maxAllocation.value.toFixed(2)).toBe(
-        "25.00"
-      )
-      expect(updated.id).toBe(portfolio.id)
-      expect(updated.updatedAt).toEqual(now)
-      // Original unchanged
-      expect(portfolio.minAllocation.value.toFixed(2)).toBe(
-        "5.00"
-      )
-    })
-
-    it("should throw ValidationError when min > target", () => {
-      const portfolio = buildPortfolio()
-      expect(() =>
-        portfolio.updateAllocation(
-          SignedPercentage.create("15"),
-          SignedPercentage.create("10"),
-          SignedPercentage.create("20")
-        )
-      ).toThrow(ValidationError)
-    })
-
-    it("should throw ValidationError when target > max", () => {
-      const portfolio = buildPortfolio()
-      expect(() =>
-        portfolio.updateAllocation(
-          SignedPercentage.create("5"),
-          SignedPercentage.create("15"),
-          SignedPercentage.create("10")
-        )
       ).toThrow(ValidationError)
     })
   })
@@ -342,9 +192,6 @@ describe("Portfolio", () => {
           name: "Fundo de Investimento em Ações",
           userId: EntityId.create("user-1"),
           annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
         },
         id
       )
@@ -354,9 +201,6 @@ describe("Portfolio", () => {
           name: "Fundo de Investimento em Ações",
           userId: EntityId.create("user-1"),
           annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
         },
         id
       )
@@ -371,9 +215,6 @@ describe("Portfolio", () => {
           name: "Fundo de Investimento em Ações",
           userId: EntityId.create("user-1"),
           annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
         },
         EntityId.create("portfolio-1")
       )
@@ -383,9 +224,6 @@ describe("Portfolio", () => {
           name: "Fundo de Investimento em Ações",
           userId: EntityId.create("user-1"),
           annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
         },
         EntityId.create("portfolio-2")
       )
@@ -399,9 +237,6 @@ describe("Portfolio", () => {
         name: "Fundo de Investimento em Ações",
         userId: EntityId.create("user-1"),
         annualInterestRate: SignedPercentage.create("10.5"),
-        minAllocation: SignedPercentage.create("5"),
-        maxAllocation: SignedPercentage.create("20"),
-        targetAllocation: SignedPercentage.create("12"),
       })
       const p2 = Portfolio.create(
         {
@@ -409,9 +244,6 @@ describe("Portfolio", () => {
           name: "Fundo de Investimento em Ações",
           userId: EntityId.create("user-1"),
           annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
         },
         EntityId.create("portfolio-1")
       )
@@ -426,9 +258,6 @@ describe("Portfolio", () => {
           name: "Fundo de Investimento em Ações",
           userId: EntityId.create("user-1"),
           annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
         },
         EntityId.create("portfolio-1")
       )
@@ -437,9 +266,6 @@ describe("Portfolio", () => {
         name: "Fundo de Investimento em Ações",
         userId: EntityId.create("user-1"),
         annualInterestRate: SignedPercentage.create("10.5"),
-        minAllocation: SignedPercentage.create("5"),
-        maxAllocation: SignedPercentage.create("20"),
-        targetAllocation: SignedPercentage.create("12"),
       })
 
       expect(p1.equals(p2)).toBe(false)
@@ -468,11 +294,7 @@ describe("Portfolio", () => {
 
     it("should return new instances on mutations", () => {
       const portfolio = buildPortfolio()
-      const updated1 = portfolio.updateAllocation(
-        SignedPercentage.create("3"),
-        SignedPercentage.create("10"),
-        SignedPercentage.create("25")
-      )
+      const updated1 = portfolio.updateAcronym("IPCA+")
       const updated2 = portfolio.updateAnnualInterestRate(
         SignedPercentage.create("12.0")
       )

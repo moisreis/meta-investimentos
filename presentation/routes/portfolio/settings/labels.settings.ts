@@ -52,12 +52,6 @@ export const PORTFOLIO_FORM = {
   LABEL_ANNUAL_INTEREST_RATE: "Taxa de juros anual",
   // Field description: the annual interest rate.
   DESCRIPTION_ANNUAL_INTEREST_RATE: "Em percentual ao ano.",
-  // Field label: the minimum allocation.
-  LABEL_MINIMUM_ALLOCATION: "Alocação mínima",
-  // Field label: the target allocation.
-  LABEL_TARGET_ALLOCATION: "Alocação alvo",
-  // Field label: the maximum allocation.
-  LABEL_MAXIMUM_ALLOCATION: "Alocação máxima",
   // Field label: the norms bound to the portfolio.
   LABEL_NORMS: "Normas da carteira",
   // Field description: the norms bound to the portfolio.
@@ -388,6 +382,7 @@ export const PORTFOLIO_ACTIVITY = {
 
   // Column headers.
   COLUMN_TYPE: "Tipo",
+  COLUMN_STATUS: "Situação",
   COLUMN_DATE: "Data",
   COLUMN_FUND: "Fundo",
   COLUMN_AMOUNT: "Valor",
@@ -397,9 +392,23 @@ export const PORTFOLIO_ACTIVITY = {
   TYPE_APPLICATION: "Aplicação",
   TYPE_WITHDRAWAL: "Resgate",
 
+  // Status badges.
+  STATUS_ACTIVE_LABEL: "Ativo",
+  STATUS_REVERSED_LABEL: "Estornado",
+
   // Row actions menu.
   ROW_ACTIONS_LABEL: "Ações",
   ROW_REVERSE_LABEL: "Reverter",
+
+  // Reverse dialog.
+  REVERSE_TITLE: "Reverter movimentação",
+  REVERSE_CONFIRM_LABEL: "Reverter",
+  REVERSE_CANCEL_LABEL: "Cancelar",
+  REVERSE_SUCCESS_TITLE: "Movimentação revertida!",
+  REVERSE_SUCCESS_DESCRIPTION:
+    "A movimentação foi marcada como estornada.",
+  REVERSE_ERROR_TITLE:
+    "Não foi possível reverter a movimentação",
 
   // Empty state of the section.
   EMPTY_TITLE: "Nenhuma movimentação no período",
@@ -407,6 +416,13 @@ export const PORTFOLIO_ACTIVITY = {
     "As aplicações e os resgates da carteira aparecem aqui " +
     "assim que houver um lançamento no período selecionado.",
 } as const
+
+// Copy used to describe the row before a single reverse.
+export function FormatReversePortfolioActivityDescription(
+  movementLabel: string
+): string {
+  return `Deseja reverter a movimentação de ${movementLabel}? O lançamento será marcado como estornado.`
+}
 
 // Formats the delete dialog description with the name.
 function FormatDeletePortfolioDescription(name: string): string {

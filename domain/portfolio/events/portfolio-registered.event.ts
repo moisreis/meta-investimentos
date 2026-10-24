@@ -7,9 +7,6 @@ export interface PortfolioRegisteredProps {
   acronym: string
   name: string
   annualInterestRate: SignedPercentage
-  minAllocation: SignedPercentage
-  targetAllocation: SignedPercentage
-  maxAllocation: SignedPercentage
   occurredAt?: Date
 }
 
@@ -19,12 +16,12 @@ export interface PortfolioRegisteredProps {
  *
  * @remarks
  * Emitted after the **Portfolio** entity is persisted.
- * Carries the allocation bounds and the target rate.
+ * Carries the target rate.
  *
  * @explanation
  * Use this event to react to new portfolio creation.
- * It exposes the allocation constraints consumed by
- * downstream contexts for compliance and returns.
+ * The allocation of the portfolio is not carried here: it
+ * belongs to the norms attached to it, in `norms-portfolio`.
  *
  * @author Moisés Reis
  *
@@ -64,21 +61,6 @@ export class PortfolioRegistered {
     return this.props.annualInterestRate
   }
 
-  // Returns the minimum allocation of the portfolio.
-  get minAllocation(): SignedPercentage {
-    return this.props.minAllocation
-  }
-
-  // Returns the target allocation of the portfolio.
-  get targetAllocation(): SignedPercentage {
-    return this.props.targetAllocation
-  }
-
-  // Returns the maximum allocation of the portfolio.
-  get maxAllocation(): SignedPercentage {
-    return this.props.maxAllocation
-  }
-
   // Returns when the event occurred.
   get occurredAt(): Date {
     return new Date(this.props.occurredAt)
@@ -100,14 +82,13 @@ export class PortfolioRegistered {
    * Creates a valid **PortfolioRegistered** event.
    *
    * @remarks
-   * Validates the required fields and the allocation
-   * bounds. The occurred date defaults to now.
+   * Validates the required fields. The occurred date
+   * defaults to now.
    *
    * @explanation
    * Factory method to build the event after the
    * **Portfolio** is stored. Throws a
-   * **ValidationError** when a required field is missing
-   * or the allocation bounds are not ordered.
+   * **ValidationError** when a required field is missing.
    *
    * @param props - Properties of the registered portfolio.
    * @param id - Optional unique identifier of the event.
@@ -125,9 +106,6 @@ export class PortfolioRegistered {
    *   acronym: "FIA",
    *   name: "Fundo de Investimento em Ações",
    *   annualInterestRate: SignedPercentage.create("10.5"),
-   *   minAllocation: SignedPercentage.create("5"),
-   *   targetAllocation: SignedPercentage.create("12"),
-   *   maxAllocation: SignedPercentage.create("20"),
    * });
    *
    * @author Moisés Reis
@@ -161,36 +139,6 @@ export class PortfolioRegistered {
     if (!props.annualInterestRate) {
       throw new ValidationError(
         "`PortfolioRegistered` must have an annual interest rate."
-      )
-    }
-    if (!props.minAllocation) {
-      throw new ValidationError(
-        "`PortfolioRegistered` must have a minimum allocation."
-      )
-    }
-    if (!props.targetAllocation) {
-      throw new ValidationError(
-        "`PortfolioRegistered` must have a target allocation."
-      )
-    }
-    if (!props.maxAllocation) {
-      throw new ValidationError(
-        "`PortfolioRegistered` must have a maximum allocation."
-      )
-    }
-
-    const MIN = props.minAllocation.value
-    const TARGET = props.targetAllocation.value
-    const MAX = props.maxAllocation.value
-
-    if (MIN.gt(TARGET)) {
-      throw new ValidationError(
-        "`PortfolioRegistered` min is above target."
-      )
-    }
-    if (TARGET.gt(MAX)) {
-      throw new ValidationError(
-        "`PortfolioRegistered` target is above max."
       )
     }
 

@@ -80,11 +80,6 @@ function usePortfolioEditForm(
       annualInterestRate: MaskPercentage(
         portfolio.annualInterestRate
       ),
-      minAllocation: MaskPercentage(portfolio.minAllocation),
-      maxAllocation: MaskPercentage(portfolio.maxAllocation),
-      targetAllocation: MaskPercentage(
-        portfolio.targetAllocation
-      ),
       norms: norms?.allocations[portfolio.id] ?? [],
     },
     submit: (values) =>
@@ -94,11 +89,6 @@ function usePortfolioEditForm(
         name: values.name,
         annualInterestRate: UnmaskPercentage(
           values.annualInterestRate
-        ),
-        minAllocation: UnmaskPercentage(values.minAllocation),
-        maxAllocation: UnmaskPercentage(values.maxAllocation),
-        targetAllocation: UnmaskPercentage(
-          values.targetAllocation
         ),
         ...(norms
           ? { norms: values.norms.map(ToNormAllocationInput) }
@@ -115,15 +105,6 @@ function usePortfolioEditForm(
     annualInterestRate: VALUES.annualInterestRate,
     updateAnnualInterestRate: (value: string) =>
       updateField("annualInterestRate", value),
-    minAllocation: VALUES.minAllocation,
-    updateMinAllocation: (value: string) =>
-      updateField("minAllocation", value),
-    maxAllocation: VALUES.maxAllocation,
-    updateMaxAllocation: (value: string) =>
-      updateField("maxAllocation", value),
-    targetAllocation: VALUES.targetAllocation,
-    updateTargetAllocation: (value: string) =>
-      updateField("targetAllocation", value),
     norms: VALUES.norms,
     updateNorms: (value: NormPortfolioAllocation[]) =>
       updateField("norms", value),

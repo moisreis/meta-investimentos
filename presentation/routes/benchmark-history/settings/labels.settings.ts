@@ -14,7 +14,7 @@ import { BuildBenchmarkHistoryMonthDate } from "../helpers/build-benchmark-histo
 // Datatable copy for the index history list screen.
 export const BENCHMARK_HISTORY_DATATABLE = {
   // Column headers.
-  COLUMN_DATE: "Data",
+  COLUMN_DATE: "Mês",
   COLUMN_BENCHMARK: "Índice",
   COLUMN_RATE: "Taxa",
 

@@ -224,9 +224,6 @@ describe("infrastructure/portfolio/repositories/portfolio.repository", () => {
           name: "Fantasma",
           userId: owner.id,
           annualInterestRate: SignedPercentage.create("10"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
         },
         MISSING_ID
       )

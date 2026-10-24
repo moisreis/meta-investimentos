@@ -292,10 +292,6 @@ export class ImportFundValuationsUseCase {
     )
 
     if (ZIP_BYTES === null) {
-      console.log(
-        `[ImportFundValuations] No archive for ${input.year}-${input.month}.`
-      )
-
       return {
         fundsScanned: FUNDS.length,
         hasMore: FUNDS.length === input.limit,
@@ -324,12 +320,6 @@ export class ImportFundValuationsUseCase {
 
     const HAS_MORE = FUNDS.length === input.limit
     const NEXT_OFFSET = input.offset + FUNDS.length
-
-    console.log(
-      `[ImportFundValuations] ${input.year}-${input.month}: ` +
-        `imported=${rowsImported} skipped=${skipped} ` +
-        `hasMore=${HAS_MORE}`
-    )
 
     return {
       fundsScanned: FUNDS.length,

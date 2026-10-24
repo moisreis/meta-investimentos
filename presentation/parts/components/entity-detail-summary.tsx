@@ -161,6 +161,15 @@ const TONE_TEXT: Record<EntitySummaryTone, string> = {
  * worth the attention a number is, and the avatar is small
  * enough to read as a signature rather than as a portrait.
  *
+ * The block holds two kinds of subject: a figure of account,
+ * which is short, and the name of a registry entry, which is
+ * not. So the headline scales with the width of the screen
+ * and wraps, and the ledger below it reads as one line per
+ * figure on a narrow screen and as four on a wide one. A
+ * subject that is long must never push the block out of the
+ * screen, and a figure that is short must never lose the
+ * weight that makes it the subject of the page.
+ *
  * @explanation
  * Use this part as the first block of any detail screen
  * whose subject is a balance that moves over a period.
@@ -202,13 +211,13 @@ export function EntityDetailSummary({
           />
         ) : null}
 
-        <h2 className="shrink-0 text-xs text-muted-foreground">
+        <h2 className="min-w-0 text-right text-xs break-words text-muted-foreground">
           {label}
         </h2>
       </div>
 
       <div className="flex flex-col gap-3">
-        <p className="font-figure text-4xl leading-none tracking-tight text-foreground tabular-nums sm:text-6xl">
+        <p className="font-figure text-[clamp(1.75rem,7vw,3.75rem)] leading-tight tracking-tight text-balance break-words text-foreground tabular-nums">
           {value}
         </p>
 
@@ -238,15 +247,15 @@ export function EntityDetailSummary({
         ) : null}
       </div>
 
-      <dl className="grid grid-cols-2 gap-x-6 gap-y-5 border-t border-border pt-5 sm:grid-cols-4">
+      <dl className="grid grid-cols-1 gap-y-4 border-t border-border pt-5 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-5 lg:grid-cols-4">
         {entries.map((entry) => (
           <div key={entry.key} className="flex flex-col gap-1">
-            <dt className="text-xs text-muted-foreground">
+            <dt className="text-xs break-words text-muted-foreground">
               {entry.label}
             </dt>
             <dd
               className={cn(
-                "text-base font-medium tabular-nums",
+                "text-base font-medium break-words tabular-nums",
                 TONE_TEXT[entry.tone]
               )}
             >

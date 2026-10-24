@@ -8,10 +8,9 @@
  * date. The `kind` is what the row is read as, and it is
  * also what decides the badge color and the column order.
  *
- * A movement is only listed when it was not reversed. A
- * reversed movement never happened, so reporting it beside
- * the ones that did would make the table claim money that
- * left no trace in the patrimony.
+ * Reversed movements remain listed with `reversedAt`
+ * populated so the status column can mark them as
+ * estornado. Non-reversed movements stay listed as active.
  *
  * @explanation
  * Use this type in the portfolio detail activity datatable.
@@ -20,7 +19,7 @@
  *
  * @author Moisés Reis
  *
- * @date 2026-09-28
+ * @date 2026-10-21
  */
 export interface PortfolioActivityRow {
   // Movement id, unique across both directions because an
@@ -43,6 +42,8 @@ export interface PortfolioActivityRow {
   amount: string
   // Quotas bought or sold, as a decimal string.
   quotas: string
+  // ISO timestamp when reversed, or null when active.
+  reversedAt: string | null
 }
 
 // Direction of a portfolio movement.

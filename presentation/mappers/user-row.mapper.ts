@@ -35,7 +35,6 @@ export function ToUserRow(dto: UserResponseDTO): UserRow {
     firstName: dto.firstName,
     lastName: dto.lastName,
     maskedCpf: dto.maskedCpf,
-    cpf: dto.cpf,
     role: dto.role,
     emailVerified: dto.emailVerified,
     image: dto.image,

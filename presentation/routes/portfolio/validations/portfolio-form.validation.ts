@@ -54,28 +54,14 @@ const NORM_ALLOCATION_SCHEMA = z
   )
 
 // Validates the portfolio add/edit form fields with **Zod**.
-const PORTFOLIO_FORM_SCHEMA = z
-  .object({
-    acronym: z.string().trim().min(1, "Informe a sigla."),
-    name: z.string().trim().min(1, "Informe o nome."),
-    annualInterestRate: PERCENTAGE_SCHEMA,
-    minAllocation: PERCENTAGE_SCHEMA,
-    maxAllocation: PERCENTAGE_SCHEMA,
-    targetAllocation: PERCENTAGE_SCHEMA,
-    norms: z.array(NORM_ALLOCATION_SCHEMA).optional(),
-  })
-  .refine(
-    (values) =>
-      Number(values.minAllocation.replace(",", ".")) <=
-        Number(values.targetAllocation.replace(",", ".")) &&
-      Number(values.targetAllocation.replace(",", ".")) <=
-        Number(values.maxAllocation.replace(",", ".")),
-    {
-      message:
-        "A alocação alvo deve estar entre a mínima e a máxima.",
-      path: ["targetAllocation"],
-    }
-  )
+// The allocation of the portfolio is not a field of the
+// form: it lives in the norms attached to it.
+const PORTFOLIO_FORM_SCHEMA = z.object({
+  acronym: z.string().trim().min(1, "Informe a sigla."),
+  name: z.string().trim().min(1, "Informe o nome."),
+  annualInterestRate: PERCENTAGE_SCHEMA,
+  norms: z.array(NORM_ALLOCATION_SCHEMA).optional(),
+})
 
 // Values of the portfolio add/edit form fields.
 type PortfolioFormValues = z.infer<typeof PORTFOLIO_FORM_SCHEMA>

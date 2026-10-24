@@ -507,9 +507,6 @@ export function buildPortfolio(
     name?: string
     userId?: EntityId
     annualInterestRate?: SignedPercentage
-    minAllocation?: SignedPercentage
-    maxAllocation?: SignedPercentage
-    targetAllocation?: SignedPercentage
     version?: number
     createdAt?: Date
     updatedAt?: Date
@@ -524,13 +521,6 @@ export function buildPortfolio(
       annualInterestRate:
         overrides.annualInterestRate ??
         buildSignedPercentage("10.5"),
-      minAllocation:
-        overrides.minAllocation ?? buildSignedPercentage("5"),
-      maxAllocation:
-        overrides.maxAllocation ?? buildSignedPercentage("20"),
-      targetAllocation:
-        overrides.targetAllocation ??
-        buildSignedPercentage("12"),
       version: overrides.version ?? 0,
       createdAt: overrides.createdAt,
       updatedAt: overrides.updatedAt,

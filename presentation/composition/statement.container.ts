@@ -4,6 +4,11 @@ import { BulkDeleteStatementsUseCase } from "@/services/statement/use-cases/bulk
 import { DeleteStatementUseCase } from "@/services/statement/use-cases/delete-statement.use-case"
 import { GenerateStatementUseCase } from "@/services/statement/use-cases/generate-statement.use-case"
 import { ListStatementsByPortfoliosUseCase } from "@/services/statement/use-cases/list-statements-by-portfolios.use-case"
+import { NormalizeAcronym } from "@/lib/benchmark/normalize-acronym"
+import { BenchmarkContainer } from "@/presentation/composition/benchmark.container"
+import { BenchmarkHistoryContainer } from "@/presentation/composition/benchmark-history.container"
+import { STATEMENT_REPORT_INDEX_ACRONYMS } from "@/services/statement/report/statement-report.constants"
+import { calculateBenchmarkMonthlyRates } from "@/domain/benchmark/calculators/benchmark-monthly-series.calculator"
 
 // The statement use cases, already wired to the repository.
 interface StatementUseCases {
@@ -11,6 +16,7 @@ interface StatementUseCases {
   generate: GenerateStatementUseCase
   listByPortfolios: ListStatementsByPortfoliosUseCase
   remove: DeleteStatementUseCase
+  resolveIpcaAvailability: (month: string) => Promise<boolean>
 }
 
 /**
@@ -43,6 +49,40 @@ interface StatementUseCases {
 function StatementContainer(): StatementUseCases {
   const REPOSITORY = new StatementRepository(db)
 
+  const resolveIpcaAvailability = async (
+    month: string
+  ): Promise<boolean> => {
+    const TARGET = NormalizeAcronym(
+      STATEMENT_REPORT_INDEX_ACRONYMS.ipca
+    )
+
+    const { list: LIST_BENCHMARKS } = BenchmarkContainer()
+    const BENCHMARKS = await LIST_BENCHMARKS.execute({})
+
+    const IPCA = BENCHMARKS.find(
+      (benchmark) =>
+        NormalizeAcronym(benchmark.acronym) === TARGET
+    )
+
+    if (IPCA === undefined) return false
+
+    const { list: LIST_BENCHMARK_HISTORY } =
+      BenchmarkHistoryContainer()
+    const HISTORY = await LIST_BENCHMARK_HISTORY.execute({
+      benchmarkId: IPCA.id,
+    })
+
+    const [READING] = calculateBenchmarkMonthlyRates({
+      entries: HISTORY.map((entry) => ({
+        date: entry.date,
+        rate: entry.rate,
+      })),
+      months: [month],
+    })
+
+    return READING?.rate !== null && READING?.rate !== undefined
+  }
+
   return {
     bulkDelete: new BulkDeleteStatementsUseCase(REPOSITORY),
     generate: new GenerateStatementUseCase(REPOSITORY),
@@ -50,6 +90,7 @@ function StatementContainer(): StatementUseCases {
       REPOSITORY
     ),
     remove: new DeleteStatementUseCase(REPOSITORY),
+    resolveIpcaAvailability,
   }
 }
 

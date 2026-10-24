@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { useRouter } from "next/navigation"
 
 import { EntityEditDialog } from "@/presentation/parts/dialogs/entity-edit"
@@ -64,17 +63,12 @@ function PortfolioEditDialog({
     dialog.result as PortfolioResponseDTO | null
   )?.id
 
-  const SUCCESS_ACTION = React.useMemo(
-    () =>
-      UPDATED_ID
-        ? {
-            label: PORTFOLIO_FORM.VIEW_ACTION,
-            onClick: () =>
-              ROUTER.push(`/portfolio/${UPDATED_ID}`),
-          }
-        : null,
-    [UPDATED_ID, ROUTER]
-  )
+  const SUCCESS_ACTION = UPDATED_ID
+    ? {
+        label: PORTFOLIO_FORM.VIEW_ACTION,
+        onClick: () => ROUTER.push(`/portfolio/${UPDATED_ID}`),
+      }
+    : null
 
   return (
     <>

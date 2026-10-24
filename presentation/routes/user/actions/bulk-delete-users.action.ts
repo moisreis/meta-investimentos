@@ -1,6 +1,7 @@
 "use server"
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { RequireRole } from "@/lib/authz/require-role"
 import { UserContainer } from "@/presentation/composition/user.container"
 import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
@@ -49,6 +50,13 @@ export async function bulkDeleteUsersAction(
     return ActionFailure("Faça login para continuar.")
   }
 
+  const { get: GET_USER } = UserContainer()
+  const ACTOR = await GET_USER.execute({ userId: USER.id })
+  const ROLE_CHECK = RequireRole(ACTOR.role, ["MANAGER"])
+  if (!ROLE_CHECK.success) {
+    return ROLE_CHECK
+  }
+
   const PARSED = BULK_DELETE_USERS_SCHEMA.safeParse(input)
 
   if (!PARSED.success) {
@@ -56,7 +64,39 @@ export async function bulkDeleteUsersAction(
   }
 
   try {
-    const { bulkDelete: BULK_DELETE_USERS } = UserContainer()
+    const {
+      bulkDelete: BULK_DELETE_USERS,
+      get: GET_TARGET,
+      list: LIST_USERS,
+    } = UserContainer()
+    const USERS_TO_DELETE = PARSED.data.userIds
+    if (USERS_TO_DELETE.includes(ACTOR.id)) {
+      return ActionFailure(
+        "Não é possível excluir a própria conta."
+      )
+    }
+    const MANAGERS_TO_DELETE = []
+    for (const USER_ID of USERS_TO_DELETE) {
+      try {
+        const TARGET = await GET_TARGET.execute({
+          userId: USER_ID,
+        })
+        if (TARGET.role === "MANAGER") {
+          MANAGERS_TO_DELETE.push(TARGET)
+        }
+      } catch {}
+    }
+    if (MANAGERS_TO_DELETE.length > 0) {
+      const ALL_USERS = await LIST_USERS.execute({})
+      const MANAGER_COUNT = ALL_USERS.filter(
+        (user) => user.role === "MANAGER"
+      ).length
+      if (MANAGER_COUNT - MANAGERS_TO_DELETE.length < 1) {
+        return ActionFailure(
+          "Não é possível excluir o último administrador."
+        )
+      }
+    }
 
     await BULK_DELETE_USERS.execute(PARSED.data)
 

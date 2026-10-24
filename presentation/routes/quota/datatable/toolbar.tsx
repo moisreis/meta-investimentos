@@ -2,10 +2,7 @@
 
 import { EntityDatatableToolbar } from "@/presentation/parts/components/entity-datatable-toolbar"
 
-import { QuotaImportButton } from "../components/quota-import-button"
-
 interface QuotaDatatableToolbarProps {
-  onImport: () => void
   filters?: React.ReactNode
 }
 
@@ -14,12 +11,9 @@ interface QuotaDatatableToolbarProps {
  * Renders the quota datatable toolbar.
  *
  * @remarks
- * Composes the shared datatable toolbar with the import
- * button on the actions slot, replacing the add-item
- * button since quotas are imported instead of created.
+ * Composes the shared datatable toolbar.
  *
- * @param props - The toolbar callbacks and slots.
- * @param props.onImport - Opens the confirm dialog.
+ * @param props - The toolbar slots.
  * @param props.filters - The left-side filter group.
  *
  * @returns The quota datatable toolbar.
@@ -29,15 +23,9 @@ interface QuotaDatatableToolbarProps {
  * @date 2026-09-25
  */
 function QuotaDatatableToolbar({
-  onImport,
   filters,
 }: QuotaDatatableToolbarProps) {
-  return (
-    <EntityDatatableToolbar
-      filters={filters}
-      actions={<QuotaImportButton onClick={onImport} />}
-    />
-  )
+  return <EntityDatatableToolbar filters={filters} />
 }
 
 export { QuotaDatatableToolbar }

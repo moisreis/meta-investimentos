@@ -102,84 +102,6 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
       expect(response.acronym).toBe("FIA")
     })
 
-    it("should keep the untouched allocation bounds when the payload provides only the minimum", async () => {
-      const saved = await portfolioRepository.save(
-        buildPortfolio({ id: buildEntityId(ID) })
-      )
-      const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository,
-        normsPortfoliosRepository
-      )
-
-      const response = await useCase.execute({
-        portfolioId: saved.id!,
-        minAllocation: "6",
-      })
-
-      expect(response.minAllocation).toBe("6")
-      expect(response.targetAllocation).toBe("12")
-      expect(response.maxAllocation).toBe("20")
-    })
-
-    it("should keep the untouched allocation bounds when the payload provides only the target", async () => {
-      const saved = await portfolioRepository.save(
-        buildPortfolio({ id: buildEntityId(ID) })
-      )
-      const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository,
-        normsPortfoliosRepository
-      )
-
-      const response = await useCase.execute({
-        portfolioId: saved.id!,
-        targetAllocation: "15",
-      })
-
-      expect(response.minAllocation).toBe("5")
-      expect(response.targetAllocation).toBe("15")
-      expect(response.maxAllocation).toBe("20")
-    })
-
-    it("should keep the untouched allocation bounds when the payload provides only the maximum", async () => {
-      const saved = await portfolioRepository.save(
-        buildPortfolio({ id: buildEntityId(ID) })
-      )
-      const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository,
-        normsPortfoliosRepository
-      )
-
-      const response = await useCase.execute({
-        portfolioId: saved.id!,
-        maxAllocation: "25",
-      })
-
-      expect(response.minAllocation).toBe("5")
-      expect(response.targetAllocation).toBe("12")
-      expect(response.maxAllocation).toBe("25")
-    })
-
-    it("should update every allocation bound when the payload provides all three", async () => {
-      const saved = await portfolioRepository.save(
-        buildPortfolio({ id: buildEntityId(ID) })
-      )
-      const useCase = new UpdatePortfolioUseCase(
-        portfolioRepository,
-        normsPortfoliosRepository
-      )
-
-      const response = await useCase.execute({
-        portfolioId: saved.id!,
-        minAllocation: "1",
-        targetAllocation: "10",
-        maxAllocation: "30",
-      })
-
-      expect(response.minAllocation).toBe("1")
-      expect(response.targetAllocation).toBe("10")
-      expect(response.maxAllocation).toBe("30")
-    })
-
     it("should persist the unchanged values when the payload provides no field", async () => {
       const saved = await portfolioRepository.save(
         buildPortfolio({ id: buildEntityId(ID) })
@@ -198,9 +120,6 @@ describe("services/portfolio/use-cases/update-portfolio.use-case", () => {
         "Fundo de Investimento em Ações"
       )
       expect(response.annualInterestRate).toBe("10.5")
-      expect(response.minAllocation).toBe("5")
-      expect(response.targetAllocation).toBe("12")
-      expect(response.maxAllocation).toBe("20")
     })
 
     it("should update the portfolio when the requesting user owns it", async () => {

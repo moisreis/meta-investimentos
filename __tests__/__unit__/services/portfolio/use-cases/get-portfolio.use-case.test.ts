@@ -60,14 +60,11 @@ describe("services/portfolio/use-cases/get-portfolio.use-case", () => {
       expect(response.userId).toBe("user-7")
     })
 
-    it("should expose every percentage as a decimal string when the portfolio exists", async () => {
+    it("should expose the annual interest rate as a decimal string when the portfolio exists", async () => {
       const saved = await portfolioRepository.save(
         buildPortfolio({
           id: buildEntityId(ID),
           annualInterestRate: buildSignedPercentage("11.25"),
-          minAllocation: buildSignedPercentage("3.5"),
-          maxAllocation: buildSignedPercentage("30"),
-          targetAllocation: buildSignedPercentage("15.75"),
         })
       )
       const useCase = new GetPortfolioUseCase(
@@ -79,9 +76,6 @@ describe("services/portfolio/use-cases/get-portfolio.use-case", () => {
       })
 
       expect(response.annualInterestRate).toBe("11.25")
-      expect(response.minAllocation).toBe("3.5")
-      expect(response.maxAllocation).toBe("30")
-      expect(response.targetAllocation).toBe("15.75")
     })
 
     it("should throw NotFoundError when the portfolio does not exist", async () => {

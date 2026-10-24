@@ -80,8 +80,7 @@ export async function GET(
         "Content-Disposition": `inline; filename="${FILE_NAME}"`,
       },
     })
-  } catch (cause) {
-    console.error(cause)
+  } catch {
     return new Response("Erro ao gerar o PDF.", {
       status: 500,
     })

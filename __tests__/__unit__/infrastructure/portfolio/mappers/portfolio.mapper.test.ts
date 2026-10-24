@@ -22,9 +22,6 @@ describe("infrastructure/portfolio/mappers/portfolio.mapper", () => {
         name: "Fundo de Investimento em Ações",
         userId: USER_ID,
         annualInterestRate: "10.500000",
-        minAllocation: "5.000000",
-        maxAllocation: "20.000000",
-        targetAllocation: "12.000000",
         version: 1,
         createdAt: new Date("2026-01-01T00:00:00.000Z"),
         updatedAt: new Date("2026-01-15T12:00:00.000Z"),
@@ -40,15 +37,6 @@ describe("infrastructure/portfolio/mappers/portfolio.mapper", () => {
       expect(portfolio.userId).toBe(EntityId.create(USER_ID))
       expect(portfolio.annualInterestRate.value.toFixed(2)).toBe(
         "10.50"
-      )
-      expect(portfolio.minAllocation.value.toFixed(2)).toBe(
-        "5.00"
-      )
-      expect(portfolio.maxAllocation.value.toFixed(2)).toBe(
-        "20.00"
-      )
-      expect(portfolio.targetAllocation.value.toFixed(2)).toBe(
-        "12.00"
       )
       expect(portfolio.version).toBe(1)
       expect(portfolio.createdAt).toEqual(row.createdAt)
@@ -68,15 +56,6 @@ describe("infrastructure/portfolio/mappers/portfolio.mapper", () => {
       expect(insert.userId).toBe("user-1")
       expect(insert.annualInterestRate).toBe(
         portfolio.annualInterestRate.value.toString()
-      )
-      expect(insert.minAllocation).toBe(
-        portfolio.minAllocation.value.toString()
-      )
-      expect(insert.maxAllocation).toBe(
-        portfolio.maxAllocation.value.toString()
-      )
-      expect(insert.targetAllocation).toBe(
-        portfolio.targetAllocation.value.toString()
       )
       expect(insert.version).toBe(portfolio.version)
       expect(insert.createdAt).toEqual(portfolio.createdAt)
@@ -107,9 +86,6 @@ describe("infrastructure/portfolio/mappers/portfolio.mapper", () => {
           name: "Fundo de Investimento em Ações",
           userId: EntityId.create(USER_ID),
           annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
           version: 1,
           createdAt: new Date("2026-01-01T00:00:00.000Z"),
           updatedAt: new Date("2026-01-01T00:00:00.000Z"),
@@ -135,9 +111,6 @@ describe("infrastructure/portfolio/mappers/portfolio.mapper", () => {
           name: "Fundo de Investimento em Ações",
           userId: EntityId.create(USER_ID),
           annualInterestRate: SignedPercentage.create("10.5"),
-          minAllocation: SignedPercentage.create("5"),
-          maxAllocation: SignedPercentage.create("20"),
-          targetAllocation: SignedPercentage.create("12"),
           version: 1,
           createdAt: new Date("2026-01-01T00:00:00.000Z"),
           updatedAt: new Date("2026-01-01T00:00:00.000Z"),

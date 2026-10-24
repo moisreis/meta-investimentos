@@ -3,6 +3,7 @@ import { LogError } from "@/lib/log/logger"
 import { FundContainer } from "@/presentation/composition/fund.container"
 import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
 import { PositionContainer } from "@/presentation/composition/position.container"
+import { ToPositionWeightRows } from "@/presentation/mappers/position-weight-row.mapper"
 
 import type {
   FundLinkedPositionRow,
@@ -52,7 +53,10 @@ export async function LoadFundOverview(
     const FUND = await GET_FUND.execute({ fundId })
 
     const { list: LIST_PORTFOLIOS } = PortfolioContainer()
-    const { listAll: LIST_POSITIONS } = PositionContainer()
+    const {
+      listAll: LIST_POSITIONS,
+      listWeights: LIST_WEIGHTS,
+    } = PositionContainer()
     const {
       listBanks: LIST_BANKS,
       listBenchmarks: LIST_BENCHMARKS,
@@ -64,12 +68,17 @@ export async function LoadFundOverview(
       userId: USER.id,
     })
 
-    const [POSITIONS, BANKS, BENCHMARKS, CATEGORIES] =
+    const PORTFOLIO_IDS = PORTFOLIOS.map(
+      (portfolio) => portfolio.id
+    )
+
+    const [POSITIONS, WEIGHTS, BANKS, BENCHMARKS, CATEGORIES] =
       await Promise.all([
         LIST_POSITIONS.execute({
-          portfolioIds: PORTFOLIOS.map(
-            (portfolio) => portfolio.id
-          ),
+          portfolioIds: PORTFOLIO_IDS,
+        }),
+        LIST_WEIGHTS.execute({
+          portfolioIds: PORTFOLIO_IDS,
         }),
         LIST_BANKS.execute({}),
         LIST_BENCHMARKS.execute({}),
@@ -97,6 +106,13 @@ export async function LoadFundOverview(
       ? NORMS.find((entry) => entry.id === FUND.normId)
       : undefined
 
+    const WEIGHT_BY_POSITION = new Map(
+      ToPositionWeightRows(WEIGHTS).map((weight) => [
+        weight.positionId,
+        weight.weight,
+      ])
+    )
+
     const POSITION_ROWS: FundLinkedPositionRow[] =
       POSITIONS.filter(
         (position) => position.fundId === FUND.id
@@ -107,7 +123,7 @@ export async function LoadFundOverview(
           PORTFOLIOS.find(
             (entry) => entry.id === position.portfolioId
           )?.name ?? null,
-        allocation: position.allocation,
+        allocation: WEIGHT_BY_POSITION.get(position.id) ?? "0",
         initialBalance: position.initialBalance,
       }))
 

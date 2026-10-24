@@ -39,11 +39,6 @@ export function toCreatePortfolioProps(
     annualInterestRate: SignedPercentage.create(
       dto.annualInterestRate
     ),
-    minAllocation: SignedPercentage.create(dto.minAllocation),
-    maxAllocation: SignedPercentage.create(dto.maxAllocation),
-    targetAllocation: SignedPercentage.create(
-      dto.targetAllocation
-    ),
   }
 }
 
@@ -80,9 +75,6 @@ export function toResponseDTO(
     userId: entity.userId,
     annualInterestRate:
       entity.annualInterestRate.value.toString(),
-    minAllocation: entity.minAllocation.value.toString(),
-    maxAllocation: entity.maxAllocation.value.toString(),
-    targetAllocation: entity.targetAllocation.value.toString(),
     createdAt: entity.createdAt.toISOString(),
     updatedAt: entity.updatedAt.toISOString(),
   }

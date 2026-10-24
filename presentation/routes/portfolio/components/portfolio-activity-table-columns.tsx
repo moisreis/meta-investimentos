@@ -1,10 +1,6 @@
 "use client"
 
 import type { ColumnHelper } from "@tanstack/react-table"
-import {
-  IconCircleArrowDown,
-  IconCircleArrowUp,
-} from "@tabler/icons-react"
 
 import { EntityStateBadge } from "@/presentation/parts/datatable/columns/entity-state-badge"
 import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
@@ -21,20 +17,22 @@ import { PORTFOLIO_ACTIVITY } from "../settings/labels.settings"
 
 /**
  * @summary
- * Builds the read-only column definitions of the recent
- * activity datatable.
+ * Builds the column definitions of the recent activity
+ * datatable.
  *
  * @remarks
  * Renders one row per movement of the portfolio inside the
  * selected window: the type badge tells an application from
- * a redemption at a glance, the fund column resolves the
+ * a redemption with distinct theme tones, the status column
+ * marks active or estornado, the fund column resolves the
  * name and the custodian bank through the shared lookup
  * cell, and the amount and quota columns render the decimal
  * strings aligned to the end. The type and the fund columns
  * are not sortable, because alphabetical order has no
  * meaning for them. The actions column offers a reverse
- * action for each row, delegating to the parent's row
- * actions hook which owns the confirm dialog and toast.
+ * action for each row while still active, delegating to the
+ * parent's row actions hook which owns the confirm dialog
+ * and toast.
  *
  * @param columnHelper - The entity column helper.
  * @param rowActions - Row actions handler for reverse.
@@ -45,9 +43,9 @@ import { PORTFOLIO_ACTIVITY } from "../settings/labels.settings"
  *   unknown-valued defs, and only the framework `any` bridges
  *   the differing accessor value types of a single list.
  *
- * @author MoisAcs Reis
+ * @author Moisés Reis
  *
- * @date 2026-09-28
+ * @date 2026-10-21
  */
 export function CreatePortfolioActivityColumns(
   columnHelper: ColumnHelper<
@@ -68,10 +66,8 @@ export function CreatePortfolioActivityColumns(
           matched={getValue() === "application"}
           matchedLabel={PORTFOLIO_ACTIVITY.TYPE_APPLICATION}
           unmatchedLabel={PORTFOLIO_ACTIVITY.TYPE_WITHDRAWAL}
-          matchedIcon={<IconCircleArrowUp aria-hidden="true" />}
-          unmatchedIcon={
-            <IconCircleArrowDown aria-hidden="true" />
-          }
+          matchedVariant="default"
+          unmatchedVariant="outline"
         />
       ),
     }),
@@ -94,6 +90,25 @@ export function CreatePortfolioActivityColumns(
         <EntityLookupCell
           title={info.getValue()}
           subtitle={info.row.original.bankName}
+        />
+      ),
+    }),
+
+    columnHelper.accessor("reversedAt", {
+      id: "status",
+      header: PORTFOLIO_ACTIVITY.COLUMN_STATUS,
+      size: 110,
+      meta: { align: "center", fluid: true },
+      enableSorting: false,
+      cell: ({ getValue }) => (
+        <EntityStateBadge
+          matched={getValue() === null}
+          matchedLabel={PORTFOLIO_ACTIVITY.STATUS_ACTIVE_LABEL}
+          unmatchedLabel={
+            PORTFOLIO_ACTIVITY.STATUS_REVERSED_LABEL
+          }
+          matchedVariant="default"
+          unmatchedVariant="destructive"
         />
       ),
     }),
@@ -126,12 +141,16 @@ export function CreatePortfolioActivityColumns(
         <EntityTableRowMenuDropdown
           label={PORTFOLIO_ACTIVITY.ROW_ACTIONS_LABEL}
           actions={[
-            {
-              key: "reverse",
-              label: PORTFOLIO_ACTIVITY.ROW_REVERSE_LABEL,
-              onSelect: () =>
-                rowActions.handleReverse(row.original),
-            },
+            ...(row.original.reversedAt
+              ? []
+              : [
+                  {
+                    key: "reverse",
+                    label: PORTFOLIO_ACTIVITY.ROW_REVERSE_LABEL,
+                    onSelect: () =>
+                      rowActions.handleReverse(row.original),
+                  },
+                ]),
           ]}
         />
       ),

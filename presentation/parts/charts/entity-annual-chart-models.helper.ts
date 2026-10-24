@@ -11,7 +11,11 @@ import {
   ChainPeriodReturn,
   type PerformanceSnapshot,
 } from "@/lib/performance/period-window.calculator"
-import { calculatePortfolioReturn } from "@/domain/portfolio/calculators/return.calculator"
+import Decimal from "decimal.js"
+import {
+  SignedPercentage,
+  type GrowthFactor,
+} from "@/value-objects"
 
 // Copy keys of the annual section of a detail screen. The
 // constants of a route satisfy this interface, so the builder
@@ -295,7 +299,33 @@ function BuildMonthlyReturnChart(
           ? ChainPeriodReturn(
               SNAPSHOTS,
               CLOSING?.returnMonthly ?? null,
-              calculatePortfolioReturn
+              (({
+                dailyGrowthFactors,
+              }: {
+                dailyGrowthFactors: Array<{
+                  value: { value: Decimal }
+                }>
+              }) => {
+                const DecimalLib = Decimal
+                const CUMULATIVE_FACTOR = (
+                  dailyGrowthFactors as Array<{
+                    value: { value: Decimal }
+                  }>
+                ).reduce(
+                  (acc: Decimal, gf) =>
+                    acc.times(gf.value.value),
+                  new DecimalLib(1)
+                )
+                const RETURN_RATE_PERCENTAGE =
+                  CUMULATIVE_FACTOR.minus(1).times(100)
+                return SignedPercentage.create(
+                  RETURN_RATE_PERCENTAGE
+                )
+              }) as unknown as (input: {
+                dailyGrowthFactors: Array<{
+                  value: GrowthFactor
+                }>
+              }) => SignedPercentage
             )
           : (CLOSING?.returnMonthly ?? null)
 

@@ -4,6 +4,7 @@ import { IconArrowDownRight } from "@tabler/icons-react"
 
 import { SharedDatatableSection } from "@/presentation/parts/datatable/layout/shared-datatable-section"
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
+import type { PositionActivityRowActionsModel } from "../hooks/use-position-activity-row-actions.hook"
 
 import { usePositionActivityTable } from "../hooks/use-position-activity-table.hook"
 import { POSITION_ACTIVITY } from "../settings/labels.settings"
@@ -14,6 +15,8 @@ import { POSITION_ACTIVITY } from "../settings/labels.settings"
 export interface PositionActivityDatatableProps {
   // The activity rows inside the selected window.
   rows: readonly PortfolioActivityRow[]
+  // Row actions (reverse) from the parent detail page.
+  rowActions: PositionActivityRowActionsModel
 }
 
 /**
@@ -22,7 +25,7 @@ export interface PositionActivityDatatableProps {
  * detail screen.
  *
  * @remarks
- * Renders the read-only activity datatable, built from the
+ * Renders the activity datatable, built from the
  * window-filtered rows through the section hook, under one
  * quiet heading. An empty window swaps the datatable for the
  * shared empty state, so a period without movements explains
@@ -31,20 +34,28 @@ export interface PositionActivityDatatableProps {
  * @param props - Props of the recent activity section.
  * @param props.rows - The activity rows inside the selected
  *   window.
+ * @param props.rowActions - Row actions (reverse) handler.
  *
  * @returns The recent activity section.
  *
  * @example
- * <PositionActivityDatatable rows={ROWS} />
+ * <PositionActivityDatatable
+ *   rows={ROWS}
+ *   rowActions={ACTIONS}
+ * />
  *
  * @author Moisés Reis
  *
- * @date 2026-09-30
+ * @date 2026-10-21
  */
 function PositionActivityDatatable({
   rows,
+  rowActions,
 }: PositionActivityDatatableProps) {
-  const { hasRows, table } = usePositionActivityTable(rows)
+  const { hasRows, table } = usePositionActivityTable(
+    rows,
+    rowActions
+  )
 
   return (
     <SharedDatatableSection

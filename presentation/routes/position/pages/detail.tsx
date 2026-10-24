@@ -9,7 +9,9 @@ import { EntityDetailSummary } from "@/presentation/parts/components/entity-deta
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
 import { EntityDateRangeFilter } from "@/presentation/parts/filters/entity-date-range"
 
+import { PositionActivityConfirmReverseDialog } from "../dialogs/confirm-reverse"
 import { PositionActivityDatatable } from "../components/position-activity-datatable"
+import { usePositionActivityRowActions } from "../hooks/use-position-activity-row-actions.hook"
 import { usePositionOverview } from "../hooks/use-position-overview.hook"
 import { POSITION_SUMMARY } from "../settings/labels.settings"
 import {
@@ -68,6 +70,7 @@ function PositionDetail({ data }: PositionDetailProps) {
 
   const overview = usePositionOverview(DATA)
   const SUMMARY = overview.summary
+  const activityRowActions = usePositionActivityRowActions()
 
   return (
     <EntityDetailShell
@@ -101,7 +104,14 @@ function PositionDetail({ data }: PositionDetailProps) {
 
       <EntityChartSections sections={overview.chartSections} />
 
-      <PositionActivityDatatable rows={overview.activityRows} />
+      <PositionActivityDatatable
+        rows={overview.activityRows}
+        rowActions={activityRowActions}
+      />
+
+      <PositionActivityConfirmReverseDialog
+        dialog={activityRowActions}
+      />
     </EntityDetailShell>
   )
 }

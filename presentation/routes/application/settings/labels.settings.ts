@@ -109,7 +109,7 @@ export const APPLICATION_DATATABLE = {
   COLUMN_QUOTA_VALUE: "Valor da cota",
 
   // Status column header.
-  COLUMN_STATUS: "Status",
+  COLUMN_STATUS: "Situação",
 
   // Status badge labels.
   STATUS_ACTIVE_LABEL: "Ativo",

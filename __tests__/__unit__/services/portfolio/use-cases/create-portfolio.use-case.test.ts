@@ -54,9 +54,6 @@ describe("services/portfolio/use-cases/create-portfolio.use-case", () => {
         name: "Meu Portfolio",
         userId: "user-1",
         annualInterestRate: "12.0",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12",
       })
 
       expect(response.acronym).toBe("ME")
@@ -76,15 +73,9 @@ describe("services/portfolio/use-cases/create-portfolio.use-case", () => {
         name: "Meu Portfolio",
         userId: "user-1",
         annualInterestRate: "12.0",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12",
       })
 
       expect(response.annualInterestRate).toBe("12")
-      expect(response.minAllocation).toBe("5")
-      expect(response.maxAllocation).toBe("20")
-      expect(response.targetAllocation).toBe("12")
     })
 
     it("should stamp both timestamps from the clock when creating a portfolio", async () => {
@@ -98,9 +89,6 @@ describe("services/portfolio/use-cases/create-portfolio.use-case", () => {
         name: "Meu Portfolio",
         userId: "user-1",
         annualInterestRate: "12.0",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12",
       })
 
       const EXPECTED = getFixedDate().toISOString()
@@ -120,9 +108,6 @@ describe("services/portfolio/use-cases/create-portfolio.use-case", () => {
         name: "Meu Portfolio",
         userId: "user-1",
         annualInterestRate: "12.0",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12",
       })
 
       const stored = await portfolioRepository.findAll({})
@@ -145,9 +130,6 @@ describe("services/portfolio/use-cases/create-portfolio.use-case", () => {
         name: "Meu Portfolio",
         userId: "user-1",
         annualInterestRate: "12.0",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12",
       })
 
       const stored = await portfolioRepository.findAll({})
@@ -167,9 +149,6 @@ describe("services/portfolio/use-cases/create-portfolio.use-case", () => {
           name: "Meu Portfolio",
           userId: "user-1",
           annualInterestRate: "12.0",
-          minAllocation: "5",
-          maxAllocation: "20",
-          targetAllocation: "12",
         })
       ).rejects.toThrow(ValidationError)
     })
@@ -186,9 +165,6 @@ describe("services/portfolio/use-cases/create-portfolio.use-case", () => {
           name: "  ",
           userId: "user-1",
           annualInterestRate: "12.0",
-          minAllocation: "5",
-          maxAllocation: "20",
-          targetAllocation: "12",
         })
       ).rejects.toThrow(ValidationError)
 
@@ -210,9 +186,6 @@ describe("services/portfolio/use-cases/create-portfolio.use-case", () => {
         name: "Meu Portfolio",
         userId: "user-1",
         annualInterestRate: "12.0",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12",
         norms: [
           {
             normId: "norm-1",
@@ -248,9 +221,6 @@ describe("services/portfolio/use-cases/create-portfolio.use-case", () => {
         name: "Meu Portfolio",
         userId: "user-1",
         annualInterestRate: "12.0",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12",
         norms: [
           {
             normId: "norm-1",
@@ -285,9 +255,6 @@ describe("services/portfolio/use-cases/create-portfolio.use-case", () => {
         name: "Meu Portfolio",
         userId: "user-1",
         annualInterestRate: "12.0",
-        minAllocation: "5",
-        maxAllocation: "20",
-        targetAllocation: "12",
       })
 
       const stored = await portfolioRepository.findAll({})

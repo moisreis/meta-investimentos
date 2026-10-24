@@ -1,6 +1,8 @@
 import type { ReactNode } from "react"
 
 import { Badge } from "@/presentation/ui/badge"
+import type { badgeVariants } from "@/presentation/ui/badge"
+import type { VariantProps } from "class-variance-authority"
 
 /**
  * Props for the entity state badge.
@@ -24,6 +26,14 @@ export interface EntityStateBadgeProps {
 
   // Icon rendered before the unmatched label.
   unmatchedIcon?: ReactNode
+
+  // Optional badge variant for the matched state.
+  matchedVariant?: VariantProps<typeof badgeVariants>["variant"]
+
+  // Optional badge variant for the unmatched state.
+  unmatchedVariant?: VariantProps<
+    typeof badgeVariants
+  >["variant"]
 }
 
 /**
@@ -34,10 +44,10 @@ export interface EntityStateBadgeProps {
  * Several columns carry a single yes-or-no: a reversed or an
  * active transaction, an application or a withdrawal. The
  * comparison decides both the wording and the tone, so the two
- * can never drift apart: matched is the default badge,
- * unmatched is the destructive one, because the state that
- * deserves attention is the one that was not the expected
- * one.
+ * can never drift apart: by default matched is rendered with
+ * `outline` and unmatched with `outline`, but callers may
+ * pass per-state variants to color distinct kinds without
+ * changing existing usages.
  *
  * Naming the two states as matched and unmatched rather than
  * after their contents is what lets one badge serve a status
@@ -56,16 +66,9 @@ export interface EntityStateBadgeProps {
  *
  * @returns The two-state badge.
  *
- * @example
- * <EntityStateBadge
- *   matched={value === null}
- *   matchedLabel={APPLICATION_DATATABLE.STATUS_ACTIVE_LABEL}
- *   unmatchedLabel={APPLICATION_DATATABLE.STATUS_REVERSED_LABEL}
- * />
- *
  * @author Moisés Reis
  *
- * @date 2026-09-30
+ * @date 2026-10-21
  */
 function EntityStateBadge({
   matched,
@@ -73,9 +76,11 @@ function EntityStateBadge({
   unmatchedLabel,
   matchedIcon,
   unmatchedIcon,
+  matchedVariant = "outline",
+  unmatchedVariant = "outline",
 }: EntityStateBadgeProps) {
   return (
-    <Badge variant="outline">
+    <Badge variant={matched ? matchedVariant : unmatchedVariant}>
       {matched ? matchedIcon : unmatchedIcon}
       {matched ? matchedLabel : unmatchedLabel}
     </Badge>

@@ -10,17 +10,13 @@ import type { QuotaRow } from "@/presentation/types/quota-row.types"
 import { QuotaDatatableFilters } from "../datatable/filters"
 import { QuotaDatatableTable } from "../datatable/table"
 import { QuotaDatatableToolbar } from "../datatable/toolbar"
-import { QuotaConfirmImportDialog } from "../dialogs/confirm-import"
-import { QuotaImportProgressDialog } from "../dialogs/import-progress"
+import type { QuotaFundLookups } from "../types/quota-list.types"
 import { EMPTY_QUOTA_FUND_LOOKUPS } from "../helpers/build-quota-fund-lookups.helper"
 import { useQuotaDatatable } from "../hooks/use-quota-datatable.hook"
 import { useQuotaDatatableFilters } from "../hooks/use-quota-datatable-filters.hook"
 import { useQuotaKpis } from "../hooks/use-quota-kpis.hook"
-import { useQuotaImport } from "../hooks/use-quota-import.hook"
 import { useSharedCommandOpen } from "@/presentation/parts/hooks/use-shared-command-open.hook"
 import { QUOTA_EMPTY } from "../settings/labels.settings"
-import type { QuotaFundLookups } from "../types/quota-list.types"
-
 export interface QuotaListProps {
   data: QuotaRow[] | null
   lookups?: QuotaFundLookups
@@ -31,10 +27,7 @@ export interface QuotaListProps {
  * Renders the quota list page.
  *
  * @remarks
- * Composes the KPI group, the toolbar with the import
- * button, the search filters, the empty state and the
- * read-only datatable. The confirm-import and progress
- * dialogs render at the page level above the table.
+ * Composes KPI group, toolbar, filters, empty and read-only table.
  *
  * @param props - Props of the quota list page.
  * @param props.data - The quota rows, or `null` while
@@ -61,21 +54,14 @@ function QuotaList({
     filters.filteredQuotas,
     lookups
   )
-  const kpis = useQuotaKpis({ quotas: QUOTAS })
-  const importFlow = useQuotaImport()
+  const KPIS = useQuotaKpis({ quotas: QUOTAS })
 
-  // The shell reaches this flow without naming it: Ctrl+Q and
-  // the palette row both land on `?command=import-quotas`, and
-  // this page opens the confirm dialog when it sees the id.
-  useSharedCommandOpen(
-    "import-quotas",
-    importFlow.handleOpenConfirm
-  )
+  useSharedCommandOpen("import-quotas", () => {})
 
   return (
     <>
       <EntityDatatableKpiGroup>
-        {kpis.map((kpi) => (
+        {KPIS.map((kpi) => (
           <EntityDatatableKpiCard
             key={kpi.key}
             title={kpi.title}
@@ -89,7 +75,6 @@ function QuotaList({
       </EntityDatatableKpiGroup>
 
       <QuotaDatatableToolbar
-        onImport={importFlow.handleOpenConfirm}
         filters={
           <QuotaDatatableFilters
             fundId={filters.fundId}
@@ -108,27 +93,8 @@ function QuotaList({
           icon={IconChartPie}
           title={QUOTA_EMPTY.TITLE}
           description={QUOTA_EMPTY.DESCRIPTION}
-          primaryActionLabel={QUOTA_EMPTY.PRIMARY_ACTION_LABEL}
-          onPrimaryAction={importFlow.handleOpenConfirm}
         />
       )}
-
-      <QuotaConfirmImportDialog
-        open={importFlow.confirmOpen}
-        onOpenChange={importFlow.handleConfirmOpenChange}
-        window={importFlow.window}
-        onWindowChange={importFlow.handleWindowChange}
-        pending={importFlow.starting}
-        error={importFlow.startError}
-        onConfirm={importFlow.handleConfirm}
-      />
-
-      <QuotaImportProgressDialog
-        open={importFlow.progressOpen}
-        onOpenChange={importFlow.handleProgressOpenChange}
-        job={importFlow.job}
-        onDone={importFlow.handleClose}
-      />
     </>
   )
 }

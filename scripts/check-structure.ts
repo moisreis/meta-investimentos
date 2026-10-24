@@ -75,6 +75,7 @@ const CROSS_ROUTE_ALLOWLIST: Record<string, string[]> = {
     "portfolio-performance",
     "statement",
   ],
+  position: ["application", "withdrawal"],
   withdrawal: ["quota"],
 }
 

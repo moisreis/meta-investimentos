@@ -1,6 +1,4 @@
-import { sql } from "drizzle-orm"
 import {
-  check,
   index,
   integer,
   numeric,
@@ -12,7 +10,8 @@ import {
 import { user } from "@db-schemas/user.schema"
 
 // Stores the portfolios owned by a user.
-// Carries the interest rate and the allocation limits.
+// Carries the interest rate. The allocation of a portfolio
+// lives in the norms attached to it, in `norms_portfolios`.
 export const portfolio = pgSchema("portfolio").table(
   "portfolio",
   {
@@ -26,18 +25,6 @@ export const portfolio = pgSchema("portfolio").table(
       precision: 5,
       scale: 2,
     }).notNull(),
-    minAllocation: numeric("min_allocation", {
-      precision: 5,
-      scale: 2,
-    }).notNull(),
-    maxAllocation: numeric("max_allocation", {
-      precision: 5,
-      scale: 2,
-    }).notNull(),
-    targetAllocation: numeric("target_allocation", {
-      precision: 5,
-      scale: 2,
-    }).notNull(),
     version: integer("version").default(0).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
@@ -47,12 +34,6 @@ export const portfolio = pgSchema("portfolio").table(
       .notNull(),
   },
   (table) => [
-    // Enforces the ordering: min ≤ target ≤ max.
-    check(
-      "portfolio_allocation_order",
-      sql`${table.minAllocation} <= ${table.targetAllocation} AND ${table.targetAllocation} <= ${table.maxAllocation}`
-    ),
-
     // Speeds up lookups of portfolios by their owning user.
     index("portfolio_user_id_idx").on(table.userId),
   ]

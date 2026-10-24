@@ -52,9 +52,6 @@ function usePortfolioAddForm() {
       acronym: "",
       name: "",
       annualInterestRate: "",
-      minAllocation: "",
-      maxAllocation: "",
-      targetAllocation: "",
       norms: [] as NormPortfolioAllocation[],
     },
     submit: (values) =>
@@ -63,11 +60,6 @@ function usePortfolioAddForm() {
         name: values.name,
         annualInterestRate: UnmaskPercentage(
           values.annualInterestRate
-        ),
-        minAllocation: UnmaskPercentage(values.minAllocation),
-        maxAllocation: UnmaskPercentage(values.maxAllocation),
-        targetAllocation: UnmaskPercentage(
-          values.targetAllocation
         ),
         norms: values.norms.map(ToNormAllocationInput),
       }),
@@ -82,15 +74,6 @@ function usePortfolioAddForm() {
     annualInterestRate: VALUES.annualInterestRate,
     updateAnnualInterestRate: (value: string) =>
       updateField("annualInterestRate", value),
-    minAllocation: VALUES.minAllocation,
-    updateMinAllocation: (value: string) =>
-      updateField("minAllocation", value),
-    maxAllocation: VALUES.maxAllocation,
-    updateMaxAllocation: (value: string) =>
-      updateField("maxAllocation", value),
-    targetAllocation: VALUES.targetAllocation,
-    updateTargetAllocation: (value: string) =>
-      updateField("targetAllocation", value),
     norms: VALUES.norms,
     updateNorms: (value: NormPortfolioAllocation[]) =>
       updateField("norms", value),

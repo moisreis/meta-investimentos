@@ -2,11 +2,10 @@
 
 import { NormalizeAcronym } from "@/lib/benchmark/normalize-acronym"
 import { RequireSessionUser } from "@/lib/auth/require-session"
-import { calculateBenchmarkMonthlyRates } from "@/domain/benchmark/calculators/benchmark-monthly-series.calculator"
 import { BenchmarkContainer } from "@/presentation/composition/benchmark.container"
 import { BenchmarkHistoryContainer } from "@/presentation/composition/benchmark-history.container"
 import { PortfolioContainer } from "@/presentation/composition/portfolio.container"
-import { STATEMENT_REPORT_INDEX_ACRONYMS } from "@/services/statement/report/statement-report.constants"
+import { StatementContainer } from "@/presentation/composition/statement.container"
 import {
   ActionFailure,
   ActionSuccess,
@@ -50,7 +49,7 @@ export interface StatementMonthAvailability {
  * @returns Whether the report of the month can be rendered.
  *
  * @example
- * const RESULT = await checkStatementMonthAction({
+ * const RESULT = await getStatementMonthAction({
  *   portfolioId: "portfolio-1",
  *   month: "2026-07",
  * });
@@ -59,7 +58,7 @@ export interface StatementMonthAvailability {
  *
  * @date 2026-10-20
  */
-export async function checkStatementMonthAction(
+export async function getStatementMonthAction(
   input: unknown
 ): Promise<ActionResult<StatementMonthAvailability>> {
   const USER = await RequireSessionUser()
@@ -110,6 +109,17 @@ export async function checkStatementMonthAction(
 async function ResolveIpcaAvailability(
   month: string
 ): Promise<boolean> {
+  const { resolveIpcaAvailability } = StatementContainer()
+
+  if (resolveIpcaAvailability) {
+    return resolveIpcaAvailability(month)
+  }
+
+  const { STATEMENT_REPORT_INDEX_ACRONYMS } =
+    await import("@/services/statement/report/statement-report.constants")
+
+  const { calculateBenchmarkMonthlyRates } =
+    await import("@/domain/benchmark/calculators/benchmark-monthly-series.calculator")
   const TARGET = NormalizeAcronym(
     STATEMENT_REPORT_INDEX_ACRONYMS.ipca
   )

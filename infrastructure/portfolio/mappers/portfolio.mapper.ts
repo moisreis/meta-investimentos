@@ -37,11 +37,6 @@ export function ToDomain(
       annualInterestRate: SignedPercentage.create(
         row.annualInterestRate
       ),
-      minAllocation: SignedPercentage.create(row.minAllocation),
-      maxAllocation: SignedPercentage.create(row.maxAllocation),
-      targetAllocation: SignedPercentage.create(
-        row.targetAllocation
-      ),
       version: row.version,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
@@ -83,9 +78,6 @@ export function ToInsert(
     userId: entity.userId,
     annualInterestRate:
       entity.annualInterestRate.value.toString(),
-    minAllocation: entity.minAllocation.value.toString(),
-    maxAllocation: entity.maxAllocation.value.toString(),
-    targetAllocation: entity.targetAllocation.value.toString(),
     version: entity.version,
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt,
@@ -127,8 +119,5 @@ export function ToUpdate(
     userId: entity.userId,
     annualInterestRate:
       entity.annualInterestRate.value.toString(),
-    minAllocation: entity.minAllocation.value.toString(),
-    maxAllocation: entity.maxAllocation.value.toString(),
-    targetAllocation: entity.targetAllocation.value.toString(),
   }
 }

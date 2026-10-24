@@ -10,15 +10,12 @@ import { EntityDetailSummary } from "@/presentation/parts/components/entity-deta
 import { EntityEmptyTable } from "@/presentation/parts/datatable/pagination/entity-empty-table"
 import { EntityDateRangeFilter } from "@/presentation/parts/filters/entity-date-range"
 import { AddApplicationButton } from "@/presentation/routes/application/components/add-application-button"
-import { PortfolioPerformanceCalculateButton } from "@/presentation/routes/portfolio-performance/components/portfolio-performance-calculate-button"
-import { PortfolioPerformanceCalculateConfirmDialog } from "@/presentation/routes/portfolio-performance/dialogs/calculate-confirm"
-import { PortfolioPerformanceCalculateProgressDialog } from "@/presentation/routes/portfolio-performance/dialogs/calculate-progress"
-import { usePortfolioPerformanceCalculation } from "@/presentation/routes/portfolio-performance/hooks/use-portfolio-performance-calculation.hook"
 import { StatementGenerateReportButton } from "@/presentation/routes/statement/components/statement-generate-report-button"
 import { StatementGenerateReportDialog } from "@/presentation/routes/statement/dialogs/generate-report"
 import { useStatementGenerateDialog } from "@/presentation/routes/statement/hooks/use-statement-generate-dialog.hook"
 import { AddWithdrawalButton } from "@/presentation/routes/withdrawal/components/add-withdrawal-button"
 
+import { PortfolioActivityConfirmReverseDialog } from "../dialogs/confirm-reverse"
 import { PortfolioActivityDatatable } from "../components/portfolio-activity-datatable"
 import { PortfolioPositionsDatatable } from "../components/portfolio-positions-datatable"
 import { usePortfolioOverview } from "../hooks/use-portfolio-overview.hook"
@@ -100,9 +97,22 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
   // Both dialogs open on the portfolio of the screen and keep
   // their picker complete, so the user can still calculate or
   // report another wallet from the same dialog.
-  const calculation = usePortfolioPerformanceCalculation(
-    DATA.portfolioId || null
-  )
+  const _unusedCalculation = {
+    confirmOpen: false,
+    handleConfirmOpenChange: () => {},
+    portfolioId: DATA.portfolioId,
+    handlePortfolioChange: () => {},
+    dateRange: undefined,
+    handleDateRangeChange: () => {},
+    starting: false,
+    startError: null,
+    handleConfirm: async () => {},
+    progressOpen: false,
+    handleProgressOpenChange: () => {},
+    job: null,
+    handleClose: () => {},
+  }
+  void _unusedCalculation
   const generateDialog = useStatementGenerateDialog()
 
   // Row actions for the activity datatable: reverse an
@@ -130,10 +140,6 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
           actions={
             <>
               <EntityDatatableToolbarSeparator />
-
-              <PortfolioPerformanceCalculateButton
-                onClick={calculation.handleOpenConfirm}
-              />
 
               <StatementGenerateReportButton
                 onClick={generateDialog.handleOpen}
@@ -171,30 +177,14 @@ function PortfolioDetail({ data }: PortfolioDetailProps) {
         rowActions={activityRowActions}
       />
 
-      <PortfolioPerformanceCalculateConfirmDialog
-        open={calculation.confirmOpen}
-        onOpenChange={calculation.handleConfirmOpenChange}
-        portfolios={DATA.portfolios}
-        portfolioId={calculation.portfolioId}
-        onPortfolioChange={calculation.handlePortfolioChange}
-        dateRange={calculation.dateRange}
-        onDateRangeChange={calculation.handleDateRangeChange}
-        pending={calculation.starting}
-        error={calculation.startError}
-        onConfirm={calculation.handleConfirm}
-      />
-
-      <PortfolioPerformanceCalculateProgressDialog
-        open={calculation.progressOpen}
-        onOpenChange={calculation.handleProgressOpenChange}
-        job={calculation.job}
-        onDone={calculation.handleClose}
-      />
-
       <StatementGenerateReportDialog
         dialog={generateDialog}
         portfolios={DATA.portfolios}
         defaultPortfolioId={DATA.portfolioId}
+      />
+
+      <PortfolioActivityConfirmReverseDialog
+        dialog={activityRowActions}
       />
     </EntityDetailShell>
   )

@@ -25,8 +25,6 @@ import type { UserRole } from "@/lib/auth/user-role"
 export interface UserRow {
   id: string
   name: string
-  // Raw CPF (not masked) for server calls.
-  cpf: string
   email: string
   firstName: string
   lastName: string

@@ -86,12 +86,6 @@ function EditPortfolioForm({
     updateName,
     annualInterestRate,
     updateAnnualInterestRate,
-    minAllocation,
-    updateMinAllocation,
-    maxAllocation,
-    updateMaxAllocation,
-    targetAllocation,
-    updateTargetAllocation,
     norms,
     updateNorms,
     error,
@@ -165,58 +159,6 @@ function EditPortfolioForm({
             }
           />
         </SharedFormField>
-        <SharedFormField
-          label={PORTFOLIO_FORM.LABEL_MINIMUM_ALLOCATION}
-          error={fieldErrors.minAllocation}
-          htmlFor="minAllocation"
-        >
-          <EntityPercentageInput
-            id="minAllocation"
-            value={minAllocation}
-            onChange={(value: string) =>
-              updateMinAllocation(value)
-            }
-            disabled={pending}
-            aria-invalid={
-              fieldErrors.minAllocation ? "true" : undefined
-            }
-          />
-        </SharedFormField>
-        <SharedFormField
-          label={PORTFOLIO_FORM.LABEL_TARGET_ALLOCATION}
-          error={fieldErrors.targetAllocation}
-          htmlFor="targetAllocation"
-        >
-          <EntityPercentageInput
-            id="targetAllocation"
-            value={targetAllocation}
-            onChange={(value: string) =>
-              updateTargetAllocation(value)
-            }
-            disabled={pending}
-            aria-invalid={
-              fieldErrors.targetAllocation ? "true" : undefined
-            }
-          />
-        </SharedFormField>
-        <SharedFormField
-          label={PORTFOLIO_FORM.LABEL_MAXIMUM_ALLOCATION}
-          error={fieldErrors.maxAllocation}
-          htmlFor="maxAllocation"
-        >
-          <EntityPercentageInput
-            id="maxAllocation"
-            value={maxAllocation}
-            onChange={(value: string) =>
-              updateMaxAllocation(value)
-            }
-            disabled={pending}
-            aria-invalid={
-              fieldErrors.maxAllocation ? "true" : undefined
-            }
-          />
-        </SharedFormField>
-
         <SharedFormField
           label={PORTFOLIO_FORM.LABEL_NORMS}
           description={PORTFOLIO_FORM.DESCRIPTION_NORMS}

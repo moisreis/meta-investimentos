@@ -1,10 +1,6 @@
 "use client"
 
 import type { ColumnHelper } from "@tanstack/react-table"
-import {
-  IconCheck,
-  IconRotateClockwise,
-} from "@tabler/icons-react"
 
 import { EntityStateBadge } from "@/presentation/parts/datatable/columns/entity-state-badge"
 import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
@@ -139,10 +135,8 @@ export function CreateApplicationTableColumns(
           unmatchedLabel={
             APPLICATION_DATATABLE.STATUS_REVERSED_LABEL
           }
-          matchedIcon={<IconCheck aria-hidden="true" />}
-          unmatchedIcon={
-            <IconRotateClockwise aria-hidden="true" />
-          }
+          matchedVariant="default"
+          unmatchedVariant="destructive"
         />
       ),
     }),

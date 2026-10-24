@@ -1,7 +1,9 @@
 "use server"
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { RequireRole } from "@/lib/authz/require-role"
 import { BankContainer } from "@/presentation/composition/bank.container"
+import { UserContainer } from "@/presentation/composition/user.container"
 import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
   ActionFailure,
@@ -48,6 +50,13 @@ export async function createBankAction(
 
   if (!USER) {
     return ActionFailure("Faça login para continuar.")
+  }
+
+  const { get: GET_USER } = UserContainer()
+  const ACTOR = await GET_USER.execute({ userId: USER.id })
+  const ROLE_CHECK = RequireRole(ACTOR.role, ["MANAGER"])
+  if (!ROLE_CHECK.success) {
+    return ROLE_CHECK
   }
 
   const PARSED = CREATE_BANK_SCHEMA.safeParse(input)

@@ -31,52 +31,35 @@ interface Movement {
   date: string
   amount: string
   quotas: string
+  reversedAt: string | null
 }
 
-// Maps an application DTO onto an unlabeled movement. A
-// reversed application never happened, so it is dropped
-// instead of being reported next to the ones that did.
+// Maps an application DTO onto an unlabeled movement.
 function ToMovement(
   application: ApplicationResponseDTO
-): Movement | null {
-  return ToActiveMovement(
-    {
-      id: application.id,
-      kind: "application",
-      date: application.date,
-      amount: application.amount,
-      quotas: application.quotas,
-    },
-    application.reversedAt
-  )
+): Movement {
+  return {
+    id: application.id,
+    kind: "application",
+    date: application.date,
+    amount: application.amount,
+    quotas: application.quotas,
+    reversedAt: application.reversedAt,
+  }
 }
 
-// Maps a withdrawal DTO onto an unlabeled movement. A
-// reversed withdrawal never happened, so it is dropped for
-// the same reason as a reversed application.
+// Maps a withdrawal DTO onto an unlabeled movement.
 function ToWithdrawalMovement(
   withdrawal: WithdrawalResponseDTO
-): Movement | null {
-  return ToActiveMovement(
-    {
-      id: withdrawal.id,
-      kind: "withdrawal",
-      date: withdrawal.date,
-      amount: withdrawal.amount,
-      quotas: withdrawal.quotas,
-    },
-    withdrawal.reversedAt
-  )
-}
-
-// Drops a movement that has been reversed, keeping the rest.
-// The reversal is read directly from the DTO, so the service
-// layer keeps owning the meaning of a reversal.
-function ToActiveMovement(
-  movement: Movement,
-  reversedAt: string | null
-): Movement | null {
-  return reversedAt === null ? movement : null
+): Movement {
+  return {
+    id: withdrawal.id,
+    kind: "withdrawal",
+    date: withdrawal.date,
+    amount: withdrawal.amount,
+    quotas: withdrawal.quotas,
+    reversedAt: withdrawal.reversedAt,
+  }
 }
 
 // Orders the movements from the newest to the oldest. The
@@ -96,17 +79,14 @@ function SortNewestFirst(
  * identity and its movements.
  *
  * @remarks
- * Joins every active application and withdrawal with the
+ * Joins every application and withdrawal with the
  * identity of its position, which already carries the fund
  * name and the custodian bank name, so a row renders with
  * the two lines a user expects without loading the fund and
- * bank registries a second time.
- *
- * Reversed movements are left out: a reversal means the
- * movement never happened, so reporting it beside the ones
- * that did would claim money that left no trace in the
- * patrimony. The rows come out newest first, which is the
- * order a recent activity table should open in.
+ * bank registries a second time. Reversed movements remain
+ * listed and carry `reversedAt`. The rows come out newest
+ * first, which is the order a recent activity table should
+ * open in.
  *
  * @explanation
  * Use this helper from the position detail loader. The
@@ -129,7 +109,7 @@ function SortNewestFirst(
  *
  * @author Moisés Reis
  *
- * @date 2026-09-30
+ * @date 2026-10-21
  */
 export function BuildPositionActivityRows(
   identity: PositionActivityIdentity,
@@ -137,14 +117,12 @@ export function BuildPositionActivityRows(
   withdrawals: readonly WithdrawalResponseDTO[]
 ): PortfolioActivityRow[] {
   const MOVEMENTS = [
-    ...applications.flatMap((application) => {
-      const MOVEMENT = ToMovement(application)
-      return MOVEMENT ? [MOVEMENT] : []
-    }),
-    ...withdrawals.flatMap((withdrawal) => {
-      const MOVEMENT = ToWithdrawalMovement(withdrawal)
-      return MOVEMENT ? [MOVEMENT] : []
-    }),
+    ...applications.map((application) =>
+      ToMovement(application)
+    ),
+    ...withdrawals.map((withdrawal) =>
+      ToWithdrawalMovement(withdrawal)
+    ),
   ]
 
   return SortNewestFirst(MOVEMENTS).map((movement) => ({
@@ -157,5 +135,6 @@ export function BuildPositionActivityRows(
     date: movement.date,
     amount: movement.amount,
     quotas: movement.quotas,
+    reversedAt: movement.reversedAt,
   }))
 }

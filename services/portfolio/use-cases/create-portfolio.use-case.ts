@@ -16,9 +16,6 @@ export interface CreatePortfolioInput {
   name: string
   userId: string
   annualInterestRate: string
-  minAllocation: string
-  maxAllocation: string
-  targetAllocation: string
   norms?: PortfolioNormAllocationDTO[]
 }
 
@@ -43,9 +40,6 @@ export interface CreatePortfolioInput {
  *   name: "Meu Portfolio",
  *   userId: "user-1",
  *   annualInterestRate: "12.0",
- *   minAllocation: "5",
- *   maxAllocation: "20",
- *   targetAllocation: "12",
  *   norms: [
  *     {
  *       normId: "norm-1",
@@ -91,9 +85,6 @@ export class CreatePortfolioUseCase {
    *   name: "Meu Portfolio",
    *   userId: "user-1",
    *   annualInterestRate: "12.0",
-   *   minAllocation: "5",
-   *   maxAllocation: "20",
-   *   targetAllocation: "12",
    * });
    *
    * @author Moisés Reis

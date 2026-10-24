@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 
 import type { EntityReverseToastStatus } from "@/presentation/parts/toasts/entity-reverse-toast"
 import type { ActionResult } from "@/presentation/presenters/action-result.presenter"
+import { useSharedAuditNotification } from "@/presentation/parts/hooks/use-shared-audit-notification.hook"
 import { reverseApplicationAction } from "@/presentation/routes/application/actions/reverse-application.action"
 import { reverseWithdrawalAction } from "@/presentation/routes/withdrawal/actions/reverse-withdrawal.action"
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
@@ -41,6 +42,7 @@ export interface PortfolioActivityRowActionsModel {
  */
 export function usePortfolioActivityRowActions(): PortfolioActivityRowActionsModel {
   const ROUTER = useRouter()
+  const NOTIFY = useSharedAuditNotification()
   const [REVERSE_TARGET, setReverseTarget] =
     useState<PortfolioActivityRow | null>(null)
   const [REVERSE_PENDING, setReversePending] = useState(false)
@@ -81,9 +83,10 @@ export function usePortfolioActivityRowActions(): PortfolioActivityRowActionsMod
     }
 
     setReverseStatus("success")
+    NOTIFY(RESULT.audit)
     setReverseTarget(null)
     ROUTER.refresh()
-  }, [REVERSE_TARGET, ROUTER])
+  }, [REVERSE_TARGET, ROUTER, NOTIFY])
 
   const UpdateReverseOpen = useCallback((open: boolean) => {
     if (!open) {

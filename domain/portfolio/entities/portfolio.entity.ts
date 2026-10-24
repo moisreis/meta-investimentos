@@ -6,9 +6,6 @@ export interface PortfolioProps {
   name: string
   userId: EntityId
   annualInterestRate: SignedPercentage
-  minAllocation: SignedPercentage
-  maxAllocation: SignedPercentage
-  targetAllocation: SignedPercentage
   version?: number
   createdAt?: Date
   updatedAt?: Date
@@ -19,12 +16,14 @@ export interface PortfolioProps {
  * Represents an investment portfolio owned by a user.
  *
  * @remarks
- * Must have acronym, name, userId, annualInterestRate,
- * min/max/target allocation. Instances are immutable.
+ * Must have acronym, name, userId and annualInterestRate.
+ * Instances are immutable. The allocation of the portfolio is
+ * not held here: it belongs to the norms attached to it, in
+ * `norms-portfolio`.
  *
  * @explanation
- * Core portfolio entity with allocation constraints and
- * target return. Supports allocation and rate updates.
+ * Core portfolio entity with the target return. Supports
+ * rate, acronym and name updates.
  *
  * @author Moisés Reis
  *
@@ -141,66 +140,6 @@ export class Portfolio {
 
   /**
    * @summary
-   * Returns the minimum allocation of the portfolio.
-   *
-   * @remarks
-   * SignedPercentage value.
-   *
-   * @explanation
-   * Lower bound used for allocation compliance.
-   *
-   * @returns SignedPercentage.
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-13
-   */
-  get minAllocation(): SignedPercentage {
-    return this.props.minAllocation
-  }
-
-  /**
-   * @summary
-   * Returns the maximum allocation of the portfolio.
-   *
-   * @remarks
-   * SignedPercentage value.
-   *
-   * @explanation
-   * Upper bound used for allocation compliance.
-   *
-   * @returns SignedPercentage.
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-13
-   */
-  get maxAllocation(): SignedPercentage {
-    return this.props.maxAllocation
-  }
-
-  /**
-   * @summary
-   * Returns the target allocation of the portfolio.
-   *
-   * @remarks
-   * SignedPercentage value.
-   *
-   * @explanation
-   * Desired value used for allocation compliance.
-   *
-   * @returns SignedPercentage.
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-13
-   */
-  get targetAllocation(): SignedPercentage {
-    return this.props.targetAllocation
-  }
-
-  /**
-   * @summary
    * Returns the optimistic-locking version of the portfolio.
    *
    * @remarks
@@ -301,8 +240,7 @@ export class Portfolio {
    * Creates a valid Portfolio from the provided properties.
    *
    * @remarks
-   * Validates all fields. Enforces non-negative rate and
-   * min <= target <= max.
+   * Validates all fields. Enforces non-negative rate.
    *
    * @explanation
    * Factory method to construct a valid Portfolio.
@@ -321,9 +259,6 @@ export class Portfolio {
    *     "ba57ad33-3d94-4a4a-9a6f-b3f916f7b4a2"
    *   ),
    *   annualInterestRate: SignedPercentage.create("10.5"),
-   *   minAllocation: SignedPercentage.create("5"),
-   *   maxAllocation: SignedPercentage.create("20"),
-   *   targetAllocation: SignedPercentage.create("12"),
    * });
    *
    * @author Moisés Reis
@@ -352,38 +287,9 @@ export class Portfolio {
         "`Portfolio` must have an annual interest rate."
       )
     }
-    if (!props.minAllocation) {
-      throw new ValidationError(
-        "`Portfolio` must have a minimum allocation."
-      )
-    }
-    if (!props.maxAllocation) {
-      throw new ValidationError(
-        "`Portfolio` must have a maximum allocation."
-      )
-    }
-    if (!props.targetAllocation) {
-      throw new ValidationError(
-        "`Portfolio` must have a target allocation."
-      )
-    }
     if (props.annualInterestRate.isNegative) {
       throw new ValidationError(
         "`Portfolio` annual interest rate must not be negative."
-      )
-    }
-    if (
-      props.minAllocation.value.gt(props.targetAllocation.value)
-    ) {
-      throw new ValidationError(
-        "`Portfolio` minimum allocation must not exceed target allocation."
-      )
-    }
-    if (
-      props.targetAllocation.value.gt(props.maxAllocation.value)
-    ) {
-      throw new ValidationError(
-        "`Portfolio` target allocation must not exceed maximum allocation."
       )
     }
 
@@ -402,82 +308,6 @@ export class Portfolio {
   // ---------------------------------
   // MUTATIONS
   // ---------------------------------
-
-  /**
-   * @summary
-   * Updates the allocation bounds of this portfolio.
-   *
-   * @remarks
-   * Returns new Portfolio with updated bounds.
-   * Enforces min <= target <= max.
-   *
-   * @explanation
-   * Use to change allocation constraints.
-   * Original instance unchanged.
-   *
-   * @param minAllocation - New minimum SignedPercentage.
-   * @param targetAllocation - New target SignedPercentage.
-   * @param maxAllocation - New maximum SignedPercentage.
-   * @param now - Update timestamp (optional, defaults to now).
-   *
-   * @returns New allocation bounds.
-   *
-   * @example
-   * const UPDATED = portfolio.updateAllocation(
-   *   SignedPercentage.create("3"),
-   *   SignedPercentage.create("10"),
-   *   SignedPercentage.create("25"),
-   * );
-   *
-   * @author Moisés Reis
-   *
-   * @date 2026-09-13
-   */
-  public updateAllocation(
-    minAllocation: SignedPercentage,
-    targetAllocation: SignedPercentage,
-    maxAllocation: SignedPercentage,
-    now?: Date
-  ): Portfolio {
-    if (!minAllocation) {
-      throw new ValidationError(
-        "`Portfolio` must have a minimum allocation."
-      )
-    }
-    if (!targetAllocation) {
-      throw new ValidationError(
-        "`Portfolio` must have a target allocation."
-      )
-    }
-    if (!maxAllocation) {
-      throw new ValidationError(
-        "`Portfolio` must have a maximum allocation."
-      )
-    }
-    if (minAllocation.value.gt(targetAllocation.value)) {
-      throw new ValidationError(
-        "`Portfolio` minimum allocation must not exceed target allocation."
-      )
-    }
-    if (targetAllocation.value.gt(maxAllocation.value)) {
-      throw new ValidationError(
-        "`Portfolio` target allocation must not exceed maximum allocation."
-      )
-    }
-
-    const NOW = now ?? new Date()
-
-    return new Portfolio(
-      {
-        ...this.props,
-        minAllocation,
-        targetAllocation,
-        maxAllocation,
-        updatedAt: NOW,
-      },
-      this._id
-    )
-  }
 
   /**
    * @summary

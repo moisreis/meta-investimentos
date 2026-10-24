@@ -11,18 +11,14 @@ import type { PortfolioPerformanceRow } from "@/presentation/types/portfolio-per
 import { PortfolioPerformanceDatatableFilters } from "../datatable/filters"
 import { PortfolioPerformanceDatatableTable } from "../datatable/table"
 import { PortfolioPerformanceDatatableToolbar } from "../datatable/toolbar"
-import { PortfolioPerformanceCalculateConfirmDialog } from "../dialogs/calculate-confirm"
-import { PortfolioPerformanceCalculateProgressDialog } from "../dialogs/calculate-progress"
 import { PortfolioPerformanceConfirmDeleteDialog } from "../dialogs/confirm-delete"
+import type { PortfolioPerformanceLookups } from "../types/portfolio-performance-list.types"
 import { EMPTY_PORTFOLIO_PERFORMANCE_LOOKUPS } from "../helpers/build-portfolio-performance-lookups.helper"
-import { usePortfolioPerformanceCalculation } from "../hooks/use-portfolio-performance-calculation.hook"
 import { usePortfolioPerformanceDatatable } from "../hooks/use-portfolio-performance-datatable.hook"
 import { usePortfolioPerformanceDatatableFilters } from "../hooks/use-portfolio-performance-datatable-filters.hook"
 import { usePortfolioPerformanceKpis } from "../hooks/use-portfolio-performance-kpis.hook"
 import { useSharedCommandOpen } from "@/presentation/parts/hooks/use-shared-command-open.hook"
 import { PORTFOLIO_PERFORMANCE_EMPTY } from "../settings/labels.settings"
-import type { PortfolioPerformanceLookups } from "../types/portfolio-performance-list.types"
-
 export interface PortfolioPerformanceListProps {
   data: PortfolioPerformanceRow[] | null
   portfolios?: PortfolioRow[]
@@ -34,11 +30,7 @@ export interface PortfolioPerformanceListProps {
  * Renders the portfolio performance list page.
  *
  * @remarks
- * Composes the KPI group, the toolbar with the calculate
- * button, the portfolio and period filters, the empty
- * state and the selectable datatable with row delete action.
- * The calculate-confirm, calculate-progress and confirm delete
- * dialogs render at the page level above the table.
+ * Composes KPI group, toolbar, portfolio/period filters, empty and datatable.
  *
  * @param props - Props of the performance list page.
  * @param props.data - The performance rows, or `null`
@@ -55,9 +47,10 @@ export interface PortfolioPerformanceListProps {
  */
 function PortfolioPerformanceList({
   data,
-  portfolios = [],
+  portfolios,
   lookups = EMPTY_PORTFOLIO_PERFORMANCE_LOOKUPS,
 }: PortfolioPerformanceListProps) {
+  void portfolios
   const PENDING = data === null
   const PERFORMANCES = data ?? []
   const HAS_PERFORMANCES = PERFORMANCES.length > 0
@@ -69,23 +62,16 @@ function PortfolioPerformanceList({
       filters.filteredPerformances,
       lookups
     )
-  const kpis = usePortfolioPerformanceKpis({
+  const KPIS = usePortfolioPerformanceKpis({
     performances: PERFORMANCES,
   })
-  const calculation = usePortfolioPerformanceCalculation()
 
-  // The shell reaches this flow without naming it: Ctrl+P and
-  // the palette row both land on the same command id, and
-  // this page opens the confirm dialog when it sees it.
-  useSharedCommandOpen(
-    "calculate-performance",
-    calculation.handleOpenConfirm
-  )
+  useSharedCommandOpen("calculate-performance", () => {})
 
   return (
     <>
       <EntityDatatableKpiGroup>
-        {kpis.map((kpi) => (
+        {KPIS.map((kpi) => (
           <EntityDatatableKpiCard
             key={kpi.key}
             title={kpi.title}
@@ -99,7 +85,6 @@ function PortfolioPerformanceList({
       </EntityDatatableKpiGroup>
 
       <PortfolioPerformanceDatatableToolbar
-        onCalculate={calculation.handleOpenConfirm}
         filters={
           <PortfolioPerformanceDatatableFilters
             portfolioId={filters.portfolioId}
@@ -122,32 +107,8 @@ function PortfolioPerformanceList({
           icon={IconChartLine}
           title={PORTFOLIO_PERFORMANCE_EMPTY.TITLE}
           description={PORTFOLIO_PERFORMANCE_EMPTY.DESCRIPTION}
-          primaryActionLabel={
-            PORTFOLIO_PERFORMANCE_EMPTY.PRIMARY_ACTION_LABEL
-          }
-          onPrimaryAction={calculation.handleOpenConfirm}
         />
       )}
-
-      <PortfolioPerformanceCalculateConfirmDialog
-        open={calculation.confirmOpen}
-        onOpenChange={calculation.handleConfirmOpenChange}
-        portfolios={portfolios}
-        portfolioId={calculation.portfolioId}
-        onPortfolioChange={calculation.handlePortfolioChange}
-        dateRange={calculation.dateRange}
-        onDateRangeChange={calculation.handleDateRangeChange}
-        pending={calculation.starting}
-        error={calculation.startError}
-        onConfirm={calculation.handleConfirm}
-      />
-
-      <PortfolioPerformanceCalculateProgressDialog
-        open={calculation.progressOpen}
-        onOpenChange={calculation.handleProgressOpenChange}
-        job={calculation.job}
-        onDone={calculation.handleClose}
-      />
 
       <PortfolioPerformanceConfirmDeleteDialog
         dialog={rowActions}

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-
-const SESSION_COOKIE = "better-auth.session_token"
+import { getSessionCookie } from "better-auth/cookies"
 
 const PROTECTED_PREFIXES = [
   "/main",
@@ -16,16 +15,22 @@ const PROTECTED_PREFIXES = [
   "/quota",
   "/user",
   "/audit",
+  "/audit-log",
   "/norm",
   "/application",
   "/withdrawal",
+  "/checking-account",
+  "/bank-account",
+  "/portfolio-performance",
+  "/position-performance",
 ]
 
 const AUTH_ROUTES = ["/sign-in", "/sign-up"]
 
 export function proxy(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl
-  const hasSession = request.cookies.has(SESSION_COOKIE)
+  const sessionCookie = getSessionCookie(request)
+  const hasSession = Boolean(sessionCookie)
 
   const isProtected = PROTECTED_PREFIXES.some((prefix) =>
     pathname.startsWith(prefix)

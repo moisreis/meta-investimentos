@@ -13,6 +13,7 @@ import type {
   EntityTableFeatures,
 } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { PortfolioActivityRow } from "@/presentation/types/portfolio-activity-row.types"
+import type { PositionActivityRowActionsModel } from "./use-position-activity-row-actions.hook"
 
 import { CreatePositionActivityColumns } from "../components/position-activity-table-columns"
 
@@ -42,25 +43,28 @@ interface UsePositionActivityTableOutput {
  * @remarks
  * Creates the shared table instance used by the datatable
  * and the pagination over the window-filtered rows. The
- * columns are read-only and built once, and the pagination
+ * columns are built with row actions and the pagination
  * starts at ten rows per page. The rows are never mutated,
  * so the same table instance serves every window the user
  * picks by swapping the data the hook is called with.
  *
  * @param rows - The activity rows inside the selected window.
+ * @param rowActions - Row actions (reverse) handler.
  *
  * @returns The table instance and the row gate.
  *
  * @author Moisés Reis
  *
- * @date 2026-09-30
+ * @date 2026-10-21
  */
 function usePositionActivityTable(
-  rows: readonly PortfolioActivityRow[]
+  rows: readonly PortfolioActivityRow[],
+  rowActions: PositionActivityRowActionsModel
 ): UsePositionActivityTableOutput {
   const COLUMNS = useMemo(
-    () => CreatePositionActivityColumns(COLUMN_HELPER),
-    []
+    () =>
+      CreatePositionActivityColumns(COLUMN_HELPER, rowActions),
+    [rowActions]
   )
 
   const TABLE = useTable({

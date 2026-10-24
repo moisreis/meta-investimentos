@@ -5,9 +5,10 @@ import type { PortfolioNormAllocationDTO } from "./portfolio-norm-allocation.dto
  * Defines the payload for creating a `Portfolio`.
  *
  * @remarks
- * Allocations obey min <= target <= max.
  * The annual interest rate must not be negative.
- * Percentages are decimal strings.
+ * Percentages are decimal strings. The allocation of the
+ * portfolio is not part of this payload: it belongs to the
+ * norms attached to it, in `norms`.
  *
  * @explanation
  * Use this DTO to create a portfolio through the service
@@ -19,9 +20,6 @@ import type { PortfolioNormAllocationDTO } from "./portfolio-norm-allocation.dto
  *   name: "Master Portfolio",
  *   userId: "user-1",
  *   annualInterestRate: "0",
- *   minAllocation: "5",
- *   maxAllocation: "20",
- *   targetAllocation: "12",
  *   norms: [
  *     {
  *       normId: "norm-1",
@@ -41,8 +39,5 @@ export interface CreatePortfolioDTO {
   name: string
   userId: string
   annualInterestRate: string
-  minAllocation: string
-  maxAllocation: string
-  targetAllocation: string
   norms?: PortfolioNormAllocationDTO[]
 }

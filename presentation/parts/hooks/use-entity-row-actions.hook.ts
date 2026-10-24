@@ -20,9 +20,12 @@ type EntityRouter = ReturnType<typeof useRouter>
 export interface EntityRowActionsConfig<
   TData extends { id: string },
 > {
-  runDelete: (id: string) => Promise<ActionResult<undefined>>
+  runDelete?: (id: string) => Promise<ActionResult<undefined>>
   /** Marks the row as reversed instead of deleting it. */
-  runReverse?: (id: string) => Promise<ActionResult<undefined>>
+  runReverse?: (
+    id: string,
+    row?: TData
+  ) => Promise<ActionResult<undefined>>
   onView?: (row: TData, router: EntityRouter) => void
 }
 
@@ -135,7 +138,7 @@ function useEntityRowActions<TData extends { id: string }>({
   }, [])
 
   const HandleConfirmDelete = useCallback(async () => {
-    if (!DELETE_TARGET) return
+    if (!DELETE_TARGET || !runDelete) return
 
     setDeletePending(true)
     const RESULT = await runDelete(DELETE_TARGET.id)
@@ -172,7 +175,10 @@ function useEntityRowActions<TData extends { id: string }>({
     if (!REVERSE_TARGET || !runReverse) return
 
     setReversePending(true)
-    const RESULT = await runReverse(REVERSE_TARGET.id)
+    const RESULT = await runReverse(
+      REVERSE_TARGET.id,
+      REVERSE_TARGET
+    )
     setReversePending(false)
 
     if (!RESULT.success) {

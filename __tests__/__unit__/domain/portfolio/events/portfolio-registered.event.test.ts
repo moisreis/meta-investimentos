@@ -31,9 +31,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
           acronym: "FIA",
           name: "Fundo de Investimento em Ações",
           annualInterestRate: buildSignedPercentage("10.5"),
-          minAllocation: buildSignedPercentage("5"),
-          targetAllocation: buildSignedPercentage("12"),
-          maxAllocation: buildSignedPercentage("20"),
           occurredAt,
         })
 
@@ -44,13 +41,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
         expect(event.name).toBe("Fundo de Investimento em Ações")
         expect(event.annualInterestRate.value.toFixed(2)).toBe(
           "10.50"
-        )
-        expect(event.minAllocation.value.toFixed(2)).toBe("5.00")
-        expect(event.targetAllocation.value.toFixed(2)).toBe(
-          "12.00"
-        )
-        expect(event.maxAllocation.value.toFixed(2)).toBe(
-          "20.00"
         )
         expect(event.occurredAt).toEqual(occurredAt)
       })
@@ -63,9 +53,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIA",
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           },
           "event-portfolio-registered-1"
         )
@@ -83,9 +70,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIA",
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           },
           ""
         )
@@ -102,9 +86,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
           acronym: "FIA",
           name: "Fundo de Investimento em Ações",
           annualInterestRate: buildSignedPercentage("10.5"),
-          minAllocation: buildSignedPercentage("5"),
-          targetAllocation: buildSignedPercentage("12"),
-          maxAllocation: buildSignedPercentage("20"),
         })
 
         expect(event.occurredAt).toEqual(getFixedDate())
@@ -121,9 +102,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
           acronym: "FIA",
           name: "Fundo de Investimento em Ações",
           annualInterestRate: buildSignedPercentage("10.5"),
-          minAllocation: buildSignedPercentage("5"),
-          targetAllocation: buildSignedPercentage("12"),
-          maxAllocation: buildSignedPercentage("20"),
           occurredAt,
         })
 
@@ -138,35 +116,9 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
           acronym: "FIA",
           name: "Fundo de Investimento em Ações",
           annualInterestRate: buildSignedPercentage("10.5"),
-          minAllocation: buildSignedPercentage("5"),
-          targetAllocation: buildSignedPercentage("12"),
-          maxAllocation: buildSignedPercentage("20"),
         })
 
         expect(event.occurredAt).not.toBe(event.occurredAt)
-      })
-
-      it("should accept equal allocation bounds", () => {
-        const event = PortfolioRegistered.create({
-          portfolioId: buildEntityId("portfolio-1"),
-          userId: buildEntityId("user-1"),
-          acronym: "FIA",
-          name: "Fundo de Investimento em Ações",
-          annualInterestRate: buildSignedPercentage("10.5"),
-          minAllocation: buildSignedPercentage("15"),
-          targetAllocation: buildSignedPercentage("15"),
-          maxAllocation: buildSignedPercentage("15"),
-        })
-
-        expect(event.minAllocation.value.toFixed(2)).toBe(
-          "15.00"
-        )
-        expect(event.targetAllocation.value.toFixed(2)).toBe(
-          "15.00"
-        )
-        expect(event.maxAllocation.value.toFixed(2)).toBe(
-          "15.00"
-        )
       })
 
       it("should throw ValidationError when portfolioId is missing", () => {
@@ -176,9 +128,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIA",
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           } as Parameters<typeof PortfolioRegistered.create>[0])
         ).toThrow(ValidationError)
       })
@@ -190,9 +139,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIA",
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           } as Parameters<typeof PortfolioRegistered.create>[0])
         ).toThrow(ValidationError)
       })
@@ -204,9 +150,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             userId: buildEntityId("user-1"),
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           } as Parameters<typeof PortfolioRegistered.create>[0])
         ).toThrow(ValidationError)
 
@@ -217,9 +160,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "",
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           })
         ).toThrow(ValidationError)
       })
@@ -231,9 +171,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             userId: buildEntityId("user-1"),
             acronym: "FIA",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           } as Parameters<typeof PortfolioRegistered.create>[0])
         ).toThrow(ValidationError)
 
@@ -244,9 +181,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIA",
             name: "",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           })
         ).toThrow(ValidationError)
       })
@@ -258,82 +192,7 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             userId: buildEntityId("user-1"),
             acronym: "FIA",
             name: "Fundo de Investimento em Ações",
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           } as Parameters<typeof PortfolioRegistered.create>[0])
-        ).toThrow(ValidationError)
-      })
-
-      it("should throw ValidationError when minAllocation is missing", () => {
-        expect(() =>
-          PortfolioRegistered.create({
-            portfolioId: buildEntityId("portfolio-1"),
-            userId: buildEntityId("user-1"),
-            acronym: "FIA",
-            name: "Fundo de Investimento em Ações",
-            annualInterestRate: buildSignedPercentage("10.5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
-          } as Parameters<typeof PortfolioRegistered.create>[0])
-        ).toThrow(ValidationError)
-      })
-
-      it("should throw ValidationError when targetAllocation is missing", () => {
-        expect(() =>
-          PortfolioRegistered.create({
-            portfolioId: buildEntityId("portfolio-1"),
-            userId: buildEntityId("user-1"),
-            acronym: "FIA",
-            name: "Fundo de Investimento em Ações",
-            annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            maxAllocation: buildSignedPercentage("20"),
-          } as Parameters<typeof PortfolioRegistered.create>[0])
-        ).toThrow(ValidationError)
-      })
-
-      it("should throw ValidationError when maxAllocation is missing", () => {
-        expect(() =>
-          PortfolioRegistered.create({
-            portfolioId: buildEntityId("portfolio-1"),
-            userId: buildEntityId("user-1"),
-            acronym: "FIA",
-            name: "Fundo de Investimento em Ações",
-            annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-          } as Parameters<typeof PortfolioRegistered.create>[0])
-        ).toThrow(ValidationError)
-      })
-
-      it("should throw ValidationError when minAllocation is above targetAllocation", () => {
-        expect(() =>
-          PortfolioRegistered.create({
-            portfolioId: buildEntityId("portfolio-1"),
-            userId: buildEntityId("user-1"),
-            acronym: "FIA",
-            name: "Fundo de Investimento em Ações",
-            annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("30"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("40"),
-          })
-        ).toThrow(ValidationError)
-      })
-
-      it("should throw ValidationError when targetAllocation is above maxAllocation", () => {
-        expect(() =>
-          PortfolioRegistered.create({
-            portfolioId: buildEntityId("portfolio-1"),
-            userId: buildEntityId("user-1"),
-            acronym: "FIA",
-            name: "Fundo de Investimento em Ações",
-            annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("45"),
-            maxAllocation: buildSignedPercentage("40"),
-          })
         ).toThrow(ValidationError)
       })
     })
@@ -346,9 +205,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
           acronym: "FIA",
           name: "Fundo de Investimento em Ações",
           annualInterestRate: buildSignedPercentage("10.5"),
-          minAllocation: buildSignedPercentage("5"),
-          targetAllocation: buildSignedPercentage("12"),
-          maxAllocation: buildSignedPercentage("20"),
         })
 
         expect(event.equals(event)).toBe(true)
@@ -362,9 +218,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIA",
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           },
           "event-shared-id"
         )
@@ -376,9 +229,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIA",
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           },
           "event-shared-id"
         )
@@ -394,9 +244,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIA",
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           },
           "event-1"
         )
@@ -408,9 +255,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIA",
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           },
           "event-2"
         )
@@ -426,9 +270,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIA",
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           },
           "event-1"
         )
@@ -440,9 +281,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIQ",
             name: "Fundo de Investimento em Quotas",
             annualInterestRate: buildSignedPercentage("9.25"),
-            minAllocation: buildSignedPercentage("1"),
-            targetAllocation: buildSignedPercentage("2"),
-            maxAllocation: buildSignedPercentage("3"),
           },
           "event-1"
         )
@@ -459,9 +297,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
           acronym: "FIA",
           name: "Fundo de Investimento em Ações",
           annualInterestRate: buildSignedPercentage("10.5"),
-          minAllocation: buildSignedPercentage("5"),
-          targetAllocation: buildSignedPercentage("12"),
-          maxAllocation: buildSignedPercentage("20"),
         })
 
         const second = PortfolioRegistered.create(
@@ -471,9 +306,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIA",
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           },
           "event-1"
         )
@@ -489,9 +321,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
             acronym: "FIA",
             name: "Fundo de Investimento em Ações",
             annualInterestRate: buildSignedPercentage("10.5"),
-            minAllocation: buildSignedPercentage("5"),
-            targetAllocation: buildSignedPercentage("12"),
-            maxAllocation: buildSignedPercentage("20"),
           },
           "event-1"
         )
@@ -502,9 +331,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
           acronym: "FIA",
           name: "Fundo de Investimento em Ações",
           annualInterestRate: buildSignedPercentage("10.5"),
-          minAllocation: buildSignedPercentage("5"),
-          targetAllocation: buildSignedPercentage("12"),
-          maxAllocation: buildSignedPercentage("20"),
         })
 
         expect(first.equals(second)).toBe(false)
@@ -517,9 +343,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
           acronym: "FIA",
           name: "Fundo de Investimento em Ações",
           annualInterestRate: buildSignedPercentage("10.5"),
-          minAllocation: buildSignedPercentage("5"),
-          targetAllocation: buildSignedPercentage("12"),
-          maxAllocation: buildSignedPercentage("20"),
         })
 
         expect(event.equals(null)).toBe(false)
@@ -532,9 +355,6 @@ describe("domain/portfolio/events/portfolio-registered.event", () => {
           acronym: "FIA",
           name: "Fundo de Investimento em Ações",
           annualInterestRate: buildSignedPercentage("10.5"),
-          minAllocation: buildSignedPercentage("5"),
-          targetAllocation: buildSignedPercentage("12"),
-          maxAllocation: buildSignedPercentage("20"),
         })
 
         expect(event.equals(undefined)).toBe(false)

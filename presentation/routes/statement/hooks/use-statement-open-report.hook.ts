@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react"
 
-import { checkStatementMonthAction } from "@/presentation/routes/statement/actions/check-statement-month.action"
+import { getStatementMonthAction } from "@/presentation/routes/statement/actions/get-statement-month.action"
 
 // Message shown when a month holds no IPCA reading, so the
 // report cannot be rendered.
@@ -59,7 +59,7 @@ function useStatementOpenReport(): StatementOpenReportModel {
       return
     }
 
-    const RESULT = await checkStatementMonthAction(PARAMS)
+    const RESULT = await getStatementMonthAction(PARAMS)
 
     if (!RESULT.success) {
       setAlertDescription(RESULT.error)

@@ -1,4 +1,5 @@
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { RequireRole } from "@/lib/authz/require-role"
 import { UserContainer } from "@/presentation/composition/user.container"
 import { ToUserRows } from "@/presentation/mappers/user-row.mapper"
 import type { UserRow } from "@/presentation/types/user-row.types"
@@ -10,7 +11,7 @@ import type { UserRow } from "@/presentation/types/user-row.types"
  * @remarks
  * Derives the acting user from the session and lists all
  * users of the platform through the use case. Returns null
- * when there is no active session.
+ * when there is no active session or the user is not a MANAGER.
  *
  * @explanation
  * Use this helper from the page loader so the session
@@ -30,7 +31,12 @@ export async function LoadUsers(): Promise<UserRow[] | null> {
 
   if (!USER) return null
 
-  const { list: LIST_USERS } = UserContainer()
+  const { get: GET_USER, list: LIST_USERS } = UserContainer()
+  const ACTOR = await GET_USER.execute({ userId: USER.id })
+  const ROLE_CHECK = RequireRole(ACTOR.role, ["MANAGER"])
+  if (!ROLE_CHECK.success) {
+    return null
+  }
 
   return ToUserRows(await LIST_USERS.execute({}))
 }

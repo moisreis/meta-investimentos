@@ -10,13 +10,12 @@ import type { PortfolioNormAllocationDTO } from "./portfolio-norm-allocation.dto
  * relations of the portfolio untouched.
  *
  * @explanation
- * Use this DTO to adjust the portfolio identity, its
- * allocation or its annual interest rate.
+ * Use this DTO to adjust the portfolio identity or its
+ * annual interest rate.
  *
  * @example
  * const DTO: UpdatePortfolioDTO = {
  *   name: "Renda Fixa IPCA",
- *   targetAllocation: "15",
  * };
  *
  * @author Moisés Reis
@@ -27,8 +26,5 @@ export interface UpdatePortfolioDTO {
   acronym?: string
   name?: string
   annualInterestRate?: string
-  minAllocation?: string
-  maxAllocation?: string
-  targetAllocation?: string
   norms?: PortfolioNormAllocationDTO[]
 }

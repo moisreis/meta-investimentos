@@ -2,10 +2,7 @@
 
 import { EntityDatatableToolbar } from "@/presentation/parts/components/entity-datatable-toolbar"
 
-import { PortfolioPerformanceCalculateButton } from "../components/portfolio-performance-calculate-button"
-
 interface PortfolioPerformanceDatatableToolbarProps {
-  onCalculate: () => void
   filters?: React.ReactNode
 }
 
@@ -14,13 +11,9 @@ interface PortfolioPerformanceDatatableToolbarProps {
  * Renders the performance datatable toolbar.
  *
  * @remarks
- * Composes the shared datatable toolbar with the
- * calculate button on the actions slot, replacing the
- * add-item button since performances are calculated
- * instead of created manually.
+ * Composes the shared datatable toolbar.
  *
- * @param props - The toolbar callbacks and slots.
- * @param props.onCalculate - Opens the confirm dialog.
+ * @param props - The toolbar slots.
  * @param props.filters - The left-side filter group.
  *
  * @returns The performance datatable toolbar.
@@ -30,19 +23,9 @@ interface PortfolioPerformanceDatatableToolbarProps {
  * @date 2026-09-25
  */
 function PortfolioPerformanceDatatableToolbar({
-  onCalculate,
   filters,
 }: PortfolioPerformanceDatatableToolbarProps) {
-  return (
-    <EntityDatatableToolbar
-      filters={filters}
-      actions={
-        <PortfolioPerformanceCalculateButton
-          onClick={onCalculate}
-        />
-      }
-    />
-  )
+  return <EntityDatatableToolbar filters={filters} />
 }
 
 export { PortfolioPerformanceDatatableToolbar }

@@ -24,9 +24,6 @@ export interface PortfolioResponseDTO {
   name: string
   userId: string
   annualInterestRate: string
-  minAllocation: string
-  maxAllocation: string
-  targetAllocation: string
   createdAt: string
   updatedAt: string
 }

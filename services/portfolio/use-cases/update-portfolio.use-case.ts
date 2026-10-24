@@ -16,9 +16,6 @@ export interface UpdatePortfolioInput {
   acronym?: string
   name?: string
   annualInterestRate?: string
-  minAllocation?: string
-  maxAllocation?: string
-  targetAllocation?: string
   norms?: PortfolioNormAllocationDTO[]
 }
 
@@ -28,11 +25,11 @@ export interface UpdatePortfolioInput {
  *
  * @remarks
  * Fetches the portfolio, applies `updateAnnualInterestRate`
- * and `updateAllocation` for the provided fields, and
- * persists the updated entity. The norm-portfolio relations
- * are then reconciled against the submitted list: the norms
- * that are gone are detached, the ones that remain are
- * re-bounded and the new ones are attached.
+ * for the provided fields, and persists the updated entity.
+ * The norm-portfolio relations are then reconciled against
+ * the submitted list: the norms that are gone are detached,
+ * the ones that remain are re-bounded and the new ones are
+ * attached.
  *
  * @explanation
  * Use this use case to edit the editable fields of an
@@ -68,12 +65,11 @@ export class UpdatePortfolioUseCase {
    *
    * @remarks
    * Fetches the portfolio, applies `updateAnnualInterestRate`
-   * and `updateAllocation` for the provided fields, and
-   * persists the updated entity. The norm-portfolio
-   * relations are then reconciled against the submitted
-   * list. Omitting `norms` leaves the relations untouched,
-   * so a caller that only renames a portfolio cannot drop
-   * the norms the user configured earlier.
+   * for the provided fields, and persists the updated entity.
+   * The norm-portfolio relations are then reconciled against
+   * the submitted list. Omitting `norms` leaves the relations
+   * untouched, so a caller that only renames a portfolio
+   * cannot drop the norms the user configured earlier.
    *
    * @explanation
    * Use this method to edit the editable fields of an
@@ -198,24 +194,6 @@ export class UpdatePortfolioUseCase {
     if (input.annualInterestRate !== undefined) {
       UPDATED = UPDATED.updateAnnualInterestRate(
         SignedPercentage.create(input.annualInterestRate)
-      )
-    }
-
-    if (
-      input.minAllocation !== undefined ||
-      input.targetAllocation !== undefined ||
-      input.maxAllocation !== undefined
-    ) {
-      UPDATED = UPDATED.updateAllocation(
-        input.minAllocation !== undefined
-          ? SignedPercentage.create(input.minAllocation)
-          : UPDATED.minAllocation,
-        input.targetAllocation !== undefined
-          ? SignedPercentage.create(input.targetAllocation)
-          : UPDATED.targetAllocation,
-        input.maxAllocation !== undefined
-          ? SignedPercentage.create(input.maxAllocation)
-          : UPDATED.maxAllocation
       )
     }
 

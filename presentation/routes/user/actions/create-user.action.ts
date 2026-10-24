@@ -1,6 +1,7 @@
 "use server"
 
 import { RequireSessionUser } from "@/lib/auth/require-session"
+import { RequireRole } from "@/lib/authz/require-role"
 import { UserContainer } from "@/presentation/composition/user.container"
 import { ActionAudited } from "@/presentation/parts/audit/shared-log-action.helper"
 import {
@@ -55,6 +56,13 @@ export async function createUserAction(
     return ActionFailure("Faça login para continuar.")
   }
 
+  const { get: GET_USER } = UserContainer()
+  const ACTOR = await GET_USER.execute({ userId: USER.id })
+  const ROLE_CHECK = RequireRole(ACTOR.role, ["MANAGER"])
+  if (!ROLE_CHECK.success) {
+    return ROLE_CHECK
+  }
+
   const PARSED = CREATE_USER_SCHEMA.safeParse(input)
 
   if (!PARSED.success) {
@@ -64,7 +72,12 @@ export async function createUserAction(
   try {
     const { create: CREATE_USER } = UserContainer()
 
-    const CREATED_USER = await CREATE_USER.execute(PARSED.data)
+    const CREATE_INPUT = {
+      ...PARSED.data,
+      role: "USER" as const,
+    }
+
+    const CREATED_USER = await CREATE_USER.execute(CREATE_INPUT)
 
     return ActionAudited(undefined, {
       userId: USER.id,
@@ -75,7 +88,7 @@ export async function createUserAction(
       changes: {
         name: PARSED.data.name,
         email: PARSED.data.email,
-        role: PARSED.data.role,
+        role: "USER",
       },
     })
   } catch (cause) {

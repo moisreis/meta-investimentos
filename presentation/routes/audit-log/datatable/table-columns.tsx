@@ -4,6 +4,7 @@ import type { ColumnHelper } from "@tanstack/react-table"
 
 import { FormatAuditAction } from "@/presentation/parts/audit/shared-format-audit-action.helper"
 import { FormatAuditEntity } from "@/presentation/parts/audit/shared-format-audit-entity.helper"
+import { EntityStateBadge } from "@/presentation/parts/datatable/columns/entity-state-badge"
 import { EntityUserCell } from "@/presentation/parts/datatable/columns/entity-user-cell"
 import type { EntityColumnDef } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
 import type { EntityTableFeatures } from "@/presentation/parts/datatable/settings/entity-table-features.settings"
@@ -13,6 +14,21 @@ import type { AuditLogRow } from "@/presentation/types/audit-log-row.types"
 
 import { AUDIT_LOG_DATATABLE } from "../settings/labels.settings"
 import type { AuditLogRowSummary } from "../types/audit-log-list.types"
+
+import { AUDIT_ACTIONS } from "@/presentation/parts/audit/shared-audit-actions.settings"
+
+function GetAuditActionMeta(action: string) {
+  const TOKEN = action
+    .trim()
+    .toUpperCase() as keyof typeof AUDIT_ACTIONS
+  const FOUND = AUDIT_ACTIONS[TOKEN]
+
+  if (FOUND) {
+    return { variant: FOUND.variant }
+  }
+
+  return { variant: "outline" as const }
+}
 
 export interface AuditLogTableColumnOptions {
   summaryFor: (auditLogId: string) => AuditLogRowSummary | null
@@ -86,13 +102,22 @@ export function CreateAuditLogTableColumns(
     columnHelper.accessor("action", {
       id: "action",
       header: AUDIT_LOG_DATATABLE.COLUMN_ACTION,
-      size: 120,
+      size: 140,
       enableSorting: false,
       meta: { fluid: true },
       cell: (info) => {
         const DISPLAY = FormatAuditAction(info.getValue())
+        const META = GetAuditActionMeta(info.getValue())
 
-        return DISPLAY.label
+        return (
+          <EntityStateBadge
+            matched
+            matchedLabel={DISPLAY.label}
+            unmatchedLabel={DISPLAY.label}
+            matchedVariant={META.variant}
+            unmatchedVariant={META.variant}
+          />
+        )
       },
     }),
 

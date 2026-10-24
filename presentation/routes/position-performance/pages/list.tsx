@@ -10,17 +10,13 @@ import type { PositionPerformanceRow } from "@/presentation/types/position-perfo
 import { PositionPerformanceDatatableFilters } from "../datatable/filters"
 import { PositionPerformanceDatatableTable } from "../datatable/table"
 import { PositionPerformanceDatatableToolbar } from "../datatable/toolbar"
-import { PositionPerformanceCalculateConfirmDialog } from "../dialogs/calculate-confirm"
-import { PositionPerformanceCalculateProgressDialog } from "../dialogs/calculate-progress"
 import { PositionPerformanceConfirmDeleteDialog } from "../dialogs/confirm-delete"
+import type { PositionPerformanceLookups } from "../types/position-performance-list.types"
 import { EMPTY_POSITION_PERFORMANCE_LOOKUPS } from "../helpers/build-position-performance-lookups.helper"
-import { usePositionPerformanceCalculation } from "../hooks/use-position-performance-calculation.hook"
 import { usePositionPerformanceDatatable } from "../hooks/use-position-performance-datatable.hook"
 import { usePositionPerformanceDatatableFilters } from "../hooks/use-position-performance-datatable-filters.hook"
 import { usePositionPerformanceKpis } from "../hooks/use-position-performance-kpis.hook"
 import { POSITION_PERFORMANCE_EMPTY } from "../settings/labels.settings"
-import type { PositionPerformanceLookups } from "../types/position-performance-list.types"
-
 export interface PositionPerformanceListProps {
   data: PositionPerformanceRow[] | null
   lookups?: PositionPerformanceLookups
@@ -31,11 +27,7 @@ export interface PositionPerformanceListProps {
  * Renders the position performance list page.
  *
  * @remarks
- * Composes the KPI group, the toolbar with the calculate
- * button, the position and period filters, the empty
- * state and the selectable datatable with row delete action.
- * The calculate-confirm, calculate-progress and confirm delete
- * dialogs render at the page level above the table.
+ * Composes KPI group, toolbar, filters, empty and datatable.
  *
  * @param props - Props of the performance list page.
  * @param props.data - The performance rows, or `null`
@@ -63,15 +55,14 @@ function PositionPerformanceList({
       filters.filteredPerformances,
       lookups
     )
-  const kpis = usePositionPerformanceKpis({
+  const KPIS = usePositionPerformanceKpis({
     performances: PERFORMANCES,
   })
-  const calculation = usePositionPerformanceCalculation()
 
   return (
     <>
       <EntityDatatableKpiGroup>
-        {kpis.map((kpi) => (
+        {KPIS.map((kpi) => (
           <EntityDatatableKpiCard
             key={kpi.key}
             title={kpi.title}
@@ -85,7 +76,6 @@ function PositionPerformanceList({
       </EntityDatatableKpiGroup>
 
       <PositionPerformanceDatatableToolbar
-        onCalculate={calculation.handleOpenConfirm}
         filters={
           <PositionPerformanceDatatableFilters
             positionId={filters.positionId}
@@ -108,32 +98,8 @@ function PositionPerformanceList({
           icon={IconCoin}
           title={POSITION_PERFORMANCE_EMPTY.TITLE}
           description={POSITION_PERFORMANCE_EMPTY.DESCRIPTION}
-          primaryActionLabel={
-            POSITION_PERFORMANCE_EMPTY.PRIMARY_ACTION_LABEL
-          }
-          onPrimaryAction={calculation.handleOpenConfirm}
         />
       )}
-
-      <PositionPerformanceCalculateConfirmDialog
-        open={calculation.confirmOpen}
-        onOpenChange={calculation.handleConfirmOpenChange}
-        positionOptions={lookups.calculationOptions}
-        positionId={calculation.positionId}
-        onPositionChange={calculation.handlePositionChange}
-        dateRange={calculation.dateRange}
-        onDateRangeChange={calculation.handleDateRangeChange}
-        pending={calculation.starting}
-        error={calculation.startError}
-        onConfirm={calculation.handleConfirm}
-      />
-
-      <PositionPerformanceCalculateProgressDialog
-        open={calculation.progressOpen}
-        onOpenChange={calculation.handleProgressOpenChange}
-        job={calculation.job}
-        onDone={calculation.handleClose}
-      />
 
       <PositionPerformanceConfirmDeleteDialog
         dialog={rowActions}

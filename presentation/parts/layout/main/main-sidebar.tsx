@@ -3,7 +3,9 @@ import type { ReactNode } from "react"
 import {
   IconBuildingBank,
   IconCategory,
+  IconChartArea,
   IconChartDonut,
+  IconChartLine,
   IconChartPie,
   IconCircleArrowDown,
   IconCircleArrowUp,
@@ -31,15 +33,17 @@ import {
   type MainNavigationItem,
 } from "@/presentation/parts/navigation/main-navigation.settings"
 
-// Icons resolved per navigation href.
+// Icons resolved per navigation href. Every entry owns its
+// icon, so two buttons of the sidebar never answer to the
+// same sign.
 const SIDEBAR_ICONS: Record<string, ReactNode> = {
   "/portfolio": <IconWallet />,
   "/position": <IconChartDonut />,
   "/application": <IconCircleArrowUp />,
   "/withdrawal": <IconCircleArrowDown />,
   "/statement": <IconFileAnalytics />,
-  "/portfolio-performance": <IconWallet />,
-  "/position-performance": <IconCoin />,
+  "/portfolio-performance": <IconChartLine />,
+  "/position-performance": <IconChartArea />,
   "/benchmark": <IconTrendingUp />,
   "/norm": <IconCategory />,
   "/benchmark-history": <IconHistory />,

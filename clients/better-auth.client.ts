@@ -44,7 +44,7 @@ function createAuth() {
         firstName: { type: "string", required: true },
         lastName: { type: "string", required: true },
         cpf: { type: "string", required: true },
-        role: { type: "string", required: false },
+        role: { type: "string", required: false, input: false },
       },
     },
   })

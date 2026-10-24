@@ -35,6 +35,11 @@ export interface EntityDatatableSkeletonProps {
  * screen it stands in for makes the arrival of the data feel
  * like a jump, which is worse than waiting a moment longer.
  *
+ * The KPI bar mirrors the strip as well: it scrolls on a
+ * narrow screen and every placeholder keeps the same floor
+ * of width the real card keeps, so the placeholder does not
+ * arrive as a row of bars that then reshapes into figures.
+ *
  * @explanation
  * Use as the fallback of a route `loading.tsx`, and as the
  * pending body of a list screen whose rows have not
@@ -61,12 +66,12 @@ function EntityDatatableSkeleton({
       className={cn("flex w-full flex-col", className)}
       aria-busy
     >
-      <section className="flex h-32 w-full flex-row items-center border-b border-border">
+      <section className="flex h-32 w-full flex-row items-center overflow-x-auto overscroll-x-contain border-b border-border">
         {Array.from({ length: KPI_CARD_COUNT }).map(
           (_, INDEX) => (
             <div
               key={INDEX}
-              className="flex h-full w-full flex-col justify-center gap-3 border-r border-border px-3 last:border-r-0"
+              className="flex h-full min-w-64 flex-1 flex-col justify-center gap-3 border-r border-border px-3 last:border-r-0 sm:min-w-0"
             >
               <Skeleton className="h-3 w-24" />
               <Skeleton className="h-6 w-32" />

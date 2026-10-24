@@ -1,7 +1,5 @@
 "use client"
 
-import * as React from "react"
-
 import { EntityAddDialog } from "@/presentation/parts/dialogs/entity-add"
 import { EntityAlertDialog } from "@/presentation/parts/dialogs/entity-alert"
 import { EntityAddToast } from "@/presentation/parts/toasts/entity-add-toast"
@@ -63,16 +61,12 @@ function StatementGenerateReportDialog({
 
   const OPEN_REPORT = openReport.openReport
 
-  const SUCCESS_ACTION = React.useMemo(
-    () =>
-      FILE_URL
-        ? {
-            label: STATEMENT_FORM.GENERATE_SUCCESS_ACTION,
-            onClick: () => void OPEN_REPORT(FILE_URL),
-          }
-        : null,
-    [FILE_URL, OPEN_REPORT]
-  )
+  const SUCCESS_ACTION = FILE_URL
+    ? {
+        label: STATEMENT_FORM.GENERATE_SUCCESS_ACTION,
+        onClick: () => void OPEN_REPORT(FILE_URL),
+      }
+    : null
 
   return (
     <>
